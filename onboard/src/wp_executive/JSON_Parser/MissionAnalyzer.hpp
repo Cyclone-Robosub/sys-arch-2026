@@ -15,7 +15,7 @@ struct Task;
 class MissionAnalyzer {
 public:
   MissionAnalyzer();
-  MissionAnalyzer(const MissionAnalyzer& other); 
+  MissionAnalyzer(const MissionAnalyzer& other);
   MissionAnalyzer(std::filesystem::path filePath);
   void parseJSONForMission();
   Task popNextTask();
