@@ -2,21 +2,24 @@
 Takes user input from the command line and publishes a pwm_cli 
 '''
 
+import time
+import threading
+
 from .cli_publisher import *
 
 default_power = 70
 timer_running = False
 current_command = None
+timed_command_thread = None
 
 # pwm constants
 PWM_ZERO = 1500
 EMERGENCY_BRAKES = [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO]
 
-# To test, check ROS documentation for checking what messages are sent
 
 def main():
 	global current_command
-	current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
+	current_command = RobotCommand("Undefined", default_power, -1, EMERGENCY_BRAKES)
 
 	rclpy.init(args=None)
 
@@ -26,6 +29,7 @@ def main():
 
 	reading_input = True
 
+	# ADD LOOP HEADING
 	while (reading_input):
 		user_input = input("Input a command: ").lower()
 
@@ -46,17 +50,20 @@ def main():
 		# A stop command should be processed immediately
 		elif command.name == "Stop":
 			cli.publish_pwm(command.pwm)
-			current_command = "Stop"
+			current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
 		
 		# A robot command should be processed after the user confirms it was intended
 		elif command.confirm_command(command):
-			# TODO (Zoe): Check if command is timed, and if so schedule a stop set command.time seconds later
 			cli.publish_pwm(command.pwm)
-			current_command = command.name
+			current_command = command
 			if (command.time != -1):
-				run_command_timer(command.time)
-
+				global timed_command_thread
+				if timed_command_thread is not None and timed_command_thread.is_alive():
+					timed_command_thread.stop()
+				timed_command_thread = threading.Thread(target=run_command_timer(),args=[command.time])
+				timed_command_thread.start()
 	# End of while loop
+
 	reading_input = False
 
 	# Stop robot before shutting down cli
@@ -78,10 +85,11 @@ def translate_command(command):
 
 	# Non-Robot Commands
 	if "set" and "power" in command:
-		new_power = find_num_in_string()
-		if new_power == "":
-			global default_power
-			default_power = new_power
+		new_power = find_num_in_string(command[command.index("power")])
+		if new_power == "" or new_power > 100:
+			return None
+		global default_power
+		default_power = new_power
 		return "Set default power to {new_power}"
 
 	if "current" and "command" in command:
@@ -165,7 +173,7 @@ def translate_command(command):
 		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
 		return cmd
 
-	# custom pwm syntax: [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
+	# custom pwm syntax: "Custom pwm [flt, frt, rlt, rrt, flb, frb, rlb, rrb]"
 	if "custom" and '[' and ']' in command:
 		cmd.name = "Custom pwm"
 		# TODO: Look for 8 ints given by user and store the result in an array
@@ -181,16 +189,23 @@ def get_current_command():
 	elif current_command.time == -1:
 		return "Current Command: {current_command.name} at {current_command.power}"
 	else:
-		return "Current Command: {current_command.name} at {current_command.power} for {current_command.time} seconds"
+		return "Current Command: {current_command.name} for {current_command.time} seconds at {current_command.power} "
 
 
 
 '''
-IN PROGRESS
-Begins a timer, after which 
+Waits for a timer with a given duration to finish, then sends a stop command
+duration is the duration the timer will wait in seconds
+Does not return a value
 '''
-def run_command_timer(time):
-	pass
+def run_command_timer(duration):
+	start_time = time.time
+	while time.time - start_time < duration * 1000:
+		pass
+	global current_command
+	current_command = RobotCommand("Stop")
+
+
 
 '''
 Looks through a string for the first number in it
@@ -227,12 +242,13 @@ def confirm(prompt):
 			return False
 
 class RobotCommand():
-	def __init__(self, name = "Undeclared", power = default_power, time = -1, pwm = EMERGENCY_BRAKES):
+	def __init__(self, name = "Stop", power = default_power, time = -1, pwm = EMERGENCY_BRAKES):
 		self.name = name
 		self.power = power
 		self.time = time
 		self.pwm = pwm
 		
+	# Does this work with custom powers???
 	def command_dictionary(self):
 		pwm_fwd = PWM_ZERO + 400 * (default_power / 100)
 		pwm_rev = PWM_ZERO - 400 * (default_power / 100)
