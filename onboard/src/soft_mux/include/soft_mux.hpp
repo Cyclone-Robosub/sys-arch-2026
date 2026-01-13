@@ -23,6 +23,7 @@ class SoftMux : public rclcpp::Node {
         void pwm_ctrl_callback(custom_interfaces::msg::Pwms::UniquePtr pwm);
         void pwm_cli_callback(custom_interfaces::msg::Pwms::UniquePtr pwm);
         void set_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+        void pub_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, std::shared_ptr<std_srvs::srv::SetBool::Response> response);
     private:
         void ctrl_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
         void ctrl_heartbeat_check_callback();
@@ -33,6 +34,7 @@ class SoftMux : public rclcpp::Node {
         void mux_heartbeat_send();
        
         rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr control_mode;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr force_pub;
        
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_ctrl_subscriber;
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cli_subscriber;

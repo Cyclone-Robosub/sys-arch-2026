@@ -19,6 +19,7 @@ SoftMux::SoftMux() : rclcpp::Node("SoftMux") {
    
     //Services
     control_mode = this->create_service<std_srvs::srv::SetBool>("control_mode", std::bind(&SoftMux::set_mode_srv, this, std::placeholders::_1, std::placeholders::_2));
+    force_pub = this->create_service<std_srvs::srv::SetBool>("force_pub", std::bind(&SoftMux::pub_mode_srv, this, std::placeholders::_1, std::placeholders::_2));
 
 
     //Outputs
@@ -69,6 +70,17 @@ void SoftMux::set_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request
         response->success = false;
     }
 }
+
+void SoftMux::pub_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, std::shared_ptr<std_srvs::srv::SetBool::Response> response) {
+    auto message = std_msgs::msg::Bool();
+    message.data = this->is_matlab_mode;
+    this->current_control_mode->publish(message);
+
+    response->success = true;
+
+    (void) request; // stop compiler complaining about unused variables
+}
+
 
 
 void SoftMux::pwm_cmd_publish(custom_interfaces::msg::Pwms::UniquePtr pwm) {
