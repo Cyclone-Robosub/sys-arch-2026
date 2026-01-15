@@ -63,8 +63,12 @@ void Mux_Controller::control_mode_callback(std_msgs::msg::Bool::UniquePtr msg) {
     refresh_display();
 }
 
+void Mux_Controller::clear_display() {
+    printf("\e[1;1H\e[2J");
+}
+
 void Mux_Controller::refresh_display() {
-    printf("\e[1;1H\e[2J"); // clear display
+    clear_display();
     if (no_heartbeat) {
         printf("====== No heartbeat detected from Mux! ======\n\n");
     }
@@ -104,9 +108,11 @@ int main(int argc, char* argv[]) {
         if (mode == 'e' || mode == 'q') {
             break;
         }
-        if (mode != '0' && mode != '1') {
-            printf("Invalid command. Try again.");
-            printf("\e[1;1H\e[2J"); // clear display
+        if (should_be_newline != '\n' || (mode != '0' && mode != '1')) {
+            printf("Invalid command. Try again: ");
+            while (should_be_newline != '\n') {
+                scanf("%c", &should_be_newline);
+            }
             continue;
         }
         
@@ -116,7 +122,7 @@ int main(int argc, char* argv[]) {
     rclcpp::shutdown();
     ros_thread.join();
 
-    printf("\e[1;1H\e[2J"); // clear display
+    Mux_Controller::clear_display();
     
     return 0;
 }
