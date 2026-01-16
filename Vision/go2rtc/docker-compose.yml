@@ -1,0 +1,12 @@
+services:
+  go2rtc:
+    image: alexxit/go2rtc
+    container_name: go2rtc
+    restart: always
+    network_mode: host
+    privileged: true
+    devices:
+      - /dev/video2:/dev/video2
+    volumes:
+      - ./go2rtc.yaml:/config/go2rtc.yaml
+    runtime: nvidia
