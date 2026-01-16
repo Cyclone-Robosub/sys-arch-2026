@@ -54,11 +54,6 @@ void Mux_Controller::heartbeat_check_callback() {
     }
 }
 
-bool Mux_Controller::is_heartbeat() {
-    return !no_heartbeat;
-}
-
-
 void Mux_Controller::control_mode_callback(std_msgs::msg::Bool::UniquePtr msg) {
     current_control_mode = msg->data;
     refresh_display();
@@ -84,20 +79,11 @@ void Mux_Controller::refresh_display() {
     fflush(stdout);
 }
 
-int main(int argc, char* argv[]) {
-    
-    
-    rclcpp::init(argc, argv);
-    auto mux_controller = std::make_shared<Mux_Controller>();
-    
-    std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
-        rclcpp::spin(mux_controller);
-    });
-
-    while (!mux_controller->is_heartbeat() && rclcpp::ok()) {
+void Mux_Controller::work_loop() {
+    while (no_heartbeat && rclcpp::ok()) {
         // wait until we get a heartbeat
     }
-    mux_controller->get_mux_mode_now();
+    get_mux_mode_now();
 
     char mode = 0;
     char should_be_newline = 0;
@@ -117,8 +103,19 @@ int main(int argc, char* argv[]) {
             continue;
         }
         
-        mux_controller->set_mux_mode((bool)(mode - '0'));
+        set_mux_mode((bool)(mode - '0'));
     }
+}
+
+int main(int argc, char* argv[]) {    
+    rclcpp::init(argc, argv);
+    auto mux_controller = std::make_shared<Mux_Controller>();
+    
+    std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
+        rclcpp::spin(mux_controller);
+    });
+
+    mux_controller->work_loop();
 
     rclcpp::shutdown();
     ros_thread.join();

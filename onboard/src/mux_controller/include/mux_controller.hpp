@@ -14,7 +14,7 @@ public:
     Mux_Controller();
     void set_mux_mode(bool mode);
     void get_mux_mode_now();
-    bool is_heartbeat();
+    void work_loop();
     static void clear_display();
 private:
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr current_control_mode_subscriber;
