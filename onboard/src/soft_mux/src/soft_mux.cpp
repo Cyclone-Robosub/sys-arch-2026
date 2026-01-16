@@ -4,7 +4,7 @@
 using namespace std::chrono_literals;
 
 
-SoftMux::SoftMux() : rclcpp::Node("SoftMux") {
+SoftMux::SoftMux() : rclcpp::Node("SoftMux"), is_matlab_mode(false), no_ctrl_heartbeat(true), no_cli_heartbeat(true) {
     //Inputs
     pwm_ctrl_subscriber = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_ctrl", 10, std::bind(&SoftMux::pwm_ctrl_callback, this, std::placeholders::_1));
     pwm_cli_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_cli", 10, std::bind(&SoftMux::pwm_cli_callback, this, std::placeholders::_1));

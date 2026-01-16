@@ -12,7 +12,8 @@ class SoftMux : public rclcpp::Node {
     public:
         friend class TestSoftMuxInterface_MuxSendCtrlPwms_Test;
         friend class TestSoftMuxInterface_MuxSendCliPwms_Test;
-        friend class TestSoftMuxInterface_MuxTestService_Test;
+        friend class TestSoftMuxInterface_MuxTestSetModeService_Test;
+        friend class TestSoftMuxInterface_MuxTestGetModeService_Test;
         friend class TestSoftMuxInterface_MuxTestInputHB_Test;
         friend class TestSoftMuxInterface_NoCtrlHeartbeatTriggersStop_Test;
         friend class TestSoftMuxInterface_NoCliHeartbeatTriggersStop_Test;
