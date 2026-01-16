@@ -63,7 +63,6 @@ void SoftMux::set_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request
             auto message = std_msgs::msg::Bool();
             message.data = this->is_matlab_mode;
             this->current_control_mode->publish(message);
-            std::cout << message.data << std::endl; // TODO: Remove prints before merging to main
         }
         response->success = true;
     } else {
@@ -85,9 +84,6 @@ void SoftMux::pub_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request
 
 void SoftMux::pwm_cmd_publish(custom_interfaces::msg::Pwms::UniquePtr pwm) {
     this->pwm_cmd_publisher->publish(*(std::move(pwm)));
-    for (int i = 0; i < 8; i++) { // TODO: Remove prints before merging to main
-         std::cout << "PWM " << i << " is sent as " << pwm->pwms[i] << "\n";
-    }
 }
 
 
