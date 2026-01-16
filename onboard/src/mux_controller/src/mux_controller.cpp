@@ -37,6 +37,7 @@ void Mux_Controller::mux_heartbeat_received_callback(std_msgs::msg::Bool::Unique
     most_recent_heartbeat = std::chrono::steady_clock::now();
     if (no_heartbeat) {
         no_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
+        get_mux_mode_now();
         refresh_display();
     }
     (void)heartbeat; // stop compiler complaining
@@ -64,7 +65,7 @@ void Mux_Controller::control_mode_callback(std_msgs::msg::Bool::UniquePtr msg) {
 }
 
 void Mux_Controller::clear_display() {
-    printf("\e[1;1H\e[2J");
+    printf("\x1B[2J\x1B[H");
 }
 
 void Mux_Controller::refresh_display() {
