@@ -15,7 +15,7 @@ class CLIPublisher(Node):
 	def publish_pwm(self, pwms):
 		msg = Pwms()
 		msg.pwms = pwms
-		print(pwms)
+		print(pwms) # Used for code testing
 		self.publisher_.publish(msg)
 
 

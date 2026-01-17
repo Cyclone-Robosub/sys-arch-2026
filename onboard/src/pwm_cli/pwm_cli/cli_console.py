@@ -4,9 +4,11 @@ Takes user input from the command line and publishes a pwm_cli
 
 import time
 import threading
+import math
 
 from .cli_publisher import *
 
+cli = None
 default_power = 70
 timer_running = False
 current_command = None
@@ -23,9 +25,14 @@ def main():
 
 	rclpy.init(args=None)
 
+	global cli
 	cli = CLIPublisher()
-	heartbeat = HeartbeatPublisher()
-	rclpy.spin(heartbeat)
+
+	# Create a seperate thread to spin the heartbeat
+	heartbeat_thread = threading.Thread(target=spin_heartbeat)
+	heartbeat_thread.start()
+
+	info()
 
 	reading_input = True
 
@@ -40,7 +47,7 @@ def main():
 
 		# if an invalid command is inputted, warn the user
 		if command is None:
-			print("{user_input} is not a valid command")
+			print(f"{user_input} is not a valid command")
 			continue
 
 		# Valid non-robot commands should output their result
@@ -53,15 +60,15 @@ def main():
 			current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
 		
 		# A robot command should be processed after the user confirms it was intended
-		elif command.confirm_command(command):
+		elif command.confirm_command():
 			cli.publish_pwm(command.pwm)
-			current_command = command
 			if (command.time != -1):
 				global timed_command_thread
 				if timed_command_thread is not None and timed_command_thread.is_alive():
 					timed_command_thread.stop()
-				timed_command_thread = threading.Thread(target=run_command_timer(),args=[command.time])
+				timed_command_thread = threading.Thread(target=run_command_timer,args=[command.time])
 				timed_command_thread.start()
+			current_command = command
 	# End of while loop
 
 	reading_input = False
@@ -69,8 +76,8 @@ def main():
 	# Stop robot before shutting down cli
 	cli.publish_pwm(EMERGENCY_BRAKES)
 
-	# Destroy the node explicitly
-	heartbeat.destroy_node()
+	# Stop heartbeat publishing
+	heartbeat_thread.stop()
 	rclpy.shutdown()
 
 	print("Goodbye!")
@@ -83,129 +90,146 @@ returns a robot command or the result of the non-robot action taken
 '''
 def translate_command(command):
 
+	if "info" in command or "help" in command:
+		info()
+		return ""
+
+	global default_power
+	
 	# Non-Robot Commands
-	if "set" and "power" in command:
+	if "set" in command and "power" in command:
 		new_power = find_num_in_string(command[command.index("power")])
 		if new_power == "" or new_power > 100:
 			return None
-		global default_power
 		default_power = new_power
-		return "Set default power to {new_power}"
+		return f"Set default power to {new_power}\n"
 
-	if "current" and "command" in command:
+	if "current" in command and "command" in command:
 		return get_current_command()
 
 
-	cmd = RobotCommand()
+	cmd = RobotCommand(power = default_power)
 
 	#Changing settings for a given robot command
 	if "power:" in command:
 		power = find_num_in_string(command[command.index("power:")])
-		if power <= 100:
+		if power is not None and power <= 100:
 			cmd.power = power
 		else:
-			return None
+			return "Invalid power inputted\n"
 	elif "p:" in command:
 		power = find_num_in_string(command[command.index("p:")])
-		if power <= 100:
+		if power is not None and power <= 100:
 			cmd.power = power
 		else:
-			return None
+			return "Invalid power inputted\n"
 
 	if "time:" in command:
 		cmd.time = find_num_in_string(command[command.index("time:")])
 	elif "t:" in command:
 		cmd.time = find_num_in_string(command[command.index("t:")])
 	if cmd.time is None:
-		return "Invalid time inputted"
+		return "Invalid time inputted\n"
 
 	# Robot Commands
 	if "stop" in command:
 		cmd.name = "Stop"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
 	if "forwards" in command:
 		cmd.name = "Move Forwards"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
 	if "backwards" in command:
 		cmd.name = "Move Backwards"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "strafe" and "left" in command:
+	if "strafe" in command and "left" in command:
 		cmd.name = "Strafe Left"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "strafe" and "right" in command:
+	if "strafe" in command and "right" in command:
 		cmd.name = "Strafe Right"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
 	if "rise" in command:
 		cmd.name = "Rise"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
 	if "sink" in command:
 		cmd.name = "Sink"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "yaw" and "counter" and "clockwise" in command:
+	if "yaw" in command and "counter" in command and "clockwise" in command:
 		cmd.name = "Yaw Counterclockwise"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "yaw" and "clockwise" in command:
+	if "yaw" in command and "clockwise" in command:
 		cmd.name = "Yaw Clockwise"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "pitch" and "forwards" in command:
+	if "pitch" in command and "forwards" in command:
 		cmd.name = "Pitch Forwards"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "pitch" and "backwards" in command:
+	if "pitch" in command and "backwards" in command:
 		cmd.name = "Pitch Backwards"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "roll" and "left" in command:
+	if "roll" in command and "left" in command:
 		cmd.name = "Roll Left"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "roll" and "right" in command:
+	if "roll" in command and "right" in command:
 		cmd.name = "Roll Right"
-		cmd.pwm = cmd.command_dictionary()["{cmd.name}"]
+		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
 
 	# custom pwm syntax: "Custom pwm [flt, frt, rlt, rrt, flb, frb, rlb, rrb]"
-	if "custom" and '[' and ']' in command:
+	if "custom" in command and '[' in command and ']' in command:
 		cmd.name = "Custom pwm"
-		# TODO: Look for 8 ints given by user and store the result in an array
-		cmd.pwm = EMERGENCY_BRAKES # Should be value read in from the user
-		return cmd
+		flt = get_custom_pwm(command[command.index("[")])
+		frt = get_custom_pwm(command[command.index("{flt}") + len(flt)])
+		rlt = get_custom_pwm(command[command.index("{frt}") + len(frt)])
+		rrt = get_custom_pwm(command[command.index("{rlt}") + len(rlt)])
+		flb = get_custom_pwm(command[command.index("{rrt}") + len(rrt)])
+		frb = get_custom_pwm(command[command.index("{flb}") + len(flb)])
+		rlb = get_custom_pwm(command[command.index("{frb}") + len(frb)])
+		rrb = get_custom_pwm(command[command.index("{rlb}") + len(rlb)])
+		extra = get_custom_pwm(command[command.index("{rrb}") + len(rrb)])
+		if (flt is not None and frt is not None and rlt is not None and rrt is not None 
+				and flb is not None and frb is not None and rlb is not None and rrb is not None and extra is None):
+			cmd.pwm = [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
+			return cmd
 
 	return None
 
+'''
+prints a list of all valid commands and examples of how to use them
+does not return a value
+'''
+def info():
+	print("Info command is not yet implemented")
+
+'''
+ADD COMMENTS
+'''
 def get_current_command():
 	global current_command
-	if current_command.name == "Stop":
-		return "There is no currently active command"
+	if current_command.name == "Stop" or current_command.name == "Undefined":
+		return "There is no currently active command\n"
 	elif current_command.time == -1:
-		return "Current Command: {current_command.name} at {current_command.power}"
+		return f"Current Command: {current_command.name} at {current_command.power}% power\n"
 	else:
-		return "Current Command: {current_command.name} for {current_command.time} seconds at {current_command.power} "
+		return f"Current Command: {current_command.name} for {current_command.time} seconds at {current_command.power}% power\n"
 
 
-
-'''
-Waits for a timer with a given duration to finish, then sends a stop command
-duration is the duration the timer will wait in seconds
-Does not return a value
-'''
-def run_command_timer(duration):
-	start_time = time.time
-	while time.time - start_time < duration * 1000:
-		pass
-	global current_command
-	current_command = RobotCommand("Stop")
-
-
+# Gets a custom pwm (integer between 1100 and 1900)
+def get_custom_pwm(string):
+	pwm = find_num_in_string(string)
+	if pwm >= 1100 and pwm <= 1900:
+		return pwm
+	return None
 
 '''
 Looks through a string for the first number in it
@@ -227,6 +251,24 @@ def find_num_in_string(string):
 		elif started:
 			return num
 	return None
+
+'''
+Waits for a timer with a given duration to finish, then sends a stop command
+duration is the duration the timer will wait in seconds
+Does not return a value
+'''
+def run_command_timer(duration):
+	start_time = time.time
+	while time.time - start_time < duration * 1000:
+		pass
+	global current_command
+	global cli
+	current_command = RobotCommand("Stop")
+	cli.publish_pwm(current_command.command_dictionary()["Stop"])
+
+def spin_heartbeat():
+	rclpy.spin(HeartbeatPublisher())
+
 		
 '''
 Ask user for confirmation until valid response is given
@@ -250,8 +292,8 @@ class RobotCommand():
 		
 	# Does this work with custom powers???
 	def command_dictionary(self):
-		pwm_fwd = PWM_ZERO + 400 * (default_power / 100)
-		pwm_rev = PWM_ZERO - 400 * (default_power / 100)
+		pwm_fwd = math.floor(PWM_ZERO + 400 * (default_power / 100))
+		pwm_rev = math.ceil(PWM_ZERO - 400 * (default_power / 100))
 		# pwm order: [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
 		return {
 			"Stop" : [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
@@ -271,10 +313,9 @@ class RobotCommand():
 
 	def confirm_command(self):
 		if self.time == -1:
-			confirm("Are you sure you want to {self.name} at {self.power}% power until stopped?")
+			return confirm(f"Are you sure you want to {self.name} at {self.power}% power until stopped? [yes/no]\n")
 		else:
-			confirm("Are you sure you want to {self.name} at {self.power}% power for {self.time} seconds?")
-
-
+			return confirm(f"Are you sure you want to {self.name} at {self.power}% power for {self.time} seconds? [yes/no]\n")
+		
 
 main()
