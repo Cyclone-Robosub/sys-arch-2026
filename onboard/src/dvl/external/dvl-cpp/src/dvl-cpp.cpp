@@ -3,7 +3,7 @@
 namespace dvl {
 
     // Constructor
-    DVL(const std::string& port, unsigned long baudrate = 115200) {
+    DVL(const std::string& port, unsigned long baudrate = 115200) : Node() {
         ser.setPort(port);
         ser.setBaudrate(baudrate);
         serial::Timeout timeout = serial::Timeout::simpleTimeout(1000);
