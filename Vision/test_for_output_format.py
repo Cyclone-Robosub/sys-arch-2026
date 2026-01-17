@@ -3,6 +3,8 @@ import sys
 
 deviceIdx = int(sys.argv[1] if len(sys.argv) > 1 else 0)
 
+cap = cv.VideoCapture(deviceIdx)
+
 # Try different fourcc codes for the onboard H.264
 fourcc_codes = [
     cv.VideoWriter_fourcc(*'H264'),
