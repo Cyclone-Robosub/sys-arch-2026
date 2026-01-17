@@ -120,3 +120,8 @@ cython_debug/
 
 # Macos extended attr
 .DS_Store
+
+# checkpoints
+Vision/runs
+
+Vision/yolo*.pt
