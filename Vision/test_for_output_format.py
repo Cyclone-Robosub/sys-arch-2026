@@ -1,7 +1,7 @@
 import cv2 as cv
 import sys
 
-cap = sys.argv[1] if len(sys.argv) > 1 else 0
+deviceIdx = int(sys.argv[1] if len(sys.argv) > 1 else 0)
 
 # Try different fourcc codes for the onboard H.264
 fourcc_codes = [
