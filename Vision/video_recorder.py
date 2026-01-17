@@ -2,12 +2,8 @@ import cv2
 import time
 import os
 import sys
-from flask import Flask, Response
 
-app = Flask(__name__)
-
-VIDEO_SPAN = 10  # seconds
-FPS = 15  # only 15 worked...
+VIDEO_SPAN = 10 # seconds
 
 # Get device index from command line, default to 0
 if len(sys.argv) > 1:
@@ -17,15 +13,16 @@ if len(sys.argv) > 1:
         print("Invalid device index. Using default (0).")
         device_index = 0
 else:
-    device_index = 0
-    print("No device index provided. Using default (0).")
+    print("Usage: python video_recorder.py [device_index]")
+    exit(1)
 
-cap = cv2.VideoCapture(device_index, cv2.CAP_V4L2)
+cap = cv2.VideoCapture(device_index, cv2.CAP_V4L2)  # Adjust if using USB camera index or file
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-cap.set(cv2.CAP_PROP_FPS, FPS)
+cap.set(cv2.CAP_PROP_FPS, 30)
 cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+# cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('H', '2', '6', '4'))
 
 # Verify actual settings
 actual_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -38,61 +35,34 @@ print(f"Actual FPS: {actual_fps}")
 output_folder = 'videos/'
 os.makedirs(output_folder, exist_ok=True)
 
-# Global state for recording
-writer = None
-frame_count = 0
-target_frames = FPS * VIDEO_SPAN
-
-def gen():
-    """Read, record, and stream camera frames"""
-    global writer, frame_count
-    
+try:
     while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Failed to read frame")
-            break
-        
-        # Initialize writer if needed
-        if writer is None:
-            writer = cv2.VideoWriter(
-                f'{output_folder}output_{time.strftime("%Y%m%d_%H%M%S")}.avi',
-                cv2.VideoWriter_fourcc(*'MJPG'),
-                FPS,
-                (actual_width, actual_height))
-            frame_count = 0
-            print(f"Started new recording segment")
-        
-        # Write frame to file
-        writer.write(frame)
-        frame_count += 1
-        
-        # Check if segment is complete
-        if frame_count >= target_frames:
-            writer.release()
-            writer = None
-            print(f"Finished recording segment: {frame_count} frames")
-        
-        # Encode and yield for web streaming
-        _, jpg = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
-        if jpg is not None:
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + jpg.tobytes() + b'\r\n')
 
-@app.route('/video')
-def video():
-    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+        frame_idx = 0
+        writer = cv2.VideoWriter(
+            f'{output_folder}output_{time.strftime("%Y%m%d_%H%M%S")}.avi', 
+            cv2.VideoWriter_fourcc(*'MJPG'), 
+            30, 
+            (1920, 1080))
 
-@app.route('/')
-def index():
-    return '<img src="/video" />'
+        while frame_idx < 30 * VIDEO_SPAN:
+            ret, frame = cap.read()
+            if not ret:
+                break
 
-if __name__ == '__main__':
-    print("Starting Flask server on http://0.0.0.0:5000")
-    try:
-        app.run(host="0.0.0.0", port=5000, threaded=False, debug=False)
-    except KeyboardInterrupt:
-        print("Shutting down...")
-        if writer:
-            writer.release()
-        cap.release()
+            frame_idx += 1
+            print(f"Recording frame {frame_idx}")
+
+            writer.write(frame)
+
+            # Display the frame (optional)
+            # cv2.imshow('Frame', frame)
+            # if cv2.waitKey(1) & 0xFF == ord('q'):
+            #     break
+
+        writer.release()
+        # cv2.destroyAllWindows()
+except KeyboardInterrupt:
+    print("Recording stopped by user.")
+finally:
+    cap.release()
