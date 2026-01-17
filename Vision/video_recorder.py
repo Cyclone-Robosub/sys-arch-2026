@@ -16,7 +16,7 @@ else:
     print("Usage: python video_recorder.py [device_index]")
     exit(1)
 
-cap = cv2.VideoCapture(device_index)  # Adjust if using USB camera index or file
+cap = cv2.VideoCapture(device_index, cv2.CAP_V4L2)  # Adjust if using USB camera index or file
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
