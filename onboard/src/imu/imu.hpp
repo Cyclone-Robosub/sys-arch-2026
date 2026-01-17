@@ -7,8 +7,7 @@
 #include "inertial_sense_ros.h"
 class InertialSenseIMU{
     public:
-        IMU(){
-
+       void IMU(){
         }
     
 };
