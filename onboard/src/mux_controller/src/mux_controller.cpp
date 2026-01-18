@@ -98,15 +98,15 @@ void Mux_Controller::backspace() {
         current_input[cursor_pos - 1] = old_val;
         printf("%c", old_val);
         fflush(stdout);
-        (cursor_pos)++;
+        cursor_pos++;
     }
     write(STDOUT_FILENO, " ", 1);
     current_input.pop_back();
     while (cursor_pos >= orig_pos) {
-        (cursor_pos)--;
+        cursor_pos--;
         write(STDOUT_FILENO, "\x1B[1D", 4);
     }
-    (num_read)--;
+    num_read--;
 }
 
 void Mux_Controller::process_input() {
