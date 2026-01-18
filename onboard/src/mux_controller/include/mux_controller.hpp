@@ -2,6 +2,8 @@
 #define MUX_CONTROLLER_HPP
 
 #include <chrono>
+#include <unistd.h>
+#include <termios.h>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_srvs/srv/set_bool.hpp"
@@ -24,6 +26,7 @@ private:
     void heartbeat_check_callback();
     void control_mode_callback(std_msgs::msg::Bool::UniquePtr msg);
     void refresh_display();
+    void process_input();
 
     bool current_control_mode;
 

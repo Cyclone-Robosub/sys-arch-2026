@@ -46,8 +46,10 @@ void Mux_Controller::mux_heartbeat_received_callback(std_msgs::msg::Bool::Unique
 void Mux_Controller::heartbeat_check_callback() {
     auto current_time = std::chrono::steady_clock::now();
     if (current_time - most_recent_heartbeat > 1s) {
-        no_heartbeat = true;
-        refresh_display();
+        if (!no_heartbeat) {
+            no_heartbeat = true;
+            refresh_display();
+        }
     }
     else {
         no_heartbeat = false;
@@ -64,6 +66,7 @@ void Mux_Controller::clear_display() {
 }
 
 void Mux_Controller::refresh_display() {
+    tcflush(STDIN_FILENO, TCIFLUSH);
     clear_display();
     if (no_heartbeat) {
         printf("====== No heartbeat detected from Mux! ======\n\n");
@@ -79,32 +82,92 @@ void Mux_Controller::refresh_display() {
     fflush(stdout);
 }
 
-void Mux_Controller::work_loop() {
-    while (no_heartbeat && rclcpp::ok()) {
-        // wait until we get a heartbeat
-    }
-    get_mux_mode_now();
-
-    char mode = 0;
-    char should_be_newline = 0;
-
-    while (rclcpp::ok()) {
-        scanf("%c", &mode);
-        scanf("%c", &should_be_newline);
-        mode = tolower(mode);
-        if (mode == 'e' || mode == 'q') {
-            break;
-        }
-        if (should_be_newline != '\n' || (mode != '0' && mode != '1')) {
-            printf("Invalid command. Try again: ");
-            while (should_be_newline != '\n') {
-                scanf("%c", &should_be_newline);
+void Mux_Controller::process_input() {
+    int cursor_pos = 0;
+    int num_read = 0;
+    int c = 0;
+    while (true) {
+        while (read(STDIN_FILENO, &c, 1) != 0) {
+            if (c == '\n') {
+                return;
             }
-            continue;
+            if (c >= 32 && c <= 126) {
+                cursor_pos++;
+                num_read++;
+                // append to record
+                printf("%c", c);
+                fflush(stdout);
+            }
+            if (c == 127 && cursor_pos > 0) {
+                // remove from record
+                if (num_read == cursor_pos) { // end of string
+                    printf("\b \b");
+                }
+                else {
+                    // shift all the characters along
+                }
+                
+                fflush(stdout);
+                cursor_pos--;
+                num_read--;
+            }
+            if (c == 27) {
+                read(STDIN_FILENO, &c, 1);
+                read(STDIN_FILENO, &c, 1);
+                if (c == 51) { // delete key
+                    read(STDIN_FILENO, &c, 1); // clear extra identifier
+                    // delete
+                    cursor_pos--;
+                    num_read--;
+                }
+                else { // direction key
+                    if (c == 65) { // up
+                        // do nothing
+                    }
+                    if (c == 66) { // down
+                        // do nothing
+                    }
+                    if (c == 67) { // right
+                        // go right
+                    }
+                    if (c == 68 && cursor_pos > 0) { // left
+                        write(STDOUT_FILENO, "\b", 1);
+                        cursor_pos--;
+                    }
+                }
+            }
         }
-        
-        set_mux_mode((bool)(mode - '0'));
     }
+    
+}
+
+void Mux_Controller::work_loop() {
+    // while (no_heartbeat && rclcpp::ok()) {
+    //     // wait until we get a heartbeat
+    // }
+    // get_mux_mode_now();
+
+    // char mode = 0;
+    // char should_be_newline = 0;
+
+    // while (rclcpp::ok()) {
+    //     read(STDIN_FILENO, &mode, 1);
+    //     read(STDIN_FILENO, &should_be_newline, 1);
+    //     mode = tolower(mode);
+    //     if (mode == 'e' || mode == 'q') {
+    //         break;
+    //     }
+    //     if (should_be_newline != '\n' || (mode != '0' && mode != '1')) {
+    //         printf("Invalid command. Try again: ");
+    //         while (should_be_newline != '\n') {
+    //             read(STDIN_FILENO, &should_be_newline, 1);
+    //         }
+    //         continue;
+    //     }
+        
+    //     set_mux_mode((bool)(mode - '0'));
+    // }
+    process_input();
 }
 
 int main(int argc, char* argv[]) {    
@@ -115,12 +178,22 @@ int main(int argc, char* argv[]) {
         rclcpp::spin(mux_controller);
     });
 
+    struct termios orig_termios;
+    tcgetattr(STDIN_FILENO, &orig_termios);
+    struct termios raw = orig_termios;
+    raw.c_lflag &= ~(ICANON | ECHO);  // no line buffering or echoing
+    raw.c_cc[VMIN] = 0;
+    raw.c_cc[VTIME] = 0;
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+
     mux_controller->work_loop();
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
 
     rclcpp::shutdown();
     ros_thread.join();
 
     Mux_Controller::clear_display();
+    
     
     return 0;
 }
