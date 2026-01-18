@@ -14,6 +14,7 @@ def split_yolo_dataset(train_ratio=0.8):
 
     # List all images
     images = [f for f in os.listdir(img_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp'))]
+    random.seed(42)  # For reproducibility
     random.shuffle(images)
 
     # Calculate split
