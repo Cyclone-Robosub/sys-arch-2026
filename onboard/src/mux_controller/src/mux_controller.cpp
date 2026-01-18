@@ -24,7 +24,7 @@ void Mux_Controller::get_mux_mode_now() {
 }
 
 void Mux_Controller::set_mux_mode(bool mode) {
-    if (mode == current_control_mode) {
+    if (mode == current_control_mode || no_heartbeat) {
         refresh_display();
         return;
     }
@@ -67,9 +67,13 @@ void Mux_Controller::clear_display() {
 
 void Mux_Controller::refresh_display() {
     tcflush(STDIN_FILENO, TCIFLUSH);
+    current_input = "";
     clear_display();
     if (no_heartbeat) {
+        write(STDOUT_FILENO, "\x1B[5m", 4); // set blinking
+        write(STDOUT_FILENO, "\x1B[1;39m", 7); // set bold
         printf("====== No heartbeat detected from Mux! ======\n\n");
+        write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
     }
     else {
         printf("Current mode is: %s\n\n", current_control_mode ? "matlab (ctrl)" : "cli" );
@@ -82,43 +86,55 @@ void Mux_Controller::refresh_display() {
     fflush(stdout);
 }
 
+void Mux_Controller::backspace() {
+    int orig_pos = cursor_pos;
+    write(STDOUT_FILENO, "\x1B[1D", 4); // move left to prepare for delete
+    while (cursor_pos < num_read) {
+        char old_val = current_input[cursor_pos];
+        current_input[cursor_pos - 1] = old_val;
+        printf("%c", old_val);
+        fflush(stdout);
+        (cursor_pos)++;
+    }
+    write(STDOUT_FILENO, " ", 1);
+    current_input.pop_back();
+    while (cursor_pos >= orig_pos) {
+        (cursor_pos)--;
+        write(STDOUT_FILENO, "\x1B[1D", 4);
+    }
+    (num_read)--;
+}
+
 void Mux_Controller::process_input() {
-    int cursor_pos = 0;
-    int num_read = 0;
+    cursor_pos = 0;
+    num_read = 0;
     int c = 0;
+    current_input = "";
     while (true) {
         while (read(STDIN_FILENO, &c, 1) != 0) {
-            if (c == '\n') {
-                return;
-            }
-            if (c >= 32 && c <= 126) {
+            if ((c >= 32 && c <= 126) || c == '\n') {
                 cursor_pos++;
                 num_read++;
-                // append to record
+                current_input.push_back((char)c);
                 printf("%c", c);
                 fflush(stdout);
+                if (c == '\n') {
+                    return;
+                }
             }
             if (c == 127 && cursor_pos > 0) {
-                // remove from record
-                if (num_read == cursor_pos) { // end of string
-                    printf("\b \b");
-                }
-                else {
-                    // shift all the characters along
-                }
-                
-                fflush(stdout);
-                cursor_pos--;
-                num_read--;
+                backspace();
             }
             if (c == 27) {
                 read(STDIN_FILENO, &c, 1);
                 read(STDIN_FILENO, &c, 1);
                 if (c == 51) { // delete key
                     read(STDIN_FILENO, &c, 1); // clear extra identifier
-                    // delete
-                    cursor_pos--;
-                    num_read--;
+                    if (cursor_pos < num_read) {
+                        write(STDOUT_FILENO, "\x1B[1C", 4);
+                        cursor_pos++;
+                        backspace();
+                    }
                 }
                 else { // direction key
                     if (c == 65) { // up
@@ -127,47 +143,50 @@ void Mux_Controller::process_input() {
                     if (c == 66) { // down
                         // do nothing
                     }
-                    if (c == 67) { // right
-                        // go right
+                    if (c == 67 && cursor_pos < num_read) { // right
+                        write(STDOUT_FILENO, "\x1B[1C", 4);
+                        cursor_pos++;
                     }
                     if (c == 68 && cursor_pos > 0) { // left
-                        write(STDOUT_FILENO, "\b", 1);
+                        write(STDOUT_FILENO, "\x1B[1D", 4);
                         cursor_pos--;
                     }
                 }
             }
         }
     }
-    
 }
 
 void Mux_Controller::work_loop() {
-    // while (no_heartbeat && rclcpp::ok()) {
-    //     // wait until we get a heartbeat
-    // }
-    // get_mux_mode_now();
+    char mode = 0;
+    int string_index = 0;
 
-    // char mode = 0;
-    // char should_be_newline = 0;
+    while (rclcpp::ok()) {
+        process_input();
+        mode = current_input[0];
+        mode = tolower(mode);
 
-    // while (rclcpp::ok()) {
-    //     read(STDIN_FILENO, &mode, 1);
-    //     read(STDIN_FILENO, &should_be_newline, 1);
-    //     mode = tolower(mode);
-    //     if (mode == 'e' || mode == 'q') {
-    //         break;
-    //     }
-    //     if (should_be_newline != '\n' || (mode != '0' && mode != '1')) {
-    //         printf("Invalid command. Try again: ");
-    //         while (should_be_newline != '\n') {
-    //             read(STDIN_FILENO, &should_be_newline, 1);
-    //         }
-    //         continue;
-    //     }
+        if (current_input.size() < 2) {
+            printf("Invalid command. Try again: ");
+            fflush(stdout);
+            continue; 
+        }
+
+        string_index = 1;
+        if (mode == 'e' || mode == 'q') {
+            break;
+        }
+        if (current_input[string_index] != '\n' || (mode != '0' && mode != '1')) {
+            printf("Invalid command. Try again: ");
+            fflush(stdout);
+            while (current_input[string_index] != '\n') {
+                string_index++;
+            }
+            continue;
+        }
         
-    //     set_mux_mode((bool)(mode - '0'));
-    // }
-    process_input();
+        set_mux_mode((bool)(mode - '0'));
+    }
 }
 
 int main(int argc, char* argv[]) {    
