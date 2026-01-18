@@ -61,6 +61,10 @@ void Mux_Controller::control_mode_callback(std_msgs::msg::Bool::UniquePtr msg) {
     refresh_display();
 }
 
+/*
+ * For ANSI escape sequences, see: https://gist.github.com/ConnerWill/d4b6c776b509add763e17f9f113fd25b
+*/
+
 void Mux_Controller::clear_display() {
     printf("\x1B[2J\x1B[H");
 }
@@ -212,7 +216,6 @@ int main(int argc, char* argv[]) {
     ros_thread.join();
 
     Mux_Controller::clear_display();
-    
     
     return 0;
 }
