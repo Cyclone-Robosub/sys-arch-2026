@@ -102,16 +102,16 @@ void Mux_Controller::insert(char c) {
         current_input[cursor_pos] = new_val;
         printf("%c", new_val);
         fflush(stdout);
-        new_val = old_val;
         cursor_pos++;
+        new_val = old_val;
     }
+    current_input.push_back(new_val);
     printf("%c", new_val);
     fflush(stdout);
     cursor_pos++;
-    current_input.push_back(new_val);
     while (cursor_pos > orig_pos + 1) {
-        cursor_pos--;
         write(STDOUT_FILENO, "\x1B[1D", 4);
+        cursor_pos--;
     }
     num_read++;
 }
@@ -127,14 +127,54 @@ void Mux_Controller::backspace() {
         fflush(stdout);
         cursor_pos++;
     }
-    write(STDOUT_FILENO, " ", 1);
     current_input.pop_back();
+    write(STDOUT_FILENO, " ", 1);
     while (cursor_pos >= orig_pos) {
-        cursor_pos--;
         write(STDOUT_FILENO, "\x1B[1D", 4);
+        cursor_pos--;
     }
     num_read--;
 }
+
+/* Here we make the totally not dangerous assumption that some identifiers don't matter. :) */
+void Mux_Controller::delete_or_direction() {
+    char c = 0;
+    read(STDIN_FILENO, &c, 1);
+    read(STDIN_FILENO, &c, 1);
+    if (c == 51) { // delete key
+        read(STDIN_FILENO, &c, 1);
+        if (c == 126 && cursor_pos < num_read) { // standard delete
+            write(STDOUT_FILENO, "\x1B[1C", 4);
+            cursor_pos++;
+            backspace();
+        }
+        if (c == 59) { // ctrl + delete
+            read(STDIN_FILENO, &c, 1); // clear extra identifier
+            read(STDIN_FILENO, &c, 1); // clear extra identifier
+            write(STDOUT_FILENO, "\x1B[0K", 4); // erase from cursor to end of line
+            num_read -= (current_input.size() - cursor_pos);
+            current_input.erase(cursor_pos, std::string::npos);
+        }
+    }
+    else { // direction key
+        if (c == 67 && cursor_pos < num_read) { // right
+            write(STDOUT_FILENO, "\x1B[1C", 4);
+            cursor_pos++;
+        }
+        if (c == 68 && cursor_pos > 0) { // left
+            write(STDOUT_FILENO, "\x1B[1D", 4);
+            cursor_pos--;
+        }
+    }
+}
+
+/*
+ * Known limitations:
+    * ctrl + arrow keys missing
+    * page up / page down missing
+    * line wrapping missing and breaks backspace
+    * delete_or_direction() doesn't check full scancodes
+*/
 
 void Mux_Controller::process_input() {
     display_mutex.lock();
@@ -161,40 +201,8 @@ void Mux_Controller::process_input() {
                     backspace();
                 }
             }
-            if (c == 27) { // here we make the totally not dangerous assumption that some identifiers don't matter. :)
-                read(STDIN_FILENO, &c, 1);
-                read(STDIN_FILENO, &c, 1);
-                if (c == 51) { // delete key
-                    read(STDIN_FILENO, &c, 1);
-                    if (c == 126 && cursor_pos < num_read) { // standard delete
-                        write(STDOUT_FILENO, "\x1B[1C", 4);
-                        cursor_pos++;
-                        backspace();
-                    }
-                    if (c == 59) { // ctrl + delete
-                        read(STDIN_FILENO, &c, 1); // clear extra identifier
-                        read(STDIN_FILENO, &c, 1); // clear extra identifier
-                        write(STDOUT_FILENO, "\x1B[0K", 4); // erase from cursor to end of line
-                        num_read -= (current_input.size() - cursor_pos);
-                        current_input.erase(cursor_pos, std::string::npos);
-                    }
-                }
-                else { // direction key
-                    if (c == 65) { // up
-                        // do nothing
-                    }
-                    if (c == 66) { // down
-                        // do nothing
-                    }
-                    if (c == 67 && cursor_pos < num_read) { // right
-                        write(STDOUT_FILENO, "\x1B[1C", 4);
-                        cursor_pos++;
-                    }
-                    if (c == 68 && cursor_pos > 0) { // left
-                        write(STDOUT_FILENO, "\x1B[1D", 4);
-                        cursor_pos--;
-                    }
-                }
+            if (c == 27) {
+                delete_or_direction();
             }
             display_mutex.unlock();
         }
@@ -207,17 +215,20 @@ void Mux_Controller::work_loop() {
 
     while (rclcpp::ok()) {
         process_input();
+        display_mutex.lock();
         mode = current_input[0];
         mode = tolower(mode);
 
         if (current_input.size() < 2) {
             printf("Invalid command. Try again: ");
             fflush(stdout);
+            display_mutex.unlock();
             continue; 
         }
 
         string_index = 1;
         if (mode == 'e' || mode == 'q') {
+            display_mutex.unlock();
             break;
         }
         if (current_input[string_index] != '\n' || (mode != '0' && mode != '1')) {
@@ -226,9 +237,10 @@ void Mux_Controller::work_loop() {
             while (current_input[string_index] != '\n') {
                 string_index++;
             }
+            display_mutex.unlock();
             continue;
         }
-        
+        display_mutex.unlock();
         set_mux_mode((bool)(mode - '0'));
     }
 }

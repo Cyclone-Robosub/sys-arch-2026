@@ -29,6 +29,7 @@ private:
     void refresh_display();
     void process_input();
     void backspace();
+    void delete_or_direction();
     void insert(char c);
 
     std::mutex display_mutex;
