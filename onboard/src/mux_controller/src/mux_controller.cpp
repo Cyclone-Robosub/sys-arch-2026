@@ -72,10 +72,12 @@ void Mux_Controller::clear_display() {
 void Mux_Controller::refresh_display() {
     tcflush(STDIN_FILENO, TCIFLUSH);
     current_input = "";
+    cursor_pos = 0;
+    num_read = 0;
     clear_display();
     if (no_heartbeat) {
         write(STDOUT_FILENO, "\x1B[5m", 4); // set blinking
-        write(STDOUT_FILENO, "\x1B[1;39m", 7); // set bold
+        write(STDOUT_FILENO, "\x1B[1;37;7m", 9); // set bold, white, inverted
         printf("====== No heartbeat detected from Mux! ======\n\n");
         write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
     }
@@ -90,9 +92,32 @@ void Mux_Controller::refresh_display() {
     fflush(stdout);
 }
 
+void Mux_Controller::insert(char c) {
+    char new_val = c;
+    int orig_pos = cursor_pos;
+    while (cursor_pos < num_read) {
+        char old_val = current_input[cursor_pos];
+        current_input[cursor_pos] = new_val;
+        printf("%c", new_val);
+        fflush(stdout);
+        new_val = old_val;
+        cursor_pos++;
+    }
+    printf("%c", new_val);
+    fflush(stdout);
+    cursor_pos++;
+    current_input.push_back(new_val);
+    while (cursor_pos > orig_pos + 1) {
+        cursor_pos--;
+        write(STDOUT_FILENO, "\x1B[1D", 4);
+    }
+    num_read++;
+}
+
+
 void Mux_Controller::backspace() {
     int orig_pos = cursor_pos;
-    write(STDOUT_FILENO, "\x1B[1D", 4); // move left to prepare for delete
+    write(STDOUT_FILENO, "\x1B[1D", 4); // move left to prepare for deletion
     while (cursor_pos < num_read) {
         char old_val = current_input[cursor_pos];
         current_input[cursor_pos - 1] = old_val;
@@ -117,11 +142,7 @@ void Mux_Controller::process_input() {
     while (true) {
         while (read(STDIN_FILENO, &c, 1) != 0) {
             if ((c >= 32 && c <= 126) || c == '\n') {
-                cursor_pos++;
-                num_read++;
-                current_input.push_back((char)c);
-                printf("%c", c);
-                fflush(stdout);
+                insert(c);
                 if (c == '\n') {
                     return;
                 }
@@ -129,15 +150,27 @@ void Mux_Controller::process_input() {
             if (c == 127 && cursor_pos > 0) {
                 backspace();
             }
-            if (c == 27) {
+            if (c == 8) { // ctrl + backspace
+                while (cursor_pos > 0) {
+                    backspace();
+                }
+            }
+            if (c == 27) { // here we make the totally not dangerous assumption that some identifiers don't matter. :)
                 read(STDIN_FILENO, &c, 1);
                 read(STDIN_FILENO, &c, 1);
                 if (c == 51) { // delete key
-                    read(STDIN_FILENO, &c, 1); // clear extra identifier
-                    if (cursor_pos < num_read) {
+                    read(STDIN_FILENO, &c, 1);
+                    if (c == 126 && cursor_pos < num_read) { // standard delete
                         write(STDOUT_FILENO, "\x1B[1C", 4);
                         cursor_pos++;
                         backspace();
+                    }
+                    if (c == 59) { // ctrl + delete
+                        read(STDIN_FILENO, &c, 1); // clear extra identifier
+                        read(STDIN_FILENO, &c, 1); // clear extra identifier
+                        write(STDOUT_FILENO, "\x1B[0K", 4); // erase from cursor to end of line
+                        num_read -= (current_input.size() - cursor_pos);
+                        current_input.erase(cursor_pos, std::string::npos);
                     }
                 }
                 else { // direction key

@@ -28,6 +28,7 @@ private:
     void refresh_display();
     void process_input();
     void backspace();
+    void insert(char c);
 
     bool current_control_mode = false;
     bool no_heartbeat = true;
