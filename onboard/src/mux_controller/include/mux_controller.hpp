@@ -4,6 +4,7 @@
 #include <chrono>
 #include <unistd.h>
 #include <termios.h>
+#include <mutex>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_srvs/srv/set_bool.hpp"
@@ -29,6 +30,8 @@ private:
     void process_input();
     void backspace();
     void insert(char c);
+
+    std::mutex display_mutex;
 
     bool current_control_mode = false;
     bool no_heartbeat = true;

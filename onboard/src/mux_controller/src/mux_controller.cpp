@@ -70,6 +70,7 @@ void Mux_Controller::clear_display() {
 }
 
 void Mux_Controller::refresh_display() {
+    display_mutex.lock();
     tcflush(STDIN_FILENO, TCIFLUSH);
     current_input = "";
     cursor_pos = 0;
@@ -90,6 +91,7 @@ void Mux_Controller::refresh_display() {
     printf("[E]: Exit\n");
     printf("Mode: ");
     fflush(stdout);
+    display_mutex.unlock();
 }
 
 void Mux_Controller::insert(char c) {
@@ -135,15 +137,19 @@ void Mux_Controller::backspace() {
 }
 
 void Mux_Controller::process_input() {
+    display_mutex.lock();
     cursor_pos = 0;
     num_read = 0;
     int c = 0;
     current_input = "";
+    display_mutex.unlock();
     while (true) {
         while (read(STDIN_FILENO, &c, 1) != 0) {
+            display_mutex.lock();
             if ((c >= 32 && c <= 126) || c == '\n') {
                 insert(c);
                 if (c == '\n') {
+                    display_mutex.unlock();
                     return;
                 }
             }
@@ -190,6 +196,7 @@ void Mux_Controller::process_input() {
                     }
                 }
             }
+            display_mutex.unlock();
         }
     }
 }
