@@ -17,6 +17,8 @@ Mux_Controller::Mux_Controller() : Node("mux_controller") {
     refresh_display();
 }
 
+/* ROS FUNCTIONS START */
+
 void Mux_Controller::get_mux_mode_now() {
     std::shared_ptr<std_srvs::srv::SetBool::Request> request = std::make_shared<std_srvs::srv::SetBool::Request>();
     request->data = true;
@@ -61,9 +63,13 @@ void Mux_Controller::control_mode_callback(std_msgs::msg::Bool::UniquePtr msg) {
     refresh_display();
 }
 
+/* ROS FUNCTIONS END */
+
 /*
  * For ANSI escape sequences, see: https://gist.github.com/ConnerWill/d4b6c776b509add763e17f9f113fd25b
 */
+
+/* DISPLAY FUNCTIONS START */
 
 void Mux_Controller::clear_display() {
     printf("\x1B[2J\x1B[H");
@@ -208,6 +214,8 @@ void Mux_Controller::process_input() {
         }
     }
 }
+
+/* DISPLAY FUNCTIONS END */
 
 void Mux_Controller::work_loop() {
     char mode = 0;
