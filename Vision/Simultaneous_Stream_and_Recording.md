@@ -57,22 +57,6 @@ Access the stream from any computer on the same network. MediaMTX provides a bui
 
 * **URL:** `http://<IP-OF-RASPBERRY-PI>:8889/cam`
 
-### B. The Recording
-
-To check the file integrity on the Pi:
-
-```bash
-ls -lh ~/recordings/
-
-```
-
-To play it back (if you have a desktop environment):
-
-```bash
-ffplay ~/recordings/output_*.mp4
-
-```
-
 ---
 
 ## 6. Troubleshooting
@@ -80,11 +64,3 @@ ffplay ~/recordings/output_*.mp4
 * **Warnings (`Non-monotonic DTS` / `Timestamps unset`):**
 * These are common with USB H.264 cameras.
 * **Verdict:** Safe to ignore as long as `speed=1.0x` and the resulting MP4 file plays back correctly.
-
-
-* **"Permission Denied":**
-* Ensure your user is in the video group: `sudo usermod -aG video $USER` (requires logout/login).
-
-
-
-```
