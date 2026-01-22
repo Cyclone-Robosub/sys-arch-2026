@@ -13,6 +13,19 @@ namespace dvl {
         error_config.periodic_cycling_enabled = 'x';
         config = error_config; //this will get overwritten by the first successful readConfig
 
+        //Services
+        setConfig = this->create_service<custom_interfaces::msg::Config>("set_config", std::bind(&DVL::setConfig(/*need to add inputs*/), this, std::placeholders::_1, std::placeholders::_2));
+        resetDRR = this->create_service<custom_interfaces::msg::DRR>("set_drr", std::bind(&DVL::resetDRR(), this, std::placeholders::_1, std::placeholders::_2));
+        resetGyro = this->create_service<std_srvs::srv::SetBool>("set_gyro", std::bind(&DVL::resetGyro(), this, std::placeholders::_1, std::placeholders::_2));
+        setSerrProtocol = this->create_service<std_srvs::srv::SetBool>("set_serr_protocol", std::bind(&DVL::setSerProtocol(/*need to add input*/), this, std::placeholders::_1, std::placeholders::_2));
+
+
+        //Publishers
+        velocityReport = this->create_publisher<custom_interfaces::msg::Pwms>("VR", 10);
+        drrReport = this->create_publisher<custom_interfaces::msg::Pwms>("DRR", 10);
+        config = this->create_publisher<custom_interfaces::msg::Pwms>("Config", 10);
+
+
         //serial setup
         ser.setPort(port);
         ser.setBaudrate(baudrate);

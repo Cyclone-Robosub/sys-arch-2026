@@ -11,6 +11,7 @@
 #include <stdexcept>
 #include "serial/serial.h" //https://github.com/wjwwood/serial
 #include <chrono>
+#include "std_srvs/srv/set_bool.hpp"
 
 //TODO - add check to make sure awk is received from the DVL
 //TODO - add status parsing for VR and DRR
@@ -64,14 +65,14 @@ class DVL : public rclcpp::Node {
 
         
     private:
-        rclcpp::Publisher<>::SharedPtr velocityReport;
-        rclcpp::Publisher<>::SharedPtr drrReport;
-        rclcpp::Publisher<>::SharedPtr config;
+        rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocityReport;
+        rclcpp::Publisher<custom_interfaces::msg::DRR>::SharedPtr drrReport;
+        rclcpp::Publisher<custom_interfaces::msg::Config>::SharedPtr config;
 
-        rclcpp::Service<>::SharedPtr setConfig;
-        rclcpp::Service<>::SharedPtr resetDRR;
-        rclcpp::Service<>::SharedPtr resetGyro;
-        rclcpp::Service<>::SharedPtr setSerProtocol;
+        rclcpp::Service<custom_interfaces::msg::Config>::SharedPtr setConfig;
+        rclcpp::Service<custom_interfaces::msg::DRR>::SharedPtr resetDRR;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr resetGyro;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr setSerProtocol;
 
         /*
         Outgoing messages are expected in the format "[SOP][DIR_CMD][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n". Options are only needed for some commands
