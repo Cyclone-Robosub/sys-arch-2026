@@ -2,6 +2,9 @@
 #define MUX_CONTROLLER_HPP
 
 #include <chrono>
+#include <unistd.h>
+#include <termios.h>
+#include <mutex>
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_srvs/srv/set_bool.hpp"
@@ -24,8 +27,18 @@ private:
     void heartbeat_check_callback();
     void control_mode_callback(std_msgs::msg::Bool::UniquePtr msg);
     void refresh_display();
+    void process_input();
+    void backspace();
+    void delete_or_direction();
+    void insert(char c);
 
-    bool current_control_mode;
+    std::mutex display_mutex;
+
+    bool current_control_mode = false;
+    bool no_heartbeat = true;
+    std::string current_input;
+    int cursor_pos = 0;
+    int num_read = 0;
 
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr client;
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub;
@@ -33,7 +46,6 @@ private:
     rclcpp::TimerBase::SharedPtr heartbeat_timer;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_heartbeat;
 
-    bool no_heartbeat = true;
 };
 
 #endif
