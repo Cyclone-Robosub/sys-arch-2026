@@ -21,12 +21,15 @@ EMERGENCY_BRAKES = [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, 
 
 def main():
 	global current_command
-	current_command = RobotCommand("Undefined", default_power, -1, EMERGENCY_BRAKES)
+	current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
 
 	rclpy.init(args=None)
 
 	global cli
 	cli = CLIPublisher()
+
+	global timed_command_thread
+	global timer_running
 
 	# Create a seperate thread to spin the heartbeat
 	heartbeat_thread = threading.Thread(target=spin_heartbeat)
@@ -36,7 +39,7 @@ def main():
 
 	reading_input = True
 
-	# ADD LOOP HEADING
+	# TODO: ADD LOOP HEADING
 	while (reading_input):
 		user_input = input("Input a command: ").lower()
 
@@ -63,21 +66,28 @@ def main():
 		elif command.confirm_command():
 			cli.publish_pwm(command.pwm)
 			if (command.time != -1):
-				global timed_command_thread
 				if timed_command_thread is not None and timed_command_thread.is_alive():
-					timed_command_thread.stop()
+					timer_running = False
+					timed_command_thread.join()
 				timed_command_thread = threading.Thread(target=run_command_timer,args=[command.time])
+				timer_running = True
 				timed_command_thread.start()
 			current_command = command
 	# End of while loop
 
 	reading_input = False
 
-	# Stop robot before shutting down cli
-	cli.publish_pwm(EMERGENCY_BRAKES)
+	# Shut down timer thread if it exists
+	if timed_command_thread is not None and timed_command_thread.is_alive():
+		timer_running = False
+		timed_command_thread.join()
 
-	# Stop heartbeat publishing
-	heartbeat_thread.stop()
+	# Stop robot before shutting down cli
+	cli.publish_pwm(EMERGENCY_BRAKES)	
+
+	# Stop heartbeat publishing 
+	# (.stop() does not exist. There are some issues with trying to stop the heartbeat thread, but it is low priority)
+	# heartbeat_thread.stop()
 	rclpy.shutdown()
 
 	print("Goodbye!")
@@ -85,7 +95,7 @@ def main():
 
 '''
 Reads a string and takes the action requested or outputs a robot command
-@command is the string to process
+command is the string to process
 returns a robot command or the result of the non-robot action taken
 '''
 def translate_command(command):
@@ -98,8 +108,8 @@ def translate_command(command):
 	
 	# Non-Robot Commands
 	if "set" in command and "power" in command:
-		new_power = find_num_in_string(command[command.index("power")])
-		if new_power == "" or new_power > 100:
+		new_power = find_num_in_string(command[command.index("power"):])
+		if new_power == None or int(new_power) > 100:
 			return None
 		default_power = new_power
 		return f"Set default power to {new_power}\n"
@@ -110,24 +120,24 @@ def translate_command(command):
 
 	cmd = RobotCommand(power = default_power)
 
-	#Changing settings for a given robot command
+	# Changing settings for a given robot command
 	if "power:" in command:
-		power = find_num_in_string(command[command.index("power:")])
-		if power is not None and power <= 100:
+		power = find_num_in_string(command[command.index("power:"):])
+		if power is not None and int(power) <= 100:
 			cmd.power = power
 		else:
 			return "Invalid power inputted\n"
 	elif "p:" in command:
-		power = find_num_in_string(command[command.index("p:")])
-		if power is not None and power <= 100:
+		power = find_num_in_string(command[command.index("p:"):])
+		if power is not None and int(power) <= 100:
 			cmd.power = power
 		else:
 			return "Invalid power inputted\n"
 
 	if "time:" in command:
-		cmd.time = find_num_in_string(command[command.index("time:")])
+		cmd.time = find_num_in_string(command[command.index("time:"):])
 	elif "t:" in command:
-		cmd.time = find_num_in_string(command[command.index("t:")])
+		cmd.time = find_num_in_string(command[command.index("t:"):])
 	if cmd.time is None:
 		return "Invalid time inputted\n"
 
@@ -188,15 +198,15 @@ def translate_command(command):
 	# custom pwm syntax: "Custom pwm [flt, frt, rlt, rrt, flb, frb, rlb, rrb]"
 	if "custom" in command and '[' in command and ']' in command:
 		cmd.name = "Custom pwm"
-		flt = get_custom_pwm(command[command.index("[")])
-		frt = get_custom_pwm(command[command.index("{flt}") + len(flt)])
-		rlt = get_custom_pwm(command[command.index("{frt}") + len(frt)])
-		rrt = get_custom_pwm(command[command.index("{rlt}") + len(rlt)])
-		flb = get_custom_pwm(command[command.index("{rrt}") + len(rrt)])
-		frb = get_custom_pwm(command[command.index("{flb}") + len(flb)])
-		rlb = get_custom_pwm(command[command.index("{frb}") + len(frb)])
-		rrb = get_custom_pwm(command[command.index("{rlb}") + len(rlb)])
-		extra = get_custom_pwm(command[command.index("{rrb}") + len(rrb)])
+		flt = get_custom_pwm(command[command.index("["):])
+		frt = get_custom_pwm(command[command.index("{flt}") + len(flt):])
+		rlt = get_custom_pwm(command[command.index("{frt}") + len(frt):])
+		rrt = get_custom_pwm(command[command.index("{rlt}") + len(rlt):])
+		flb = get_custom_pwm(command[command.index("{rrt}") + len(rrt):])
+		frb = get_custom_pwm(command[command.index("{flb}") + len(flb):])
+		rlb = get_custom_pwm(command[command.index("{frb}") + len(frb):])
+		rrb = get_custom_pwm(command[command.index("{rlb}") + len(rlb):])
+		extra = get_custom_pwm(command[command.index("{rrb}") + len(rrb):])
 		if (flt is not None and frt is not None and rlt is not None and rrt is not None 
 				and flb is not None and frb is not None and rlb is not None and rrb is not None and extra is None):
 			cmd.pwm = [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
@@ -209,14 +219,33 @@ prints a list of all valid commands and examples of how to use them
 does not return a value
 '''
 def info():
-	print("Info command is not yet implemented")
+	print("Note: Whitespace is ignored in command names")
+	print("\n")
+	print("Valid User Commands:")
+	print("\t'set power {num}'\t\t changes default power for robot commands (as a percentage)")
+	print("\t'current command'\t\t prints out the currently active command")
+	print("\t'info' or 'help'\t\t resends this message")
+	print("\t'end session'\t\t\t ends program excecution")
+	print("\n")
+	print("Valid Robot Commands:")
+	print("\tstop | forwards | backwards | strafe left | strafe right | rise | sink |")
+	print("\tyaw counter clockwise | yaw clockwise | pitch forwards | pitch backwards | roll left | roll right")
+	print("\tcustom [{pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}]")
+	print("\n")
+	print("All robot commands have optional power and time fields")
+	print("'power: {num}' or 'p: {num}' for a custom power (as a percentage)")
+	print("'time: {num}' or 't: {num}' for a timed command (in seconds)")
+	print("\n\n")
+
+	# Add note that default power is 70%
+	# Give examples of valid commands
 
 '''
-ADD COMMENTS
+returns string describing current command to user
 '''
 def get_current_command():
 	global current_command
-	if current_command.name == "Stop" or current_command.name == "Undefined":
+	if current_command.name == "Stop":
 		return "There is no currently active command\n"
 	elif current_command.time == -1:
 		return f"Current Command: {current_command.name} at {current_command.power}% power\n"
@@ -224,17 +253,21 @@ def get_current_command():
 		return f"Current Command: {current_command.name} for {current_command.time} seconds at {current_command.power}% power\n"
 
 
-# Gets a custom pwm (integer between 1100 and 1900)
+'''
+Finds custom pwm value
+Checks pwm is found and between 110 and 1990
+returns pwm if valid else returns None
+'''
 def get_custom_pwm(string):
 	pwm = find_num_in_string(string)
-	if pwm >= 1100 and pwm <= 1900:
+	if pwm is not None and int(pwm) >= 1100 and int(pwm) <= 1900:
 		return pwm
 	return None
 
 '''
 Looks through a string for the first number in it
 string is the string to look through
-Returns the number found, or an empty string
+Returns the number found, or None
 '''
 def find_num_in_string(string):
 	started = False
@@ -249,8 +282,10 @@ def find_num_in_string(string):
 			if not started:
 				started = True
 		elif started:
-			return num
-	return None
+			break
+	if num == "":
+		return None
+	return num
 
 '''
 Waits for a timer with a given duration to finish, then sends a stop command
@@ -259,8 +294,10 @@ Does not return a value
 '''
 def run_command_timer(duration):
 	start_time = time.time
+	global timer_running
 	while time.time - start_time < duration * 1000:
-		pass
+		if not timer_running:
+			return
 	global current_command
 	global cli
 	current_command = RobotCommand("Stop")
