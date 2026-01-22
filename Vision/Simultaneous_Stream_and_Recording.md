@@ -18,6 +18,22 @@ graph LR
     Server -->|RTSP/WebRTC| Browser[Web Dashboard]
 ```
 
+### A. Install MediaMTX (The Streaming Server)
+
+This lightweight server bridges the raw RTSP stream to a web-friendly format (WebRTC).
+
+**Download & Run (on the Pi):**
+```bash
+# Download (Check generic arm64 or armv7 depending on your Pi OS)
+wget https://github.com/bluenviron/mediamtx/releases/download/v1.15.6/mediamtx_v1.15.6_linux_arm64.tar.gz
+# Extract
+tar -xvzf mediamtx_v1.6.0_linux_arm64.tar.gz
+
+# Run in background
+./mediamtx &
+
+```
+
 ### B. Prepare Directories
 
 Ensure the recording folder exists to prevent FFmpeg errors.
