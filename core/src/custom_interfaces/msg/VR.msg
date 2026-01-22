@@ -1,0 +1,6 @@
+geometry_msgs/TwistWithCovariance twist
+geometry_msgs/TwistWithCovariance covariance
+int64 time_of_validity
+int64 time_of_transmission
+uint8 status
+std_msgs/msg/Char valid

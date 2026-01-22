@@ -1,8 +1,7 @@
 #pragma once
 
+#include <chrono>
 #include "rclcpp/rclcpp.hpp"
-#include "external/dvl-cpp/include/dvl-cpp.h"
-#include "std_msgs/msg/bool.hpp"
 #include <string>
 #include <cstdint>
 #include <array>
@@ -11,39 +10,69 @@
 #include <iomanip>
 #include <stdexcept>
 #include "serial/serial.h" //https://github.com/wjwwood/serial
+#include <chrono>
 
 //TODO - add check to make sure awk is received from the DVL
 //TODO - add status parsing for VR and DRR
 
 namespace dvl {
 
-class DVL :: public rclcpp::Node {
+class DVL : public rclcpp::Node {
     public:
-        DVL(const std::string& port, unsigned long baudrate = 115200);
+
+        DVL(const std::string& port, unsigned long baudrate = 115200) : rclcpp::Node ;
 
         struct VR {
-            float vx = 0, vy = 0, vz = 0, altitude = 0, fom = 0, covariance = 0, time_of_validity = 0, time_of_transmission = 0, time = 0;
-            bool valid = false;
-            uint8_t status = 0;
+            float vx = 0, vy = 0, vz = 0, altitude = 0, fom = 0, time = 0;
+            std::array<float,9> covariance = {0};
+            int64_t time_of_validity = 0, time_of_transmission = 0;
+            char valid = 'n';
+            uint8_t status = 0x00; 
         };
 
         struct DRR {
-            float time_stamp = 0, x = 0, y = 0, z = 0, pos_std = 0, roll = 0, pitch = 0, yaw = 0;
-            bool status = false;
+            int64_t time_stamp = 0;
+            float x = 0, y = 0, z = 0, pos_std = 0, roll = 0, pitch = 0, yaw = 0;
+            uint8_t status = 0x00;
+        };
+
+        struct Config {
+            float speed_of_sound;
+            float mounting_rotation_offset;
+            char acoustic_enabled; //y or n
+            char dark_mode_enabled; //y or n
+            std::string range_mode = "auto";
+            char periodic_cycling_enabled; //y or n
         };
 
         // PUBLIC API //
-        //reads
+        //reads from actual DVL
         VR readVelocityReport(); //velocity report
         DRR readDRReport(); //dead reckoning report
-        //TODO getVersion, getProductDetail, getSettings
+        std::string readVersion();
+        std::string readDetails();
+        Config readConfig();
 
-        //sets
-        bool setSettings(float, float, char, char, string, char){
-        bool resetDR(); //reset the dead reckoning report
-        bool calGyro(); //zero the gyroscope
+
+        
+
+        //sets (returns true if acknowledge was received)
+        bool setConfig(float, float, char, char, std::string, bool);
+        bool resetDRR(); //reset the dead reckoning report
+        bool resetGyro(); //zero the gyroscope
+        bool setSerProtocol(int);
+
         
     private:
+        rclcpp::Publisher<>::SharedPtr velocityReport;
+        rclcpp::Publisher<>::SharedPtr drrReport;
+        rclcpp::Publisher<>::SharedPtr config;
+
+        rclcpp::Service<>::SharedPtr setConfig;
+        rclcpp::Service<>::SharedPtr resetDRR;
+        rclcpp::Service<>::SharedPtr resetGyro;
+        rclcpp::Service<>::SharedPtr setSerProtocol;
+
         /*
         Outgoing messages are expected in the format "[SOP][DIR_CMD][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n". Options are only needed for some commands
 
@@ -53,7 +82,7 @@ class DVL :: public rclcpp::Node {
         // PRIVATE CONSTANTS //
         // Protocol definitions
         static constexpr uint8_t SOP = 'w'; //start of package
-        static constexpr std::vector<uint8_t> EOP = {'\n','\r'}; //possible end of packets bytes
+        static constexpr std::array<uint8_t,2> EOP = {'\n','\r'}; //possible end of packets bytes
         static constexpr uint8_t DIR_CMD = 'c'; //command
         static constexpr uint8_t DIR_RESP = 'r'; //response
         static constexpr uint8_t CS = '*'; //checksum 
@@ -72,6 +101,8 @@ class DVL :: public rclcpp::Node {
         static constexpr uint8_t REC_TR = 'u'; //receive transducer report
         static constexpr uint8_t REC_DRR = 'p'; //receive dead reckoning report
 
+        static constexpr uint8_t ACK = 'a';
+
         // list of valid outgoing commands
         static constexpr std::array<char,8> VALID_OUT = {CMD_GET_VERSION, CMD_GET_PRODUCT_DETAIL, CMD_SET_SETTINGS, CMD_GET_SETTINGS, CMD_RESET_DR, CMD_TRIGGER_PING, CMD_CALIBRATE_GYRO, CMD_CHANGE_SER_OUTPUT};
 
@@ -80,16 +111,24 @@ class DVL :: public rclcpp::Node {
 
         // PRIVATE VARS //
         serial::Serial ser;
-        VR lastVelocityReport;
-        DRR lastDRReport;
+        VR vr, error_vr;
+        DRR drr, error_drr;
 
+        Config config, error_config;
+        
+      
+        
+        std::string version; //Protocol version "major.minor.patch"
+        std::string product_details;
 
         // PRIVATE METHODS //
-        void parse(const std::vector<uint8_t>& sentence); //parses text string from DVL into the results structure
-        std::string readLine(); //reads until /r/n
+        bool parseResponse(std::string&); //parses text string from DVL into the results structure
+        bool holdForResponse(const char); 
+        bool sendCommand(uint8_t, const std::vector<std::string>& = {});
+
 
         // CRC-8 MAXIM lookup table
-    constexpr uint8_t CRC8_TABLE[256] = {
+    static constexpr uint8_t CRC8_TABLE[256] = {
         0x00,0x31,0x62,0x53,0xC4,0xF5,0xA6,0x97,0xB9,0x88,0xDB,0xEA,0x7D,0x4C,0x1F,0x2E,
         0x43,0x72,0x21,0x10,0x87,0xB6,0xE5,0xD4,0xFA,0xCB,0x98,0xA9,0x3E,0x0F,0x5C,0x6D,
         0x86,0xB7,0xE4,0xD5,0x42,0x73,0x20,0x11,0x3F,0x0E,0x5D,0x6C,0xFB,0xCA,0x99,0xA8,
@@ -111,9 +150,3 @@ class DVL :: public rclcpp::Node {
 };
 
 }
-}
-
-
-
-
-
