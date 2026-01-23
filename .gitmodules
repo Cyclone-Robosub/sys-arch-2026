@@ -1,0 +1,6 @@
+[submodule "onboard/src/imu/ros2_ws/src/--force"]
+	path = onboard/src/imu/ros2_ws/src/--force
+	url = https://github.com/Cyclone-Robosub/inertial-sense-sdk.git
+[submodule "onboard/src/imu/ros2_ws/src/inertial-sense-sdk"]
+	path = onboard/src/imu/ros2_ws/src/inertial-sense-sdk
+	url = https://github.com/Cyclone-Robosub/inertial-sense-sdk.git
