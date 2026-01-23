@@ -84,7 +84,7 @@ void Mux_Controller::refresh_display() {
     clear_display();
     if (no_heartbeat) {
         write(STDOUT_FILENO, "\x1B[5m", 4); // set blinking
-        write(STDOUT_FILENO, "\x1B[1;37;7m", 9); // set bold, white, inverted
+        write(STDOUT_FILENO, "\x1B[1;7m", 6); // set bold, inverted
         printf("====== No heartbeat detected from Mux! ======\n\n");
         write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
     }
