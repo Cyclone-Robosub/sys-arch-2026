@@ -120,3 +120,5 @@ cython_debug/
 
 # Macos extended attr
 .DS_Store
+.vscode
+.vscode/launch.json
