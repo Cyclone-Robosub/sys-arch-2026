@@ -1,4 +1,0 @@
-[submodule "Cyclone_imu_inertialsense"]
-	path = ros2_ws/src
-	url = https://github.com/Cyclone-Robosub/inertial-sense-sdk.git
-	branch = RollBackTesting
