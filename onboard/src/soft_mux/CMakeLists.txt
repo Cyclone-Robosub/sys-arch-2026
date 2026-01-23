@@ -73,8 +73,4 @@ if(BUILD_TESTING)
   )
 endif()
 
-# install(TARGETS
-#  soft_mux
-#  DESTINATION lib/${PROJECT_NAME})
-
 ament_package()
