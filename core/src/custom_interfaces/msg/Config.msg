@@ -1,6 +1,6 @@
 float32 speed_of_sound
 float32 mounting_rotation_offset
-std_msgs/msg/Char acoustic_enabled
-std_msgs/msg/Char dark_mode_enabled
+std_msgs/msg/String acoustic_enabled
+std_msgs/msg/String dark_mode_enabled
 std_msgs/msg/String range_mode
-std_msgs/msg/Char periodic_cycling_enabled
+std_msgs/msg/String periodic_cycling_enabled
