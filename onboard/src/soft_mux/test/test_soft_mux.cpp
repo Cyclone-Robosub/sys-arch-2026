@@ -170,7 +170,7 @@ TEST_F(TestSoftMuxInterface, MuxSendCliPwms) {
 /**
  * @brief Test control mode service
  */
-TEST_F(TestSoftMuxInterface, MuxTestService) {
+TEST_F(TestSoftMuxInterface, MuxTestSetModeService) {
     createMux();
     auto client = mux->create_client<std_srvs::srv::SetBool>("control_mode");
     ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
@@ -199,6 +199,59 @@ TEST_F(TestSoftMuxInterface, MuxTestService) {
 
     subscribe_control_mode(); // since the mode changes (from true to false)
     EXPECT_FALSE(most_recent_mode.data); // resulting mode
+
+    executor.cancel();
+    spin_thread.join();
+}
+
+/**
+ * @brief Test control mode service
+ */
+TEST_F(TestSoftMuxInterface, MuxTestGetModeService) {
+    createMux();
+    auto set_client = mux->create_client<std_srvs::srv::SetBool>("control_mode");
+    auto get_client = mux->create_client<std_srvs::srv::SetBool>("force_pub");
+    ASSERT_TRUE(set_client->wait_for_service(std::chrono::seconds(1)));
+    ASSERT_TRUE(get_client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(mux);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    subscribe_control_mode();
+    most_recent_mode.data = true; // set to be incorrect at first to verify that the message is received    
+
+    /* Make the mux publish the current mode. Should be CLI by default. */
+    std::shared_ptr<std_srvs::srv::SetBool::Request> request = std::make_shared<std_srvs::srv::SetBool::Request>();
+    request->data = true;
+    auto future = get_client->async_send_request(request);
+    
+    ASSERT_EQ (future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future.get()->success); // request should be recieved by service
+
+    EXPECT_FALSE(most_recent_mode.data); // resulting mode
+
+    /* Force publishing again, this time when the mux is in Matlab/CTRL mode instead. */
+    auto request2 = std::make_shared<std_srvs::srv::SetBool::Request>();
+    request2->data = true;
+    auto future2 = set_client->async_send_request(request2);
+
+    ASSERT_EQ (future2.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future2.get()->success); // request should be recieved by service
+
+    most_recent_mode.data = false; // set to be incorrect at first to verify that the message is received
+
+    auto request3 = std::make_shared<std_srvs::srv::SetBool::Request>();
+    request3->data = true;
+    auto future3 = get_client->async_send_request(request3);
+    
+    ASSERT_EQ (future3.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future3.get()->success); // request should be recieved by service
+    EXPECT_TRUE(most_recent_mode.data); // resulting mode
+
 
     executor.cancel();
     spin_thread.join();
