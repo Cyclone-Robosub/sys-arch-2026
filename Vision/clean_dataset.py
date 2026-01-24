@@ -49,6 +49,7 @@ def clean_keypoint_labels(label_dir):
 
                     # If visibility is 0, set x and y to 0.5
                     if visibility == 0:
+                        print(f"Cleaning keypoint at index {i//3} in file {label_file}")
                         x = 0.5
                         y = 0.5
 
