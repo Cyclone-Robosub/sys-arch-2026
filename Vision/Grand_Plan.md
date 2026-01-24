@@ -15,12 +15,12 @@ The vision system is designed to provide comprehensive environmental perception 
 ### Component Breakdown
 
 #### ML Component
-- **[Object Identification](https://www.notion.so/Gate-Identification-Keypoint-2eb8a3eca2f08070b297dfad31e35cce?pvs=21)**
+- **Object Identification**
   - Gate and path marker detection
   - Gripper object recognition
   - General objects of research interest
 
-- **[Keypoint Detection](https://www.notion.so/Gate-Identification-Keypoint-2eb8a3eca2f08070b297dfad31e35cce?pvs=21)**
+- **Keypoint Detection**
   - Four corners of the gate
   - key features on objects/markers
 
@@ -98,19 +98,17 @@ graph TB
 
 ## Current Implementation Status
 
-```mermaid
-graph LR
-    A[Raw Image] --> B[YOLO Keypoint Model]
-    B --> C[Raw Keypoints]
-    C --> D[Post-Processing & Validation]
-    D --> E[Cleaned Keypoints]
-    E --> F[cv.solvePnP Algorithm]
-    F --> G[Object Pose Vector]
-    G --> H[Gate Center Offset]
-```
+1. YOLO Keypoint Model
+2. Raw Keypoints
+3. Post-Processing & Validation
+4. Cleaned Keypoints
+5. cv.solvePnP Algorithm
+6. Object Pose Vector
+7. Gate Center Offset
 
 **In Development:**
 - **Stereo Vision System**: Hardware integration and calibration in progress
+- **custom SSD model** for future same backbone architecture
 
 **Hardware:**
 - **Platform**: NVIDIA Jetson Orin Nano (8GB RAM)
