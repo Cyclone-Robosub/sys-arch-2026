@@ -27,6 +27,7 @@ The vision system is designed to provide comprehensive environmental perception 
 #### SLAM Component
 - **Distance Estimation**
   - [Stereo matching algorithms](https://www.notion.so/Research-Vision-Algorithms-2f18a3eca2f0804aac9ae2d4a157d1ff?pvs=21) (SGBM preferred over Hirschmuller-Heiko)
+  - Gaussian Splatting
   - Depth map generation
 
 - **Motion Estimation**
