@@ -32,7 +32,7 @@ def main():
 	global timer_running
 
 	# Create a seperate thread to spin the heartbeat
-	heartbeat_thread = threading.Thread(target=spin_heartbeat)
+	heartbeat_thread = threading.Thread(name="heartbeat_thread", target=spin_heartbeat)
 	heartbeat_thread.start()
 
 	info()
@@ -69,7 +69,7 @@ def main():
 				if timed_command_thread is not None and timed_command_thread.is_alive():
 					timer_running = False
 					timed_command_thread.join()
-				timed_command_thread = threading.Thread(target=run_command_timer,args=[command.time])
+				timed_command_thread = threading.Thread(name="timed_command_thread", target=run_command_timer, args=[command.time])
 				timer_running = True
 				timed_command_thread.start()
 			current_command = command
@@ -83,7 +83,7 @@ def main():
 		timed_command_thread.join()
 
 	# Stop robot before shutting down cli
-	cli.publish_pwm(EMERGENCY_BRAKES)	
+	cli.publish_pwm(EMERGENCY_BRAKES)
 
 	# Stop heartbeat publishing 
 	# (.stop() does not exist. There are some issues with trying to stop the heartbeat thread, but it is low priority)
@@ -219,7 +219,9 @@ prints a list of all valid commands and examples of how to use them
 does not return a value
 '''
 def info():
-	print("Note: Whitespace is ignored in command names")
+	print("Notes:")
+	print("\tWhitespace is ignored in command names")
+	print("\tDefault power is 70%")
 	print("\n")
 	print("Valid User Commands:")
 	print("\t'set power {num}'\t\t changes default power for robot commands (as a percentage)")
@@ -233,12 +235,15 @@ def info():
 	print("\tcustom [{pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}]")
 	print("\n")
 	print("All robot commands have optional power and time fields")
-	print("'power: {num}' or 'p: {num}' for a custom power (as a percentage)")
-	print("'time: {num}' or 't: {num}' for a timed command (in seconds)")
-	print("\n\n")
+	print("\t'power: {num}' or 'p: {num}' for a custom power (as a percentage)")
+	print("\t'time: {num}' or 't: {num}' for a timed command (in seconds)")
+	print("\n")
+	print("Examples:")
+	print("\tForwards p:50 t: 10\t\tForwards at 50% power for 10 seconds")
+	print("\tstrafe-left time: 3\t\tStrafe Left at default power for 3 seconds")
+	print("\tROLL_RIGHT power: 80\t\tRoll Right at 80% power until stopped")
 
-	# Add note that default power is 70%
-	# Give examples of valid commands
+	print("\n\n")
 
 '''
 returns string describing current command to user
@@ -293,9 +298,9 @@ duration is the duration the timer will wait in seconds
 Does not return a value
 '''
 def run_command_timer(duration):
-	start_time = time.time
+	start_time = time.time()
 	global timer_running
-	while time.time - start_time < duration * 1000:
+	while time.time() - start_time < float(duration):
 		if not timer_running:
 			return
 	global current_command
@@ -353,6 +358,4 @@ class RobotCommand():
 			return confirm(f"Are you sure you want to {self.name} at {self.power}% power until stopped? [yes/no]\n")
 		else:
 			return confirm(f"Are you sure you want to {self.name} at {self.power}% power for {self.time} seconds? [yes/no]\n")
-		
 
-main()
