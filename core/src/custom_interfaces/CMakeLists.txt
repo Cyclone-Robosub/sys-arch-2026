@@ -10,6 +10,8 @@ find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED) 
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -34,7 +36,7 @@ endif()
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_sources}
   ${srv_sources}
-  DEPENDENCIES geometry_msgs std_msgs
+  DEPENDENCIES geometry_msgs std_msgs sensor_msgs nav_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)

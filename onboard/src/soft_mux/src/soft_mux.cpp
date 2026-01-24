@@ -4,7 +4,7 @@
 using namespace std::chrono_literals;
 
 
-SoftMux::SoftMux() : rclcpp::Node("SoftMux") {
+SoftMux::SoftMux() : rclcpp::Node("SoftMux"), is_matlab_mode(false), no_ctrl_heartbeat(true), no_cli_heartbeat(true) {
     //Inputs
     pwm_ctrl_subscriber = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_ctrl", 10, std::bind(&SoftMux::pwm_ctrl_callback, this, std::placeholders::_1));
     pwm_cli_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_cli", 10, std::bind(&SoftMux::pwm_cli_callback, this, std::placeholders::_1));
@@ -15,10 +15,11 @@ SoftMux::SoftMux() : rclcpp::Node("SoftMux") {
     //Heartbeat Timers
     ctrl_heartbeat_timer = this->create_wall_timer(500ms, std::bind(&SoftMux::ctrl_heartbeat_check_callback, this));
     cli_heartbeat_timer = this->create_wall_timer(500ms, std::bind(&SoftMux::cli_heartbeat_check_callback, this));
-    mux_heartbeat_timer = this->create_wall_timer(1000ms, std::bind(&SoftMux::mux_heartbeat_send, this));
+    mux_heartbeat_timer = this->create_wall_timer(500ms, std::bind(&SoftMux::mux_heartbeat_send, this));
    
     //Services
     control_mode = this->create_service<std_srvs::srv::SetBool>("control_mode", std::bind(&SoftMux::set_mode_srv, this, std::placeholders::_1, std::placeholders::_2));
+    force_pub = this->create_service<std_srvs::srv::SetBool>("force_pub", std::bind(&SoftMux::pub_mode_srv, this, std::placeholders::_1, std::placeholders::_2));
 
 
     //Outputs
@@ -62,7 +63,6 @@ void SoftMux::set_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request
             auto message = std_msgs::msg::Bool();
             message.data = this->is_matlab_mode;
             this->current_control_mode->publish(message);
-            std::cout << message.data << std::endl; // TODO: Remove prints before merging to main
         }
         response->success = true;
     } else {
@@ -70,12 +70,20 @@ void SoftMux::set_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request
     }
 }
 
+void SoftMux::pub_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, std::shared_ptr<std_srvs::srv::SetBool::Response> response) {
+    auto message = std_msgs::msg::Bool();
+    message.data = this->is_matlab_mode;
+    this->current_control_mode->publish(message);
+
+    response->success = true;
+
+    (void) request; // stop compiler complaining about unused variables
+}
+
+
 
 void SoftMux::pwm_cmd_publish(custom_interfaces::msg::Pwms::UniquePtr pwm) {
     this->pwm_cmd_publisher->publish(*(std::move(pwm)));
-    for (int i = 0; i < 8; i++) { // TODO: Remove prints before merging to main
-         std::cout << "PWM " << i << " is sent as " << pwm->pwms[i] << "\n";
-    }
 }
 
 
