@@ -104,15 +104,15 @@ graph LR
 
 ```mermaid
 graph LR
-    U[Unreal Environment + Sensor Model] --> R[Rendered RGB Frame]
-    U --> GT[Ground Truth: 2D Keypoints / 3D Pose / Depth]
+    classDef distinct fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+    U[Unreal Environment + Sensor Model]:::distinct --> R[Rendered RGB Frame]:::distinct
+    U --> GT[Ground Truth: 2D Keypoints / 3D Pose / Depth]:::distinct
     R --> P[Monocular Camera Pipeline]
-    P --> O[Predicted Output]
-    GT --> E[Error Metrics]
+    P --> O[Predicted Output]:::distinct
+    GT --> E[Error Metrics]:::distinct
     O --> E
-    E --> S[Scenario Selection + Domain Randomization]
+    E --> S[Scenario Selection + Domain Randomization]:::distinct
     S --> U
-
 ```
 
 **Pipeline Description:**
