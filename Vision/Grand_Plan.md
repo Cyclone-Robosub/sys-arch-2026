@@ -4,11 +4,19 @@
 
 The vision system is designed to provide comprehensive environmental perception and navigation support for the autonomous underwater vehicle:
 
+### Real World
 - **Object Detection & Localization**: Identify objects in the environment and compute distance vectors to each target
-- **Velocity Estimation**: Determine the robot's speed through visual odometry
+- **Velocity Estimation**: Determine the robot's speed through visual odometry and temporal pose estimation
 - **Environmental Mapping**: Generate depth maps of the surrounding field
 - **Navigation Support**: Assist the navigation algorithm with waypoint following capabilities
 - **Dynamic Waypoint Generation**: Enable visual servoing by dynamically creating and tracking waypoints
+
+### Simulation
+- **Synthetic Data Generation (Unreal)**: Generate photorealistic underwater imagery for training and testing detection + keypoint models
+- **Ground Truth Labeling**: Export automatic labels per frame (2D keypoints, object pose, camera pose, depth) to enable supervised learning and quantitative evaluation
+- **Domain Randomization for Sim2Real**: Randomize lighting, turbidity, particles, textures, and camera noise to improve real-world robustness
+- **Closed-Loop Validation**: Benchmark perception outputs against ground truth across controlled scenarios (pose error, reprojection error, detection metrics)
+- **Hardware-in-the-Loop Readiness**: Validate runtime performance by streaming simulated frames through the Jetson inference stack before pool deployment
 
 ## System Architecture
 
@@ -22,7 +30,10 @@ The vision system is designed to provide comprehensive environmental perception 
 
 - **Keypoint Detection**
   - Four corners of the gate
-  - key features on objects/markers
+  - Key features on objects/markers
+ 
+- **Temporal Filtering**
+  - Smoothing of keypoints and pose estimates across frames
 
 #### SLAM Component
 - **Distance Estimation**
@@ -31,15 +42,53 @@ The vision system is designed to provide comprehensive environmental perception 
   - Depth map generation
 
 - **Motion Estimation**
-  - Velocity computation through temporal derivatives
+  - Velocity computation through temporal derivatives of pose estimates
 
 #### Stereo Vision Module
-- Geometric distance calculation using triangulation
-- Disparity-based depth estimation
+- Geometric distance calculation using stereo triangulation
+- Disparity-based depth estimation from rectified image pairs
+
+#### Simulation Component (Unreal Engine)
+- **Environment Rendering**
+  - Pool, gate, and marker assets with underwater lighting and materials  
+  - Water effects: turbidity, backscatter, caustics, and particles  
+
+- **Sensor Modeling**
+  - Camera intrinsics and distortion matched to real hardware  
+  - Noise models (blur, exposure variation, motion blur)
+
+- **Ground Truth Generation**
+  - 2D labels: bounding boxes, keypoints, segmentation masks  
+  - 3D labels: object pose, camera pose, and depth  
+  - Relative pose: object-to-camera vectors  
+
+- **Scenario Orchestration**
+  - Automatic camera trajectories around gates  
+  - Randomized lighting, visibility, and object placement  
+  - Edge-case generation (occlusion, glare, far range, low contrast)
+  - Adaptive scenario generation driven by failure cases and error metrics
+
+
+#### Data & Evaluation Module
+- **Dataset Construction**
+  - Build labeled datasets from simulation and real-world captures  
+  - Maintain train/validation/test splits by scenario
+ 
+- **Coordinate Frame Management**
+  - Consistent camera, object, and world coordinate frame conventions across sim and physical environments
+
+- **Performance Metrics**
+  - Keypoint reprojection error  
+  - Pose estimation error (translation and rotation)  
+  - Detection precision and recall  
+
+- **Failure Mode Analysis**
+  - Identify conditions causing keypoint or pose failure  
+  - Feed failure cases back into simulation scenario generation
 
 ## Data Flow Architecture
 
-### Phase 1: Monocular Camera (Current Implementation)
+### Phase 1: Monocular Camera Pipeline (Current Implementation)
 
 ```mermaid
 graph LR
@@ -49,6 +98,21 @@ graph LR
     E[Known Object Dimensions] --> D
     D --> F[Distance Vector]
     D --> G[Orientation]
+```
+
+### Simulation
+
+```mermaid
+graph LR
+    U[Unreal Environment + Sensor Model] --> R[Rendered RGB Frame]
+    U --> GT[Ground Truth: 2D Keypoints / 3D Pose / Depth]
+    R --> P[Monocular Camera Pipeline]
+    P --> O[Predicted Output]
+    GT --> E[Error Metrics]
+    O --> E
+    E --> S[Scenario Selection + Domain Randomization]
+    S --> U
+
 ```
 
 **Pipeline Description:**
@@ -99,6 +163,7 @@ graph TB
 
 ## Current Implementation Status
 
+**Real World** 
 1. YOLO Keypoint Model
 2. Raw Keypoints
 3. Post-Processing & Validation
@@ -107,9 +172,16 @@ graph TB
 6. Object Pose Vector
 7. Gate Center Offset
 
+**Simulation**
+1. Unreal Engine – MATLAB Interface (robot control via MATLAB commands)  
+2. Simulated Robot (Manny) Motion Control in Unreal  
+3. Pool Environment Modeling (accurate dimensions, tiling, and materials)  
+4. Underwater Lighting & Material Setup (initial realism pass)
+
 **In Development:**
 - **Stereo Vision System**: Hardware integration and calibration in progress
-- **custom SSD model** for future same backbone architecture
+- **Custom SSD Model** for future same backbone architecture
+- **Simulation Testbed**: Setup of Unreal environment for data capture and ground-truth-based algorithm evaluation
 
 **Hardware:**
 - **Platform**: NVIDIA Jetson Orin Nano (8GB RAM)
