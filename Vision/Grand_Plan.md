@@ -1,52 +1,117 @@
-## Goals of vision system
+# Vision System Architecture Plan
 
-- Identify the objects we see and distance vector to each of them
-- Speed of the robot
-- Depth map of the surrounding field
-- Aid navigation algorithm (waypoint following)
-- Able to dynamically create and follow waypoints (visually)
+## System Objectives
 
-### Decomposition
+The vision system is designed to provide comprehensive environmental perception and navigation support for the autonomous underwater vehicle:
 
-- ML component
-    - [Object identification](https://www.notion.so/Gate-Identification-Keypoint-2eb8a3eca2f08070b297dfad31e35cce?pvs=21)
-        - Gate (Left right by image of the gate)
-            - Gripper objects
-            - Any research interest
-    - [Keypoint detection](https://www.notion.so/Gate-Identification-Keypoint-2eb8a3eca2f08070b297dfad31e35cce?pvs=21)
-        - Non square bounding box
-- SLAM component
-    - Distance identification
-        - [HH/SGBM algo](https://www.notion.so/Research-Vision-Algorithms-2f18a3eca2f0804aac9ae2d4a157d1ff?pvs=21) (likely SGBM)
-    - Velocity from derivative
-- Stereo vision
-    - trigonometry
+- **Object Detection & Localization**: Identify objects in the environment and compute distance vectors to each target
+- **Velocity Estimation**: Determine the robot's speed through visual odometry
+- **Environmental Mapping**: Generate depth maps of the surrounding field
+- **Navigation Support**: Assist the navigation algorithm with waypoint following capabilities
+- **Dynamic Waypoint Generation**: Enable visual servoing by dynamically creating and tracking waypoints
 
-### Overall flow of data
+## System Architecture
 
-### Mono camera (for now)
+### Component Breakdown
 
-use mermaid for chart
+#### ML Component
+- **[Object Identification](https://www.notion.so/Gate-Identification-Keypoint-2eb8a3eca2f08070b297dfad31e35cce?pvs=21)**
+  - Gate and path marker detection
+  - Gripper object recognition
+  - General objects of research interest
 
-raw image - keypoint model→ keypoints on the object
+- **[Keypoint Detection](https://www.notion.so/Gate-Identification-Keypoint-2eb8a3eca2f08070b297dfad31e35cce?pvs=21)**
+  - Four corners of the gate
+  - key features on objects/markers
 
-keypoints + know size of the object → getting the distance and the direction to the object 
+#### SLAM Component
+- **Distance Estimation**
+  - [Stereo matching algorithms](https://www.notion.so/Research-Vision-Algorithms-2f18a3eca2f0804aac9ae2d4a157d1ff?pvs=21) (SGBM preferred over Hirschmuller-Heiko)
+  - Depth map generation
 
-### Stereo camera (in future)
+- **Motion Estimation**
+  - Velocity computation through temporal derivatives
 
-1. Stereo
-    1. Produce raw images
-    2. and depth map with the image
-2. ML component
-    1. ML component performs Object identification
-    2. ML component performs key point identification
-    3. Same backbone and different head for keypoints/bounding box
-3. SLAM component
-    1. SLAM component produces a depth map of the surrounding
-    2. use depth map to identify distance to objects
+#### Stereo Vision Module
+- Geometric distance calculation using triangulation
+- Disparity-based depth estimation
 
-### Current status
+## Data Flow Architecture
 
-- raw image → yolo keypoints → keypoints → post-processing to validate and clean keypoints → algorithm to calculate distance (cv.pnp)  → vector to the keypoints → vector from the center of the gate to the robot.
-- stereo vision → under construction
-- running on jetson orin nano (8GB of ram)
+### Phase 1: Monocular Camera (Current Implementation)
+
+```mermaid
+graph LR
+    A[Raw Image] --> B[Keypoint Detection Model]
+    B --> C[Detected Keypoints]
+    C --> D[PnP Algorithm]
+    E[Known Object Dimensions] --> D
+    D --> F[Distance Vector]
+    D --> G[Orientation]
+```
+
+**Pipeline Description:**
+1. Capture raw image from monocular camera
+2. Apply keypoint detection model to extract object features
+3. Leverage known object dimensions with detected keypoints
+4. Use Perspective-n-Point (PnP) algorithm to solve for 6DOF pose
+5. Output distance vector and orientation to the object
+
+### Phase 2: Stereo Camera (Future Development)
+
+```mermaid
+graph TB
+    subgraph Stereo_Hardware[Stereo Camera System]
+        A[Left Camera] --> C[Stereo Image Pair]
+        B[Right Camera] --> C
+        C --> D[Depth Map Generation]
+    end
+
+    subgraph ML_Pipeline[ML Component]
+        C --> E[Shared Backbone Network]
+        E --> F[Object Detection Head]
+        E --> G[Keypoint Detection Head]
+    end
+
+    subgraph SLAM_Pipeline[SLAM Component]
+        D --> H[Dense Depth Map]
+        F --> I[Object Distance Estimation]
+        G --> I
+        H --> I
+        I --> J[3D Object Localization]
+    end
+
+    J --> K[Position & Orientation Vectors]
+```
+
+**Pipeline Description:**
+1. **Stereo Capture**: Acquire synchronized image pairs from left and right cameras
+2. **Depth Estimation**: Generate dense depth map using stereo matching (SGBM)
+3. **ML Processing**:
+   - Single backbone network with dual heads for efficiency
+   - Object detection head for bounding boxes and classification
+   - Keypoint detection head for precise feature localization
+4. **SLAM Integration**:
+   - Fuse depth map with detected objects
+   - Compute accurate 3D positions of identified objects
+   - Output position and orientation vectors for navigation
+
+## Current Implementation Status
+
+```mermaid
+graph LR
+    A[Raw Image] --> B[YOLO Keypoint Model]
+    B --> C[Raw Keypoints]
+    C --> D[Post-Processing & Validation]
+    D --> E[Cleaned Keypoints]
+    E --> F[cv.solvePnP Algorithm]
+    F --> G[Object Pose Vector]
+    G --> H[Gate Center Offset]
+```
+
+**In Development:**
+- **Stereo Vision System**: Hardware integration and calibration in progress
+
+**Hardware:**
+- **Platform**: NVIDIA Jetson Orin Nano (8GB RAM)
+- **Performance**: Real-time inference capability
