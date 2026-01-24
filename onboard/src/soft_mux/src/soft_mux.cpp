@@ -15,7 +15,7 @@ SoftMux::SoftMux() : rclcpp::Node("SoftMux"), is_matlab_mode(false), no_ctrl_hea
     //Heartbeat Timers
     ctrl_heartbeat_timer = this->create_wall_timer(500ms, std::bind(&SoftMux::ctrl_heartbeat_check_callback, this));
     cli_heartbeat_timer = this->create_wall_timer(500ms, std::bind(&SoftMux::cli_heartbeat_check_callback, this));
-    mux_heartbeat_timer = this->create_wall_timer(1000ms, std::bind(&SoftMux::mux_heartbeat_send, this));
+    mux_heartbeat_timer = this->create_wall_timer(500ms, std::bind(&SoftMux::mux_heartbeat_send, this));
    
     //Services
     control_mode = this->create_service<std_srvs::srv::SetBool>("control_mode", std::bind(&SoftMux::set_mode_srv, this, std::placeholders::_1, std::placeholders::_2));
