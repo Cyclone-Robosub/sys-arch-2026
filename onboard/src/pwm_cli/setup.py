@@ -12,6 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
     ],
     install_requires=['setuptools'],
+	tests_require=['pytest'],
     zip_safe=True,
     maintainer='declan-whitlock',
     maintainer_email='dcwhitlock@ucdavis.edu',

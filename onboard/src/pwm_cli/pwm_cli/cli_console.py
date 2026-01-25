@@ -8,6 +8,7 @@ import math
 
 from .cli_publisher import *
 
+# Global variables
 cli = None
 default_power = 70
 timer_running = False
@@ -21,6 +22,7 @@ EMERGENCY_BRAKES = [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, 
 
 def main():
 	global current_command
+	global default_power
 	current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
 
 	rclpy.init(args=None)
@@ -35,22 +37,30 @@ def main():
 	heartbeat_thread = threading.Thread(name="heartbeat_thread", target=spin_heartbeat)
 	heartbeat_thread.start()
 
+	# Prints usage info to screen
 	info()
 
 	reading_input = True
 
-	# TODO: ADD LOOP HEADING
+	'''
+	Parses user input and takes action or translates into RobotCommand
+		If action is taken, the result is printed to the screen
+		If a RobotCommand is created, after confirmation the relevant pwms are published
+		Exception is the 'Stop' command, which is a RobotCommand that gets processed immediately
+	Ends excecution when the user types 'end session'
+	'''
 	while (reading_input):
 		user_input = input("Input a command: ").lower()
 
 		if (user_input == "end session"):
 			break
 
+		# Check whether user input is a valid command
 		command = translate_command(user_input)
 
 		# if an invalid command is inputted, warn the user
 		if command is None:
-			print(f"{user_input} is not a valid command")
+			print(f"{user_input} is not a valid command: type 'help' for valid commands.")
 			continue
 
 		# Valid non-robot commands should output their result
@@ -85,9 +95,6 @@ def main():
 	# Stop robot before shutting down cli
 	cli.publish_pwm(EMERGENCY_BRAKES)
 
-	# Stop heartbeat publishing 
-	# (.stop() does not exist. There are some issues with trying to stop the heartbeat thread, but it is low priority)
-	# heartbeat_thread.stop()
 	rclpy.shutdown()
 
 	print("Goodbye!")
@@ -215,8 +222,8 @@ def translate_command(command):
 	return None
 
 '''
-prints a list of all valid commands and examples of how to use them
-does not return a value
+Prints a list of all valid commands and examples of how to use them
+Does not return a value
 '''
 def info():
 	print("Notes:")
@@ -246,7 +253,8 @@ def info():
 	print("\n\n")
 
 '''
-returns string describing current command to user
+Describes the currently running RobotCommand, or says no commands are running
+returns a string describing current command to user
 '''
 def get_current_command():
 	global current_command
@@ -259,9 +267,9 @@ def get_current_command():
 
 
 '''
-Finds custom pwm value
-Checks pwm is found and between 110 and 1990
-returns pwm if valid else returns None
+Uses find_num_in_string() to look for a valid pwm value (between 1100 and 1900)
+string is the string to look through
+returns pwm if valid, or None otherwise
 '''
 def get_custom_pwm(string):
 	pwm = find_num_in_string(string)
@@ -294,6 +302,7 @@ def find_num_in_string(string):
 
 '''
 Waits for a timer with a given duration to finish, then sends a stop command
+	While waiting, checks whether it needs to terminate early without publishing
 duration is the duration the timer will wait in seconds
 Does not return a value
 '''
@@ -308,6 +317,10 @@ def run_command_timer(duration):
 	current_command = RobotCommand("Stop")
 	cli.publish_pwm(current_command.command_dictionary()["Stop"])
 
+'''
+Spins the HeartbeatPublisher
+Used as a threading target, as thread(rclpy.spin) crashes program
+'''
 def spin_heartbeat():
 	rclpy.spin(HeartbeatPublisher())
 
@@ -325,17 +338,29 @@ def confirm(prompt):
 		elif "no" in response:
 			return False
 
+
+'''
+Used to store the name, power, time, and pwm set for a thruster command
+name is the name of the command
+power is the percent of full power the command should run at (0-100%)
+time is the amount of the time the command should run for, or -1 if it is untimed
+pwm is the set of 8 pwms to be sent to the thrusters
+'''
 class RobotCommand():
 	def __init__(self, name = "Stop", power = default_power, time = -1, pwm = EMERGENCY_BRAKES):
 		self.name = name
 		self.power = power
 		self.time = time
 		self.pwm = pwm
-		
-	# Does this work with custom powers???
+	
+	'''
+	Calculates the pwm sets for all commands using the RobotCommand's power
+	Returns a dictionary with all calculated pwm sets obtained via their name
+	'''
+	# NOTE: Could be made more efficient by remaking to check self.name and return only that set
 	def command_dictionary(self):
-		pwm_fwd = math.floor(PWM_ZERO + 400 * (default_power / 100))
-		pwm_rev = math.ceil(PWM_ZERO - 400 * (default_power / 100))
+		pwm_fwd = math.floor(PWM_ZERO + 400 * (int(self.power) / 100))
+		pwm_rev = math.ceil(PWM_ZERO - 400 * (int(self.power) / 100))
 		# pwm order: [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
 		return {
 			"Stop" : [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
@@ -353,9 +378,13 @@ class RobotCommand():
 			"Roll Right" : [pwm_fwd, pwm_rev, pwm_fwd, pwm_rev, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO]
 		}
 
+	'''
+	Prints a confirmation message to screen and waits for the user to respond 'yes' or 'no'
+	self is the RobotCommand that needs to be confirmed
+	Returns whether the command should be run
+	'''
 	def confirm_command(self):
 		if self.time == -1:
 			return confirm(f"Are you sure you want to {self.name} at {self.power}% power until stopped? [yes/no]\n")
 		else:
 			return confirm(f"Are you sure you want to {self.name} at {self.power}% power for {self.time} seconds? [yes/no]\n")
-
