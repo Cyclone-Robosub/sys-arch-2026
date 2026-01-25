@@ -9,7 +9,7 @@ The vision system is designed to provide comprehensive environmental perception 
 - **Velocity Estimation**: Determine the robot's speed through visual odometry and temporal pose estimation
 - **Environmental Mapping**: Generate depth maps of the surrounding field
 - **Navigation Support**: Assist the navigation algorithm with waypoint following capabilities
-- **Dynamic Waypoint Generation**: Enable visual servoing by dynamically creating and tracking waypoints
+- **Dynamic Waypoint Generation**: Enable visual creating and tracking waypoints
 
 ### Simulation
 - **Synthetic Data Generation (Unreal)**: Generate photorealistic underwater imagery for training and testing detection + keypoint models
