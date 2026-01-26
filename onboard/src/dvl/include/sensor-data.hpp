@@ -20,6 +20,8 @@
 #include "custom_interfaces/msg/drr.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_srvs/srv/set_bool.hpp"
+#include "custom_interfaces/srv/set_config.hpp"
+#include "custom_interfaces/srv/set_serial.hpp"
 
 namespace dvl {
 struct VR {
@@ -78,10 +80,7 @@ uint8_t crc8(uint8_t*, int);
 
 class DVL : public rclcpp::Node {
     public:
-
-        DVL(const std::string& port, unsigned long baudrate = 115200) : rclcpp::Node ;
-
-        
+        DVL(const std::string& port, unsigned long baudrate = 115200);
         // PUBLIC API //
         //reads from actual DVL
         VR readVelocityReport(); //velocity report
@@ -91,21 +90,21 @@ class DVL : public rclcpp::Node {
         Config readConfig();
 
         //sets (returns true if acknowledge was received)
-        bool setConfig(float, float, std::string, std::string, std::string, std::string);
+        void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> response);
         bool resetDRR(); //reset the dead reckoning report
         bool resetGyro(); //zero the gyroscope
-        bool setSerialProtocol(int);
+        void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> response);
         bool triggerPing();
     private:
         rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocity_report_publisher;
         rclcpp::Publisher<custom_interfaces::msg::DRR>::SharedPtr drr_report_publisher;
         rclcpp::Publisher<custom_interfaces::msg::Config>::SharedPtr config_publisher;
 
-        rclcpp::Service<custom_interfaces::msg::Config>::SharedPtr setConfig;
-        rclcpp::Service<custom_interfaces::msg::DRR>::SharedPtr resetDRR;
-        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr resetGyro;
-        rclcpp::Service<std_msgs::msg::Int32>::SharedPtr setSerProtocol;
-
+        rclcpp::Service<custom_interfaces::srv::SetConfig>::SharedPtr config_service;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr drr_service;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gyro_service;
+        rclcpp::Service<custom_interfaces::srv::SetSerial>::SharedPtr set_serr_protocol;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr trigger_ping;
         /*
         Outgoing messages are expected in the format "[SOP][DIR_CMD][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n". Options are only needed for some commands
 

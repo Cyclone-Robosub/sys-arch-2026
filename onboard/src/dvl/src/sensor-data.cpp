@@ -4,7 +4,7 @@
 namespace dvl {
 
     // Constructor
-    DVL::DVL(const std::string& port, unsigned long baudrate = 115200) : rclcpp::Node {
+    DVL::DVL(const std::string& port, unsigned long baudrate) : rclcpp::Node("DVL") {
         //error config definition
         error_config.speed_of_sound = 0.0;
         error_config.mounting_rotation_offset = 0.0;
@@ -15,10 +15,11 @@ namespace dvl {
         config = error_config; //this will get overwritten by the first successful readConfig
 
         //Services
-        resetDRR = this->create_service<custom_interfaces::msg::DRR>("set_drr", std::bind(&DVL::resetDRR(), this, std::placeholders::_1));
-        resetGyro = this->create_service<std_srvs::srv::SetBool>("set_gyro", std::bind(&DVL::resetGyro(), this, std::placeholders::_1));
-        setSerrProtocol = this->create_service<std_msgs::msg::Int32>("set_serial_protocol", std::bind(&DVL::setSerialProtocol(), this, std::placeholders::_1, std::placeholders::_2));
-        triggerPing = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&DVL::triggerPing(), this, std::placeholders::_1));
+        config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig(), this, std::placeholders::_1, std::placeholders::_2));
+        drr_service = this->create_service<std_srvs::srv::SetBool>("set_drr", std::bind(&DVL::resetDRR(), this, std::placeholders::_1));
+        gyro_service = this->create_service<std_srvs::srv::SetBool>("set_gyro", std::bind(&DVL::resetGyro(), this, std::placeholders::_1));
+        set_serr_protocol = this->create_service<custom_interfaces::srv::SetSerial>("set_serial_protocol", std::bind(&DVL::setSerialProtocol(), this, std::placeholders::_1, std::placeholders::_2));
+        trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&DVL::triggerPing(), this, std::placeholders::_1));
 
         //Publishers
         velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("VR", 10);
@@ -139,9 +140,9 @@ namespace dvl {
 
 
     // Public Writes
-    bool DVL::setConfig(custom_interfaces::msg::Config::SharedPtr config/*float speed_of_sound, float mounting_rotation_offset, std::string acoustic_enabled, std::string dark_mode_enabled, std::string range_mode, std::string periodic_cycling_enabled*/){
+    void DVL::setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> response)/*float speed_of_sound, float mounting_rotation_offset, std::string acoustic_enabled, std::string dark_mode_enabled, std::string range_mode, std::string periodic_cycling_enabled*/){
         //to do: add setting args
-        return sendCommand(CMD_SET_SETTINGS, {std::to_string(config->speed_of_sound),std::to_string(config->mounting_rotation_offset), config->acoustic_enabled, config->range_mode, config->periodic_cycling_enabled});
+        response->success = sendCommand(CMD_SET_SETTINGS, {std::to_string(request->config_data.speed_of_sound),std::to_string(config->mounting_rotation_offset), config->acoustic_enabled, config->range_mode, config->periodic_cycling_enabled});
 
     }
 
@@ -175,12 +176,12 @@ namespace dvl {
 
     }
 
-    bool DVL::setSerialProtocol(std_msgs::msg::Int32 protocol){
-        sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(protocol.data)}); //currently only can be used to start serial output
+    void DVL::setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> response){
+        sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(request->serial)}); //currently only can be used to start serial output
         if(holdForResponse(ACK)){
-            return true;
+            response->success = true;
         } else{
-            return false;
+            response->success = false;
         }
     }
 
