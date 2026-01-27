@@ -113,28 +113,28 @@ void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
 }
 
 
-Pico_FD::Pico_FD(std::string path) : 
+Path_FD::Path_FD(std::string path) : 
     FD_Interface(),
     path(path) 
      {
     fd = open_pico_serial();
 }
 
-int Pico_FD::get_fd() {
+int Path_FD::get_fd() {
     return fd;
 }
 
-void Pico_FD::attempt_reconnect() {
+void Path_FD::attempt_reconnect() {
     fd = open_pico_serial();
 }
 
-void Pico_FD::close_fd() {
+void Path_FD::close_fd() {
     if (fd >= 0) {
         close(fd);
     }
 }
 
-int Pico_FD::open_pico_serial() {
+int Path_FD::open_pico_serial() {
     struct termios options;
     speed_t baud = 115200;
     int status, fd;
@@ -174,29 +174,29 @@ int Pico_FD::open_pico_serial() {
     return fd;
 }
 
-Pico_FD::~Pico_FD() {
+Path_FD::~Path_FD() {
     close_fd();
 }
 
-Pipe_FD::Pipe_FD(int fd) :
+Direct_FD::Direct_FD(int fd) :
     FD_Interface()
      {
         this->fd = fd;
 }
 
-int Pipe_FD::get_fd() {
+int Direct_FD::get_fd() {
     return fd;
 }
-void Pipe_FD::attempt_reconnect() {
+void Direct_FD::attempt_reconnect() {
     return;
 }
-void Pipe_FD::close_fd() {
+void Direct_FD::close_fd() {
     if (fd >= 0) {
         close(fd);
     }
 }
 
-Pipe_FD::~Pipe_FD() {
+Direct_FD::~Direct_FD() {
     close_fd();
 }
 
@@ -205,7 +205,7 @@ Pipe_FD::~Pipe_FD() {
 
 int main(int argc, char* argv[]) {
     std::vector<int> thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
-    std::unique_ptr<FD_Interface> fd = std::make_unique<Pico_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
+    std::unique_ptr<FD_Interface> fd = std::make_unique<Path_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
     rclcpp::init(argc, argv);
     auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, std::move(fd), 1200, 1800);
     rclcpp::spin(thrust_interface);

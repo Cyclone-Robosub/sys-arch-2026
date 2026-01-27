@@ -91,7 +91,7 @@ protected:
     void create_node_with_params(int min_pwm, int max_pwm) {
         // Use pipe_fds[1] (write end) as the file descriptor
         // The node will write to it, and we'll read from pipe_fds[0]
-        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Pipe_FD>(pipe_fds[1]);
+        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(pipe_fds[1]);
 
         node = std::make_shared<Thrust_Interface>(
             test_thrusters, 

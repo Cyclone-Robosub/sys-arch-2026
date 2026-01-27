@@ -21,25 +21,25 @@ public:
     virtual void close_fd() = 0;
 };
 
-class Pico_FD : public FD_Interface {
+class Path_FD : public FD_Interface {
 protected:
     std::string path;
     int open_pico_serial();
 public:
-    Pico_FD(std::string path);
+    Path_FD(std::string path);
     int get_fd() override;
     void attempt_reconnect() override;
     void close_fd() override;
-    ~Pico_FD();
+    ~Path_FD();
 };
 
-class Pipe_FD : public FD_Interface {
+class Direct_FD : public FD_Interface {
 public:
-    Pipe_FD(int fd);
+    Direct_FD(int fd);
     int get_fd() override;
     void attempt_reconnect() override;
     void close_fd() override;
-    ~Pipe_FD();
+    ~Direct_FD();
 };
 
 class Thrust_Interface : public rclcpp::Node {
