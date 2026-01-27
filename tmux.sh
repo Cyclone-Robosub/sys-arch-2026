@@ -16,4 +16,5 @@ tmux send-keys -t $SESSION:0.0 'ros2 run thrust_interface thrust_interface' C-m
 tmux send-keys -t $SESSION:0.1 'source install/setup.sh' C-m
 tmux send-keys -t $SESSION:0.1 'ros2 run soft_mux soft_mux' C-m
 
-# 
+# Bring the tmux session to the foreground
+tmux attach -t $SESSION
