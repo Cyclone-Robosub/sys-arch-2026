@@ -80,8 +80,11 @@ uint8_t crc8(uint8_t*, int);
 
 class DVL : public rclcpp::Node {
     public:
-        DVL(const std::string& port, unsigned long baudrate = 115200);
+        DVL(int fd, unsigned long baudrate = 115200);
         // PUBLIC API //
+
+        static int open_serial(std::string path);
+
         //reads from actual DVL
         VR readVelocityReport(); //velocity report
         DRR readDRReport(); //dead reckoning report
@@ -89,12 +92,16 @@ class DVL : public rclcpp::Node {
         std::string readDetails();
         Config readConfig();
 
+        void publishVR();
+        void publishDRR();
+        void publishConfig();
+
         //sets (returns true if acknowledge was received)
-        void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> response);
-        bool resetDRR(); //reset the dead reckoning report
-        bool resetGyro(); //zero the gyroscope
-        void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> response);
-        bool triggerPing();
+        void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response);
+        void resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //reset the dead reckoning report
+        void resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //zero the gyroscope
+        void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
+        void triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
     private:
         rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocity_report_publisher;
         rclcpp::Publisher<custom_interfaces::msg::DRR>::SharedPtr drr_report_publisher;
@@ -116,15 +123,15 @@ class DVL : public rclcpp::Node {
         VR vr, error_vr;
         DRR drr, error_drr;
 
-        Config config, error_config;
+        Config error_config, config;
         
         std::string version; //Protocol version "major.minor.patch"
         std::string product_details;
 
         // PRIVATE METHODS //
-        bool parseResponse(std::string&); //parses text string from DVL into the results structure
-        bool holdForResponse(const char); 
-        bool sendCommand(uint8_t, const std::vector<std::string>& = {});
+        bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
+        bool holdForResponse(const char expected_response); 
+        bool sendCommand(uint8_t cmd, const std::vector<std::string>& options = {});
 };
 
 }
