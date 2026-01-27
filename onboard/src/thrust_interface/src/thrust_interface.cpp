@@ -30,11 +30,6 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters,
     heartbeat_subscription = this->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, 
             std::bind(&Thrust_Interface::mux_heartbeat_received_callback, this, std::placeholders::_1));
     
-    if (pico_fd < 0) {
-        RCLCPP_ERROR(this->get_logger(), "Invalid file descriptor provided: %d", pico_fd->get_fd());
-        exit(42);
-    }
-    
     heartbeat_timer = this->create_wall_timer(500ms, 
             std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer
 }
