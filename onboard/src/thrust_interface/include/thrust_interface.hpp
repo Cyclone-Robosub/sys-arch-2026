@@ -65,7 +65,6 @@ private:
     int max_pwm;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_heartbeat;
     bool no_heartbeat;
-    int write_failure_count;
 
     std::mutex serial_mutex;
 };

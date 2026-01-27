@@ -20,8 +20,7 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters,
     pico_fd(std::move(pico_fd)),
     min_pwm(min_pwm), 
     max_pwm(max_pwm),
-    no_heartbeat(true),
-    write_failure_count(0)
+    no_heartbeat(true)
      {
     
     pwm_received_subscription = this->create_subscription<custom_interfaces::msg::Pwms>(
