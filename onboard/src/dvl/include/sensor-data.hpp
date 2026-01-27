@@ -1,0 +1,137 @@
+#pragma once
+
+#include <chrono>
+#include "rclcpp/rclcpp.hpp"
+#include <string>
+#include <cstdint>
+#include <array>
+#include <vector>
+#include <sstream>
+#include <iomanip>
+#include <stdexcept>
+#include <fcntl.h>
+#include <unistd.h>
+#include <termios.h>
+#include <errno.h>
+#include <cstring>
+#include <iostream>
+#include "custom_interfaces/msg/config.hpp"
+#include "custom_interfaces/msg/vr.hpp"
+#include "custom_interfaces/msg/drr.hpp"
+#include "std_msgs/msg/bool.hpp"
+#include "std_srvs/srv/set_bool.hpp"
+#include "custom_interfaces/srv/set_config.hpp"
+#include "custom_interfaces/srv/set_serial.hpp"
+
+namespace dvl {
+struct VR {
+    float vx = 0, vy = 0, vz = 0, altitude = 0, fom = 0, time = 0;
+    std::array<float,9> covariance = {0};
+    int64_t time_of_validity = 0, time_of_transmission = 0;
+    char valid = 'n';
+    uint8_t status = 0x00; 
+};
+
+struct DRR {
+    int64_t time_stamp = 0;
+    float x = 0, y = 0, z = 0, pos_std = 0, roll = 0, pitch = 0, yaw = 0;
+    uint8_t status = 0x00;
+};
+
+struct Config {
+    float speed_of_sound;
+    float mounting_rotation_offset;
+    std::string acoustic_enabled; //y or n
+    std::string dark_mode_enabled; //y or n
+    std::string range_mode = "auto";
+    std::string periodic_cycling_enabled; //y or n
+};
+
+// Protocol definitions
+static constexpr uint8_t SOP = 'w'; //start of package
+static constexpr std::array<uint8_t,2> EOP = {'\n','\r'}; //possible end of packets bytes
+static constexpr uint8_t DIR_CMD = 'c'; //command
+static constexpr uint8_t DIR_RESP = 'r'; //response
+static constexpr uint8_t CS = '*'; //checksum 
+
+//valid options for [CMD] in outgoing message
+static constexpr uint8_t CMD_GET_VERSION = 'v';
+static constexpr uint8_t CMD_GET_PRODUCT_DETAIL = 'w';
+static constexpr uint8_t CMD_SET_SETTINGS = 's';
+static constexpr uint8_t CMD_GET_SETTINGS = 'c';
+static constexpr uint8_t CMD_RESET_DR = 'r';
+static constexpr uint8_t CMD_TRIGGER_PING = 'x';
+static constexpr uint8_t CMD_CALIBRATE_GYRO = 'g';
+static constexpr uint8_t CMD_CHANGE_SER_OUTPUT = 'p';
+
+static constexpr uint8_t REC_VR = 'z'; //receive velocity report
+static constexpr uint8_t REC_TR = 'u'; //receive transducer report
+static constexpr uint8_t REC_DRR = 'p'; //receive dead reckoning report
+
+static constexpr uint8_t ACK = 'a';
+
+// list of valid outgoing commands
+static constexpr std::array<char,8> VALID_OUT = {CMD_GET_VERSION, CMD_GET_PRODUCT_DETAIL, CMD_SET_SETTINGS, CMD_GET_SETTINGS, CMD_RESET_DR, CMD_TRIGGER_PING, CMD_CALIBRATE_GYRO, CMD_CHANGE_SER_OUTPUT};
+
+// list of valid received commands
+static constexpr std::array<char,11> VALID_IN = {REC_VR, REC_TR, REC_DRR, CMD_GET_VERSION, CMD_GET_PRODUCT_DETAIL, CMD_SET_SETTINGS, CMD_GET_SETTINGS, CMD_RESET_DR, CMD_TRIGGER_PING, CMD_CALIBRATE_GYRO, CMD_CHANGE_SER_OUTPUT};
+
+uint8_t crc8(uint8_t*, int);
+
+class DVL : public rclcpp::Node {
+    public:
+        DVL(int fd, unsigned long baudrate = 115200);
+        // PUBLIC API //
+
+        static int open_serial(std::string path);
+
+        //reads from actual DVL
+        VR readVelocityReport(); //velocity report
+        DRR readDRReport(); //dead reckoning report
+        std::string readVersion();
+        std::string readDetails();
+        Config readConfig();
+
+        void publishVR();
+        void publishDRR();
+        void publishConfig();
+
+        //sets (returns true if acknowledge was received)
+        void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response);
+        void resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //reset the dead reckoning report
+        void resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //zero the gyroscope
+        void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
+        void triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+    private:
+        rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocity_report_publisher;
+        rclcpp::Publisher<custom_interfaces::msg::DRR>::SharedPtr drr_report_publisher;
+        rclcpp::Publisher<custom_interfaces::msg::Config>::SharedPtr config_publisher;
+
+        rclcpp::Service<custom_interfaces::srv::SetConfig>::SharedPtr config_service;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr drr_service;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gyro_service;
+        rclcpp::Service<custom_interfaces::srv::SetSerial>::SharedPtr set_serr_protocol;
+        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr trigger_ping;
+        /*
+        Outgoing messages are expected in the format "[SOP][DIR_CMD][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n". Options are only needed for some commands
+
+        Incoming messages are expected in the format "[SOP]{DIR_RESP][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n" Options are only needed for some commands. EOP may be "\n", "\r", or "\r\n"
+        */
+
+        // PRIVATE VARS //
+        int fd;
+        VR vr, error_vr;
+        DRR drr, error_drr;
+
+        Config error_config, config;
+        
+        std::string version; //Protocol version "major.minor.patch"
+        std::string product_details;
+
+        // PRIVATE METHODS //
+        bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
+        bool holdForResponse(const char expected_response); 
+        bool sendCommand(uint8_t cmd, const std::vector<std::string>& options = {});
+};
+
+}

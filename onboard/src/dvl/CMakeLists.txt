@@ -3,13 +3,30 @@ project(dvl)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-g)
 endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(custom_interfaces REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+
+include_directories(
+  ${PROJECT_SOURCE_DIR}/include
+)
+
+add_executable(dvl src/sensor-data.cpp)
+ament_target_dependencies(dvl rclcpp custom_interfaces std_srvs)
+
+install(TARGETS
+  dvl
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -21,6 +38,20 @@ if(BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+
+  add_library(${PROJECT_NAME}_lib src/sensor-data.cpp)
+  target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
+  ament_target_dependencies(${PROJECT_NAME}_lib
+    rclcpp
+    custom_interfaces
+    std_msgs
+    std_srvs
+  )
+  target_include_directories(${PROJECT_NAME}_lib PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+  )
+
 endif()
 
 ament_package()
