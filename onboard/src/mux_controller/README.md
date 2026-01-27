@@ -6,6 +6,8 @@ This is a small terminal program to control the `soft_mux` node (i.e. to switch 
 ## How do I use it?
 Run it in the terminal, and type either `0` or `1` to select which input `soft_mux` listens to. If you get a message saying `No heartbeat detected from Mux!`, `soft_mux` probably isn't running or isn't able to connect to this program. Check that you're on the same network as `soft_mux`.
 
+The package and node are both called `mux_controller`, so to run it type `ros2 run mux_controller mux_controller`.
+
 ## What nodes/topics/services does depend on?
 - Node: `softmux`
 - Topics:
