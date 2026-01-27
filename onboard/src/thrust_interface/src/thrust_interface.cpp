@@ -34,7 +34,7 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters, int pico_fd,
     }
     
     heartbeat_timer = this->create_wall_timer(500ms, 
-            std::bind(&Thrust_Interface::heartbeat_check_callback, this)); // heartbeat timer    
+            std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer    
 }
     
 void Thrust_Interface::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
@@ -48,7 +48,7 @@ void Thrust_Interface::pwm_received_subscription_callback(custom_interfaces::msg
             pwms[i] = std::max(pwms[i], min_pwm);
             pwms[i] = std::min(pwms[i], max_pwm);
         }
-        send_to_pico(thrusters[i], pwms[i]);
+        send_pwm_to_pico(thrusters[i], pwms[i]);
     }
 }
 
@@ -60,25 +60,46 @@ void Thrust_Interface::mux_heartbeat_received_callback(std_msgs::msg::Bool::Uniq
     (void)heartbeat; // stop compiler complaining
 }
 
-void Thrust_Interface::heartbeat_check_callback() {
+void Thrust_Interface::evaluate_mux_heartbeat_freshness() {
     auto current_time = std::chrono::steady_clock::now();
     if (current_time - most_recent_heartbeat > 1s) {
         RCLCPP_INFO(this->get_logger(), "Didn't get heartbeat from mux. Sending stop command.");
         no_heartbeat = true;
         for (int i = 0; i < 8; i++) {
-            send_to_pico(thrusters[i], 1500);
+            send_pwm_to_pico(thrusters[i], 1500);
         }
     }
     else {
         no_heartbeat = false;
     }
 }
+void Thrust_Interface::send_heartbeat_to_pico() {
+    std::string serial_message = "ping\n";
+    int length = serial_message.size();
+    
+    serial_mutex.lock();
+    ssize_t bytes_written = write(pico_fd, serial_message.c_str(), length);
+    serial_mutex.unlock();
+    
+    if (bytes_written != length) {
+        RCLCPP_WARN(this->get_logger(), 
+                    "Failed to ping Pico (wrote %zd/%d bytes)", 
+                    bytes_written, length);
+    }
+}
 
-void Thrust_Interface::send_to_pico(int thruster, int pwm) {
+void Thrust_Interface::heartbeat_callback() {
+    send_heartbeat_to_pico();
+    evaluate_mux_heartbeat_freshness();
+}
+
+void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
     std::string serial_message = "Set " + std::to_string(thruster) + " PWM " + std::to_string(pwm) + "\n";
     int length = serial_message.size();
     
+    serial_mutex.lock();
     ssize_t bytes_written = write(pico_fd, serial_message.c_str(), length);
+    serial_mutex.unlock();
     
     if (bytes_written != length) {
         RCLCPP_WARN(this->get_logger(), 
