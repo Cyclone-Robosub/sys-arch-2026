@@ -17,6 +17,7 @@ public:
                      int min_pwm, int max_pwm);
     
     static int open_pico_serial(std::string pico_path);
+    static inline bool write_failure_exit {false};
     
 private:
     void pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg);
@@ -35,6 +36,7 @@ private:
     int max_pwm;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_heartbeat;
     bool no_heartbeat;
+    int write_failure_count;
 
     std::mutex serial_mutex;
 };

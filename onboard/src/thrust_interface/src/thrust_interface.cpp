@@ -7,6 +7,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 /* For serial */
+#include <signal.h>
 
 using namespace std::chrono_literals;
 using namespace rclcpp;
@@ -18,7 +19,8 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters, int pico_fd,
     pico_fd(pico_fd),
     min_pwm(min_pwm), 
     max_pwm(max_pwm),
-    no_heartbeat(true)
+    no_heartbeat(true),
+    write_failure_count(0)
      {
     
     pwm_received_subscription = this->create_subscription<custom_interfaces::msg::Pwms>(
@@ -34,7 +36,9 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters, int pico_fd,
     }
     
     heartbeat_timer = this->create_wall_timer(500ms, 
-            std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer    
+            std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer
+    
+    write_failure_exit = false;
 }
     
 void Thrust_Interface::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
@@ -85,6 +89,12 @@ void Thrust_Interface::send_heartbeat_to_pico() {
         RCLCPP_WARN(this->get_logger(), 
                     "Failed to ping Pico (wrote %zd/%d bytes)", 
                     bytes_written, length);
+        write_failure_count++;
+    }
+    if (write_failure_count >= 100) {
+        write_failure_exit = true;
+        RCLCPP_ERROR(this->get_logger(), "Exiting thruster_interface due to write issues.");
+        raise(SIGINT);
     }
 }
 
@@ -105,6 +115,12 @@ void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
         RCLCPP_WARN(this->get_logger(), 
                     "Failed to write complete message for thruster %d (wrote %zd/%d bytes)", 
                     thruster, bytes_written, length);
+        write_failure_count++;
+    }
+    if (write_failure_count >= 100) {
+        write_failure_exit = true;
+        RCLCPP_ERROR(this->get_logger(), "Exiting thruster_interface due to write issues.");
+        raise(SIGINT);
     }
 }
 
@@ -152,10 +168,26 @@ int Thrust_Interface::open_pico_serial(std::string pico_path) {
 
 int main(int argc, char* argv[]) {
     std::vector<int> thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
-    int fd = Thrust_Interface::open_pico_serial("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_60fdf513bf90cb73-if00");
-
+    int fd = Thrust_Interface::open_pico_serial("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<Thrust_Interface>(thrusters, fd, 1200, 1800));
+    auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, fd, 1200, 1800);
+    rclcpp::spin(thrust_interface);
+    
+    /* Some level of automatic recovery if we lose the Pico for a short amount of time */
+    while (Thrust_Interface::write_failure_exit) {
+        usleep(100000); //wait 0.1 seconds before looping to avoid excessive CPU usage
+        RCLCPP_WARN(thrust_interface->get_logger(), "Attempting to restart thruster_interface.");
+        fd = Thrust_Interface::open_pico_serial("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
+        if (fd < 0) { // Still can't connect to Pico...
+            RCLCPP_WARN(thrust_interface->get_logger(), "Unable to connect to Pico.");
+            continue;
+        }
+        rclcpp::shutdown();
+        rclcpp::init(argc, argv);
+        auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, fd, 1200, 1800);
+        rclcpp::spin(thrust_interface);
+    }
+
     rclcpp::shutdown();
 
     if (fd >= 0) {
