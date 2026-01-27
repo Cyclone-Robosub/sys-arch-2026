@@ -1,4 +1,20 @@
+# `dvl`
+
+## What is it?
+[comment]: # (TODO: provide a brief summary of the package)
+
+## How do I use it?
+[comment]: # (TODO: provide a summary of the steps to use the node. In this case, that's probably just a summary of the things that the node publishes, and the services it provides.)
+The package is called `dvl` and the node is called `dvl`, so to run it type `ros2 run dvl dvl`.
+
+## What nodes/topics/services does depend on?
+[comment]: # (TODO: add any dependencies from other packages. This means any nodes that it expects to be running, any topics it subscribes to, or any services that it calls. If there aren't any, put "none.")
+- Nodes: 
+- Topics:
+- Services:
+
 ## custom data types 
+[comment]: # (TODO: move the following to the custom interfaces README file, following the format used there)
 
 VR\
     TwistWithCovariance.msg: float vx = 0, vy = 0, vx = 0, covariance = 0\
