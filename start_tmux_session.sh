@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# This script sets up a tmux session 
+# Use this as a startup script on the robot
+# This script sets up a tmux session and runs each component in its own pane/window
 
 SESSION="manny"
+
+###-------------------------------
+# set up the main window running thrust interface, mux, btop, and mux_controller
 
 # start a new tmux session named "manny" in detached mode
 tmux new-session -d -s $SESSION
@@ -22,8 +26,11 @@ tmux send-keys -t $SESSION:0.2 'btop' C-m
 
 # set up the fourth pane running mux_controller
 tmux split-window -v -t $SESSION:0.0 # split the first pane vertically
-tmux send-keys -t $SESSION:0.3 'source install/setup.sh' C-m
-tmux send-keys -t $SESSION:0.3 'ros2 run mux_controller mux_controller' C-m
+tmux send-keys -t $SESSION:0.1 'source install/setup.sh' C-m 
+tmux send-keys -t $SESSION:0.1 'ros2 run mux_controller mux_controller' C-m
+
+###-------------------------------
+# set up the streaming and recording in a new window
 
 # Bring the tmux session to the foreground
 tmux attach -t $SESSION
