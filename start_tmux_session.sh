@@ -50,12 +50,12 @@ tmux send-keys -t $SESSION:0.1 'ros2 run mux_controller mux_controller' C-m
 tmux new-window -t $SESSION
 
 # --- mediaMTX ---
-tmux send-keys -t $SESSION:1 'cd ~/mediaMTX && ./mediamtx' C-m
+tmux send-keys -t $SESSION:-1 'cd ~/mediaMTX && ./mediamtx' C-m
 
 # --- ffmpeg ---
-tmux split-window -h -t $SESSION:1
-tmux send-keys -t $SESSION:1.1 'cd ~/recordings' C-m
-tmux send-keys -t $SESSION:1.1 \
+tmux split-window -h -t $SESSION:-1
+tmux send-keys -t $SESSION:-1.1 'cd ~/recordings' C-m
+tmux send-keys -t $SESSION:-1.1 \
     'ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
     -fflags +genpts \
     -i /dev/video2 \
@@ -66,7 +66,16 @@ tmux send-keys -t $SESSION:1.1 \
 # SECTION 3: (Optional) joystick logger and rosbridge Window
 ################################################################################
 
+tmux new-window -t $SESSION
 
+# --- rosbridge server ---
+tmux send-keys -t $SESSION:-1 'source install/setup.sh' C-m
+tmux send-keys -t $SESSION:-1 'ros2 launch rosbridge_server rosbridge_websocket_launch.xml' C-m
+
+# --- joystick logger ---
+tmux split-window -v -t $SESSION:-1
+tmux send-keys -t $SESSION:-1.1 'source install/setup.sh' C-m
+tmux send-keys -t $SESSION:-1.1 'ros2 run joystick_logger logger' C-m
 
 ################################################################################
 # Attach to Session
