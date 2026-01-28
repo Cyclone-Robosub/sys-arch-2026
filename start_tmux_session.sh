@@ -55,8 +55,8 @@ tmux send-keys -t $SESSION:$WINDOW 'cd ~/mediaMTX && ./mediamtx' C-m
 
 # --- ffmpeg ---
 tmux split-window -h -t $SESSION:$WINDOW
-sleep 0.1
-notify-send $WINDOW
+# sleep 0.3
+# notify-send $WINDOW # Debugging line to see window index
 WINDOW=$(echo $WINDOW | cut -d. -f1)
 tmux send-keys -t $SESSION:$WINDOW.1 'cd ~/recordings' C-m
 tmux send-keys -t $SESSION:$WINDOW.1 'ffmpeg -f v4l2 -input_format h264 \
@@ -69,6 +69,7 @@ tmux send-keys -t $SESSION:$WINDOW.1 'ffmpeg -f v4l2 -input_format h264 \
 ################################################################################
 # SECTION 3: (Optional) 
 ################################################################################
+
 
 
 ################################################################################
