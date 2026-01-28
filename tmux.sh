@@ -20,5 +20,10 @@ tmux send-keys -t $SESSION:0.1 'ros2 run soft_mux soft_mux' C-m
 tmux split-window -v -t $SESSION:0.1 # split the second pane vertically
 tmux send-keys -t $SESSION:0.2 'btop' C-m
 
+# set up the fourth pane running mux_controller
+tmux split-window -v -t $SESSION:0.0 # split the first pane vertically
+tmux send-keys -t $SESSION:0.3 'source install/setup.sh' C-m
+tmux send-keys -t $SESSION:0.3 'ros2 run mux_controller mux_controller' C-m
+
 # Bring the tmux session to the foreground
 tmux attach -t $SESSION
