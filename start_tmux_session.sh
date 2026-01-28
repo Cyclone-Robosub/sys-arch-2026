@@ -63,19 +63,9 @@ tmux send-keys -t $SESSION:-1.1 \
     -c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S).mp4' C-m
 
 ################################################################################
-# SECTION 3: (Optional) joystick logger and rosbridge Window
+# SECTION 3: (Optional) 
 ################################################################################
 
-tmux new-window -t $SESSION
-
-# --- rosbridge server ---
-tmux send-keys -t $SESSION:-1 'source install/setup.sh' C-m
-tmux send-keys -t $SESSION:-1 'ros2 launch rosbridge_server rosbridge_websocket_launch.xml' C-m
-
-# --- joystick logger ---
-tmux split-window -v -t $SESSION:-1
-tmux send-keys -t $SESSION:-1.1 'source install/setup.sh' C-m
-tmux send-keys -t $SESSION:-1.1 'ros2 run joystick_logger logger' C-m
 
 ################################################################################
 # Attach to Session
