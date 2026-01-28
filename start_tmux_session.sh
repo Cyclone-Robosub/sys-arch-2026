@@ -1,36 +1,69 @@
 #!/bin/bash
 
-# Use this as a startup script on the robot
-# This script sets up a tmux session and runs each component in its own pane/window
+################################################################################
+# RoboSub System Startup Script
+################################################################################
+# Purpose: Start all component using one script
+# Usage: Creates a tmux session named "manny" 
+#
+# Layout Overview:
+#   Window 0 (Main):
+#     ┌─────────────────┬─────────────────┐
+#     │  thrust_        │  soft_mux       │
+#     │  interface      │                 │
+#     ├─────────────────┤─────────────────┤
+#     │  mux_controller │  btop (monitor) │
+#     └─────────────────┴─────────────────┘
+################################################################################
 
 SESSION="manny"
 
-###-------------------------------
-# set up the main window running thrust interface, mux, btop, and mux_controller
+################################################################################
+# SECTION 1: Main Window - Core System Components
+################################################################################
 
-# start a new tmux session named "manny" in detached mode
+# Create new detached tmux session
 tmux new-session -d -s $SESSION
 
-# set up the first pane running thrust interface
-tmux split-window -h -t $SESSION # split the window horizontally
+# --- Thrust Interface ---
+tmux split-window -h -t $SESSION
 tmux send-keys -t $SESSION:0.0 'source install/setup.sh' C-m
 tmux send-keys -t $SESSION:0.0 'ros2 run thrust_interface thrust_interface' C-m
 
-# set up the second pane running mux
+# --- Software Multiplexer ---
 tmux send-keys -t $SESSION:0.1 'source install/setup.sh' C-m
 tmux send-keys -t $SESSION:0.1 'ros2 run soft_mux soft_mux' C-m
 
-# set up the third pane running btop
-tmux split-window -v -t $SESSION:0.1 # split the second pane vertically
+# --- System Monitor (btop) ---
+tmux split-window -v -t $SESSION:0.1
 tmux send-keys -t $SESSION:0.2 'btop' C-m
 
-# set up the fourth pane running mux_controller
-tmux split-window -v -t $SESSION:0.0 # split the first pane vertically
-tmux send-keys -t $SESSION:0.1 'source install/setup.sh' C-m 
+# --- Mux Controller ---
+tmux split-window -v -t $SESSION:0.0
+tmux send-keys -t $SESSION:0.1 'source install/setup.sh' C-m
 tmux send-keys -t $SESSION:0.1 'ros2 run mux_controller mux_controller' C-m
 
-###-------------------------------
-# set up the streaming and recording in a new window
+################################################################################
+# SECTION 2: (Optional) Video Streaming and Recording Window
+################################################################################
 
-# Bring the tmux session to the foreground
+tmux new-window -t $SESSION
+
+# --- mediaMTK ---
+tmux send-keys -t $SESSION:1 'cd ~/mediaMTK && ./mediamtk' C-m
+
+# --- ffmpeg ---
+tmux split-window -h -t $SESSION:1
+tmux send-keys -t $SESSION:1.1 \
+    'ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
+    -fflags +genpts \
+    -i /dev/video2 \
+    -c:v copy -f rtsp rtsp://localhost:8554/cam \
+    -c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S).mp4' C-m
+
+################################################################################
+# Attach to Session
+################################################################################
+
+# Bring the configured tmux session to the foreground
 tmux attach -t $SESSION
