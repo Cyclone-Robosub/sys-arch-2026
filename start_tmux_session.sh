@@ -49,11 +49,12 @@ tmux send-keys -t $SESSION:0.1 'ros2 run mux_controller mux_controller' C-m
 
 tmux new-window -t $SESSION
 
-# --- mediaMTK ---
-tmux send-keys -t $SESSION:1 'cd ~/mediaMTK && ./mediamtk' C-m
+# --- mediaMTX ---
+tmux send-keys -t $SESSION:1 'cd ~/mediaMTX && ./mediamtx' C-m
 
 # --- ffmpeg ---
 tmux split-window -h -t $SESSION:1
+tmux send-keys -t $SESSION:1.1 'cd ~/recordings' C-m
 tmux send-keys -t $SESSION:1.1 \
     'ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
     -fflags +genpts \
@@ -62,8 +63,17 @@ tmux send-keys -t $SESSION:1.1 \
     -c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S).mp4' C-m
 
 ################################################################################
+# SECTION 3: (Optional) joystick logger and rosbridge Window
+################################################################################
+
+
+
+################################################################################
 # Attach to Session
 ################################################################################
+
+# Select the main window
+tmux select-window -t $SESSION:0
 
 # Bring the configured tmux session to the foreground
 tmux attach -t $SESSION
