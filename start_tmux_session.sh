@@ -48,15 +48,13 @@ tmux send-keys -t $SESSION:0.1 'ros2 run mux_controller mux_controller' C-m
 ################################################################################
 
 # Create new window and capture its index
-WINDOW=$(tmux new-window -t $SESSION -P | cut -d: -f2)
+WINDOW=$(tmux new-window -t $SESSION -P | cut -d: -f2) # WINDOW=1.0
 
 # --- mediaMTX ---
 tmux send-keys -t $SESSION:$WINDOW 'cd ~/mediaMTX && ./mediamtx' C-m
 
 # --- ffmpeg ---
 tmux split-window -h -t $SESSION:$WINDOW
-# sleep 0.3
-# notify-send $WINDOW # Debugging line to see window index
 WINDOW=$(echo $WINDOW | cut -d. -f1)
 tmux send-keys -t $SESSION:$WINDOW.1 'cd ~/recordings' C-m
 tmux send-keys -t $SESSION:$WINDOW.1 'ffmpeg -f v4l2 -input_format h264 \
@@ -67,10 +65,15 @@ tmux send-keys -t $SESSION:$WINDOW.1 'ffmpeg -f v4l2 -input_format h264 \
     -c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S).mp4' C-m
 
 ################################################################################
-# SECTION 3: (Optional) 
+# SECTION 3: (Optional) Additional Components: IMU
 ################################################################################
 
+# Create new window and capture its index
+WINDOW=$(tmux new-window -t $SESSION -P | cut -d: -f2)
 
+# --- IMU Node ---
+tmux send-keys -t $SESSION:$WINDOW 'source install/setup.sh' C-m
+tmux send-keys -t $SESSION:$WINDOW 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node' C-m
 
 ################################################################################
 # Attach to Session
