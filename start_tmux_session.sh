@@ -22,62 +22,45 @@ SESSION="manny"
 # SECTION 1: Main Window - Core System Components
 ################################################################################
 
-# Create new detached tmux session
-tmux new-session -d -s $SESSION
-
 # --- Thrust Interface ---
-tmux split-window -h -t $SESSION
-tmux send-keys -t $SESSION:0.0 'source install/setup.sh' C-m
-tmux send-keys -t $SESSION:0.0 'ros2 run thrust_interface thrust_interface' C-m
+# Create new detached tmux session
+THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "source install/setup.sh && ros2 run thrust_interface thrust_interface; bash" )
 
 # --- Software Multiplexer ---
-tmux send-keys -t $SESSION:0.1 'source install/setup.sh' C-m
-tmux send-keys -t $SESSION:0.1 'ros2 run soft_mux soft_mux' C-m
+SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "source install/setup.sh && ros2 run soft_mux soft_mux; bash" )
 
 # --- System Monitor (btop) ---
-tmux split-window -v -t $SESSION:0.1
-tmux send-keys -t $SESSION:0.2 'btop' C-m
+tmux split-window -v -t $SOFT_MUX_PANE "btop; bash"
 
 # --- Mux Controller ---
-tmux split-window -v -t $SESSION:0.0
-tmux send-keys -t $SESSION:0.1 'source install/setup.sh' C-m
-tmux send-keys -t $SESSION:0.1 'ros2 run mux_controller mux_controller' C-m
+tmux split-window -v -t $THRUST_INTERFACE_PANE "source install/setup.sh && ros2 run mux_controller mux_controller; bash"
 
 ################################################################################
 # SECTION 2: (Optional) Video Streaming and Recording Window
 ################################################################################
 
-# Create new window and capture its index
-WINDOW=$(tmux new-window -t $SESSION -P | cut -d: -f2) # WINDOW=1.0
-
 # --- mediaMTX ---
-tmux send-keys -t $SESSION:$WINDOW 'cd ~/mediaMTX && ./mediamtx' C-m
+# Create new window 
+# MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX && ./mediamtx; bash")
 
 # --- ffmpeg ---
-tmux split-window -h -t $SESSION:$WINDOW
-WINDOW=$(echo $WINDOW | cut -d. -f1)
-tmux send-keys -t $SESSION:$WINDOW.1 'cd ~/recordings' C-m
-tmux send-keys -t $SESSION:$WINDOW.1 'ffmpeg -f v4l2 -input_format h264 \
-    -video_size 1920x1080 -framerate 30 \
-    -fflags +genpts \
-    -i /dev/video2 \
-    -c:v copy -f rtsp rtsp://localhost:8554/cam \
-    -c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S).mp4' C-m
+# tmux split-window -h -t $MEDIAMTX_PANE "cd ~/mediaMTX && \
+#     ffmpeg -f v4l2 -input_format h264 \
+#     -video_size 1920x1080 -framerate 30 \
+#     -fflags +genpts \
+#     -i /dev/video2 \
+#     -c:v copy -f rtsp rtsp://localhost:8554/cam; bash" 
 
-################################################################################
-# SECTION 3: (Optional) Additional Components: IMU
-################################################################################
-
-# Create new window and capture its index
-WINDOW=$(tmux new-window -t $SESSION -P | cut -d: -f2)
+# ################################################################################
+# # SECTION 3: (Optional) Additional Components: IMU
+# ################################################################################
 
 # --- IMU Node ---
-tmux send-keys -t $SESSION:$WINDOW 'source install/setup.sh' C-m
-tmux send-keys -t $SESSION:$WINDOW 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node' C-m
+tmux new-window -t $SESSION "source install/setup.sh && ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash"
 
-################################################################################
-# Attach to Session
-################################################################################
+# ################################################################################
+# # Attach to Session
+# ################################################################################
 
 # Select the main window
 tmux select-window -t $SESSION:0
