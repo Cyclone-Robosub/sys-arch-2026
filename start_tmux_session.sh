@@ -47,15 +47,16 @@ tmux send-keys -t $SESSION:0.1 'ros2 run mux_controller mux_controller' C-m
 # SECTION 2: (Optional) Video Streaming and Recording Window
 ################################################################################
 
-tmux new-window -t $SESSION
+# Create new window and capture its index
+WINDOW=$(tmux new-window -t $SESSION -P | cut -d: -f2)
 
 # --- mediaMTX ---
-tmux send-keys -t $SESSION:-1 'cd ~/mediaMTX && ./mediamtx' C-m
+tmux send-keys -t $SESSION:$WINDOW 'cd ~/mediaMTX && ./mediamtx' C-m
 
 # --- ffmpeg ---
-tmux split-window -h -t $SESSION:-1
-tmux send-keys -t $SESSION:-1.1 'cd ~/recordings' C-m
-tmux send-keys -t $SESSION:-1.1 \
+tmux split-window -h -t $SESSION:$WINDOW
+tmux send-keys -t $SESSION:$WINDOW.1 'cd ~/recordings' C-m
+tmux send-keys -t $SESSION:$WINDOW.1 \
     'ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
     -fflags +genpts \
     -i /dev/video2 \
