@@ -3,6 +3,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include <builtin_interfaces/msg/time.hpp>
+#include <custom_interfaces/msg/gamepad.hpp>
 #include <custom_interfaces/msg/imu.hpp>
 #include <custom_interfaces/msg/pwms.hpp>
 #include <geometry_msgs/msg/point.hpp>
@@ -13,7 +14,6 @@
 #include <geometry_msgs/msg/twist_with_covariance.hpp>
 #include <geometry_msgs/msg/vector3.hpp>
 #include <nav_msgs/msg/odometry.hpp>
-#include <remote_control_interface/msg/gamepad.hpp>
 #include <sensor_msgs/msg/fluid_pressure.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/magnetic_field.hpp>
@@ -25,6 +25,9 @@
 
 [[maybe_unused]] static void convertFromBus(builtin_interfaces::msg::Time& msgPtr, SL_Bus_builtin_interfaces_Time const* busPtr);
 [[maybe_unused]] static void convertToBus(SL_Bus_builtin_interfaces_Time* busPtr, const builtin_interfaces::msg::Time& msgPtr);
+
+[[maybe_unused]] static void convertFromBus(custom_interfaces::msg::Gamepad& msgPtr, SL_Bus_custom_interfaces_Gamepad const* busPtr);
+[[maybe_unused]] static void convertToBus(SL_Bus_custom_interfaces_Gamepad* busPtr, const custom_interfaces::msg::Gamepad& msgPtr);
 
 [[maybe_unused]] static void convertFromBus(custom_interfaces::msg::Imu& msgPtr, SL_Bus_custom_interfaces_Imu const* busPtr);
 [[maybe_unused]] static void convertToBus(SL_Bus_custom_interfaces_Imu* busPtr, const custom_interfaces::msg::Imu& msgPtr);
@@ -55,9 +58,6 @@
 
 [[maybe_unused]] static void convertFromBus(nav_msgs::msg::Odometry& msgPtr, SL_Bus_nav_msgs_Odometry const* busPtr);
 [[maybe_unused]] static void convertToBus(SL_Bus_nav_msgs_Odometry* busPtr, const nav_msgs::msg::Odometry& msgPtr);
-
-[[maybe_unused]] static void convertFromBus(remote_control_interface::msg::Gamepad& msgPtr, SL_Bus_remote_control_interface_Gamepad const* busPtr);
-[[maybe_unused]] static void convertToBus(SL_Bus_remote_control_interface_Gamepad* busPtr, const remote_control_interface::msg::Gamepad& msgPtr);
 
 [[maybe_unused]] static void convertFromBus(sensor_msgs::msg::FluidPressure& msgPtr, SL_Bus_sensor_msgs_FluidPressure const* busPtr);
 [[maybe_unused]] static void convertToBus(SL_Bus_sensor_msgs_FluidPressure* busPtr, const sensor_msgs::msg::FluidPressure& msgPtr);
@@ -92,6 +92,33 @@
 
   busPtr->nanosec =  msgPtr.nanosec;
   busPtr->sec =  msgPtr.sec;
+}
+
+
+// Conversions between SL_Bus_custom_interfaces_Gamepad and custom_interfaces::msg::Gamepad
+
+[[maybe_unused]] static void convertFromBus(custom_interfaces::msg::Gamepad& msgPtr, SL_Bus_custom_interfaces_Gamepad const* busPtr)
+{
+  const std::string rosMessageType("custom_interfaces/Gamepad");
+
+  msgPtr.pitch =  busPtr->pitch;
+  msgPtr.rise =  busPtr->rise;
+  msgPtr.sink =  busPtr->sink;
+  msgPtr.x =  busPtr->x;
+  msgPtr.y =  busPtr->y;
+  msgPtr.yaw =  busPtr->yaw;
+}
+
+[[maybe_unused]] static void convertToBus(SL_Bus_custom_interfaces_Gamepad* busPtr, const custom_interfaces::msg::Gamepad& msgPtr)
+{
+  const std::string rosMessageType("custom_interfaces/Gamepad");
+
+  busPtr->pitch =  msgPtr.pitch;
+  busPtr->rise =  msgPtr.rise;
+  busPtr->sink =  msgPtr.sink;
+  busPtr->x =  msgPtr.x;
+  busPtr->y =  msgPtr.y;
+  busPtr->yaw =  msgPtr.yaw;
 }
 
 
@@ -296,33 +323,6 @@
   convertToBus(&busPtr->header, msgPtr.header);
   convertToBus(&busPtr->pose, msgPtr.pose);
   convertToBus(&busPtr->twist, msgPtr.twist);
-}
-
-
-// Conversions between SL_Bus_remote_control_interface_Gamepad and remote_control_interface::msg::Gamepad
-
-[[maybe_unused]] static void convertFromBus(remote_control_interface::msg::Gamepad& msgPtr, SL_Bus_remote_control_interface_Gamepad const* busPtr)
-{
-  const std::string rosMessageType("remote_control_interface/Gamepad");
-
-  msgPtr.pitch =  busPtr->pitch;
-  msgPtr.rise =  busPtr->rise;
-  msgPtr.sink =  busPtr->sink;
-  msgPtr.x =  busPtr->x;
-  msgPtr.y =  busPtr->y;
-  msgPtr.yaw =  busPtr->yaw;
-}
-
-[[maybe_unused]] static void convertToBus(SL_Bus_remote_control_interface_Gamepad* busPtr, const remote_control_interface::msg::Gamepad& msgPtr)
-{
-  const std::string rosMessageType("remote_control_interface/Gamepad");
-
-  busPtr->pitch =  msgPtr.pitch;
-  busPtr->rise =  msgPtr.rise;
-  busPtr->sink =  msgPtr.sink;
-  busPtr->x =  msgPtr.x;
-  busPtr->y =  msgPtr.y;
-  busPtr->yaw =  msgPtr.yaw;
 }
 
 

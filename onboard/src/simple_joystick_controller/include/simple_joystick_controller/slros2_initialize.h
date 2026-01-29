@@ -1,5 +1,5 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 28-Jan-2026 23:12:37
+// Generated 29-Jan-2026 00:19:01
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
 #include "Simple_Joystick_Controller_types.h"
@@ -44,5 +44,5 @@ extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_P
 // Simple_Joystick_Controller/IMU
 extern SimulinkSubscriber<custom_interfaces::msg::Imu,SL_Bus_custom_interfaces_Imu> Sub_Simple_Joystick_Controller_33;
 // Simple_Joystick_Controller/Subsystem/Subscribe
-extern SimulinkSubscriber<remote_control_interface::msg::Gamepad,SL_Bus_remote_control_interface_Gamepad> Sub_Simple_Joystick_Controller_25;
+extern SimulinkSubscriber<custom_interfaces::msg::Gamepad,SL_Bus_custom_interfaces_Gamepad> Sub_Simple_Joystick_Controller_25;
 #endif

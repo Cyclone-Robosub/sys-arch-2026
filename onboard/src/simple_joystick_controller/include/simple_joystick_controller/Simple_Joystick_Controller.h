@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'Simple_Joystick_Controller'.
 //
-// Model version                  : 1.7
+// Model version                  : 1.8
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Wed Jan 28 23:12:33 2026
+// C/C++ source code generated on : Thu Jan 29 00:18:51 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -27,8 +27,8 @@
 struct B_Simple_Joystick_Controller_T {
   SL_Bus_custom_interfaces_Imu r;
   SL_Bus_custom_interfaces_Pwms BusCreator3;// '<S5>/Bus Creator3'
-  SL_Bus_remote_control_interface_Gamepad In1;// '<S8>/In1'
-  SL_Bus_remote_control_interface_Gamepad rtb_SourceBlock_o2_g_m;
+  SL_Bus_custom_interfaces_Gamepad In1;// '<S8>/In1'
+  SL_Bus_custom_interfaces_Gamepad rtb_SourceBlock_o2_g_m;
   char_T b_zeroDelimTopic[16];
   char_T b_zeroDelimTopic_c[16];
   sJ4ih70VmKcvCeguWN0mNVF deadline;

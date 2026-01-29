@@ -34,7 +34,6 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 find_package( custom_interfaces REQUIRED)
 find_package( rclcpp REQUIRED)
-find_package( remote_control_interface REQUIRED)
 find_package( std_msgs REQUIRED)
 # Add package include directories
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/simple_joystick_controller")
@@ -82,7 +81,6 @@ ament_target_dependencies(
   Simple_Joystick_Controller
   "custom_interfaces"
   "rclcpp"
-  "remote_control_interface"
   "std_msgs"
 )
 target_include_directories(Simple_Joystick_Controller PUBLIC
@@ -109,4 +107,4 @@ add_custom_command(
 				   )				   
 endforeach(file_i)
 ament_package()
-# Generated on Wed Jan 28 23:12:39 2026
+# Generated on Thu Jan 29 00:19:04 2026

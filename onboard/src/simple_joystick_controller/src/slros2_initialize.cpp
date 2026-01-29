@@ -1,5 +1,5 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 28-Jan-2026 23:12:37
+// Generated 29-Jan-2026 00:19:01
 #include "slros2_initialize.h"
 const std::string SLROSNodeName("Simple_Joystick_Controller");
 // Simple_Joystick_Controller/pwm_heartbeat_publisher/Publish1
@@ -9,4 +9,4 @@ SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pu
 // Simple_Joystick_Controller/IMU
 SimulinkSubscriber<custom_interfaces::msg::Imu,SL_Bus_custom_interfaces_Imu> Sub_Simple_Joystick_Controller_33;
 // Simple_Joystick_Controller/Subsystem/Subscribe
-SimulinkSubscriber<remote_control_interface::msg::Gamepad,SL_Bus_remote_control_interface_Gamepad> Sub_Simple_Joystick_Controller_25;
+SimulinkSubscriber<custom_interfaces::msg::Gamepad,SL_Bus_custom_interfaces_Gamepad> Sub_Simple_Joystick_Controller_25;
