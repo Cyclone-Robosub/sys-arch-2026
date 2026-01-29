@@ -40,3 +40,72 @@ Launch files are a alternative to bash script for runnign ROS nodes
 ---
 
 For information on nodes, topics, etc. check the README.md files within the packages themselves.
+
+## How to Turn on The Robot for Manual Control
+### Overview
+At a high level, running the robot manually requires remotely connecting to the Pi 5 through `ssh`, starting up the necessary ROS nodes, and connecting a gamepad. The processes you'll need running include the following:
+- `thrust_interface`: sends PWM signals to the thrusters via a Raspberry Pi Pico
+- `soft_mux`: chooses whether to listen to the Matlab controls code or to the command line tool (CLI) for thruster data
+- `mux_controller`: provides a simple interface to switch between the `soft_mux` inputs
+- `inertial_sense`: provides IMU (sensor) data to the Matlab code
+- `index.html`: the webpage that connects to the gamepad
+- `rosbridge_server`: connects the gamepad data to the Matlab code
+
+The following section provides some background on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the [SECTION NAME HERE] section.
+
+### Understanding Linux/The Terminal
+#### Why the terminal?
+The terminal provides you a convenient, reproducible way to interact with your computer. At the end of the day, the goal of using a computer is to manipulate files and data, and a graphical interface merely provides a familiar way of understanding what's really going on in your computer through the abstraction of a desktop. This is fine for regular users, but when you want to run specific programs and develop software, it's much more convenient to do so by entering the specific commands that you want the computer to do.
+
+#### Understanding the terminal
+When you open the terminal, you will be greeted with a single prompt a the top. It will look something like this:
+```
+cyclone@cyclone-general:~$
+```
+
+Let's disect this. The first word, `cyclone`, is your username. The second phrase, `cyclone-general` is the hostname (the name of the computer). The tilde (`~`) is the current directory (more on that in a bit), which is the folder that you're currently in. Finally, the `$` sign signifies the start of the prompt where you can type your commands. The overall breakdown therefore looks like this:
+```
+[username]@[hostname]:[current_directory]$
+```
+
+When you type a command into the terminal, you are telling the computer to run a specific program or execute a specific tool. These can be programs that already exist on your computer, or programs that you wrote yourself. For example, to run Chrome, you could type:
+
+```
+cyclone@cyclone-general:~$ google-chrome
+```
+
+This works because Chrome is installed in a globally-accessible way on the computer (i.e. not just accessible from a single directory). If you want to run a local program, you'd have to put `./` in front of it (i.e. `./local_program`).
+
+To run a command that you've previously run, you can use the up arrow, which will cycle through them. To go back to your most recent command, you can use the down arrow.
+
+#### Understanding Unix Filesystems
+Linux is a Unix-like system, meaning that it follows most of the same rules as the Unix standard. MacOS is also a Unix system, but Windows is not. The following only applies to Unix systems, so don't try to apply this knowledge to Windows. Also note that the word "directory" and "folder" are used interchangeably.
+
+The filsystem can be thought of as a large, inverted tree. The root is at the top, and the branches grow downwards. The root directory is represented by `/`: that's the full name of the directory. `/` contains a number of other folders, including `dev`, `home`, `etc`, `sys`, `usr`, and more. The path to any of these directories is therefore `/dev`, `/home`, etc. `/home` is where the home directories of the users live, i.e. `/home/cyclone` is the path to the home directory for the `cyclone` user. Inside this directory are the directories that you interact with on a daily basis and have more familiar names, including `Documents`, `Downloads`, `Desktop`, etc. The full path to these is therefore `/home/cyclone/Documents`. Because the home directory is used so much, Unix has a shorcut for it: the `~` symbol (tilde). If you're the `cyclone` user, then `~` means `/home/cyclone`.
+
+In Unix, everything is a file, even things that aren't really files. For example, the Pi Pico that's connected to the Pi 5 shows up as a file under the path `/dev/serial/by-id/`, because `/dev` contains the devices on the system.
+
+There are also two special directories that live inside every directory. `.` and `..` represent the current directory and the parent directory, respectively. If you're in `/home/cyclone`, then `.` is `/home/cyclone` and `..` is `/home`. This is why to run a local progam, you type `./` in front of it: in doing so, you specify that the program lives in the current directory.
+
+#### Navigating the filesystem through the terminal
+There are a few basic commands that will be critical to navigating the terminal.
+- `ls`: This lists all the files and folders in your current location, excluding hidden files.
+   - To see hidden files (those that begin with a dot, like `.gitignore`), you can run `ls -A`
+- `cd {path}`: This means to **c**hange **d**irectory to the directory specified in `{path}`. Path can be either a "relative" path or an "absolute" path.
+   - A relative path is a path defined from your current location. If you're used to a graphical file explorer, you can think of this as all the folders and files that you can see from within whatever folder you're currently in. For example, if you're in `/home/cyclone`, then the following is a relative path: `Documents/my_document.txt`. Note the lack of `/` at the start of the path: this signifies that it is relative rather than absolute.
+   - An absolute path is a path defined from the filesystem root (i.e. `/home/cyclone/Documents/my_document.txt`).
+   - You can `cd` into the special `.`, `..`, and `/` directories just like any other directory.
+
+
+### Understanding Local Machine vs Pi 5
+Throughout these instructions, you will be running multiple terminal sessions to run each of these processes. Some of them should run on the Pi 5, and some should run on the local machine (team laptop). If they should run on the Pi 5, you will need to be connected (through `ssh`) to the Pi before running the commands to start them up.
+
+To check whether your terminal is connected to the local machine, you can check the hostname at the start of the terminal prompt. If it looks like this:
+```
+cyclone@cyclone-general:~$
+```
+then you're on the local machine. If it looks like this:
+```
+cyclone@cyclone-propulsion:~$
+```
+then you're on the Pi 5. Most processes have to run on the Pi 5, some can be run on the local machine or the Pi 5, and have to run on the local machine.
