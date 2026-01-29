@@ -110,7 +110,6 @@ cython_debug/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 !.vscode/c_cpp_properties.json # has ROS include paths
@@ -121,5 +120,3 @@ cython_debug/
 
 # Macos extended attr
 .DS_Store
-.vscode
-.vscode/launch.json
