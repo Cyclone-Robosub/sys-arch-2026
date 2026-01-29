@@ -190,6 +190,7 @@ void Mux_Controller::process_input() {
     current_input = "";
     display_mutex.unlock();
     while (true) {
+	usleep(10000);
         while (read(STDIN_FILENO, &c, 1) != 0) {
             display_mutex.lock();
             if ((c >= 32 && c <= 126) || c == '\n') {
