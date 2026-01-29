@@ -1,0 +1,32 @@
+#ifndef REMOTE_CONTROL_INTERFACE__VISIBILITY_CONTROL_H_
+#define REMOTE_CONTROL_INTERFACE__VISIBILITY_CONTROL_H_
+#if defined _WIN32 || defined __CYGWIN__
+  #ifdef __GNUC__
+    #define REMOTE_CONTROL_INTERFACE_EXPORT __attribute__ ((dllexport))
+    #define REMOTE_CONTROL_INTERFACE_IMPORT __attribute__ ((dllimport))
+  #else
+    #define REMOTE_CONTROL_INTERFACE_EXPORT __declspec(dllexport)
+    #define REMOTE_CONTROL_INTERFACE_IMPORT __declspec(dllimport)
+  #endif
+  #ifdef REMOTE_CONTROL_INTERFACE_BUILDING_LIBRARY
+    #define REMOTE_CONTROL_INTERFACE_PUBLIC REMOTE_CONTROL_INTERFACE_EXPORT
+  #else
+    #define REMOTE_CONTROL_INTERFACE_PUBLIC REMOTE_CONTROL_INTERFACE_IMPORT
+  #endif
+  #define REMOTE_CONTROL_INTERFACE_PUBLIC_TYPE REMOTE_CONTROL_INTERFACE_PUBLIC
+  #define REMOTE_CONTROL_INTERFACE_LOCAL
+#else
+  #define REMOTE_CONTROL_INTERFACE_EXPORT __attribute__ ((visibility("default")))
+  #define REMOTE_CONTROL_INTERFACE_IMPORT
+  #if __GNUC__ >= 4
+    #define REMOTE_CONTROL_INTERFACE_PUBLIC __attribute__ ((visibility("default")))
+    #define REMOTE_CONTROL_INTERFACE_LOCAL  __attribute__ ((visibility("hidden")))
+  #else
+    #define REMOTE_CONTROL_INTERFACE_PUBLIC
+    #define REMOTE_CONTROL_INTERFACE_LOCAL
+  #endif
+  #define REMOTE_CONTROL_INTERFACE_PUBLIC_TYPE
+#endif
+#endif  // REMOTE_CONTROL_INTERFACE__VISIBILITY_CONTROL_H_
+// Generated 17-Nov-2025 22:38:22
+ 
