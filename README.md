@@ -50,8 +50,11 @@ At a high level, running the robot manually requires remotely connecting to the 
 - `inertial_sense`: provides IMU (sensor) data to the Matlab code
 - `index.html`: the webpage that connects to the gamepad
 - `rosbridge_server`: connects the gamepad data to the Matlab code
+- `joystick_logger`: displays the current gamepad data, and allows the rosbridge server to connect to the Matlab code.
 
 The following section provides some background on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the [SECTION NAME HERE] section.
+
+There is also a script that you can run that starts up all the robot components automatically. If it works properly, you should just need to `ssh` to the Pi 5 and run the script! If it doesn't, work properly, you'll need to follow the step by step instructions in this guide under [SECTION NAME HERE].
 
 ### Understanding Linux/The Terminal
 #### Why the terminal?
@@ -108,4 +111,7 @@ then you're on the local machine. If it looks like this:
 ```
 cyclone@cyclone-propulsion:~$
 ```
-then you're on the Pi 5. Most processes have to run on the Pi 5, some can be run on the local machine or the Pi 5, and have to run on the local machine.
+then you're on the Pi 5. Most processes have to run on the Pi 5, some can be run on the local machine or the Pi 5, and some have to run on the local machine.
+
+### How to Connect to the Pi 5
+Connecting to the Pi 5 is done through `ssh`. First, make sure that the robot is powered on and the Pi 5 has a green LED on near the power port. Open a terminal on the local machine, and type `ssh pi5`. 
