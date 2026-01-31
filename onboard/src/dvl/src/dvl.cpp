@@ -439,7 +439,7 @@ namespace dvl {
     int main(int argc, char* argv[]) {
         rclcpp::init(argc, argv);
         std::unique_ptr<FD_Interface> path_fd = std::make_unique<Path_FD>(*argv);
-        rclcpp::spin(std::make_shared<DVL>(std::move(path_fd)));
+        rclcpp::spin(std::make_shared<dvl::DVL>(std::move(path_fd)));
         rclcpp::shutdown();
         return 0;
     }

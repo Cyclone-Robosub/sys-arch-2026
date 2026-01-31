@@ -220,4 +220,11 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     //check if publisher has published correct data
  }
 
+ #ifdef ENABLE_TESTING
+    int main(int argc, char** argv) {
+        ::testing::InitGoogleTest(&argc, argv);
+        return RUN_ALL_TESTS();
+    }
+#endif
+
  
