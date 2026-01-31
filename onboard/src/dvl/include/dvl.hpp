@@ -22,7 +22,14 @@
 #include "std_srvs/srv/set_bool.hpp"
 #include "custom_interfaces/srv/set_config.hpp"
 #include "custom_interfaces/srv/set_serial.hpp"
-#include "fd-interface.hpp"
+#include "fd_interface.hpp"
+
+class DVL_FD : public Path_FD {
+public:
+    DVL_FD(std::string path);
+protected:
+    int open_serial() override;
+};
 
 namespace dvl {
 struct velocity_report {

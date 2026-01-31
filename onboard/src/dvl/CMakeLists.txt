@@ -12,6 +12,7 @@ find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(fd_interface REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -21,8 +22,8 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include
 )
 
-add_executable(dvl src/dvl.cpp src/fd-interface.cpp)
-ament_target_dependencies(dvl rclcpp custom_interfaces std_srvs)
+add_executable(dvl src/dvl.cpp)
+ament_target_dependencies(dvl rclcpp custom_interfaces std_srvs fd_interface)
 
 install(TARGETS
   dvl
@@ -40,13 +41,14 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
 
-  add_library(${PROJECT_NAME}_lib src/dvl.cpp src/fd-interface.cpp)
+  add_library(${PROJECT_NAME}_lib src/dvl.cpp)
   target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
   ament_target_dependencies(${PROJECT_NAME}_lib
     rclcpp
     custom_interfaces
     std_msgs
     std_srvs
+    fd_interface
   )
   target_include_directories(${PROJECT_NAME}_lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -65,6 +67,7 @@ if(BUILD_TESTING)
     custom_interfaces
     std_msgs
     std_srvs
+    fd_interface
   )
 
 endif()

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
 #include "dvl.hpp"
-#include "fd-interface.hpp"
+#include "fd_interface.hpp"
 #include <chrono>
 
 static constexpr uint8_t VR_TYPE = 'v';

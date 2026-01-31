@@ -4,6 +4,9 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#ifndef FD_INTERFACE
+#define FD_INTERFACE
+
 class FD_Interface {
 protected:
     int fd;
@@ -34,3 +37,5 @@ public:
     virtual void close_fd() override;
     virtual ~Direct_FD();
 };
+
+#endif // FD_INTERFACE
