@@ -1,6 +1,7 @@
 #ifndef FD_INTERFACE_HPP
 #define FD_INTERFACE_HPP
 
+#include <string>
 #include <termios.h>
 
 class FD_Interface {

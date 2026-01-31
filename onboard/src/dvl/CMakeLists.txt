@@ -21,7 +21,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include
 )
 
-add_executable(dvl src/sensor-data.cpp)
+add_executable(dvl src/dvl.cpp src/fd-interface.cpp)
 ament_target_dependencies(dvl rclcpp custom_interfaces std_srvs)
 
 install(TARGETS
@@ -40,7 +40,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
 
-  add_library(${PROJECT_NAME}_lib src/sensor-data.cpp)
+  add_library(${PROJECT_NAME}_lib src/dvl.cpp)
   target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
   ament_target_dependencies(${PROJECT_NAME}_lib
     rclcpp
