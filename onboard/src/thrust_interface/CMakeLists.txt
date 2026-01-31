@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(custom_interfaces REQUIRED)
+find_package(fd_interface REQUIRED)
 
 # Include directories
 include_directories(
@@ -22,17 +23,13 @@ ament_target_dependencies(thrust_interface
   rclcpp
   custom_interfaces
   std_msgs
+  fd_interface
 )
 
 # Install main executable
 install(TARGETS
   thrust_interface
   DESTINATION lib/${PROJECT_NAME})
-
-install(DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME}/
-)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -45,6 +42,7 @@ if(BUILD_TESTING)
     rclcpp
     custom_interfaces
     std_msgs
+    fd_interface
   )
   target_include_directories(${PROJECT_NAME}_lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -63,6 +61,7 @@ if(BUILD_TESTING)
     rclcpp
     custom_interfaces
     std_msgs
+    fd_interface
   )
 endif()
 

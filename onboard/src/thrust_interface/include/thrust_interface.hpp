@@ -4,6 +4,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <custom_interfaces/msg/pwms.hpp>
 #include "std_msgs/msg/bool.hpp"
+#include "fd_interface.hpp"
 #include <mutex>
 #include <vector>
 #include <string>
@@ -11,36 +12,13 @@
 
 using namespace rclcpp;
 
-class FD_Interface {
+class Pico_FD : public Path_FD {
 protected:
-    int fd;
+    int open_serial() override;
 public:
-    explicit FD_Interface() {};
-    virtual int get_fd() = 0;
-    virtual void attempt_reconnect() = 0;
-    virtual void close_fd() = 0;
+    Pico_FD(std::string path);
 };
 
-class Path_FD : public FD_Interface {
-protected:
-    std::string path;
-    int open_pico_serial();
-public:
-    Path_FD(std::string path);
-    int get_fd() override;
-    void attempt_reconnect() override;
-    void close_fd() override;
-    ~Path_FD();
-};
-
-class Direct_FD : public FD_Interface {
-public:
-    Direct_FD(int fd);
-    int get_fd() override;
-    void attempt_reconnect() override;
-    void close_fd() override;
-    ~Direct_FD();
-};
 
 class Thrust_Interface : public rclcpp::Node {
 public:
