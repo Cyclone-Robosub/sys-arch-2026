@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>thrust_interface</name>
+  <name>fd_interface</name>
   <version>0.0.0</version>
-  <description>Software interface for the robot thrusters</description>
+  <description>An abstraction of file descriptors to allow simulated unit testing and reconnection to real devices</description>
   <maintainer email="crs.aggies@gmail.com">Cyclone RoboSub</maintainer>
   <license>TODO: License declaration</license>
 
@@ -11,10 +11,6 @@
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-
-  <depend>custom_interfaces</depend>
-  <depend>std_msgs</depend>
-  <depend>fd_interface</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

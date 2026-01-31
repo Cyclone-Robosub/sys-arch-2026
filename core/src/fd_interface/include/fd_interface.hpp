@@ -19,18 +19,18 @@ protected:
     std::string path;
     virtual int open_serial() = 0;
 public:
-    Path_FD(std::string path);
-    int get_fd() override;
-    void attempt_reconnect() override;
-    void close_fd() override;
-    ~Path_FD();
+    explicit Path_FD(std::string path);
+    virtual int get_fd() override;
+    virtual void attempt_reconnect() override;
+    virtual void close_fd() override;
+    virtual ~Path_FD();
 };
 
 class Direct_FD : public FD_Interface {
 public:
     Direct_FD(int fd);
-    int get_fd() override;
-    void attempt_reconnect() override;
-    void close_fd() override;
-    ~Direct_FD();
+    virtual int get_fd() override;
+    virtual void attempt_reconnect() override;
+    virtual void close_fd() override;
+    virtual ~Direct_FD();
 };
