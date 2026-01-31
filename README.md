@@ -50,7 +50,6 @@ At a high level, running the robot manually requires remotely connecting to the 
 - `inertial_sense`: provides IMU (sensor) data to the Matlab code
 - `index.html`: the webpage that connects to the gamepad
 - `rosbridge_server`: connects the gamepad data to the Matlab code
-- `joystick_logger`: displays the current gamepad data, and allows the rosbridge server to connect to the Matlab code.
 
 The following section provides some background on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the [SECTION NAME HERE] section.
 
@@ -109,9 +108,29 @@ cyclone@cyclone-general:~$
 ```
 then you're on the local machine. If it looks like this:
 ```
-cyclone@cyclone-propulsion:~$
+cyclone@cyclonepropulsion:~$
 ```
 then you're on the Pi 5. Most processes have to run on the Pi 5, some can be run on the local machine or the Pi 5, and some have to run on the local machine.
 
 ### How to Connect to the Pi 5
-Connecting to the Pi 5 is done through `ssh`. First, make sure that the robot is powered on and the Pi 5 has a green LED on near the power port. Open a terminal on the local machine, and type `ssh pi5`. 
+Connecting to the Pi 5 is done through `ssh`. First, make sure that the robot is powered on and the Pi 5 has a green LED on near the power port. Open a terminal on the local machine, and type `ssh pi5`. If you get the message
+```
+ssh: Could not resolve hostname cyclonepropulsion.local: Name or service not known
+```
+then `ssh` was unable to connect to the Pi 5. Check the Ethernet connection between the robot and the local machine: there should be LEDs turned on on the local machine's Ethernet port. If the robot was only recently turned on, the Pi 5 might just need a little bit longer to boot up.
+
+If you are successful, you should get a message similar to this:
+```
+Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1044-raspi aarch64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Suport:         https://ubuntu.com/pro
+
+ System information as of Fri Jan 30 17:14:11 PST 2026
+
+  System load:  1.71                Temperature:            56.1 C
+  Usage of /:   29.3% of 116.68GB   Processes:              188
+  Memory usage: 4%                  Users logged in:        0
+  Swap usage:   0%                  IPv4 address for wlan0: 100.126.159.3
+```
