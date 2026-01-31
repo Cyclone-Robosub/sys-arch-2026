@@ -25,7 +25,7 @@
 #include "fd-interface.hpp"
 
 namespace dvl {
-struct VR {
+struct velocity_report {
     float vx = 0, vy = 0, vz = 0, altitude = 0, fom = 0, time = 0;
     std::array<float,9> covariance = {0};
     int64_t time_of_validity = 0, time_of_transmission = 0;
@@ -33,13 +33,13 @@ struct VR {
     uint8_t status = 0x00; 
 };
 
-struct DRR {
+struct dead_reck_report {
     int64_t time_stamp = 0;
     float x = 0, y = 0, z = 0, pos_std = 0, roll = 0, pitch = 0, yaw = 0;
     uint8_t status = 0x00;
 };
 
-struct Config {
+struct config_report {
     float speed_of_sound;
     float mounting_rotation_offset;
     std::string acoustic_enabled; //y or n
@@ -85,11 +85,11 @@ class DVL : public rclcpp::Node {
         DVL(std::unique_ptr<FD_Interface> dvl_fd);
 
         //reads from actual DVL
-        VR readVelocityReport(); //velocity report
-        DRR readDRReport(); //dead reckoning report
+        velocity_report readVelocityReport(); //velocity report
+        dead_reck_report readDRReport(); //dead reckoning report
         std::string readVersion();
         std::string readDetails();
-        Config readConfig();
+        config_report readConfig();
 
         void publishVR();
         void publishDRR();
@@ -119,10 +119,10 @@ class DVL : public rclcpp::Node {
 
         // PRIVATE VARS //
         std::unique_ptr<FD_Interface> fd;
-        VR vr, error_vr;
-        DRR drr, error_drr;
+        velocity_report vr, error_vr;
+        dead_reck_report drr, error_drr;
 
-        Config error_config, config;
+        config_report error_config, config;
         
         std::string version; //Protocol version "major.minor.patch"
         std::string product_details;

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
-#include "sensor-data.hpp"
+#include "dvl.hpp"
 #include "fd-interface.hpp"
 #include <chrono>
 
@@ -132,7 +132,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  */
  TEST_F(TestDVLInterface, ValidReadVelocityReport){
     create_node();
-    VR vr;
+    velocity_report vr;
 
     //write valid VR data into  pipe_fds[1] 
     write_serial_message(VR_TYPE);
@@ -155,7 +155,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  */
  TEST_F(TestDVLInterface, ValidReadDRReport){
     create_node();
-    DRR drr;
+    dead_reck_report drr;
 
     //write valid DRR data into pipe_fds[1]
     write_serial_message(DRR_TYPE);
@@ -173,7 +173,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  */
  TEST_F(TestDVLInterface, ValidReadConfiguration){
     create_node();
-    Config config;
+    config_report config;
 
     //write valid Config data into pipe_fds[1]
     write_serial_message(CONFIG_TYPE);

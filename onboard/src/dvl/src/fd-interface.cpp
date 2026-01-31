@@ -4,7 +4,7 @@ Path_FD::Path_FD(std::string path) :
     FD_Interface(),
     path(path) 
      {
-    fd = open_pico_serial();
+    fd = open_serial();
 }
 
 int Path_FD::get_fd() {
@@ -24,7 +24,7 @@ void Path_FD::close_fd() {
 int Path_FD::open_serial() {
     struct termios tty;
     speed_t baud = 115200;
-    int status, fd;
+    int fd;
     
     if ((fd = open(path.c_str(), O_RDWR | O_NOCTTY | O_SYNC)) == -1) {
         return -1;

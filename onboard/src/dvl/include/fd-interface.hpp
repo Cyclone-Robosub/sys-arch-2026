@@ -3,6 +3,8 @@
 
 #include <string>
 #include <termios.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 class FD_Interface {
 protected:

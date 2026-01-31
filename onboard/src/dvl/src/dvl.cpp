@@ -7,7 +7,7 @@ namespace dvl {
     DVL::DVL(std::unique_ptr<FD_Interface> fd) : 
         rclcpp::Node("dvl"),
         fd(std::move(fd)),
-        error_config(Config{0.0, 0.0, "x", "x", "x", "x"}),
+        error_config(config_report{0.0, 0.0, "x", "x", "x", "x"}),
         config(error_config)
         {
 
@@ -19,13 +19,13 @@ namespace dvl {
         trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
         //Publishers
-        velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("VR", 10);
-        drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("DRR", 10);
-        config_publisher = this->create_publisher<custom_interfaces::msg::Config>("Config", 10);  
+        velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
+        drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("dead_reck_report", 10);
+        config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);  
     }
 
     void DVL::publishVR() {
-        VR vrReport = readVelocityReport();
+        velocity_report vrReport = readVelocityReport();
         custom_interfaces::msg::VR vrMessage;
         vrMessage.angle_data.twist.linear.x = vrReport.vx;
         vrMessage.angle_data.twist.linear.y = vrReport.vy;
@@ -44,7 +44,7 @@ namespace dvl {
     }
 
     void DVL::publishDRR() {
-        DRR drrReport = readDRReport();
+        dead_reck_report drrReport = readDRReport();
         custom_interfaces::msg::DRR drrMessage;
         
         drrMessage.time_stamp = drrReport.time_stamp;
@@ -62,7 +62,7 @@ namespace dvl {
     }
 
     void DVL::publishConfig() {
-        Config cReport = readConfig();
+        config_report cReport = readConfig();
         custom_interfaces::msg::Config configMessage;
         configMessage.speed_of_sound = cReport.speed_of_sound;
         configMessage.mounting_rotation_offset = cReport.mounting_rotation_offset;
@@ -74,7 +74,7 @@ namespace dvl {
     }
     
     // Public Reads
-    VR DVL::readVelocityReport(){
+    velocity_report DVL::readVelocityReport(){
         if(holdForResponse(REC_VR)){
             return vr;
         } else {
@@ -83,7 +83,7 @@ namespace dvl {
         
     }
 
-    DRR DVL::readDRReport(){
+    dead_reck_report DVL::readDRReport(){
         if(holdForResponse(REC_DRR)){
             return drr;
         } else {
@@ -115,7 +115,7 @@ namespace dvl {
         }
     }
 
-    Config DVL::readConfig(){
+    config_report DVL::readConfig(){
         sendCommand(CMD_GET_SETTINGS); 
         
         if(holdForResponse(CMD_GET_SETTINGS)){
@@ -433,6 +433,7 @@ namespace dvl {
         }
         return checksum;
     }
+} //namespace
 
 #ifndef ENABLE_TESTING
     int main(int argc, char* argv[]) {
@@ -443,5 +444,3 @@ namespace dvl {
         return 0;
     }
 #endif
-
-} //namespace

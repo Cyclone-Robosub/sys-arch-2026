@@ -40,7 +40,7 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
 
-  add_library(${PROJECT_NAME}_lib src/dvl.cpp)
+  add_library(${PROJECT_NAME}_lib src/dvl.cpp src/fd-interface.cpp)
   target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
   ament_target_dependencies(${PROJECT_NAME}_lib
     rclcpp
