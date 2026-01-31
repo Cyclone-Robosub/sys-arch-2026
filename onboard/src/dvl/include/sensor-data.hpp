@@ -22,6 +22,7 @@
 #include "std_srvs/srv/set_bool.hpp"
 #include "custom_interfaces/srv/set_config.hpp"
 #include "custom_interfaces/srv/set_serial.hpp"
+#include "fd-interface.hpp"
 
 namespace dvl {
 struct VR {
@@ -80,10 +81,8 @@ uint8_t crc8(uint8_t*, int);
 
 class DVL : public rclcpp::Node {
     public:
-        DVL(int fd, unsigned long baudrate = 115200);
         // PUBLIC API //
-
-        static int open_serial(std::string path);
+        DVL(std::unique_ptr<FD_Interface> dvl_fd);
 
         //reads from actual DVL
         VR readVelocityReport(); //velocity report
@@ -119,7 +118,7 @@ class DVL : public rclcpp::Node {
         */
 
         // PRIVATE VARS //
-        int fd;
+        std::unique_ptr<FD_Interface> fd;
         VR vr, error_vr;
         DRR drr, error_drr;
 

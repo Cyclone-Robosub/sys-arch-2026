@@ -38,6 +38,7 @@ if(BUILD_TESTING)
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+  find_package(ament_cmake_gtest REQUIRED)
 
   add_library(${PROJECT_NAME}_lib src/sensor-data.cpp)
   target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
@@ -50,6 +51,20 @@ if(BUILD_TESTING)
   target_include_directories(${PROJECT_NAME}_lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
+  )
+
+  ament_add_gtest(${PROJECT_NAME}_test test/test_dvl.cpp)
+  target_compile_definitions(${PROJECT_NAME}_test PUBLIC ENABLE_TESTING)
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib)
+  target_include_directories(${PROJECT_NAME}_test PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+  )
+  ament_target_dependencies(${PROJECT_NAME}_test
+    rclcpp
+    custom_interfaces
+    std_msgs
+    std_srvs
   )
 
 endif()

@@ -12,7 +12,7 @@ int Path_FD::get_fd() {
 }
 
 void Path_FD::attempt_reconnect() {
-    fd = open_pico_serial();
+    fd = open_serial();
 }
 
 void Path_FD::close_fd() {
@@ -21,7 +21,7 @@ void Path_FD::close_fd() {
     }
 }
 
-int Path_FD::open_pico_serial() {
+int Path_FD::open_serial() {
     struct termios tty;
     speed_t baud = 115200;
     int status, fd;
