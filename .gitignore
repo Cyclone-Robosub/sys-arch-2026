@@ -120,3 +120,8 @@ cython_debug/
 
 # Macos extended attr
 .DS_Store
+
+# Large video files
+*.mp4
+*.mov
+*.MOV
