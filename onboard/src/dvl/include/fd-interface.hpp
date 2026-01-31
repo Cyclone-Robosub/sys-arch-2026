@@ -1,7 +1,10 @@
 #ifndef FD_INTERFACE_HPP
 #define FD_INTERFACE_HPP
 
+#include <string>
 #include <termios.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 class FD_Interface {
 protected:
@@ -16,7 +19,7 @@ public:
 class Path_FD : public FD_Interface {
 protected:
     std::string path;
-    int open_pico_serial();
+    int open_serial();
 public:
     Path_FD(std::string path);
     int get_fd() override;

@@ -1,13 +1,13 @@
-#include <sensor-data.hpp>
+#include <dvl.hpp>
 #include <iostream>
 
 namespace dvl {
 
     // Constructor
-    DVL::DVL(int fd, unsigned long baudrate) : 
+    DVL::DVL(std::unique_ptr<FD_Interface> fd) : 
         rclcpp::Node("dvl"),
-        fd(fd),
-        error_config(Config{0.0, 0.0, "x", "x", "x", "x"}),
+        fd(std::move(fd)),
+        error_config(config_report{0.0, 0.0, "x", "x", "x", "x"}),
         config(error_config)
         {
 
@@ -19,67 +19,13 @@ namespace dvl {
         trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
         //Publishers
-        velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("VR", 10);
-        drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("DRR", 10);
-        config_publisher = this->create_publisher<custom_interfaces::msg::Config>("Config", 10);  
-    }
-
-    int DVL::open_serial(std::string path){
-         // Open serial port
-        int fd;
-        int baudrate = 115200;
-        
-        fd = open(path.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
-        if (fd < 0) {
-            throw std::runtime_error("Failed to open serial port: " + std::string(strerror(errno)));
-        }
-
-        // Configure port
-        struct termios tty;
-        if (tcgetattr(fd, &tty) != 0) {
-            close(fd);
-            throw std::runtime_error("Failed to get terminal attributes: " + std::string(strerror(errno)));
-        }
-
-        // Set baud rate
-        speed_t speed;
-        switch (baudrate) {
-            case 9600: speed = B9600; break;
-            case 19200: speed = B19200; break;
-            case 38400: speed = B38400; break;
-            case 57600: speed = B57600; break;
-            case 115200: speed = B115200; break;
-            default:
-                close(fd);
-                throw std::invalid_argument("Unsupported baudrate");
-        }
-        cfsetospeed(&tty, speed);
-        cfsetispeed(&tty, speed);
-
-        // Configure 8N1, no flow control
-        tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8; // 8 bits
-        tty.c_cflag &= ~PARENB; // no parity
-        tty.c_cflag &= ~CSTOPB; // 1 stop bit
-        tty.c_cflag &= ~CRTSCTS; // no hardware flow control
-        tty.c_cflag |= CLOCAL | CREAD; // enable receiver
-
-        tty.c_lflag = 0; // non-canonical mode
-        tty.c_oflag = 0; // no remapping, no delays
-        tty.c_iflag = 0; // no special handling
-
-        tty.c_cc[VMIN] = 0;  // non-blocking read
-        tty.c_cc[VTIME] = 10; // 1 second timeout (VTIME is in deciseconds)
-
-        if (tcsetattr(fd, TCSANOW, &tty) != 0) {
-            close(fd);
-            throw std::runtime_error("Failed to set terminal attributes: " + std::string(strerror(errno)));
-        } 
-        
-        return fd;
+        velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
+        drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("dead_reck_report", 10);
+        config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);  
     }
 
     void DVL::publishVR() {
-        VR vrReport = readVelocityReport();
+        velocity_report vrReport = readVelocityReport();
         custom_interfaces::msg::VR vrMessage;
         vrMessage.angle_data.twist.linear.x = vrReport.vx;
         vrMessage.angle_data.twist.linear.y = vrReport.vy;
@@ -98,7 +44,7 @@ namespace dvl {
     }
 
     void DVL::publishDRR() {
-        DRR drrReport = readDRReport();
+        dead_reck_report drrReport = readDRReport();
         custom_interfaces::msg::DRR drrMessage;
         
         drrMessage.time_stamp = drrReport.time_stamp;
@@ -116,7 +62,7 @@ namespace dvl {
     }
 
     void DVL::publishConfig() {
-        Config cReport = readConfig();
+        config_report cReport = readConfig();
         custom_interfaces::msg::Config configMessage;
         configMessage.speed_of_sound = cReport.speed_of_sound;
         configMessage.mounting_rotation_offset = cReport.mounting_rotation_offset;
@@ -128,7 +74,7 @@ namespace dvl {
     }
     
     // Public Reads
-    VR DVL::readVelocityReport(){
+    velocity_report DVL::readVelocityReport(){
         if(holdForResponse(REC_VR)){
             return vr;
         } else {
@@ -137,7 +83,7 @@ namespace dvl {
         
     }
 
-    DRR DVL::readDRReport(){
+    dead_reck_report DVL::readDRReport(){
         if(holdForResponse(REC_DRR)){
             return drr;
         } else {
@@ -169,7 +115,7 @@ namespace dvl {
         }
     }
 
-    Config DVL::readConfig(){
+    config_report DVL::readConfig(){
         sendCommand(CMD_GET_SETTINGS); 
         
         if(holdForResponse(CMD_GET_SETTINGS)){
@@ -253,7 +199,7 @@ namespace dvl {
 
                 std::string partial_line = "";
                 char c;
-                ssize_t n = ::read(fd, &c, 1); // read 1 byte from the serial port
+                ssize_t n = ::read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
                 if (n == 1) {
                     partial_line += c; // append to the end of the existing string
                 } else if (n < 0) {
@@ -433,7 +379,7 @@ namespace dvl {
         std::string data = msg.str();
         size_t total_written = 0;
         while (total_written < data.size()) {
-            ssize_t n = ::write(fd, data.c_str() + total_written, data.size() - total_written);
+            ssize_t n = ::write(fd->get_fd(), data.c_str() + total_written, data.size() - total_written);
             if (n < 0) {
                 throw std::runtime_error("Serial write error: " + std::string(strerror(errno)));
             }
@@ -487,5 +433,14 @@ namespace dvl {
         }
         return checksum;
     }
-
 } //namespace
+
+#ifndef ENABLE_TESTING
+    int main(int argc, char* argv[]) {
+        rclcpp::init(argc, argv);
+        std::unique_ptr<FD_Interface> path_fd = std::make_unique<Path_FD>(*argv);
+        rclcpp::spin(std::make_shared<dvl::DVL>(std::move(path_fd)));
+        rclcpp::shutdown();
+        return 0;
+    }
+#endif
