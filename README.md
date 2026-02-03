@@ -41,8 +41,8 @@ Launch files are a alternative to bash script for runnign ROS nodes
 
 For information on nodes, topics, etc. check the README.md files within the packages themselves.
 
-## How to Turn on The Robot for Manual Control
-### Overview
+# How to Run the Robot with Manual Control Mode
+## Overview
 At a high level, running the robot manually requires remotely connecting to the Pi 5 through `ssh`, starting up the necessary ROS nodes, and connecting a gamepad. The processes you'll need running include the following:
 - `thrust_interface`: sends PWM signals to the thrusters via a Raspberry Pi Pico
 - `soft_mux`: chooses whether to listen to the Matlab controls code or to the command line tool (CLI) for thruster data
@@ -50,11 +50,13 @@ At a high level, running the robot manually requires remotely connecting to the 
 - `inertial_sense`: provides IMU (sensor) data to the Matlab code
 - `index.html`: the webpage that connects to the gamepad
 - `rosbridge_server`: connects the gamepad data to the Matlab code
+- `simple_joystick_controller`: interprets gamepad inputs and converts them to thruster power values
 
-The following section provides some background on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the [SECTION NAME HERE] section.
+The following section provides some background on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the "Running the Robot" section.
 
-There is also a script that you can run that starts up all the robot components automatically. If it works properly, you should just need to `ssh` to the Pi 5 and run the script! If it doesn't, work properly, you'll need to follow the step by step instructions in this guide under [SECTION NAME HERE].
+There is also a script that you can run that starts up all the robot components automatically. If it works properly, your work is greatly simplified: you have to do little more than `ssh` to the Pi 5 and run the script! If it doesn't work properly, you'll need to follow the step by step instructions in this guide under "Running the Robot Manually (If Script Fails)".
 
+## Background
 ### Understanding Linux/The Terminal
 #### Why the terminal?
 The terminal provides you a convenient, reproducible way to interact with your computer. At the end of the day, the goal of using a computer is to manipulate files and data, and a graphical interface merely provides a familiar way of understanding what's really going on in your computer through the abstraction of a desktop. This is fine for regular users, but when you want to run specific programs and develop software, it's much more convenient to do so by entering the specific commands that you want the computer to do.
@@ -83,7 +85,29 @@ To run a command that you've previously run, you can use the up arrow, which wil
 #### Understanding Unix Filesystems
 Linux is a Unix-like system, meaning that it follows most of the same rules as the Unix standard. MacOS is also a Unix system, but Windows is not. The following only applies to Unix systems, so don't try to apply this knowledge to Windows. Also note that the word "directory" and "folder" are used interchangeably.
 
-The filsystem can be thought of as a large, inverted tree. The root is at the top, and the branches grow downwards. The root directory is represented by `/`: that's the full name of the directory. `/` contains a number of other folders, including `dev`, `home`, `etc`, `sys`, `usr`, and more. The path to any of these directories is therefore `/dev`, `/home`, etc. `/home` is where the home directories of the users live, i.e. `/home/cyclone` is the path to the home directory for the `cyclone` user. Inside this directory are the directories that you interact with on a daily basis and have more familiar names, including `Documents`, `Downloads`, `Desktop`, etc. The full path to these is therefore `/home/cyclone/Documents`. Because the home directory is used so much, Unix has a shorcut for it: the `~` symbol (tilde). If you're the `cyclone` user, then `~` means `/home/cyclone`.
+The filsystem can be thought of as a large, inverted tree. The root is at the top, and the branches grow downwards. The root directory is represented by `/`: that's the full name of the directory. `/` contains a number of other folders, including `dev`, `home`, `etc`, `sys`, `usr`, and more. The path to any of these directories is therefore `/dev`, `/home`, etc. `/home` is where the home directories of the users live, i.e. `/home/cyclone` is the path to the home directory for the `cyclone` user. Inside this directory are the directories that you interact with on a daily basis and have more familiar names, including `Documents`, `Downloads`, `Desktop`, etc. The full path to these is therefore `/home/cyclone/Documents`. Because the home directory is used so much, Unix has a shorcut for it: the `~` symbol (tilde). If you're the `cyclone` user, then `~` means `/home/cyclone`. Here's a diagram to help:
+```
+
+
+/
+├── bin
+├── boot
+├── dev
+│    └── serial
+│           └── by-id
+│                 └── usb-MicroPython_Board_...
+├── etc
+├── home
+│    └── cyclone
+├── lib     ├── Desktop
+├── mnt     ├── Documents
+├── proc    ├── Downloads
+├── sys     ├── Music
+├── tmp     ├── Pictures
+├── usr     ├── sys-arch-2026
+└── var     └── Videos
+
+```
 
 In Unix, everything is a file, even things that aren't really files. For example, the Pi Pico that's connected to the Pi 5 shows up as a file under the path `/dev/serial/by-id/`, because `/dev` contains the devices on the system.
 
@@ -98,7 +122,6 @@ There are a few basic commands that will be critical to navigating the terminal.
    - An absolute path is a path defined from the filesystem root (i.e. `/home/cyclone/Documents/my_document.txt`).
    - You can `cd` into the special `.`, `..`, and `/` directories just like any other directory.
 
-
 ### Understanding Local Machine vs Pi 5
 Throughout these instructions, you will be running multiple terminal sessions to run each of these processes. Some of them should run on the Pi 5, and some should run on the local machine (team laptop). If they should run on the Pi 5, you will need to be connected (through `ssh`) to the Pi before running the commands to start them up.
 
@@ -112,7 +135,29 @@ cyclone@cyclonepropulsion:~$
 ```
 then you're on the Pi 5. Most processes have to run on the Pi 5, some can be run on the local machine or the Pi 5, and some have to run on the local machine.
 
+### Using `tmux`
+`tmux` is a terminal multiplexer. It allows splitting a single terminal session into multiple panes. This is particularly convenient for a few reasons: if you launch a `tmux` session on the Pi 5, you can open multiple panes without having to re-`ssh` to the Pi every time, and you can view multiple panes at once (miniature windows within the big main window) without having to continually switch tabs between different robot processes.
+
+The main command that you care about for Robosub is `ctrl + b` ("control B") followed by an arrow key. This is how you move between panes: if you want to move to a pane on the left, type `ctrl + b` then the left arrow key. Clicking on the pane won't switch focus to it: you have to use this method instead!
+
+You may also need to switch between different windows within `tmux`. This is like switching tabs within the terminal, except that it's all within one `tmux` session. This can be accomplished with `ctrl + b` followed by the window number, which is displayed on the green bar on the bottom of the screen (starting from 0). For example, to switch to window 2, you would type `ctrl + b`, then `2`.
+
+If you'd like to split a pane into some sub-panes, you can do so with `%` and `"`. To split vertically, type `ctrl + b` then `%`, and to split horizontally type `ctrl + b` then `"`.
+
+To close down the `tmux` session, the easiest way is to close whatever process is running, and then type `ctrl + d` into the empty terminal prompt for each open pane. Be careful: if you type `ctrl + d` after exiting `tmux`, it will instead close the `ssh` connection or the terminal instance itself (depending on whether you're `ssh`'d or not).
+
+### Stopping a program
+To stop a program that is running in the terminal, type `ctrl + c`. This will attempt to end the process. If it doesn't end within a few seconds, try pressing it a few more times. If it still doesn't end, you may need to forcefully kill the process. This can be done most easily through `btop`.
+
+To kill a process with `btop`, open a new terminal window, tab, or `tmux` pane on the machine which is running the process you wish to kill, then type `btop` into the terminal and press `Enter`. You should be greeted with a text-based task manager program. Use the arrow keys to scroll the programs list on the right until you find the process you want to kill. Then, while hovering over the process (by careful, the processes move around frequently!) and press `k`. Confirm that the popup has the correct process listed, then press `Enter`. To exit `btop`, type `q`.
+
+## Running the Robot
+
 ### How to Connect to the Pi 5
+#### Steps
+Type the following into the terminal, followed by `Enter`:
+1. `ssh pi5`
+#### Explanation
 Connecting to the Pi 5 is done through `ssh`. First, make sure that the robot is powered on and the Pi 5 has a green LED on near the power port. Open a terminal on the local machine, and type `ssh pi5`. If you get the message
 ```
 ssh: Could not resolve hostname cyclonepropulsion.local: Name or service not known
@@ -133,4 +178,97 @@ Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1044-raspi aarch64)
   Usage of /:   29.3% of 116.68GB   Processes:              188
   Memory usage: 4%                  Users logged in:        0
   Swap usage:   0%                  IPv4 address for wlan0: 100.126.159.3
+
+ * Stricly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+ https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+502 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+67 additional security updates can be applied with ESM Apps.
+Learn more about enablign ESM Apps service at https://ubuntu.com/esm
+
+Last login: Fri Jan 30 17:07:04 2026 from 169.254.178.230
+propulsion@cyclonepropulsion:~$ 
 ```
+
+This means that are you are connected to the Pi 5. Any commands that you run from this terminal tab will run on the Pi 5 rather than the local machine.
+
+If you open a new terminal tab or window, **you will need to reconnect to the Pi 5 in that tab or window**. Again, you can verify that you are on the correct machine by checking the hostname (see "Understanding Local Machine vs Pi 5").
+
+### Running the Robot with the Bash Script (Preferred)
+#### Steps
+Type the following into the terminal, followed by `Enter`:
+1. `ssh Pi5`
+2. `cd ~/sys-arch-2026`
+3. `git pull`
+4. `colcon build`
+5. `./start_tmux_session.sh`
+6. `1`
+
+#### Explanation
+
+[TODO: Explanation and expected behaviour from `git pull` and `colcon build`]
+
+`start_tmux_session.sh` is a bash script. A bash script is a file that contains a list of terminal commands for the computer to follow. When you run the bash script, it will execute the commands in order, allowing the automation of complicated or repetitive processes.
+
+To run the script, first make sure you're `ssh`'d to the Pi 5. Then, move to the `sys-arch-2026` folder by typing `cd ~/sys-arch-2026`. The terminal prompt should now be updated to:
+```
+cyclone@cyclonepropulsion:~/sys-arch-2026$
+```
+From there, type `./start_tmux_session.sh`. This will launch a new `tmux` session, splitting your terminal window into multiple panes, each running a component of the robot code. You will need to switch the focus to the `mux_controller` pane (the one with some text at the top indicating the current robot control mode, probably `cli` at first) and switch it to `Matlab mode` by typing `1` into the prompt and pressing `Enter`. You should see the mode at the top change to `matlab (ctrl)`.
+
+That's all that you need to do on the robot side! You still have to run the joystick processes, but these should be done on the local machine rather than the Pi 5.
+
+### Running the Robot Manually (If Script Fails)
+#### Steps
+Type the following into the terminal, followed by `Enter`:
+1. `ssh pi5`
+2. `cd ~/sys-arch-2026`
+3. `git pull`
+4. `colcon build`
+5. `source install/setup.bash`
+6. `ros2 run thrust_interface thrust_interface`
+
+Then open a new terminal tab, and type:
+1. `ssh pi5`
+2. `cd ~/sys-arch-2026`
+3. `source install/setup.bash`
+4. `ros2 run soft_mux soft_mux`
+
+Then open a new terminal tab, and type:
+1. `ssh pi5`
+2. `cd ~/sys-arch-2026`
+3. `source install/setup.bash`
+4. `ros2 run mux_interface mux_interface`
+5. `1`
+
+#### Explanation
+
+[TODO]
+
+### Running Gamepad Processes
+Unfortunately, there is no script for this one: the commands must be typed manually. Fortunately, it's not too difficult compared to the robot commands.
+#### Steps
+**On the local machine**, type the following into the terminal, followed by `Enter`:
+1. `cd ~/sys-arch-2026`
+2. `git pull`
+3. `colcon build`
+4. `source install/setup.bash`
+5. `ros2 run simple_joystick_controller Simple_Joystick_Controller`
+
+Then open a new terminal tab, and type:
+1. `cd ~/sys-arch-2026`
+2. `source install/setup.bash`
+3. [TODO: rosbridge command]
+
+Then open a new terminal tab, and type:
+1. `cd ~/sys-arch-2026`
+2. `source install/setup.bash`
+3. `google-chrome remote_control_webpage/index.html`
+
+#### Explanation
+
