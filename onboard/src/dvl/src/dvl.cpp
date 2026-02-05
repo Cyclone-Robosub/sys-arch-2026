@@ -1,6 +1,8 @@
 #include <dvl.hpp>
 #include <iostream>
 
+using namespace std::chrono_literals;
+
 namespace dvl {
 
     // Constructor
@@ -22,6 +24,9 @@ namespace dvl {
         velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
         drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("dead_reck_report", 10);
         config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);  
+
+        //wall timer
+        wall_timer = this->create_wall_timer(10ms, std::bind(&dvl::DVL::callback, this));
     }
 
     void DVL::publishVR() {
@@ -199,7 +204,7 @@ namespace dvl {
 
                 std::string partial_line = "";
                 char c;
-                ssize_t n = ::read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+                ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
                 if (n == 1) {
                     partial_line += c; // append to the end of the existing string
                 } else if (n < 0) {
@@ -377,17 +382,19 @@ namespace dvl {
 
         // Write to serial port using POSIX write
         std::string data = msg.str();
-        size_t total_written = 0;
-        while (total_written < data.size()) {
-            ssize_t n = ::write(fd->get_fd(), data.c_str() + total_written, data.size() - total_written);
-            if (n < 0) {
-                throw std::runtime_error("Serial write error: " + std::string(strerror(errno)));
-            }
-            total_written += n;
+        ssize_t n = write(fd->get_fd(), data.c_str(), data.size());
+        if (n < 0) {
+            throw std::runtime_error("Serial write error: " + std::string(strerror(errno)));
         }
 
         return true;
-}
+    }
+
+    void DVL::callback() {
+        publishVR();
+        publishDRR();
+        publishConfig();
+    }
 
     static const uint8_t lookup_table[256] = {
         0x00U,0x07U,0x0EU,0x09U,0x1CU,0x1BU,0x12U,0x15U,

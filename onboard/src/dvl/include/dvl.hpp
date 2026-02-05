@@ -118,6 +118,8 @@ class DVL : public rclcpp::Node {
         rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gyro_service;
         rclcpp::Service<custom_interfaces::srv::SetSerial>::SharedPtr set_serr_protocol;
         rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr trigger_ping;
+
+        rclcpp::TimerBase::SharedPtr wall_timer;
         /*
         Outgoing messages are expected in the format "[SOP][DIR_CMD][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n". Options are only needed for some commands
 
@@ -138,6 +140,7 @@ class DVL : public rclcpp::Node {
         bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
         bool holdForResponse(const char expected_response); 
         bool sendCommand(uint8_t cmd, const std::vector<std::string>& options = {});
+        void callback();
 };
 
 }
