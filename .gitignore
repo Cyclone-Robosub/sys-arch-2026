@@ -124,4 +124,11 @@ cython_debug/
 # checkpoints
 Vision/runs
 
-Vision/yolo*.pt
+*.pt
+
+*.mp4
+*.MOV
+Vision/**/*.txt
+*.jpg
+*.png
+*.jpeg
