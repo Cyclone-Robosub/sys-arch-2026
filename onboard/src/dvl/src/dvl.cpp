@@ -303,7 +303,11 @@ namespace dvl {
                     std::vector<std::string> fields;
                     while (std::getline(ss, field, ',')) fields.push_back(field);
 
-                    if (fields.size() < 20) return false;
+                    std::stringstream ss_covariance(fields[7]);
+                     std::vector<std::string> covariance_fields;
+                    while(std::getline(ss_covariance, field, ';')) covariance_fields.push_back(field);
+
+                    if (fields.size() < 10) return false;
 
                     vr.vx = std::stof(fields[1]);
                     vr.vy = std::stof(fields[2]);
@@ -313,13 +317,13 @@ namespace dvl {
                     vr.fom = std::stof(fields[6]);
 
                     for (int i = 0; i < 9; ++i) {
-                        vr.covariance[i] = std::stof(fields[7 + i]);
+                        vr.covariance[i] = std::stof(covariance_fields[i]);
                     }
 
-                    vr.time_of_validity = std::stoll(fields[16]);
-                    vr.time_of_transmission = std::stoll(fields[17]);
-                    vr.time = std::stof(fields[18]);
-                    vr.status = static_cast<uint8_t>(std::stoul(fields[19], nullptr, 10));
+                    vr.time_of_validity = std::stoll(fields[8]);
+                    vr.time_of_transmission = std::stoll(fields[9]);
+                    vr.time = std::stof(fields[10]);
+                    vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
 
                     return true;
                 }
@@ -483,7 +487,7 @@ int DVL_FD::open_serial() {
 #ifndef ENABLE_TESTING
     int main(int argc, char* argv[]) {
         rclcpp::init(argc, argv);
-        std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>(*argv);
+        std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>("/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D30I35JH-if00-port0");
         rclcpp::spin(std::make_shared<dvl::DVL>(std::move(path_fd)));
         rclcpp::shutdown();
         return 0;

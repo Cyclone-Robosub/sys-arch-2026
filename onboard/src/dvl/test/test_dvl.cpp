@@ -103,7 +103,7 @@ protected:
         switch(data_type){
         case VR_TYPE:
             msg = 
-                "--z,1.000000,2.000000,3.000000," //vx, vy, vz
+                "wrz,1.000000,2.000000,3.000000," //vx, vy, vz
                 ",2.000000,1.000000," //valid, altitude, fom
                 "1.000000,2.000000,3.000000,4.000000,5.000000," //covariance
                 "1.000000,2.000000,3.000000,4.000000," //covariance
@@ -111,12 +111,12 @@ protected:
             break;
         case DRR_TYPE:
             msg =
-                "--p,1716814976.000000,0.110000,0.280000,0.040000," //x, y, z, pos_std
+                "wrp,1716814976.000000,0.110000,0.280000,0.040000," //x, y, z, pos_std
                 "15.400000,-1.100000,-0.300000,3\r\n\r"; //roll, pitch, yaw, status
             break;
         case CONFIG_TYPE:
             msg =
-                "--c,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
+                "wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
                 "n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
             break;
         default: 
