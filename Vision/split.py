@@ -4,6 +4,15 @@ import shutil
 import sys
 
 def split_yolo_dataset(dataset_path: str, train_ratio=0.8):
+    """
+    Split a YOLO formatted dataset into training and validation sets.
+    
+    :param dataset_path: Path to the dataset directory
+    :type dataset_path: str
+    :param train_ratio: Ratio of training data (default 0.8)
+    :type train_ratio: float
+    """
+
     # Define directories
     img_dir = os.path.join(dataset_path, 'images')
     lbl_dir = os.path.join(dataset_path, 'labels')
