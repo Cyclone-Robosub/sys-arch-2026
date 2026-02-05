@@ -1,11 +1,12 @@
 import os
 import random
 import shutil
+import sys
 
-def split_yolo_dataset(train_ratio=0.8):
+def split_yolo_dataset(dataset_path: str, train_ratio=0.8):
     # Define directories
-    img_dir = 'images'
-    lbl_dir = 'labels'
+    img_dir = os.path.join(dataset_path, 'images')
+    lbl_dir = os.path.join(dataset_path, 'labels')
     
     # Check if source directories exist
     if not os.path.exists(img_dir) or not os.path.exists(lbl_dir):
@@ -48,10 +49,16 @@ def split_yolo_dataset(train_ratio=0.8):
     move_data(val_files, 'val')
 
     # Cleanup empty source directories if desired
-    # os.rmdir(img_dir)
-    # os.rmdir(lbl_dir)
+    os.rmdir(img_dir)
+    os.rmdir(lbl_dir)
 
     print(f"Split completed: {len(train_files)} train, {len(val_files)} val.")
 
 if __name__ == "__main__":
-    split_yolo_dataset(train_ratio=0.8)
+    if len(sys.argv) < 2:
+        print("Usage: python split.py <dataset_path>")
+        sys.exit(1)
+
+    dataset_path = sys.argv[1]
+
+    split_yolo_dataset(dataset_path=dataset_path)
