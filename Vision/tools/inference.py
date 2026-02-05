@@ -2,6 +2,7 @@
 
 import cv2 as cv
 import numpy as np
+import matplotlib.pyplot as plt
 import torch
 import sys
 
@@ -29,6 +30,26 @@ def predict(model: torch.jit.ScriptModule, frame: np.ndarray):
     keypoints = output.detach().cpu().numpy().reshape(-1, 2)
 
     return keypoints
+
+def visualize(image: np.ndarray, keypoints: np.ndarray, title="Image"):
+    """
+    visualize the image with keypoints overlaid using matplotlib.
+    
+    :param image: Input image in RGB format
+    :param keypoints: Normalized keypoints as a numpy array of shape (num_keypoints, 2)
+    :param title: Title for the plot
+    """
+    
+    plt.figure(figsize=(8, 8))
+    plt.imshow(image)
+
+    # Keypoints might be a list or array
+    kpts = np.array(keypoints)
+    if len(kpts) > 0:
+        # Scatter plot for keypoints (x, y)
+        plt.scatter(kpts[:, 0], kpts[:, 1], c='red', s=40, marker='o')
+    plt.axis('off')
+    plt.show()
 
 if __name__ == "__main__":
 
