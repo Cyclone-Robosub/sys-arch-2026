@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import sys
+import argparse
 
 MODEL_PATH = 'model_with_norm_traced.pt'
 
@@ -53,10 +54,12 @@ def visualize(image: np.ndarray, keypoints: np.ndarray, title="Image"):
 
 if __name__ == "__main__":
 
-    if (len(sys.argv) < 2):
-        print("Usage: python inference.py <source>")
+    parser = argparse.ArgumentParser(description="Run inference on a video source")
+    parser.add_argument("source", help="Video source (file path or camera index)")
+    parser.add_argument("--record", type=str, default=None, help="Optional output file path to save the recorded video")
+    args = parser.parse_args()
 
-    source = sys.argv[1]
+    source = args.source
     cap = cv.VideoCapture(source)
     if not cap.isOpened():
         print("Error opening video stream or file")
@@ -68,6 +71,11 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error loading model: {e}")
         sys.exit(1)
+
+    if args.record:
+        fps = cap.get(cv.CAP_PROP_FPS) 
+        fourcc = cv.VideoWriter_fourcc(*'mp4v')
+        out = cv.VideoWriter(args.record, fourcc, fps, (int(cap.get(3)), int(cap.get(4))))
 
     while cap.isOpened():
         ok, frame = cap.read()
@@ -83,9 +91,14 @@ if __name__ == "__main__":
         for (x, y) in kpts_pixel.astype(int):
             cv.circle(frame, (x, y), 5, (0, 255, 0), -1)
 
+        if args.record:
+            out.write(frame)
+
         cv.imshow('Inference', frame)
         if cv.waitKey(1) == ord('q'):
             break
 
+    if args.record:
+        out.release()
     cap.release()
     cv.destroyAllWindows()
