@@ -52,9 +52,153 @@ At a high level, running the robot manually requires remotely connecting to the 
 - `rosbridge_server`: connects the gamepad data to the Matlab code
 - `simple_joystick_controller`: interprets gamepad inputs and converts them to thruster power values
 
-The following section provides some background on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the "Running the Robot" section.
+The "Background" section provides some context on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the "Running the Robot" section.
 
 There is also a script that you can run that starts up all the robot components automatically. If it works properly, your work is greatly simplified: you have to do little more than `ssh` to the Pi 5 and run the script! If it doesn't work properly, you'll need to follow the step by step instructions in this guide under "Running the Robot Manually (If Script Fails)".
+
+## Running the Robot
+
+### How to Connect to the Pi 5
+#### Steps
+Type the following into the terminal, followed by `Enter`:
+1. `ssh pi5`
+#### Explanation
+Connecting to the Pi 5 is done through `ssh`. First, make sure that the robot is powered on and the Pi 5 has a green LED on near the power port. Open a terminal on the local machine, and type `ssh pi5`. If you get the message
+```
+ssh: Could not resolve hostname cyclonepropulsion.local: Name or service not known
+```
+then `ssh` was unable to connect to the Pi 5. Check the Ethernet connection between the robot and the local machine: there should be LEDs turned on on the local machine's Ethernet port. If the robot was only recently turned on, the Pi 5 might just need a little bit longer to boot up.
+
+If you are successful, you should get a message similar to this:
+```
+Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1044-raspi aarch64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Suport:         https://ubuntu.com/pro
+
+ System information as of Fri Jan 30 17:14:11 PST 2026
+
+  System load:  1.71                Temperature:            56.1 C
+  Usage of /:   29.3% of 116.68GB   Processes:              188
+  Memory usage: 4%                  Users logged in:        0
+  Swap usage:   0%                  IPv4 address for wlan0: 100.126.159.3
+
+ * Stricly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s just raised the bar for easy, resilient and secure K8s cluster deployment.
+
+ https://ubuntu.com/engage/secure-kubernetes-at-the-edge
+
+Expanded Security Maintenance for Applications is not enabled.
+
+502 updates can be applied immediately.
+To see these additional updates run: apt list --upgradable
+
+67 additional security updates can be applied with ESM Apps.
+Learn more about enablign ESM Apps service at https://ubuntu.com/esm
+
+Last login: Fri Jan 30 17:07:04 2026 from 169.254.178.230
+propulsion@cyclonepropulsion:~$ 
+```
+
+This means that are you are connected to the Pi 5. Any commands that you run from this terminal tab will run on the Pi 5 rather than the local machine.
+
+If you open a new terminal tab or window, **you will need to reconnect to the Pi 5 in that tab or window**. Again, you can verify that you are on the correct machine by checking the hostname (see "Understanding Local Machine vs Pi 5").
+
+### Running the Robot with the Bash Script (Preferred)
+#### Steps
+Type the following into the terminal, followed by `Enter`:
+1. `ssh Pi5`
+2. `cd ~/sys-arch-2026`
+3. `git pull`
+4. `colcon build`
+5. `./start_tmux_session.sh`
+6. `1`
+
+#### Explanation
+
+When you type `git pull`, you should expect to see either a long list of changes, or a short message saying that it was already up to date.
+
+When you type `colcon build`, you should see a list of nodes being built. Don't worry if you see something like:
+```
+WARNING:colcon.colcon_cmake.task.cmake.build:Could not run installation step for package 'InertialSenseSDK' because it has no 'install' target
+```
+
+and/or:
+
+```
+RESOLVED_ROS_DIR="/home/william/Repos/sys-arch-2026/onboard/src/imu/ros2_ws/src/inertial-sense-sdk/ROS/ros2"
+
+ABSOLUTE_SCRIPT_PATH="/home/william/Repos/sys-arch-2026/onboard/src/imu/ros2_ws/src/inertial-sense-sdk/scripts/build_is_sdk.sh"
+```
+
+These messages are totally fine, and don't indicate an issue.
+
+`colcon build` is the command to compile all the components for the robot. You only need to run this once, because once the code is compiled as long as no code changes are made, the compiled code is still correct.
+
+`start_tmux_session.sh` is a bash script. A bash script is a file that contains a list of terminal commands for the computer to follow. When you run the bash script, it will execute the commands in order, allowing the automation of complicated or repetitive processes.
+
+To run the script, first make sure you're `ssh`'d to the Pi 5. Then, move to the `sys-arch-2026` folder by typing `cd ~/sys-arch-2026`. The terminal prompt should now be updated to:
+```
+cyclone@cyclonepropulsion:~/sys-arch-2026$
+```
+From there, type `./start_tmux_session.sh`. This will launch a new `tmux` session, splitting your terminal window into multiple panes, each running a component of the robot code. You will need to switch the focus to the `mux_controller` pane (the one with some text at the top indicating the current robot control mode, probably `cli` at first) and switch it to `Matlab mode` by typing `1` into the prompt and pressing `Enter`. You should see the mode at the top change to `matlab (ctrl)`.
+
+That's all that you need to do on the robot side! You still have to run the joystick processes, but these should be done on the local machine rather than the Pi 5.
+
+### Running the Robot Manually (If Script Fails)
+#### Steps
+Type the following into the terminal, followed by `Enter`:
+1. `ssh pi5`
+2. `cd ~/sys-arch-2026`
+3. `git pull`
+4. `colcon build`
+5. `source install/setup.bash`
+6. `ros2 run thrust_interface thrust_interface`
+
+Then open a new terminal tab, and type:
+1. `ssh pi5`
+2. `cd ~/sys-arch-2026`
+3. `source install/setup.bash`
+4. `ros2 run soft_mux soft_mux`
+
+Then open a new terminal tab, and type:
+1. `ssh pi5`
+2. `cd ~/sys-arch-2026`
+3. `source install/setup.bash`
+4. `ros2 run mux_interface mux_interface`
+5. `1`
+
+#### Explanation
+
+The first collection of steps starts the `thrust_interface` node. This node connects to the Pi Pico (the small microcontroller next to the Pi 5), which actually sends the signals that control the thrusters.
+
+The second collection of steps starts the `soft_mux` node, which manages whether the robot is listening to the Matlab/controls code or the command line tool.
+
+The third collection of steps starts the `mux_interface` node, which provides a basic user interface to switch which mode the mux is in. By then typing `1`, you switch it to listen to the Matlab control code rather than the CLI (which doesn't currently exist).
+
+### Running Gamepad Processes
+Unfortunately, there is no script for this one: the commands must be typed manually. Fortunately, it's not too difficult compared to the robot commands.
+#### Steps
+**On the local machine**, type the following into the terminal, followed by `Enter`:
+1. `cd ~/sys-arch-2026`
+2. `git pull`
+3. `colcon build`
+4. `source install/setup.bash`
+5. `ros2 run simple_joystick_controller Simple_Joystick_Controller`
+
+Then open a new terminal tab, and type:
+1. `cd ~/sys-arch-2026`
+2. `source install/setup.bash`
+3. `ros2 launch ros2bridge_server rosbridge_websocket_launch.xml`
+
+Then open a new terminal tab, and type:
+1. `cd ~/sys-arch-2026`
+2. `source install/setup.bash`
+3. `google-chrome remote_control_webpage/index.html`
+
+#### Explanation
+
+TODO: split explanation and expected output
 
 ## Background
 ### Understanding Linux/The Terminal
@@ -150,125 +294,3 @@ To close down the `tmux` session, the easiest way is to close whatever process i
 To stop a program that is running in the terminal, type `ctrl + c`. This will attempt to end the process. If it doesn't end within a few seconds, try pressing it a few more times. If it still doesn't end, you may need to forcefully kill the process. This can be done most easily through `btop`.
 
 To kill a process with `btop`, open a new terminal window, tab, or `tmux` pane on the machine which is running the process you wish to kill, then type `btop` into the terminal and press `Enter`. You should be greeted with a text-based task manager program. Use the arrow keys to scroll the programs list on the right until you find the process you want to kill. Then, while hovering over the process (by careful, the processes move around frequently!) and press `k`. Confirm that the popup has the correct process listed, then press `Enter`. To exit `btop`, type `q`.
-
-## Running the Robot
-
-### How to Connect to the Pi 5
-#### Steps
-Type the following into the terminal, followed by `Enter`:
-1. `ssh pi5`
-#### Explanation
-Connecting to the Pi 5 is done through `ssh`. First, make sure that the robot is powered on and the Pi 5 has a green LED on near the power port. Open a terminal on the local machine, and type `ssh pi5`. If you get the message
-```
-ssh: Could not resolve hostname cyclonepropulsion.local: Name or service not known
-```
-then `ssh` was unable to connect to the Pi 5. Check the Ethernet connection between the robot and the local machine: there should be LEDs turned on on the local machine's Ethernet port. If the robot was only recently turned on, the Pi 5 might just need a little bit longer to boot up.
-
-If you are successful, you should get a message similar to this:
-```
-Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1044-raspi aarch64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Suport:         https://ubuntu.com/pro
-
- System information as of Fri Jan 30 17:14:11 PST 2026
-
-  System load:  1.71                Temperature:            56.1 C
-  Usage of /:   29.3% of 116.68GB   Processes:              188
-  Memory usage: 4%                  Users logged in:        0
-  Swap usage:   0%                  IPv4 address for wlan0: 100.126.159.3
-
- * Stricly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s just raised the bar for easy, resilient and secure K8s cluster deployment.
-
- https://ubuntu.com/engage/secure-kubernetes-at-the-edge
-
-Expanded Security Maintenance for Applications is not enabled.
-
-502 updates can be applied immediately.
-To see these additional updates run: apt list --upgradable
-
-67 additional security updates can be applied with ESM Apps.
-Learn more about enablign ESM Apps service at https://ubuntu.com/esm
-
-Last login: Fri Jan 30 17:07:04 2026 from 169.254.178.230
-propulsion@cyclonepropulsion:~$ 
-```
-
-This means that are you are connected to the Pi 5. Any commands that you run from this terminal tab will run on the Pi 5 rather than the local machine.
-
-If you open a new terminal tab or window, **you will need to reconnect to the Pi 5 in that tab or window**. Again, you can verify that you are on the correct machine by checking the hostname (see "Understanding Local Machine vs Pi 5").
-
-### Running the Robot with the Bash Script (Preferred)
-#### Steps
-Type the following into the terminal, followed by `Enter`:
-1. `ssh Pi5`
-2. `cd ~/sys-arch-2026`
-3. `git pull`
-4. `colcon build`
-5. `./start_tmux_session.sh`
-6. `1`
-
-#### Explanation
-
-[TODO: Explanation and expected behaviour from `git pull` and `colcon build`]
-
-`start_tmux_session.sh` is a bash script. A bash script is a file that contains a list of terminal commands for the computer to follow. When you run the bash script, it will execute the commands in order, allowing the automation of complicated or repetitive processes.
-
-To run the script, first make sure you're `ssh`'d to the Pi 5. Then, move to the `sys-arch-2026` folder by typing `cd ~/sys-arch-2026`. The terminal prompt should now be updated to:
-```
-cyclone@cyclonepropulsion:~/sys-arch-2026$
-```
-From there, type `./start_tmux_session.sh`. This will launch a new `tmux` session, splitting your terminal window into multiple panes, each running a component of the robot code. You will need to switch the focus to the `mux_controller` pane (the one with some text at the top indicating the current robot control mode, probably `cli` at first) and switch it to `Matlab mode` by typing `1` into the prompt and pressing `Enter`. You should see the mode at the top change to `matlab (ctrl)`.
-
-That's all that you need to do on the robot side! You still have to run the joystick processes, but these should be done on the local machine rather than the Pi 5.
-
-### Running the Robot Manually (If Script Fails)
-#### Steps
-Type the following into the terminal, followed by `Enter`:
-1. `ssh pi5`
-2. `cd ~/sys-arch-2026`
-3. `git pull`
-4. `colcon build`
-5. `source install/setup.bash`
-6. `ros2 run thrust_interface thrust_interface`
-
-Then open a new terminal tab, and type:
-1. `ssh pi5`
-2. `cd ~/sys-arch-2026`
-3. `source install/setup.bash`
-4. `ros2 run soft_mux soft_mux`
-
-Then open a new terminal tab, and type:
-1. `ssh pi5`
-2. `cd ~/sys-arch-2026`
-3. `source install/setup.bash`
-4. `ros2 run mux_interface mux_interface`
-5. `1`
-
-#### Explanation
-
-[TODO]
-
-### Running Gamepad Processes
-Unfortunately, there is no script for this one: the commands must be typed manually. Fortunately, it's not too difficult compared to the robot commands.
-#### Steps
-**On the local machine**, type the following into the terminal, followed by `Enter`:
-1. `cd ~/sys-arch-2026`
-2. `git pull`
-3. `colcon build`
-4. `source install/setup.bash`
-5. `ros2 run simple_joystick_controller Simple_Joystick_Controller`
-
-Then open a new terminal tab, and type:
-1. `cd ~/sys-arch-2026`
-2. `source install/setup.bash`
-3. [TODO: rosbridge command]
-
-Then open a new terminal tab, and type:
-1. `cd ~/sys-arch-2026`
-2. `source install/setup.bash`
-3. `google-chrome remote_control_webpage/index.html`
-
-#### Explanation
-
