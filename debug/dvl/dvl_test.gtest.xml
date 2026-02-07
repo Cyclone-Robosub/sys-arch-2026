@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dvl" tests="1" failures="0" time="0.000" errors="1" skipped="0">
-  <testcase classname="dvl" name="dvl_test.gtest.missing_result" time="0.000">
-    <error message="The test did not generate a result file."/>
+<testsuite name="dvl" tests="1" failures="0" time="0.965" errors="1" skipped="0">
+  <testcase classname="dvl" name="dvl_test.gtest.missing_result" time="0.965">
+    <error message="The test did not generate a result file:&#10;&#10;[==========] Running 7 tests from 1 test suite.&#10;[----------] Global test environment set-up.&#10;[----------] 7 tests from TestDVLInterface&#10;[ RUN      ] TestDVLInterface.DVLConstruction&#10;[       OK ] TestDVLInterface.DVLConstruction (112 ms)&#10;[ RUN      ] TestDVLInterface.ValidReadVelocityReport&#10;[       OK ] TestDVLInterface.ValidReadVelocityReport (18 ms)&#10;[ RUN      ] TestDVLInterface.ValidReadDRReport&#10;/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp:203: Failure&#10;Expected equality of these values:&#10;  drr.roll&#10;    Which is: 15.4&#10;  15.400000&#10;    Which is: 15.4&#10;&#10;/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp:204: Failure&#10;Expected equality of these values:&#10;  drr.status&#10;    Which is: '\x3' (3)&#10;  0.040000&#10;    Which is: 0.04&#10;&#10;[  FAILED  ] TestDVLInterface.ValidReadDRReport (16 ms)&#10;[ RUN      ] TestDVLInterface.ValidReadConfiguration&#10;unknown file: Failure&#10;C++ exception with description &quot;Serial write error: Bad file descriptor&quot; thrown in the test body.&#10;&#10;[  FAILED  ] TestDVLInterface.ValidReadConfiguration (22 ms)&#10;[ RUN      ] TestDVLInterface.DVLPublishVR&#10;"/>
   </testcase>
 </testsuite>

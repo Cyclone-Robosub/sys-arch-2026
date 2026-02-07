@@ -4,13 +4,13 @@
   tests="3"
   failures="3"
   errors="0"
-  time="0.078"
+  time="0.126"
 >
   <testcase
     name="include/dvl.hpp"
     classname="dvl.uncrustify"
   >
-      <failure message="Diff with 159 lines"><![CDATA[--- include/dvl.hpp
+      <failure message="Diff with 167 lines"><![CDATA[--- include/dvl.hpp
 +++ include/dvl.hpp.uncrustify
 @@ -29 +29,2 @@
 -    DVL_FD(std::string path);
@@ -105,12 +105,14 @@
 +  void publishVR();
 +  void publishDRR();
 +  void publishConfig();
-@@ -106,9 +115,15 @@
+@@ -106,11 +115,15 @@
 -        void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response);
 -        void resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //reset the dead reckoning report
 -        void resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //zero the gyroscope
 -        void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
 -        void triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+-    
+-        void workLoop();
 -    private:
 -        rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocity_report_publisher;
 -        rclcpp::Publisher<custom_interfaces::msg::DRR>::SharedPtr drr_report_publisher;
@@ -130,12 +132,14 @@
 +  void triggerPing(
 +    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
 +    const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
-@@ -116,5 +131,10 @@
+@@ -118,5 +131,12 @@
 -        rclcpp::Service<custom_interfaces::srv::SetConfig>::SharedPtr config_service;
 -        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr drr_service;
 -        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gyro_service;
 -        rclcpp::Service<custom_interfaces::srv::SetSerial>::SharedPtr set_serr_protocol;
 -        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr trigger_ping;
++  void workLoop();
++
 +private:
 +  rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocity_report_publisher;
 +  rclcpp::Publisher<custom_interfaces::msg::DRR>::SharedPtr drr_report_publisher;
@@ -146,14 +150,14 @@
 +  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gyro_service;
 +  rclcpp::Service<custom_interfaces::srv::SetSerial>::SharedPtr set_serr_protocol;
 +  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr trigger_ping;
-@@ -128,3 +148,3 @@
+@@ -131,3 +151,3 @@
 -        std::unique_ptr<FD_Interface> fd;
 -        velocity_report vr, error_vr;
 -        dead_reck_report drr, error_drr;
 +  std::unique_ptr<FD_Interface> fd;
 +  velocity_report vr, error_vr;
 +  dead_reck_report drr, error_drr;
-@@ -132,4 +152,4 @@
+@@ -135,4 +155,4 @@
 -        config_report error_config, config;
 -        
 -        std::string version; //Protocol version "major.minor.patch"
@@ -162,26 +166,30 @@
 +
 +  std::string version;       //Protocol version "major.minor.patch"
 +  std::string product_details;
-@@ -138,3 +158,3 @@
+@@ -141,5 +161,5 @@
+-        bool getResponse(const char expected_response);
 -        bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
 -        bool holdForResponse(const char expected_response); 
 -        bool sendCommand(uint8_t cmd, const std::vector<std::string>& options = {});
+-        
++  bool getResponse(const char expected_response);
 +  bool parseResponse(std::string & complete_line);      //parses text string from DVL into the results structure
 +  bool holdForResponse(const char expected_response);
 +  bool sendCommand(uint8_t cmd, const std::vector<std::string> & options = {});
++
 ]]></failure>
   </testcase>
   <testcase
     name="src/dvl.cpp"
     classname="dvl.uncrustify"
   >
-      <failure message="Diff with 928 lines"><![CDATA[--- src/dvl.cpp
+      <failure message="Diff with 1055 lines"><![CDATA[--- src/dvl.cpp
 +++ src/dvl.cpp.uncrustify
-@@ -4 +4,2 @@
+@@ -6 +6,2 @@
 -namespace dvl {
 +namespace dvl
 +{
-@@ -7,6 +8,6 @@
+@@ -9,6 +10,6 @@
 -    DVL::DVL(std::unique_ptr<FD_Interface> fd) : 
 -        rclcpp::Node("dvl"),
 -        fd(std::move(fd)),
@@ -194,7 +202,7 @@
 +  error_config(config_report{0.0, 0.0, "x", "x", "x", "x"}),
 +  config(error_config)
 +{
-@@ -15,5 +16,10 @@
+@@ -17,5 +18,10 @@
 -        config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
 -        drr_service = this->create_service<std_srvs::srv::SetBool>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
 -        gyro_service = this->create_service<std_srvs::srv::SetBool>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
@@ -210,7 +218,7 @@
 +      std::bind(&dvl::DVL::setSerialProtocol, this, std::placeholders::_1, std::placeholders::_2));
 +  trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing",
 +      std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
-@@ -22,54 +28,59 @@
+@@ -24,54 +30,59 @@
 -        velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
 -        drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("dead_reck_report", 10);
 -        config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);  
@@ -219,11 +227,11 @@
 -    void DVL::publishVR() {
 -        velocity_report vrReport = readVelocityReport();
 -        custom_interfaces::msg::VR vrMessage;
--        vrMessage.angle_data.twist.linear.x = vrReport.vx;
--        vrMessage.angle_data.twist.linear.y = vrReport.vy;
--        vrMessage.angle_data.twist.linear.z = vrReport.vz;
+-        vrMessage.velocity_data.x = vrReport.vx;
+-        vrMessage.velocity_data.y = vrReport.vy;
+-        vrMessage.velocity_data.z = vrReport.vz;
 -        for (int i = 0; i < 9; i++) {
--            (vrMessage.angle_data.covariance)[i] = (vrReport.covariance)[i];
+-            (vrMessage.covariance.data)[i] = (vrReport.covariance)[i];
 -        }
 -        vrMessage.altitude = vrReport.altitude;
 -        vrMessage.fom = vrReport.fom;
@@ -240,14 +248,14 @@
 -        custom_interfaces::msg::DRR drrMessage;
 -        
 -        drrMessage.time_stamp = drrReport.time_stamp;
--        drrMessage.pos_data.position.x = drrReport.x;
--        drrMessage.pos_data.position.y = drrReport.y;
--        drrMessage.pos_data.position.z = drrReport.z;
+-        drrMessage.position.x = drrReport.x;
+-        drrMessage.position.y = drrReport.y;
+-        drrMessage.position.z = drrReport.z;
 -
--        drrMessage.pos_data.orientation.x = drrReport.roll;
--        drrMessage.pos_data.orientation.y = drrReport.pitch;
--        drrMessage.pos_data.orientation.z = drrReport.yaw;
--        drrMessage.pos_data.orientation.w = drrReport.pos_std;
+-        drrMessage.angle.x = drrReport.roll;
+-        drrMessage.angle.y = drrReport.pitch;
+-        drrMessage.angle.z = drrReport.yaw;
+-        drrMessage.pos_std = drrReport.pos_std;
 -        drrMessage.status = drrReport.status;
 -       
 -        this->drr_report_publisher->publish(drrMessage);
@@ -276,11 +284,11 @@
 +{
 +  velocity_report vrReport = readVelocityReport();
 +  custom_interfaces::msg::VR vrMessage;
-+  vrMessage.angle_data.twist.linear.x = vrReport.vx;
-+  vrMessage.angle_data.twist.linear.y = vrReport.vy;
-+  vrMessage.angle_data.twist.linear.z = vrReport.vz;
++  vrMessage.velocity_data.x = vrReport.vx;
++  vrMessage.velocity_data.y = vrReport.vy;
++  vrMessage.velocity_data.z = vrReport.vz;
 +  for (int i = 0; i < 9; i++) {
-+    (vrMessage.angle_data.covariance)[i] = (vrReport.covariance)[i];
++    (vrMessage.covariance.data)[i] = (vrReport.covariance)[i];
 +  }
 +  vrMessage.altitude = vrReport.altitude;
 +  vrMessage.fom = vrReport.fom;
@@ -298,14 +306,14 @@
 +  custom_interfaces::msg::DRR drrMessage;
 +
 +  drrMessage.time_stamp = drrReport.time_stamp;
-+  drrMessage.pos_data.position.x = drrReport.x;
-+  drrMessage.pos_data.position.y = drrReport.y;
-+  drrMessage.pos_data.position.z = drrReport.z;
++  drrMessage.position.x = drrReport.x;
++  drrMessage.position.y = drrReport.y;
++  drrMessage.position.z = drrReport.z;
 +
-+  drrMessage.pos_data.orientation.x = drrReport.roll;
-+  drrMessage.pos_data.orientation.y = drrReport.pitch;
-+  drrMessage.pos_data.orientation.z = drrReport.yaw;
-+  drrMessage.pos_data.orientation.w = drrReport.pos_std;
++  drrMessage.angle.x = drrReport.roll;
++  drrMessage.angle.y = drrReport.pitch;
++  drrMessage.angle.z = drrReport.yaw;
++  drrMessage.pos_std = drrReport.pos_std;
 +  drrMessage.status = drrReport.status;
 +
 +  this->drr_report_publisher->publish(drrMessage);
@@ -324,9 +332,9 @@
 +  this->config_publisher->publish(configMessage);
 +}
 +
-@@ -77,22 +88,25 @@
+@@ -79,22 +90,25 @@
 -    velocity_report DVL::readVelocityReport(){
--        if(holdForResponse(REC_VR)){
+-        if(getResponse(REC_VR)){
 -            return vr;
 -        } else {
 -            return error_vr;
@@ -335,7 +343,7 @@
 -    }
 -
 -    dead_reck_report DVL::readDRReport(){
--        if(holdForResponse(REC_DRR)){
+-        if(getResponse(REC_DRR)){
 -            return drr;
 -        } else {
 -            return error_drr;
@@ -346,10 +354,10 @@
 -
 -        sendCommand(CMD_GET_VERSION); 
 -        
--        if(holdForResponse(CMD_GET_VERSION)){
+-        if(getResponse(CMD_GET_VERSION)){
 +velocity_report DVL::readVelocityReport()
 +{
-+  if(holdForResponse(REC_VR)) {
++  if(getResponse(REC_VR)) {
 +    return vr;
 +  } else {
 +    return error_vr;
@@ -359,7 +367,7 @@
 +
 +dead_reck_report DVL::readDRReport()
 +{
-+  if(holdForResponse(REC_DRR)) {
++  if(getResponse(REC_DRR)) {
 +    return drr;
 +  } else {
 +    return error_drr;
@@ -371,8 +379,8 @@
 +
 +  sendCommand(CMD_GET_VERSION);
 +
-+  if(holdForResponse(CMD_GET_VERSION)) {
-@@ -100,27 +114,29 @@
++  if(getResponse(CMD_GET_VERSION)) {
+@@ -102,27 +116,29 @@
 -            return version;
 -        } else {
 -            version = "x.x.x";
@@ -384,7 +392,7 @@
 -    std::string DVL::readDetails(){
 -        sendCommand(CMD_GET_PRODUCT_DETAIL); 
 -        
--        if(holdForResponse(CMD_GET_PRODUCT_DETAIL)){
+-        if(getResponse(CMD_GET_PRODUCT_DETAIL)){
 -            return product_details;
 -        } else {
 -            return "x,x,x,x";
@@ -394,7 +402,7 @@
 -    config_report DVL::readConfig(){
 -        sendCommand(CMD_GET_SETTINGS); 
 -        
--        if(holdForResponse(CMD_GET_SETTINGS)){
+-        if(getResponse(CMD_GET_SETTINGS)){
 -            return config;
 -        } else {
 -            return error_config;
@@ -412,7 +420,7 @@
 +{
 +  sendCommand(CMD_GET_PRODUCT_DETAIL);
 +
-+  if(holdForResponse(CMD_GET_PRODUCT_DETAIL)) {
++  if(getResponse(CMD_GET_PRODUCT_DETAIL)) {
 +    return product_details;
 +  } else {
 +    return "x,x,x,x";
@@ -423,18 +431,18 @@
 +{
 +  sendCommand(CMD_GET_SETTINGS);
 +
-+  if(holdForResponse(CMD_GET_SETTINGS)) {
++  if(getResponse(CMD_GET_SETTINGS)) {
 +    return config;
 +  } else {
 +    return error_config;
 +  }
 +}
-@@ -130 +146,3 @@
+@@ -132 +148,3 @@
 -    void DVL::setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response) { /*float speed_of_sound, float mounting_rotation_offset, std::string acoustic_enabled, std::string dark_mode_enabled, std::string range_mode, std::string periodic_cycling_enabled*/
 +void DVL::setConfig(
 +  const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request,
 +  const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response)                                                                                                    /*float speed_of_sound, float mounting_rotation_offset, std::string acoustic_enabled, std::string dark_mode_enabled, std::string range_mode, std::string periodic_cycling_enabled*/
-@@ -132,45 +150,61 @@
+@@ -134,45 +152,61 @@
 -        response->success = sendCommand(CMD_SET_SETTINGS, {std::to_string(request->config_data.speed_of_sound),std::to_string(request->config_data.mounting_rotation_offset), request->config_data.acoustic_enabled, request->config_data.range_mode, request->config_data.periodic_cycling_enabled});
 -
 -    }
@@ -443,7 +451,7 @@
 -
 -    void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
 -        sendCommand(CMD_RESET_DR);
--        if(holdForResponse(ACK)){
+-        if(getResponse(ACK)){
 -            response->success = true;
 -        } else{
 -            response->success = false;
@@ -453,7 +461,7 @@
 -
 -    void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
 -        sendCommand(CMD_CALIBRATE_GYRO);
--        if(holdForResponse(ACK)){
+-        if(getResponse(ACK)){
 -            response->success = true;
 -        } else{
 -            response->success = false;
@@ -463,7 +471,7 @@
 -
 -    void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
 -        sendCommand(CMD_TRIGGER_PING);
--        if(holdForResponse(ACK)){
+-        if(getResponse(ACK)){
 -            response->success = true;
 -        } else {
 -            response->success = false;
@@ -474,7 +482,7 @@
 -
 -    void DVL::setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response){
 -        sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(request->serial)}); //currently only can be used to start serial output
--        if(holdForResponse(ACK)){
+-        if(getResponse(ACK)){
 -            response->success = true;
 -        } else{
 -            response->success = false;
@@ -495,7 +503,7 @@
 +  const std::shared_ptr<std_srvs::srv::SetBool::Response> response)
 +{
 +  sendCommand(CMD_RESET_DR);
-+  if(holdForResponse(ACK)) {
++  if(getResponse(ACK)) {
 +    response->success = true;
 +  } else {
 +    response->success = false;
@@ -508,7 +516,7 @@
 +  const std::shared_ptr<std_srvs::srv::SetBool::Response> response)
 +{
 +  sendCommand(CMD_CALIBRATE_GYRO);
-+  if(holdForResponse(ACK)) {
++  if(getResponse(ACK)) {
 +    response->success = true;
 +  } else {
 +    response->success = false;
@@ -521,7 +529,7 @@
 +  const std::shared_ptr<std_srvs::srv::SetBool::Response> response)
 +{
 +  sendCommand(CMD_TRIGGER_PING);
-+  if(holdForResponse(ACK)) {
++  if(getResponse(ACK)) {
 +    response->success = true;
 +  } else {
 +    response->success = false;
@@ -535,17 +543,88 @@
 +  const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response)
 +{
 +  sendCommand(CMD_CHANGE_SER_OUTPUT, {std::to_string(request->serial)});      //currently only can be used to start serial output
-+  if(holdForResponse(ACK)) {
++  if(getResponse(ACK)) {
 +    response->success = true;
 +  } else {
 +    response->success = false;
 +  }
 +}
-@@ -179 +213,2 @@
+@@ -181,36 +215,38 @@
+-    bool DVL::getResponse(const char expected_response){
+-        std::string complete_line;
+-        char c;
+-        ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+-        
+-        while(n > 0){
+-            std::string partial_line = "";
+-            
+-            if (n == 1) {
+-                partial_line += c; // append to the end of the existing string
+-            } else if (n < 0) {
+-                throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
+-            } else { // n == 0: no data available (non-blocking read)
+-                break;
+-            }
+-
+-            if (partial_line.empty()) {
+-                continue; //loop again if the the partial line is empty
+-            }
+-
+-            complete_line += partial_line; //add the partial line to the complete line
+-
+-            if (partial_line == "\n" || partial_line == "\r") {
+-                break; //break out of the reading loop if an end-of-line char is detected
+-            }
+-
+-            n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+-        }
+-
+-        parseResponse(complete_line);
+-
+-        if (complete_line[2] == expected_response) return true; 
+-        return false;
+-    }
+-
 -    bool DVL::holdForResponse(const char expected_response) {
++bool DVL::getResponse(const char expected_response)
++{
++  std::string complete_line;
++  char c;
++  ssize_t n = read(fd->get_fd(), &c, 1);       // read 1 byte from the serial port
++
++  while(n > 0) {
++    std::string partial_line = "";
++
++    if (n == 1) {
++      partial_line += c;           // append to the end of the existing string
++    } else if (n < 0) {
++      throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
++    } else {         // n == 0: no data available (non-blocking read)
++      break;
++    }
++
++    if (partial_line.empty()) {
++      continue;           //loop again if the the partial line is empty
++    }
++
++    complete_line += partial_line;         //add the partial line to the complete line
++
++    if (partial_line == "\n" || partial_line == "\r") {
++      break;           //break out of the reading loop if an end-of-line char is detected
++    }
++
++    n = read(fd->get_fd(), &c, 1);         // read 1 byte from the serial port
++  }
++
++  parseResponse(complete_line);
++
++  if (complete_line[2] == expected_response) {return true;}
++  return false;
++}
++
 +bool DVL::holdForResponse(const char expected_response)
 +{
-@@ -187,21 +222,21 @@
+@@ -224,21 +260,21 @@
 -        
 -        using clock = std::chrono::steady_clock;
 -        constexpr auto TIMEOUT = std::chrono::milliseconds(100);
@@ -588,7 +667,7 @@
 +      } else if (n < 0) {
 +        throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
 +      }
-@@ -210,10 +245,10 @@
+@@ -247,10 +283,10 @@
 -                if (partial_line.empty()) {
 -                    continue; //loop again if the the partial line is empty
 -                }
@@ -609,7 +688,7 @@
 +        break;             //break out of the reading loop if an end-of-line char is detected
 +      }
 +    }
-@@ -222,9 +257,41 @@
+@@ -259,9 +295,41 @@
 -            if (complete_line.empty()) {
 -                continue; 
 -            }
@@ -660,96 +739,10 @@
 +        } else {
 +          version = "";
 +          return false;
-@@ -232,2 +299,86 @@
+@@ -269,19 +337,8 @@
 -
 -        return false; //return false if the code timed out
-+        return true;
-+
-+      case 'w':           // product details
-+        if (complete_line.size() > 4) {
-+          product_details = complete_line.substr(4);
-+        } else {
-+          product_details = "";
-+          return false;
-+        }
-+        return true;
-+
-+      case 'a':           // acknowledge
-+        return true;
-+
-+      case 'c': {           // configuration
-+          std::stringstream ss(complete_line);
-+          std::string field;
-+          std::vector<std::string> fields;
-+          while (std::getline(ss, field, ',')) {fields.push_back(field);}
-+
-+          if (fields.size() < 7) {return false;}
-+
-+          config.speed_of_sound = std::stof(fields[1]);
-+          config.mounting_rotation_offset = std::stof(fields[2]);
-+          config.acoustic_enabled = fields[3];
-+          config.dark_mode_enabled = fields[4];
-+          config.range_mode = fields[5];
-+          config.periodic_cycling_enabled = fields[6];
-+
-+          return true;
-+        }
-+
-+      case 'z': {           // velocity report
-+          std::stringstream ss(complete_line);
-+          std::string field;
-+          std::vector<std::string> fields;
-+          while (std::getline(ss, field, ',')) {fields.push_back(field);}
-+
-+          if (fields.size() < 20) {return false;}
-+
-+          vr.vx = std::stof(fields[1]);
-+          vr.vy = std::stof(fields[2]);
-+          vr.vz = std::stof(fields[3]);
-+          vr.valid = !fields[4].empty() ? fields[4][0] : 'n';
-+          vr.altitude = std::stof(fields[5]);
-+          vr.fom = std::stof(fields[6]);
-+
-+          for (int i = 0; i < 9; ++i) {
-+            vr.covariance[i] = std::stof(fields[7 + i]);
-+          }
-+
-+          vr.time_of_validity = std::stoll(fields[16]);
-+          vr.time_of_transmission = std::stoll(fields[17]);
-+          vr.time = std::stof(fields[18]);
-+          vr.status = static_cast<uint8_t>(std::stoul(fields[19], nullptr, 10));
-+
-+          return true;
-+        }
-+
-+      case 'p': {           // dead reckoning report
-+          std::stringstream ss(complete_line);
-+          std::string field;
-+          std::vector<std::string> fields;
-+          while (std::getline(ss, field, ',')) {fields.push_back(field);}
-+
-+          if (fields.size() < 9) {return false;}
-+
-+          drr.x = std::stof(fields[1]);
-+          drr.y = std::stof(fields[2]);
-+          drr.z = std::stof(fields[3]);
-+          drr.pos_std = std::stof(fields[4]);
-+          drr.roll = std::stof(fields[5]);
-+          drr.pitch = std::stof(fields[6]);
-+          drr.yaw = std::stof(fields[7]);
-+          drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
-+
-+          return true;
-+        }
-+
-+      case '?':           // malformed request
-+      case '!':           // bad checksum
-+      case 'n':           // not acknowledged
-+        return false;
-+
-+      default:
-+        return false;
-@@ -235,116 +386 @@
+-    }
 -
 -    bool DVL::parseResponse(std::string& complete_line){
 -        //std::cout << complete_line << std::endl;
@@ -766,7 +759,15 @@
 -        // Strip checksum "*xx" if present
 -        if (complete_line.size() >= 3 && complete_line[complete_line.size() - 3] == '*') {
 -            complete_line.erase(complete_line.size() - 3);
--        }
++        return true;
++
++      case 'w':           // product details
++        if (complete_line.size() > 4) {
++          product_details = complete_line.substr(4);
++        } else {
++          product_details = "";
++          return false;
+@@ -289,103 +346,83 @@
 -
 -        try {
 -            switch (cmd) {
@@ -816,7 +817,11 @@
 -                    std::vector<std::string> fields;
 -                    while (std::getline(ss, field, ',')) fields.push_back(field);
 -
--                    if (fields.size() < 20) return false;
+-                    std::stringstream ss_covariance(fields[7]);
+-                    std::vector<std::string> covariance_fields;
+-                    while(std::getline(ss_covariance, field, ';')) covariance_fields.push_back(field);
+-
+-                    if (fields.size() < 10) return false;
 -
 -                    vr.vx = std::stof(fields[1]);
 -                    vr.vy = std::stof(fields[2]);
@@ -826,13 +831,13 @@
 -                    vr.fom = std::stof(fields[6]);
 -
 -                    for (int i = 0; i < 9; ++i) {
--                        vr.covariance[i] = std::stof(fields[7 + i]);
+-                        vr.covariance[i] = std::stof(covariance_fields[i]);
 -                    }
 -
--                    vr.time_of_validity = std::stoll(fields[16]);
--                    vr.time_of_transmission = std::stoll(fields[17]);
--                    vr.time = std::stof(fields[18]);
--                    vr.status = static_cast<uint8_t>(std::stoul(fields[19], nullptr, 10));
+-                    vr.time_of_validity = std::stoll(fields[8]);
+-                    vr.time_of_transmission = std::stoll(fields[9]);
+-                    vr.time = std::stof(fields[10]);
+-                    vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
 -
 -                    return true;
 -                }
@@ -866,8 +871,90 @@
 -                    return false;
 -            }
 -        } catch (const std::exception& e) {
++        return true;
++
++      case 'a':           // acknowledge
++        return true;
++
++      case 'c': {           // configuration
++          std::stringstream ss(complete_line);
++          std::string field;
++          std::vector<std::string> fields;
++          while (std::getline(ss, field, ',')) {fields.push_back(field);}
++
++          if (fields.size() < 7) {return false;}
++
++          config.speed_of_sound = std::stof(fields[1]);
++          config.mounting_rotation_offset = std::stof(fields[2]);
++          config.acoustic_enabled = fields[3];
++          config.dark_mode_enabled = fields[4];
++          config.range_mode = fields[5];
++          config.periodic_cycling_enabled = fields[6];
++
++          return true;
++        }
++
++      case 'z': {           // velocity report
++          std::stringstream ss(complete_line);
++          std::string field;
++          std::vector<std::string> fields;
++          while (std::getline(ss, field, ',')) {fields.push_back(field);}
++
++          std::stringstream ss_covariance(fields[7]);
++          std::vector<std::string> covariance_fields;
++          while(std::getline(ss_covariance, field, ';')) {covariance_fields.push_back(field);}
++
++          if (fields.size() < 10) {return false;}
++
++          vr.vx = std::stof(fields[1]);
++          vr.vy = std::stof(fields[2]);
++          vr.vz = std::stof(fields[3]);
++          vr.valid = !fields[4].empty() ? fields[4][0] : 'n';
++          vr.altitude = std::stof(fields[5]);
++          vr.fom = std::stof(fields[6]);
++
++          for (int i = 0; i < 9; ++i) {
++            vr.covariance[i] = std::stof(covariance_fields[i]);
++          }
++
++          vr.time_of_validity = std::stoll(fields[8]);
++          vr.time_of_transmission = std::stoll(fields[9]);
++          vr.time = std::stof(fields[10]);
++          vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
++
++          return true;
++        }
++
++      case 'p': {           // dead reckoning report
++          std::stringstream ss(complete_line);
++          std::string field;
++          std::vector<std::string> fields;
++          while (std::getline(ss, field, ',')) {fields.push_back(field);}
++
++          if (fields.size() < 9) {return false;}
++
++          drr.x = std::stof(fields[1]);
++          drr.y = std::stof(fields[2]);
++          drr.z = std::stof(fields[3]);
++          drr.pos_std = std::stof(fields[4]);
++          drr.roll = std::stof(fields[5]);
++          drr.pitch = std::stof(fields[6]);
++          drr.yaw = std::stof(fields[7]);
++          drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
++
++          return true;
++        }
++
++      case '?':           // malformed request
++      case '!':           // bad checksum
++      case 'n':           // not acknowledged
++        return false;
++
++      default:
++        return false;
++    }
 +  } catch (const std::exception & e) {
-@@ -352,6 +388,6 @@
+@@ -393,6 +430,6 @@
 -            std::cerr << "parseResponse error: " << e.what() << std::endl;
 -            return false;
 -        }
@@ -880,21 +967,21 @@
 +}
 +
 +bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string> & options)      //cmd with optional input args
-@@ -359 +395,2 @@
+@@ -400 +437,2 @@
 -        std::stringstream msg;
 +{
 +  std::stringstream msg;
-@@ -363 +400 @@
+@@ -404 +442 @@
 -        msg << SOP << DIR_CMD << static_cast<char>(cmd);  // add start character, direction, and command
 +  msg << SOP << DIR_CMD << static_cast<char>(cmd);        // add start character, direction, and command
-@@ -366,3 +403,3 @@
+@@ -407,3 +445,3 @@
 -        for (const auto& opt : options) {               // add options as comma-separated
 -            msg << "," << opt;
 -        }
 +  for (const auto & opt : options) {                    // add options as comma-separated
 +    msg << "," << opt;
 +  }
-@@ -371,4 +408,4 @@
+@@ -412,4 +450,4 @@
 -        std::string body = msg.str();
 -        uint8_t crc = crc8(reinterpret_cast<uint8_t*>(body.data()), body.size());
 -
@@ -903,7 +990,7 @@
 +  uint8_t crc = crc8(reinterpret_cast<uint8_t *>(body.data()), body.size());
 +
 +  msg << CS << std::hex << std::setw(2) << std::setfill('0') << (int)crc << "\n";
-@@ -379,53 +416,54 @@
+@@ -420,70 +458,72 @@
 -        std::string data = msg.str();
 -        ssize_t n = write(fd->get_fd(), data.c_str(), data.size());
 -        if (n < 0) {
@@ -911,7 +998,24 @@
 -        }
 -
 -        return true;
--}
+-    }
+-
+-    void DVL::workLoop() {
+-        using clock = std::chrono::steady_clock;
+-        constexpr auto PUBLISH_RATE = std::chrono::milliseconds(100);
+-        auto last_publish = clock::now();
+-
+-        while (rclcpp::ok()) {
+-            auto now = clock::now();
+-            if((now - last_publish) >= PUBLISH_RATE) {
+-                publishVR();
+-                publishDRR();
+-                publishConfig();
+-
+-                last_publish = now;
+-            }
+-        }    
+-    }
 -
 -    static const uint8_t lookup_table[256] = {
 -        0x00U,0x07U,0x0EU,0x09U,0x1CU,0x1BU,0x12U,0x15U,
@@ -966,6 +1070,24 @@
 +  return true;
 +}
 +
++void DVL::workLoop()
++{
++  using clock = std::chrono::steady_clock;
++  constexpr auto PUBLISH_RATE = std::chrono::milliseconds(100);
++  auto last_publish = clock::now();
++
++  while (rclcpp::ok()) {
++    auto now = clock::now();
++    if((now - last_publish) >= PUBLISH_RATE) {
++      publishVR();
++      publishDRR();
++      publishConfig();
++
++      last_publish = now;
++    }
++  }
++}
++
 +static const uint8_t lookup_table[256] = {
 +  0x00U, 0x07U, 0x0EU, 0x09U, 0x1CU, 0x1BU, 0x12U, 0x15U,
 +  0x38U, 0x3FU, 0x36U, 0x31U, 0x24U, 0x23U, 0x2AU, 0x2DU,
@@ -1011,7 +1133,7 @@
 +  }
 +  return checksum;
 +}
-@@ -434,15 +472,18 @@
+@@ -492,15 +532,18 @@
 -DVL_FD::DVL_FD(std::string path) : Path_FD(path) {
 -    fd = open_serial();
 -}
@@ -1045,14 +1167,14 @@
 +
 +  fcntl(fd, F_SETFL, O_RDWR);
 +
-@@ -450,3 +491,3 @@
+@@ -508,3 +551,3 @@
 -    cfsetospeed(&tty, baud);
 -    cfsetispeed(&tty, baud);
 -    
 +  cfsetospeed(&tty, baud);
 +  cfsetispeed(&tty, baud);
 +
-@@ -454,16 +495,16 @@
+@@ -512,16 +555,16 @@
 -    tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8; // 8 bits
 -    tty.c_cflag &= ~PARENB; // no parity
 -    tty.c_cflag &= ~CSTOPB; // 1 stop bit
@@ -1085,19 +1207,32 @@
 +  tcsetattr(fd, TCSANOW, &tty);
 +
 +  return fd;
-@@ -473,8 +514,9 @@
+@@ -531,14 +574,16 @@
 -    int main(int argc, char* argv[]) {
 -        rclcpp::init(argc, argv);
--        std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>(*argv);
--        rclcpp::spin(std::make_shared<dvl::DVL>(std::move(path_fd)));
+-        std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>("/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D30I35JH-if00-port0");
+-        auto dvl = std::make_shared<dvl::DVL>(std::move(path_fd));
+-        
+-        std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
+-            rclcpp::spin(dvl);
+-        });
+-        
+-        dvl->workLoop();
 -        rclcpp::shutdown();
 -        return 0;
 -    }
 -#endif+int main(int argc, char * argv[])
 +{
 +  rclcpp::init(argc, argv);
-+  std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>(*argv);
-+  rclcpp::spin(std::make_shared<dvl::DVL>(std::move(path_fd)));
++  std::unique_ptr<FD_Interface> path_fd =
++    std::make_unique<DVL_FD>("/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D30I35JH-if00-port0");
++  auto dvl = std::make_shared<dvl::DVL>(std::move(path_fd));
++
++  std::thread ros_thread([&]() {       // Needs to be seperate thread so that input loop can run
++      rclcpp::spin(dvl);
++    });
++
++  dvl->workLoop();
 +  rclcpp::shutdown();
 +  return 0;
 +}
@@ -1108,18 +1243,20 @@
     name="test/test_dvl.cpp"
     classname="dvl.uncrustify"
   >
-      <failure message="Diff with 298 lines"><![CDATA[--- test/test_dvl.cpp
+      <failure message="Diff with 332 lines"><![CDATA[--- test/test_dvl.cpp
 +++ test/test_dvl.cpp.uncrustify
 @@ -16 +16 @@
 -class TestDVLInterface : public::testing::Test {
 +class TestDVLInterface : public ::testing::Test {
-@@ -18,12 +18,13 @@
+@@ -18,14 +18,15 @@
 -    std::shared_ptr<DVL> node;
 -    int pipe_fds[2];  // [0] = read end, [1] = write end
 -    rclcpp::Subscription<custom_interfaces::msg::VR>::SharedPtr velocity_report_subscriber;
 -    custom_interfaces::msg::VR most_recent_velocity_report;
 -    rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr drr_report_subscriber;
 -    custom_interfaces::msg::DRR most_recent_drr_report;
+-    rclcpp::Subscription<custom_interfaces::msg::Config>::SharedPtr config_report_subscriber;
+-    custom_interfaces::msg::Config most_recent_config_report;
 -
 -
 -    void SetUp() override {
@@ -1132,6 +1269,8 @@
 +  custom_interfaces::msg::VR most_recent_velocity_report;
 +  rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr drr_report_subscriber;
 +  custom_interfaces::msg::DRR most_recent_drr_report;
++  rclcpp::Subscription<custom_interfaces::msg::Config>::SharedPtr config_report_subscriber;
++  custom_interfaces::msg::Config most_recent_config_report;
 +
 +
 +  void SetUp() override
@@ -1139,7 +1278,7 @@
 +    if (!rclcpp::ok()) {
 +      rclcpp::init(0, nullptr);
 +    }
-@@ -33,12 +34,14 @@
+@@ -35,12 +36,14 @@
 -        if (pipe(pipe_fds) == -1) {
 -            FAIL() << "Failed to create pipe for mock serial";
 -        }
@@ -1166,7 +1305,7 @@
 +
 +  void create_node(uint8_t dvl_mode)
 +  {
-@@ -47,6 +50,7 @@
+@@ -49,6 +52,7 @@
 -        std::unique_ptr<FD_Interface> pipe_fd;
 -        if(dvl_mode == DVL_READ) pipe_fd = std::make_unique<Direct_FD>(pipe_fds[0]);
 -        else pipe_fd = std::make_unique<Direct_FD>(pipe_fds[1]);
@@ -1180,10 +1319,10 @@
 +
 +    node = std::make_shared<DVL>(std::move(pipe_fd));
 +  }
-@@ -56 +60 @@
+@@ -58 +62 @@
 -    * 
 +    *
-@@ -60,23 +64,24 @@
+@@ -62,23 +66,24 @@
 -    std::string read_serial_output(int timeout_ms = 100) {
 -        char buffer[1024];
 -        fd_set readfds;
@@ -1231,10 +1370,10 @@
 +
 +    return "";
 +  }
-@@ -86 +91 @@
+@@ -88 +93 @@
 -    * 
 +    *
-@@ -89,6 +94,7 @@
+@@ -91,6 +96,7 @@
 -    void write_serial_message(uint8_t data_type){
 -        std::string msg;
 -        get_serial_message(data_type, msg);
@@ -1248,37 +1387,39 @@
 +    int length = msg.size();
 +    write(pipe_fds[1], msg.c_str(), length + 1);
 +  }
-@@ -98 +104 @@
+@@ -100 +106 @@
 -    * 
 +    *
-@@ -102,38 +108,47 @@
+@@ -104,48 +110,61 @@
 -    void get_serial_message(uint8_t data_type, std::string& msg){
 -        switch(data_type){
 -        case VR_TYPE:
 -            msg = 
--                "--z,1.000000,2.000000,3.000000," //vx, vy, vz
+-                "wrz,1.000000,2.000000,3.000000," //vx, vy, vz
 -                ",2.000000,1.000000," //valid, altitude, fom
--                "1.000000,2.000000,3.000000,4.000000,5.000000," //covariance
--                "1.000000,2.000000,3.000000,4.000000," //covariance
+-                "1.000000;2.000000;3.000000;4.000000;5.000000;" //covariance
+-                "1.000000;2.000000;3.000000;4.000000," //covariance
 -                "1,2,3.000000,0\r\n\r"; //time of validity, time of transmission, time, status
 -            break;
 -        case DRR_TYPE:
 -            msg =
--                "--p,1716814976.000000,0.110000,0.280000,0.040000," //x, y, z, pos_std
+-                "wrp,1716814976.000000,0.110000,0.280000,0.040000," //x, y, z, pos_std
 -                "15.400000,-1.100000,-0.300000,3\r\n\r"; //roll, pitch, yaw, status
 -            break;
 -        case CONFIG_TYPE:
 -            msg =
--                "--c,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
+-                "wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
 -                "n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
 -            break;
 -        default: 
 -            msg = "error";
 -        }
 -    }
+-
 -    void subscribe_velocity_report() {
 -        velocity_report_subscriber = node->create_subscription<custom_interfaces::msg::VR> ("velocity_report", 10, std::bind(&TestDVLInterface::velocity_report_callback, this, std::placeholders::_1));
 -    }
+-
 -    void velocity_report_callback(custom_interfaces::msg::VR velocity_report) {
 -        most_recent_velocity_report = velocity_report;    
 -    }
@@ -1290,37 +1431,47 @@
 -    void drr_report_callback(custom_interfaces::msg::DRR drr_report){
 -        most_recent_drr_report = drr_report;
 -    }
+-
+-    void subscribe_config_report() {
+-        config_report_subscriber = node->create_subscription<custom_interfaces::msg::Config>("config_report", 10, std::bind(&TestDVLInterface::config_report_callback, this, std::placeholders::_1));
+-    }
+-
+-    void config_report_callback(custom_interfaces::msg::Config config_report){
+-        most_recent_config_report = config_report;
+-    }
 +  void get_serial_message(uint8_t data_type, std::string & msg)
 +  {
 +    switch(data_type) {
 +      case VR_TYPE:
 +        msg =
-+          "--z,1.000000,2.000000,3.000000,"       //vx, vy, vz
++          "wrz,1.000000,2.000000,3.000000,"       //vx, vy, vz
 +          ",2.000000,1.000000,"       //valid, altitude, fom
-+          "1.000000,2.000000,3.000000,4.000000,5.000000,"       //covariance
-+          "1.000000,2.000000,3.000000,4.000000,"       //covariance
++          "1.000000;2.000000;3.000000;4.000000;5.000000;"       //covariance
++          "1.000000;2.000000;3.000000;4.000000,"       //covariance
 +          "1,2,3.000000,0\r\n\r";       //time of validity, time of transmission, time, status
 +        break;
 +      case DRR_TYPE:
 +        msg =
-+          "--p,1716814976.000000,0.110000,0.280000,0.040000,"       //x, y, z, pos_std
++          "wrp,1716814976.000000,0.110000,0.280000,0.040000,"       //x, y, z, pos_std
 +          "15.400000,-1.100000,-0.300000,3\r\n\r";       //roll, pitch, yaw, status
 +        break;
 +      case CONFIG_TYPE:
 +        msg =
-+          "--c,1475.000000,0.000000,y"       //speed of sound, mounting rotation offset, acoustic enabled
++          "wrc,1475.000000,0.000000,y"       //speed of sound, mounting rotation offset, acoustic enabled
 +          "n,auto,y\r\n\r";       //dark mode enabled, range mode, periodic cycling enabled
 +        break;
 +      default:
 +        msg = "error";
 +    }
 +  }
++
 +  void subscribe_velocity_report()
 +  {
 +    velocity_report_subscriber =
 +      node->create_subscription<custom_interfaces::msg::VR>("velocity_report", 10,
 +      std::bind(&TestDVLInterface::velocity_report_callback, this, std::placeholders::_1));
 +  }
++
 +  void velocity_report_callback(custom_interfaces::msg::VR velocity_report)
 +  {
 +    most_recent_velocity_report = velocity_report;
@@ -1337,36 +1488,48 @@
 +  {
 +    most_recent_drr_report = drr_report;
 +  }
-@@ -147 +162 @@
++
++  void subscribe_config_report()
++  {
++    config_report_subscriber =
++      node->create_subscription<custom_interfaces::msg::Config>("config_report", 10,
++      std::bind(&TestDVLInterface::config_report_callback, this, std::placeholders::_1));
++  }
++
++  void config_report_callback(custom_interfaces::msg::Config config_report)
++  {
++    most_recent_config_report = config_report;
++  }
+@@ -159 +178 @@
 -        create_node(DVL_READ);
 +    create_node(DVL_READ);
-@@ -157 +172 @@
+@@ -169 +188 @@
 - TEST_F(TestDVLInterface, ValidReadVelocityReport){
 +TEST_F(TestDVLInterface, ValidReadVelocityReport) {
-@@ -161 +176 @@
+@@ -173 +192 @@
 -    //write valid VR data into pipe_fds[1] 
 +    //write valid VR data into pipe_fds[1]
-@@ -174,2 +189,2 @@
+@@ -186,2 +205,2 @@
 -    EXPECT_EQ(vr.valid, 'n'); 
 - }
 +    EXPECT_EQ(vr.valid, 'n');
 +}
-@@ -180 +195 @@
+@@ -192 +211 @@
 - TEST_F(TestDVLInterface, ValidReadDRReport){
 +TEST_F(TestDVLInterface, ValidReadDRReport) {
-@@ -193 +208 @@
+@@ -205 +224 @@
 - }
 +}
-@@ -198 +213 @@
+@@ -210 +229 @@
 - TEST_F(TestDVLInterface, ValidReadConfiguration){
 +TEST_F(TestDVLInterface, ValidReadConfiguration) {
-@@ -204 +219 @@
+@@ -216 +235 @@
 -    
 +
-@@ -213 +228 @@
+@@ -225 +244 @@
 - }
 +}
-@@ -218,4 +233,4 @@
+@@ -230,4 +249,4 @@
 - TEST_F(TestDVLInterface, DVLPublishVR) {
 -    create_node(DVL_READ);
 -
@@ -1375,25 +1538,31 @@
 +    create_node(DVL_READ);
 +
 +    //write valid VR data into pipe_fds[1]
-@@ -243 +258 @@
+@@ -255 +274 @@
 -    
 +
-@@ -260 +275 @@
+@@ -272 +291 @@
 - }
 +}
-@@ -265 +280 @@
+@@ -277 +296 @@
 - TEST_F(TestDVLInterface, DVLPublishDRR){
 +TEST_F(TestDVLInterface, DVLPublishDRR) {
-@@ -287 +302 @@
+@@ -304 +323 @@
 - }
 +}
-@@ -292 +307 @@
+@@ -309,4 +328,4 @@
 - TEST_F(TestDVLInterface, DVLPublishConfig){
+-    create_node(DVL_READ);
+-
+-    //write valid Config data into pipe_fds[1] 
 +TEST_F(TestDVLInterface, DVLPublishConfig) {
-@@ -296 +311 @@
++    create_node(DVL_READ);
++
++    //write valid Config data into pipe_fds[1]
+@@ -333 +352 @@
 - }
 +}
-@@ -299,4 +314,5 @@
+@@ -336,4 +355,5 @@
 -    int main(int argc, char** argv) {
 -        ::testing::InitGoogleTest(&argc, argv);
 -        return RUN_ALL_TESTS();
@@ -1403,7 +1572,7 @@
 +  ::testing::InitGoogleTest(&argc, argv);
 +  return RUN_ALL_TESTS();
 +}
-@@ -304,2 +319,0 @@
+@@ -341,2 +360,0 @@
 -
 - ]]></failure>
   </testcase>

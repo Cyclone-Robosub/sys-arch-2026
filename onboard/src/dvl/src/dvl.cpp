@@ -29,11 +29,11 @@ namespace dvl {
     void DVL::publishVR() {
         velocity_report vrReport = readVelocityReport();
         custom_interfaces::msg::VR vrMessage;
-        vrMessage.angle_data.twist.linear.x = vrReport.vx;
-        vrMessage.angle_data.twist.linear.y = vrReport.vy;
-        vrMessage.angle_data.twist.linear.z = vrReport.vz;
+        vrMessage.velocity_data.x = vrReport.vx;
+        vrMessage.velocity_data.y = vrReport.vy;
+        vrMessage.velocity_data.z = vrReport.vz;
         for (int i = 0; i < 9; i++) {
-            (vrMessage.angle_data.covariance)[i] = (vrReport.covariance)[i];
+            (vrMessage.covariance.data).push_back((vrReport.covariance)[i]);
         }
         vrMessage.altitude = vrReport.altitude;
         vrMessage.fom = vrReport.fom;
@@ -50,14 +50,14 @@ namespace dvl {
         custom_interfaces::msg::DRR drrMessage;
         
         drrMessage.time_stamp = drrReport.time_stamp;
-        drrMessage.pos_data.position.x = drrReport.x;
-        drrMessage.pos_data.position.y = drrReport.y;
-        drrMessage.pos_data.position.z = drrReport.z;
+        drrMessage.position.x = drrReport.x;
+        drrMessage.position.y = drrReport.y;
+        drrMessage.position.z = drrReport.z;
 
-        drrMessage.pos_data.orientation.x = drrReport.roll;
-        drrMessage.pos_data.orientation.y = drrReport.pitch;
-        drrMessage.pos_data.orientation.z = drrReport.yaw;
-        drrMessage.pos_data.orientation.w = drrReport.pos_std;
+        drrMessage.angle.x = drrReport.roll;
+        drrMessage.angle.y = drrReport.pitch;
+        drrMessage.angle.z = drrReport.yaw;
+        drrMessage.pos_std = drrReport.pos_std;
         drrMessage.status = drrReport.status;
        
         this->drr_report_publisher->publish(drrMessage);
@@ -538,7 +538,9 @@ int DVL_FD::open_serial() {
         });
         
         dvl->workLoop();
+
         rclcpp::shutdown();
+        ros_thread.join();
         return 0;
     }
 #endif

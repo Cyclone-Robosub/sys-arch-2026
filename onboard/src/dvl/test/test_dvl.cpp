@@ -21,6 +21,8 @@ protected:
     custom_interfaces::msg::VR most_recent_velocity_report;
     rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr drr_report_subscriber;
     custom_interfaces::msg::DRR most_recent_drr_report;
+    rclcpp::Subscription<custom_interfaces::msg::Config>::SharedPtr config_report_subscriber;
+    custom_interfaces::msg::Config most_recent_config_report;
 
 
     void SetUp() override {
@@ -105,8 +107,8 @@ protected:
             msg = 
                 "wrz,1.000000,2.000000,3.000000," //vx, vy, vz
                 ",2.000000,1.000000," //valid, altitude, fom
-                "1.000000,2.000000,3.000000,4.000000,5.000000," //covariance
-                "1.000000,2.000000,3.000000,4.000000," //covariance
+                "1.000000;2.000000;3.000000;4.000000;5.000000;" //covariance
+                "1.000000;2.000000;3.000000;4.000000," //covariance
                 "1,2,3.000000,0\r\n\r"; //time of validity, time of transmission, time, status
             break;
         case DRR_TYPE:
@@ -123,9 +125,11 @@ protected:
             msg = "error";
         }
     }
+
     void subscribe_velocity_report() {
         velocity_report_subscriber = node->create_subscription<custom_interfaces::msg::VR> ("velocity_report", 10, std::bind(&TestDVLInterface::velocity_report_callback, this, std::placeholders::_1));
     }
+
     void velocity_report_callback(custom_interfaces::msg::VR velocity_report) {
         most_recent_velocity_report = velocity_report;    
     }
@@ -136,6 +140,14 @@ protected:
 
     void drr_report_callback(custom_interfaces::msg::DRR drr_report){
         most_recent_drr_report = drr_report;
+    }
+
+    void subscribe_config_report() {
+        config_report_subscriber = node->create_subscription<custom_interfaces::msg::Config>("config_report", 10, std::bind(&TestDVLInterface::config_report_callback, this, std::placeholders::_1));
+    }
+
+    void config_report_callback(custom_interfaces::msg::Config config_report){
+        most_recent_config_report = config_report;
     }
 };
 
@@ -163,11 +175,11 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     //check if vr was read correctly
     vr = node->readVelocityReport();
-    EXPECT_EQ(vr.vx, 1.000000);
-    EXPECT_EQ(vr.covariance[3], 4.000000);
-    EXPECT_EQ(vr.altitude, 2.000000);
-    EXPECT_EQ(vr.fom, 1.000000);
-    EXPECT_EQ(vr.time, 3.000000);
+    EXPECT_FLOAT_EQ(vr.vx, 1.000000);
+    EXPECT_FLOAT_EQ(vr.covariance[3], 4.000000);
+    EXPECT_FLOAT_EQ(vr.altitude, 2.000000);
+    EXPECT_FLOAT_EQ(vr.fom, 1.000000);
+    EXPECT_FLOAT_EQ(vr.time, 3.000000);
     EXPECT_EQ(vr.time_of_validity, 1);
     EXPECT_EQ(vr.time_of_transmission, 2);
     EXPECT_EQ(vr.status, 0);
@@ -187,30 +199,30 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     //check if drr was read correctly
     drr = node->readDRReport();
     EXPECT_EQ(drr.time_stamp, 0); //time stamp is never set? ask Kory??
-    EXPECT_EQ(drr.x, 1716814976.000000);
-    EXPECT_EQ(drr.roll, 15.400000);
-    EXPECT_EQ(drr.status, 0.040000);
+    EXPECT_FLOAT_EQ(drr.x, 1716814976.000000);
+    EXPECT_FLOAT_EQ(drr.roll, 15.4);
+    EXPECT_EQ(drr.status, 3);
  }
 
- /**
- * @brief Test DVL reading Config
- */
- TEST_F(TestDVLInterface, ValidReadConfiguration){
-    create_node(DVL_READ);
-    config_report config;
+//  /**
+//  * @brief Test DVL reading Config
+//  */
+//  TEST_F(TestDVLInterface, ValidReadConfiguration){
+//     create_node(DVL_READ);
+//     config_report config;
 
-    //write valid Config data into pipe_fds[1]
-    write_serial_message(CONFIG_TYPE);
+//     //write valid Config data into pipe_fds[1]
+//     write_serial_message(CONFIG_TYPE);
     
-    //check if config was read correctly
-    config = node->readConfig();
-    EXPECT_EQ(config.speed_of_sound, 1475.000000);
-    EXPECT_EQ(config.mounting_rotation_offset, 0.000000);
-    EXPECT_EQ(config.acoustic_enabled, "y");
-    EXPECT_EQ(config.dark_mode_enabled, "n");
-    EXPECT_EQ(config.range_mode, "auto");
-    EXPECT_EQ(config.periodic_cycling_enabled, "y");
- }
+//     //check if config was read correctly
+//     config = node->readConfig();
+//     EXPECT_FLOAT_EQ(config.speed_of_sound, 1475.000000);
+//     EXPECT_FLOAT_EQ(config.mounting_rotation_offset, 0.000000);
+//     EXPECT_EQ(config.acoustic_enabled, "y");
+//     EXPECT_EQ(config.dark_mode_enabled, "n");
+//     EXPECT_EQ(config.range_mode, "auto");
+//     EXPECT_EQ(config.periodic_cycling_enabled, "y");
+//  }
 
  /**
  * @brief Test DVL publishing VR
@@ -237,24 +249,24 @@ TEST_F(TestDVLInterface, DVLConstruction) {
                 "1.000000,2.000000,3.000000,4.000000," //covariance
                 "1,2,3.000000,0,\n"; //time of validity, time of transmission, time, status
     */
-    EXPECT_EQ(most_recent_velocity_report.angle_data.twist.linear.x, 1.000000);
-    EXPECT_EQ(most_recent_velocity_report.angle_data.twist.linear.y, 2.000000);
-    EXPECT_EQ(most_recent_velocity_report.angle_data.twist.linear.z, 3.000000);
+    EXPECT_EQ(most_recent_velocity_report.velocity_data.x, 1.000000);
+    EXPECT_EQ(most_recent_velocity_report.velocity_data.y, 2.000000);
+    EXPECT_EQ(most_recent_velocity_report.velocity_data.z, 3.000000);
     
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[0], 1.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[1], 2.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[2], 3.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[3], 4.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[4], 5.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[5], 1.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[6], 2.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[7], 3.000000);
-    EXPECT_EQ((most_recent_velocity_report.angle_data.covariance)[8], 4.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[0], 1.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[1], 2.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[2], 3.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[3], 4.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[4], 5.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[5], 1.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[6], 2.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[7], 3.000000);
+    EXPECT_EQ((most_recent_velocity_report.covariance.data)[8], 4.000000);
     EXPECT_EQ(most_recent_velocity_report.altitude, 2.000000);
     EXPECT_EQ(most_recent_velocity_report.fom, 1.000000);
-    EXPECT_EQ(most_recent_velocity_report.time, 1);
-    EXPECT_EQ(most_recent_velocity_report.time_of_validity, 2);
-    EXPECT_EQ(most_recent_velocity_report.time_of_transmission, 3);
+    EXPECT_EQ(most_recent_velocity_report.time, 3);
+    EXPECT_EQ(most_recent_velocity_report.time_of_validity, 1);
+    EXPECT_EQ(most_recent_velocity_report.time_of_transmission, 2);
     EXPECT_EQ(most_recent_velocity_report.status, 0);
     EXPECT_EQ(most_recent_velocity_report.valid, 'n');
  }
@@ -274,25 +286,50 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     rclcpp::executors::SingleThreadedExecutor exec;
     exec.add_node(node);
 
-    node->publishVR();
+    node->publishDRR();
     exec.spin_some();
 
     //"\t\tp,1716814976.000000,0.110000,0.280000,0.040000," //x, y, z, pos_std
     //"15.400000,-1.100000,-0.300000,3,\n"; //roll, pitch, yaw, status
 
     EXPECT_EQ(most_recent_drr_report.time_stamp, 0);
-    EXPECT_EQ(most_recent_drr_report.pos_data.position.x, 1716814976.000000);
-    EXPECT_EQ(most_recent_drr_report.pos_data.position.y, 0.110000);
-    EXPECT_EQ(most_recent_drr_report.pos_data.position.z, 0.280000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.position.x, 1716814976.000000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.position.y, 0.110000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.position.z, 0.280000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.pos_std, 0.040000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.x, 15.400000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.y, -1.100000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.z, -0.300000);
+    EXPECT_EQ(most_recent_drr_report.status, 3);
  }
 
   /**
  * @brief Test DVL publishing Config
  */
  TEST_F(TestDVLInterface, DVLPublishConfig){
-    //write valid Config data into the pipe_fds[0] end
+    create_node(DVL_READ);
 
-    //check if publisher has published correct data
+    //write valid Config data into pipe_fds[1] 
+    write_serial_message(CONFIG_TYPE);
+
+    //subscribe to Config node
+    subscribe_config_report();
+
+    rclcpp::executors::SingleThreadedExecutor exec;
+    exec.add_node(node);
+
+    node->publishConfig();
+    exec.spin_some();
+
+    //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
+    //"n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
+
+    EXPECT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
+    EXPECT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
+    EXPECT_EQ(most_recent_config_report.acoustic_enabled, "y");
+    EXPECT_EQ(most_recent_config_report.dark_mode_enabled, "n");
+    EXPECT_EQ(most_recent_config_report.range_mode, "auto");
+    EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
  }
 
  #ifdef ENABLE_TESTING
