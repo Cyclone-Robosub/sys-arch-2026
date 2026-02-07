@@ -304,7 +304,7 @@ namespace dvl {
                     while (std::getline(ss, field, ',')) fields.push_back(field);
 
                     std::stringstream ss_covariance(fields[7]);
-                     std::vector<std::string> covariance_fields;
+                    std::vector<std::string> covariance_fields;
                     while(std::getline(ss_covariance, field, ';')) covariance_fields.push_back(field);
 
                     if (fields.size() < 10) return false;
@@ -400,6 +400,58 @@ namespace dvl {
         publishConfig();
     }
 
+    void DVL::process_input() {
+        display_mutex.lock();
+        cursor_pos = 0;
+        num_read = 0;
+        int c = 0;
+        current_input = "";
+        display_mutex.unlock();
+        while (true) {
+            while (read(STDIN_FILENO, &c, 1) != 0) {
+                display_mutex.lock();
+                if ((c >= 32 && c <= 126) || c == '\n') {
+                    insert(c);
+                    if (c == '\n') {
+                        display_mutex.unlock();
+                        return;
+                    }
+                }
+               
+                display_mutex.unlock();
+            }
+        }
+    }
+    void DVL::workLoop() {
+        int string_index = 0;
+
+        while (rclcpp::ok()) {
+            std::string complete_line;
+            parseResponse(complete_line);
+            display_mutex.lock();
+           
+            if (current_input.size() < 3) {
+                printf("Invalid command. Try again: ");
+                fflush(stdout);
+                display_mutex.unlock();
+                continue; 
+            }
+
+            string_index = 1;
+            if (current_input[string_index] != '\n') {
+                printf("Invalid command. Try again: ");
+                fflush(stdout);
+                while (current_input[string_index] != '\n') {
+                    string_index++;
+                }   
+                display_mutex.unlock();
+                continue;
+            }
+            display_mutex.unlock();
+            set_mux_mode((bool)(mode - '0'));
+        }    
+    }
+
     static const uint8_t lookup_table[256] = {
         0x00U,0x07U,0x0EU,0x09U,0x1CU,0x1BU,0x12U,0x15U,
         0x38U,0x3FU,0x36U,0x31U,0x24U,0x23U,0x2AU,0x2DU,
@@ -488,7 +540,11 @@ int DVL_FD::open_serial() {
     int main(int argc, char* argv[]) {
         rclcpp::init(argc, argv);
         std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>("/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D30I35JH-if00-port0");
-        rclcpp::spin(std::make_shared<dvl::DVL>(std::move(path_fd)));
+        auto dvl = std::make_shared<dvl::DVL>(std::move(path_fd));
+        std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
+            rclcpp::spin(dvl);
+        });
+
         rclcpp::shutdown();
         return 0;
     }
