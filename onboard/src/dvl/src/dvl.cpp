@@ -24,9 +24,6 @@ namespace dvl {
         velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
         drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("dead_reck_report", 10);
         config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);  
-
-        //wall timer
-        wall_timer = this->create_wall_timer(10ms, std::bind(&dvl::DVL::callback, this));
     }
 
     void DVL::publishVR() {
@@ -80,7 +77,7 @@ namespace dvl {
     
     // Public Reads
     velocity_report DVL::readVelocityReport(){
-        if(holdForResponse(REC_VR)){
+        if(getResponse(REC_VR)){
             return vr;
         } else {
             return error_vr;
@@ -89,7 +86,7 @@ namespace dvl {
     }
 
     dead_reck_report DVL::readDRReport(){
-        if(holdForResponse(REC_DRR)){
+        if(getResponse(REC_DRR)){
             return drr;
         } else {
             return error_drr;
@@ -100,7 +97,7 @@ namespace dvl {
 
         sendCommand(CMD_GET_VERSION); 
         
-        if(holdForResponse(CMD_GET_VERSION)){
+        if(getResponse(CMD_GET_VERSION)){
             //std::cout << version << std::endl;
             return version;
         } else {
@@ -113,7 +110,7 @@ namespace dvl {
     std::string DVL::readDetails(){
         sendCommand(CMD_GET_PRODUCT_DETAIL); 
         
-        if(holdForResponse(CMD_GET_PRODUCT_DETAIL)){
+        if(getResponse(CMD_GET_PRODUCT_DETAIL)){
             return product_details;
         } else {
             return "x,x,x,x";
@@ -123,7 +120,7 @@ namespace dvl {
     config_report DVL::readConfig(){
         sendCommand(CMD_GET_SETTINGS); 
         
-        if(holdForResponse(CMD_GET_SETTINGS)){
+        if(getResponse(CMD_GET_SETTINGS)){
             return config;
         } else {
             return error_config;
@@ -142,7 +139,7 @@ namespace dvl {
 
     void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
         sendCommand(CMD_RESET_DR);
-        if(holdForResponse(ACK)){
+        if(getResponse(ACK)){
             response->success = true;
         } else{
             response->success = false;
@@ -152,7 +149,7 @@ namespace dvl {
 
     void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
         sendCommand(CMD_CALIBRATE_GYRO);
-        if(holdForResponse(ACK)){
+        if(getResponse(ACK)){
             response->success = true;
         } else{
             response->success = false;
@@ -162,7 +159,7 @@ namespace dvl {
 
     void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
         sendCommand(CMD_TRIGGER_PING);
-        if(holdForResponse(ACK)){
+        if(getResponse(ACK)){
             response->success = true;
         } else {
             response->success = false;
@@ -173,7 +170,7 @@ namespace dvl {
 
     void DVL::setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response){
         sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(request->serial)}); //currently only can be used to start serial output
-        if(holdForResponse(ACK)){
+        if(getResponse(ACK)){
             response->success = true;
         } else{
             response->success = false;
@@ -181,6 +178,41 @@ namespace dvl {
     }
 
     //Private Methods
+    bool DVL::getResponse(const char expected_response){
+        std::string complete_line;
+        char c;
+        ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+        
+        while(n > 0){
+            std::string partial_line = "";
+            
+            if (n == 1) {
+                partial_line += c; // append to the end of the existing string
+            } else if (n < 0) {
+                throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
+            } else { // n == 0: no data available (non-blocking read)
+                break;
+            }
+
+            if (partial_line.empty()) {
+                continue; //loop again if the the partial line is empty
+            }
+
+            complete_line += partial_line; //add the partial line to the complete line
+
+            if (partial_line == "\n" || partial_line == "\r") {
+                break; //break out of the reading loop if an end-of-line char is detected
+            }
+
+            n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+        }
+
+        parseResponse(complete_line);
+
+        if (complete_line[2] == expected_response) return true; 
+        return false;
+    }
+
     bool DVL::holdForResponse(const char expected_response) {
         /*
         Waits until either 10 ms have elapsed or the expected response is received.
@@ -394,61 +426,20 @@ namespace dvl {
         return true;
     }
 
-    void DVL::callback() {
-        publishVR();
-        publishDRR();
-        publishConfig();
-    }
-
-    void DVL::process_input() {
-        display_mutex.lock();
-        cursor_pos = 0;
-        num_read = 0;
-        int c = 0;
-        current_input = "";
-        display_mutex.unlock();
-        while (true) {
-            while (read(STDIN_FILENO, &c, 1) != 0) {
-                display_mutex.lock();
-                if ((c >= 32 && c <= 126) || c == '\n') {
-                    insert(c);
-                    if (c == '\n') {
-                        display_mutex.unlock();
-                        return;
-                    }
-                }
-               
-                display_mutex.unlock();
-            }
-        }
-    }
     void DVL::workLoop() {
-        int string_index = 0;
+        using clock = std::chrono::steady_clock;
+        constexpr auto PUBLISH_RATE = std::chrono::milliseconds(100);
+        auto last_publish = clock::now();
 
         while (rclcpp::ok()) {
-            std::string complete_line;
-            parseResponse(complete_line);
-            display_mutex.lock();
-           
-            if (current_input.size() < 3) {
-                printf("Invalid command. Try again: ");
-                fflush(stdout);
-                display_mutex.unlock();
-                continue; 
-            }
+            auto now = clock::now();
+            if((now - last_publish) >= PUBLISH_RATE) {
+                publishVR();
+                publishDRR();
+                publishConfig();
 
-            string_index = 1;
-            if (current_input[string_index] != '\n') {
-                printf("Invalid command. Try again: ");
-                fflush(stdout);
-                while (current_input[string_index] != '\n') {
-                    string_index++;
-                }   
-                display_mutex.unlock();
-                continue;
+                last_publish = now;
             }
-            display_mutex.unlock();
-            set_mux_mode((bool)(mode - '0'));
         }    
     }
 
@@ -541,10 +532,12 @@ int DVL_FD::open_serial() {
         rclcpp::init(argc, argv);
         std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>("/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D30I35JH-if00-port0");
         auto dvl = std::make_shared<dvl::DVL>(std::move(path_fd));
+        
         std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
             rclcpp::spin(dvl);
         });
-
+        
+        dvl->workLoop();
         rclcpp::shutdown();
         return 0;
     }

@@ -108,6 +108,8 @@ class DVL : public rclcpp::Node {
         void resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //zero the gyroscope
         void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
         void triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+    
+        void workLoop();
     private:
         rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocity_report_publisher;
         rclcpp::Publisher<custom_interfaces::msg::DRR>::SharedPtr drr_report_publisher;
@@ -119,7 +121,6 @@ class DVL : public rclcpp::Node {
         rclcpp::Service<custom_interfaces::srv::SetSerial>::SharedPtr set_serr_protocol;
         rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr trigger_ping;
 
-        rclcpp::TimerBase::SharedPtr wall_timer;
         /*
         Outgoing messages are expected in the format "[SOP][DIR_CMD][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n". Options are only needed for some commands
 
@@ -137,10 +138,11 @@ class DVL : public rclcpp::Node {
         std::string product_details;
 
         // PRIVATE METHODS //
+        bool getResponse(const char expected_response);
         bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
         bool holdForResponse(const char expected_response); 
         bool sendCommand(uint8_t cmd, const std::vector<std::string>& options = {});
-        void callback();
+        
 };
 
 }
