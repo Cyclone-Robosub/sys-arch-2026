@@ -40,7 +40,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/simple_joystick_control
 set (CMAKE_SKIP_BUILD_RPATH false)
 set (CMAKE_BUILD_WITH_INSTALL_RPATH true)
 set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set (CMAKE_INSTALL_RPATH_USEK_PATH TRUE)
 # Node
 add_executable(Simple_Joystick_Controller 
 src/Simple_Joystick_Controller.cpp

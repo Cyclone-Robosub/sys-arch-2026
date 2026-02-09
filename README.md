@@ -20,6 +20,14 @@ chmod +x start_tmux_session.sh
 ./start_tmux_session.sh
 ```
 
+## Running unit tests
+1. Run `colcon build`
+2. Run `colcon test --parallel-workers 1`
+> This argument is needed to prevent node tests from interfering with each other: if different tests create publishers and subscribers on the same topic, this can create unexpected behaviour!
+3. If there are any errors, view them with  `colcon test-result --verbose | less`
+
+
+
 ## How to use launch files
 Launch files are a alternative to bash script for runnign ROS nodes
 1. Run `colcon build` in the workspace
