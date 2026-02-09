@@ -32,7 +32,6 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gtest REQUIRED)
   
   # Create a library from the source for testing (WITH ENABLE_TESTING defined)
