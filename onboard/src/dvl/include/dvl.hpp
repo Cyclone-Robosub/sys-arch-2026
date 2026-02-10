@@ -138,6 +138,8 @@ class DVL : public rclcpp::Node {
         std::string product_details;
 
         // PRIVATE METHODS //
+        char getCommandFromSerial();
+        void publishCommandFromSerial(char cmd);
         bool getResponse(const char expected_response);
         bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
         bool holdForResponse(const char expected_response); 

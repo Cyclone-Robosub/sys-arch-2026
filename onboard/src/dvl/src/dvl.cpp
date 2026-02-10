@@ -178,10 +178,45 @@ namespace dvl {
     }
 
     //Private Methods
+    char DVL::getCommandFromSerial(){
+        std::string curr_line = "";
+        ssize_t n;
+        char c;
+        
+        while(curr_line.size() < 3){ //keep reading until curr_line is length 3
+            n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+            if (n == 1) {
+                curr_line += c; // append to the end of the existing string
+            } else if (n < 0) {
+                throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
+            } 
+        }
+
+        return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is the command 
+    }
+
+    void DVL::publishCommandFromSerial(char cmd){
+        switch(cmd){
+            case 'c':
+                publishConfig();
+                break;
+            case 'z':
+                publishVR();
+                break;
+            case 'p':
+                publishDRR();
+                break;
+            default:
+                break;
+        }
+    }
+    
     bool DVL::getResponse(const char expected_response){
         std::string complete_line;
         char c;
         ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+
+        if(n > 0 && c != 'w') complete_line += "wr" + expected_response;
         
         while(n > 0){
             std::string partial_line = "";
@@ -211,63 +246,6 @@ namespace dvl {
 
         if (complete_line[2] == expected_response) return true; 
         return false;
-    }
-
-    bool DVL::holdForResponse(const char expected_response) {
-        /*
-        Waits until either 10 ms have elapsed or the expected response is received.
-        Inputs:
-            const std::string& expected_response -- string containing the expected response to the command such as "wrx" or "wra"
-        Outputs:
-            true or false depending on whether the expected response was found.
-        */
-        
-        using clock = std::chrono::steady_clock;
-        constexpr auto TIMEOUT = std::chrono::milliseconds(100);
-
-        auto start = clock::now();
-        std::string complete_line;
-
-        while (clock::now() - start < TIMEOUT) {
-
-            complete_line.clear(); //clear the complete line each time a line complete line is parsed 
-
-            while (clock::now() - start < TIMEOUT) { //read until a complete line is found
-
-                std::string partial_line = "";
-                char c;
-                ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
-                if (n == 1) {
-                    partial_line += c; // append to the end of the existing string
-                } else if (n < 0) {
-                    throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
-                }
-                // n == 0: no data available (non-blocking read)
-
-                if (partial_line.empty()) {
-                    continue; //loop again if the the partial line is empty
-                }
-
-                complete_line += partial_line; //add the partial line to the complete line
-
-                if (partial_line == "\n" || partial_line == "\r") {
-                    break; //break out of the reading loop if an end-of-line char is detected
-                }
-            }
-
-            //if inner loop timed out without EOL, keep looping
-            if (complete_line.empty()) {
-                continue; 
-            }
-
-            parseResponse(complete_line);
-
-            if (complete_line[2] == expected_response) {
-                return true; //if the expected response was received as the command field of the response
-            }
-        }
-
-        return false; //return false if the code timed out
     }
 
     bool DVL::parseResponse(std::string& complete_line){
@@ -427,19 +405,21 @@ namespace dvl {
     }
 
     void DVL::workLoop() {
-        using clock = std::chrono::steady_clock;
-        constexpr auto PUBLISH_RATE = std::chrono::milliseconds(100);
-        auto last_publish = clock::now();
+        // using clock = std::chrono::steady_clock;
+        // constexpr auto PUBLISH_RATE = std::chrono::milliseconds(100);
+        // auto last_publish = clock::now();
 
         while (rclcpp::ok()) {
-            auto now = clock::now();
-            if((now - last_publish) >= PUBLISH_RATE) {
-                publishVR();
-                publishDRR();
-                publishConfig();
+            // auto now = clock::now();
+            // if((now - last_publish) >= PUBLISH_RATE) {
+            //     publishVR();
+            //     publishDRR();
+            //     publishConfig();
 
-                last_publish = now;
-            }
+            //     last_publish = now;
+            // }
+            char cmd = getCommandFromSerial();
+            if(cmd != '0') publishCommandFromSerial(cmd);
         }    
     }
 
