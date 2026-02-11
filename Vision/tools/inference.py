@@ -6,10 +6,11 @@ import matplotlib.pyplot as plt
 import torch
 import sys
 import argparse
+from ultralytics import YOLO
 
-MODEL_PATH = 'model_with_norm_traced.pt'
+MODEL_PATH = 'best.pt' 
 
-def predict(model: torch.jit.ScriptModule, frame: np.ndarray):
+def predict(model: YOLO, frame: np.ndarray):
     """
     Precess the input frame from openCV through the model and 
     Return the normalizedkeypoints.
@@ -18,19 +19,13 @@ def predict(model: torch.jit.ScriptModule, frame: np.ndarray):
     :param frame: Input frame from openCV capture (H x W x C) in BGR format
     :return: Normalized keypoints as a numpy array of shape (num_keypoints, 2)
     """
-    # resize the frame to model input size
-    frame = cv.resize(frame, (224, 224))
+    results = model.predict(frame, verbose=False)
+    if len(results) > 0 and len(results[0].keypoints.xyn) > 0:
+        pred_keypoints = results[0].keypoints.xyn[0].cpu().numpy()
+    else:
+        pred_keypoints = np.array([])
 
-    # Preprocess the frame
-    input_tensor = torch.from_numpy(frame).float().permute(2, 0, 1).unsqueeze(0) / 255.0
-
-    # Run inference
-    with torch.no_grad():
-        output = model(input_tensor)
-
-    keypoints = output.detach().cpu().numpy().reshape(-1, 2)
-
-    return keypoints
+    return pred_keypoints
 
 def visualize(image: np.ndarray, keypoints: np.ndarray, title="Image"):
     """
@@ -65,12 +60,7 @@ if __name__ == "__main__":
         print("Error opening video stream or file")
         sys.exit(1)
 
-    try:
-        model = torch.jit.load(MODEL_PATH)
-        model.eval()
-    except Exception as e:
-        print(f"Error loading model: {e}")
-        sys.exit(1)
+    model = YOLO(MODEL_PATH)
 
     if args.record:
         fps = cap.get(cv.CAP_PROP_FPS) 
@@ -85,11 +75,12 @@ if __name__ == "__main__":
 
         h, w, _ = frame.shape
         keypoints = predict(model, frame)
-        kpts_pixel = keypoints[:, :2] * [w, h]
+        if len(keypoints) > 0:
+            kpts_pixel = keypoints[:, :2] * [w, h]
 
-        # Draw keypoints on the frame
-        for (x, y) in kpts_pixel.astype(int):
-            cv.circle(frame, (x, y), 5, (0, 255, 0), -1)
+            # Draw keypoints on the frame
+            for (x, y) in kpts_pixel.astype(int):
+                cv.circle(frame, (x, y), 5, (0, 255, 0), -1)
 
         if args.record:
             out.write(frame)
