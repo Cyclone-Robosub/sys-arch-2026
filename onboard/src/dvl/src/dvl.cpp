@@ -186,13 +186,14 @@ namespace dvl {
         while(curr_line.size() < 3){ //keep reading until curr_line is length 3
             n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
             if (n == 1) {
+                if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
             } else if (n < 0) {
                 throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
             } 
         }
 
-        return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is the command 
+        return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
     }
 
     void DVL::publishCommandFromSerial(char cmd){
@@ -318,6 +319,7 @@ namespace dvl {
                     while(std::getline(ss_covariance, field, ';')) covariance_fields.push_back(field);
 
                     if (fields.size() < 10) return false;
+                    if (covariance_fields.size() < 9) return false;
 
                     vr.vx = std::stof(fields[1]);
                     vr.vy = std::stof(fields[2]);
