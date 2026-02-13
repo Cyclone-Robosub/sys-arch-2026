@@ -27,6 +27,14 @@ def test_example_input(simulate_input):
 	output = input()
 	assert output == "Overriding input() with a lambda"
 
+def test_multiple_input_lambda():
+	builtins.input = lambda: {"Input 1" : "This is input 1", "Input 2" : "This is input 2"}
+	input1 = input()["Input 1"]
+	input2 = input()["Input 2"]
+	assert input1 == "This is input 1"
+	assert input2 == "This is input 2"
 
+#def test_untimed_default_power_input():
+#	builtins.input = lambda: "Yes"
 
 
