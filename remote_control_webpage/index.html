@@ -131,7 +131,7 @@
       console.log("Controller disconnected"); // Log to console
       cancelAnimationFrame(animationFrameId); // Pause updateGamepad loop
     });
-    windows.addEventListener("beforeunload", () => {
+    window.addEventListener("beforeunload", () => {
         controllerPub.unadvertise();
     });
   </script>
