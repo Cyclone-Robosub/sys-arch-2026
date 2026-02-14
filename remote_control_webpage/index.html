@@ -51,8 +51,10 @@
       ros: rosNode,
       name: '/ps5_controller',
       // ROS 2 message type notation includes '/msg/'
-      messageType: 'remote_control_interface/msg/Gamepad'
+      messageType: 'custom_interfaces/msg/Gamepad'
     });
+
+    controllerPub.advertise();
 
     function publishControllerData(x = 0.0, y = 0.0, rise = 0.0, sink = 0.0, yaw = 0.0, pitch = 0.0) {
       const msg = new ROSLIB.Message({
@@ -124,6 +126,9 @@
       output.textContent = "⚠️ Controller disconnected";
       console.log("Controller disconnected"); // Log to console
       cancelAnimationFrame(animationFrameId); // Pause updateGamepad loop
+    });
+    windows.addEventListener("beforeunload", () => {
+        controllerPub.unadvertise();
     });
   </script>
 </body>
