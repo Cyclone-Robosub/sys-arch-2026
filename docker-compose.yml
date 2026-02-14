@@ -28,9 +28,11 @@ services:
       - /dev/i2c-5 
       - /dev/i2c-7 
       - /dev/i2c-9 
+      # add pico
     environment:
       - PULSE_SERVER=unix:/run/user/1000/pulse/native
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
-    tty: true
-    stdin_open: true
-    command: ["bash"]
+    command: 
+      [
+        "ros2 launch rosbridge_server rosbridge_websocket_launch.xml",
+      ]
