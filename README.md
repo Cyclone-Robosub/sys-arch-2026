@@ -222,7 +222,7 @@ Unfortunately, there is no script for this one: the commands must be typed manua
 Then open a new terminal tab, and type:
 1. `cd ~/sys-arch-2026`
 2. `source install/setup.bash`
-3. `ros2 launch ros2bridge_server rosbridge_websocket_launch.xml`
+3. `ros2 launch rosbridge_server rosbridge_websocket_launch.xml`
 
 Then open a new terminal tab, and type:
 1. `cd ~/sys-arch-2026`
