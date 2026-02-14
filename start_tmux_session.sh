@@ -128,16 +128,12 @@ fi
 ################################################################################
 
 if [[ "$USE_CONTAINER" == true ]]; then
-    tmux new-window -t $SESSION "docker compose exec jetson-app bash -ic 'ros2 run simple_joystick_controller Simple_Joystick_Controller'"
+    JOYSTICK_PANE=$(tmux new-window -t $SESSION "docker compose exec jetson-app bash -ic 'ros2 run simple_joystick_controller Simple_Joystick_Controller'")
 else
-    tmux new-window -t $SESSION "source install/setup.sh && ros2 run simple_joystick_controller Simple_Joystick_Controller; bash"
+    JOYSTICK_PANE=$(tmux new-window -t $SESSION "source install/setup.sh && ros2 run simple_joystick_controller Simple_Joystick_Controller; bash")
 fi
 
-################################################################################
-# SECTION 5: Serve the Remote Control Webpage
-################################################################################
-
-tmux new-window -t $SESSION "cd ~/sys-arch-2026/remote_control_webpage && python3 -m http.server 8000; bash"
+tmux split-window -v -t $JOYSTICK_PANE "cd ~/sys-arch-2026/remote_control_webpage && python3 -m http.server 8000; bash"
 
 ################################################################################
 # Attach to Session
