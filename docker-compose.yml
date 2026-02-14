@@ -31,5 +31,6 @@ services:
     environment:
       - PULSE_SERVER=unix:/run/user/1000/pulse/native
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
-    command:
-      - bash -c "source /opt/ros/jazzy/setup.bash && source /root/sys-arch-2026/install/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml"
+    tty: true
+    stdin_open: true
+    command: ["bash"]
