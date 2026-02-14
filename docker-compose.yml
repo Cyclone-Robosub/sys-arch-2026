@@ -32,7 +32,10 @@ services:
     environment:
       - PULSE_SERVER=unix:/run/user/1000/pulse/native
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
-    command: 
+    command:
       [
-        "ros2 launch rosbridge_server rosbridge_websocket_launch.xml",
+        "ros2",
+        "launch",
+        "rosbridge_server",
+        "rosbridge_websocket_launch.xml"
       ]
