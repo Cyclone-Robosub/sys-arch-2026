@@ -19,21 +19,74 @@
 SESSION="manny"
 
 ################################################################################
+# SECTION 0: Flag Parsing
+################################################################################
+
+USE_CONTAINER=false
+
+# Parse command-line flags until no arguments remain.
+while [[ $# -gt 0 ]]; do
+	# Match on the current argument.
+	case "$1" in
+		--container)
+			# Remember that the container mode was requested.
+			USE_CONTAINER=true
+			# Consume this flag and move to the next argument.
+			shift
+			;; # End of this case branch.
+		--help|-h)
+			# Print usage and exit cleanly.
+			cat <<'EOF' 
+Usage: ./start_tmux_session.sh [options]
+
+Options:
+	--container    Run the components inside container
+	--help, -h     Show this help message
+EOF
+			exit 0
+			;;
+		*)
+			# Unknown flag: report error and stop.
+			echo "Unknown option: $1" >&2
+			echo "Run with --help to see available options." >&2
+			exit 1
+			;;
+	esac
+done
+
+if [[ "$USE_CONTAINER" == true ]]; then
+	echo "Running components inside container..."
+fi
+
+################################################################################
 # SECTION 1: Main Window - Core System Components
 ################################################################################
 
 # --- Thrust Interface ---
 # Create new detached tmux session
-THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "source install/setup.sh && ros2 run thrust_interface thrust_interface; bash" )
+if [[ "$USE_CONTAINER" == true ]]; then
+	THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "docker compose exec jetson-app bash -ic 'ros2 run thrust_interface thrust_interface'" )
+else 
+    THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "source install/setup.sh && ros2 run thrust_interface thrust_interface; bash" )
+fi
+
 
 # --- Software Multiplexer ---
-SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "source install/setup.sh && ros2 run soft_mux soft_mux; bash" )
+if [[ "$USE_CONTAINER" == true ]]; then
+	SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "docker compose exec jetson-app bash -ic 'ros2 run soft_mux soft_mux'" )
+else
+	SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "source install/setup.sh && ros2 run soft_mux soft_mux; bash" )
+fi
 
 # --- System Monitor (btop) ---
 tmux split-window -v -t $SOFT_MUX_PANE "btop; bash"
 
 # --- Mux Controller ---
-tmux split-window -v -t $THRUST_INTERFACE_PANE "source install/setup.sh && ros2 run mux_controller mux_controller; bash"
+if [[ "$USE_CONTAINER" == true ]]; then
+    tmux split-window -v -t $THRUST_INTERFACE_PANE "docker compose exec jetson-app bash -ic 'ros2 run mux_controller mux_controller'" 
+else
+    tmux split-window -v -t $THRUST_INTERFACE_PANE "source install/setup.sh && ros2 run mux_controller mux_controller; bash"
+fi
 
 ################################################################################
 # SECTION 2: (Optional) Video Streaming and Recording Window
@@ -56,7 +109,11 @@ tmux split-window -v -t $THRUST_INTERFACE_PANE "source install/setup.sh && ros2 
 # ################################################################################
 
 # --- IMU Node ---
-tmux new-window -t $SESSION "source install/setup.sh && ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash"
+if [[ "$USE_CONTAINER" == true ]]; then
+	tmux new-window -t $SESSION "docker compose exec jetson-app bash -ic 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node'" 
+else
+	tmux new-window -t $SESSION "source install/setup.sh && ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash"
+fi
 
 # ################################################################################
 # # Attach to Session
