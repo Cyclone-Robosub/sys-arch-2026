@@ -8,6 +8,7 @@ ENV PULSE_SERVER=unix:/run/user/1000/pulse/native
 # Set the working directory (replacing the manual cd)
 WORKDIR /root/sys-arch-2026
 
-RUN apt update && apt install ros-jazzy-rosbridge-suite -y 
+RUN apt update && apt install -y \
+    ros-jazzy-rosbridge-suite 
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 RUN echo "source /root/sys-arch-2026/install/setup.bash" >> ~/.bashrc
