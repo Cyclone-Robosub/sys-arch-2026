@@ -113,7 +113,7 @@ else
 fi
 
 ################################################################################
-# SECTION 3: (Optional) Additional Components: IMU
+# SECTION 3: (Optional)  IMU
 ################################################################################
 
 # --- IMU Node ---
@@ -122,6 +122,16 @@ fi
 # else
 # 	tmux new-window -t $SESSION "source install/setup.sh && ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash"
 # fi
+
+################################################################################
+# SECTION 4: (Optional) Joystick controller
+################################################################################
+
+if [[ "$USE_CONTAINER" == true ]]; then
+    tmux new-window -t $SESSION "docker compose exec jetson-app bash -ic 'ros2 run simple_joystick_controller Simple_Joystick_Controller'"
+else
+    tmux new-window -t $SESSION "source install/setup.sh && ros2 run simple_joystick_controller Simple_Joystick_Controller; bash"
+fi
 
 ################################################################################
 # Attach to Session
