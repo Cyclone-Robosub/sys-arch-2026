@@ -94,25 +94,34 @@ fi
 
 # --- mediaMTX ---
 # Create new window 
-# MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX && ./mediamtx; bash")
+MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX && ./mediamtx; bash")
 
 # --- ffmpeg ---
-tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 \
-    -video_size 1920x1080 -framerate 30 \
-    -fflags +genpts \
-    -i /dev/video2 \
-    -c:v copy -f rtsp rtsp://localhost:8554/cam; bash" 
+if [[ "$USE_CONTAINER" == true ]]; then
+    tmux split-window -h -t $MEDIAMTX_PANE "docker compose exec jetson-app bash -ic 'ffmpeg -f v4l2 -input_format h264 \
+        -video_size 1920x1080 -framerate 30 \
+        -fflags +genpts \
+        -i /dev/video2 \
+        -c:v copy -f rtsp rtsp://localhost:8554/cam; bash'" 
+else
+    tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 \
+        -video_size 1920x1080 -framerate 30 \
+        -fflags +genpts \
+        -i /dev/video2 \
+        -c:v copy -f rtsp rtsp://localhost:8554/cam \
+        -c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S).mp4; bash" # Record 
+fi
 
 ################################################################################
 # SECTION 3: (Optional) Additional Components: IMU
 ################################################################################
 
 # --- IMU Node ---
-if [[ "$USE_CONTAINER" == true ]]; then
-	tmux new-window -t $SESSION "docker compose exec jetson-app bash -ic 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node'" 
-else
-	tmux new-window -t $SESSION "source install/setup.sh && ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash"
-fi
+# if [[ "$USE_CONTAINER" == true ]]; then
+# 	tmux new-window -t $SESSION "docker compose exec jetson-app bash -ic 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node'" 
+# else
+# 	tmux new-window -t $SESSION "source install/setup.sh && ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash"
+# fi
 
 ################################################################################
 # Attach to Session
