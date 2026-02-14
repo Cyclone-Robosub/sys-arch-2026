@@ -1,0 +1,33 @@
+services:
+  jetson-app:
+    build: .
+    runtime: nvidia
+    network_mode: host
+    shm_size: '8gb'
+    volumes:
+      - /tmp/argus_socket:/tmp/argus_socket
+      - /etc/enctune.conf:/etc/enctune.conf 
+      - /etc/nv_tegra_release:/etc/nv_tegra_release 
+      - /tmp/nv_jetson_model:/tmp/nv_jetson_model 
+      - /var/run/dbus:/var/run/dbus 
+      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket 
+      - /var/run/docker.sock:/var/run/docker.sock 
+      - /home/nano/Documents/jetson-containers/data:/data 
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /run/user/1000/pulse:/run/user/1000/pulse
+      - /run/jtop.sock:/run/jtop.sock
+      - /home/nano/Documents/sys-arch-2026:/root/sys-arch-2026
+    devices:
+      - /dev/snd
+      - /dev/bus/usb
+      - /dev/i2c-0 
+      - /dev/i2c-1 
+      - /dev/i2c-2 
+      - /dev/i2c-4 
+      - /dev/i2c-5 
+      - /dev/i2c-7 
+      - /dev/i2c-9 
+    environment:
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
