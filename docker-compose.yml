@@ -34,8 +34,6 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
     command:
       [
-        "ros2",
-        "launch",
-        "rosbridge_server",
-        "rosbridge_websocket_launch.xml"
+        "sleep",
+        "infinity"
       ]
