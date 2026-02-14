@@ -17,7 +17,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /run/user/1000/pulse:/run/user/1000/pulse
       - /run/jtop.sock:/run/jtop.sock
-      - /home/nano/Documents/sys-arch-2026:/root/sys-arch-2026
+      - /home/nano/sys-arch-2026:/root/sys-arch-2026
     devices:
       - /dev/snd
       - /dev/bus/usb
