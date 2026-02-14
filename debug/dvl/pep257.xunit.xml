@@ -4,7 +4,7 @@
   tests="2"
   errors="0"
   failures="0"
-  time="0.060"
+  time="0.044"
 >
   <testcase
     name="./install/_local_setup_util_ps1.py"

@@ -88,6 +88,7 @@ uint8_t crc8(uint8_t*, int);
 
 class DVL : public rclcpp::Node {
     public:
+        friend class TestDVLInterface_BadVelocityReport_Test;
         // PUBLIC API //
         DVL(std::unique_ptr<FD_Interface> dvl_fd);
 
@@ -108,7 +109,9 @@ class DVL : public rclcpp::Node {
         void resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //zero the gyroscope
         void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
         void triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
-    
+
+        char getCommandFromSerial();
+        void publishCommandFromSerial(char cmd);
         void workLoop();
     private:
         rclcpp::Publisher<custom_interfaces::msg::VR>::SharedPtr velocity_report_publisher;
@@ -138,8 +141,6 @@ class DVL : public rclcpp::Node {
         std::string product_details;
 
         // PRIVATE METHODS //
-        char getCommandFromSerial();
-        void publishCommandFromSerial(char cmd);
         bool getResponse(const char expected_response);
         bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
         bool holdForResponse(const char expected_response); 

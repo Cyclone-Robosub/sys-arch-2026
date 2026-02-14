@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuite
-  name="dvl.cppcheck"
+  name="soft_mux.cppcheck"
   tests="3"
   errors="0"
   failures="0"
@@ -8,24 +8,24 @@
   skipped="3"
 >
   <testcase
-    name="include/dvl.hpp"
-    classname="dvl.cppcheck"
+    name="include/soft_mux.hpp"
+    classname="soft_mux.cppcheck"
   >
     <skipped type="skip" message="">
       ![CDATA[Test Skipped due to cppcheck 2.13.0 performance issues]]
     </skipped>
   </testcase>
   <testcase
-    name="src/dvl.cpp"
-    classname="dvl.cppcheck"
+    name="src/soft_mux.cpp"
+    classname="soft_mux.cppcheck"
   >
     <skipped type="skip" message="">
       ![CDATA[Test Skipped due to cppcheck 2.13.0 performance issues]]
     </skipped>
   </testcase>
   <testcase
-    name="test/test_dvl.cpp"
-    classname="dvl.cppcheck"
+    name="test/test_soft_mux.cpp"
+    classname="soft_mux.cppcheck"
   >
     <skipped type="skip" message="">
       ![CDATA[Test Skipped due to cppcheck 2.13.0 performance issues]]

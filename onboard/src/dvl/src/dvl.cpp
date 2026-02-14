@@ -26,52 +26,50 @@ namespace dvl {
         config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);  
     }
 
+    // Ros2 publish functions
     void DVL::publishVR() {
-        velocity_report vrReport = readVelocityReport();
         custom_interfaces::msg::VR vrMessage;
-        vrMessage.velocity_data.x = vrReport.vx;
-        vrMessage.velocity_data.y = vrReport.vy;
-        vrMessage.velocity_data.z = vrReport.vz;
+        vrMessage.velocity_data.x = vr.vx;
+        vrMessage.velocity_data.y = vr.vy;
+        vrMessage.velocity_data.z = vr.vz;
         for (int i = 0; i < 9; i++) {
-            (vrMessage.covariance.data).push_back((vrReport.covariance)[i]);
+            (vrMessage.covariance.data).push_back((vr.covariance)[i]);
         }
-        vrMessage.altitude = vrReport.altitude;
-        vrMessage.fom = vrReport.fom;
-        vrMessage.time = vrReport.time;
-        vrMessage.time_of_validity = vrReport.time_of_validity;
-        vrMessage.time_of_transmission = vrReport.time_of_transmission;
-        vrMessage.status = vrReport.status;
-        vrMessage.valid = vrReport.valid;
+        vrMessage.altitude = vr.altitude;
+        vrMessage.fom = vr.fom;
+        vrMessage.time = vr.time;
+        vrMessage.time_of_validity = vr.time_of_validity;
+        vrMessage.time_of_transmission = vr.time_of_transmission;
+        vrMessage.status = vr.status;
+        vrMessage.valid = vr.valid;
         this->velocity_report_publisher->publish(vrMessage);
     }
 
     void DVL::publishDRR() {
-        dead_reck_report drrReport = readDRReport();
         custom_interfaces::msg::DRR drrMessage;
         
-        drrMessage.time_stamp = drrReport.time_stamp;
-        drrMessage.position.x = drrReport.x;
-        drrMessage.position.y = drrReport.y;
-        drrMessage.position.z = drrReport.z;
+        drrMessage.time_stamp = drr.time_stamp;
+        drrMessage.position.x = drr.x;
+        drrMessage.position.y = drr.y;
+        drrMessage.position.z = drr.z;
 
-        drrMessage.angle.x = drrReport.roll;
-        drrMessage.angle.y = drrReport.pitch;
-        drrMessage.angle.z = drrReport.yaw;
-        drrMessage.pos_std = drrReport.pos_std;
-        drrMessage.status = drrReport.status;
+        drrMessage.angle.x = drr.roll;
+        drrMessage.angle.y = drr.pitch;
+        drrMessage.angle.z = drr.yaw;
+        drrMessage.pos_std = drr.pos_std;
+        drrMessage.status = drr.status;
        
         this->drr_report_publisher->publish(drrMessage);
     }
 
     void DVL::publishConfig() {
-        config_report cReport = readConfig();
         custom_interfaces::msg::Config configMessage;
-        configMessage.speed_of_sound = cReport.speed_of_sound;
-        configMessage.mounting_rotation_offset = cReport.mounting_rotation_offset;
-        configMessage.acoustic_enabled= cReport.acoustic_enabled;
-        configMessage.dark_mode_enabled = cReport.dark_mode_enabled;
-        configMessage.range_mode = cReport.range_mode;
-        configMessage.periodic_cycling_enabled = cReport.periodic_cycling_enabled;
+        configMessage.speed_of_sound = config.speed_of_sound;
+        configMessage.mounting_rotation_offset = config.mounting_rotation_offset;
+        configMessage.acoustic_enabled= config.acoustic_enabled;
+        configMessage.dark_mode_enabled = config.dark_mode_enabled;
+        configMessage.range_mode = config.range_mode;
+        configMessage.periodic_cycling_enabled = config.periodic_cycling_enabled;
         this->config_publisher->publish(configMessage);
     }
     
@@ -135,8 +133,6 @@ namespace dvl {
 
     }
 
-    
-
     void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
         sendCommand(CMD_RESET_DR);
         if(getResponse(ACK)){
@@ -189,6 +185,7 @@ namespace dvl {
                 if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
             } else if (n < 0) {
+                fd->attempt_reconnect();
                 throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
             } 
         }
@@ -197,27 +194,23 @@ namespace dvl {
     }
 
     void DVL::publishCommandFromSerial(char cmd){
-        switch(cmd){
-            case 'c':
-                publishConfig();
-                break;
-            case 'z':
-                publishVR();
-                break;
-            case 'p':
-                publishDRR();
-                break;
-            default:
-                break;
-        }
+        getResponse(cmd);
     }
     
     bool DVL::getResponse(const char expected_response){
-        std::string complete_line;
+        std::string complete_line = "";
         char c;
         ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+        if(n == -1){
+            fd->attempt_reconnect();
+            return false;
+        }
 
-        if(n > 0 && c != 'w') complete_line += "wr" + expected_response;
+        if(c != 'w'){
+            complete_line += 'w';
+            complete_line += 'r';
+            complete_line += expected_response;
+        }
         
         while(n > 0){
             std::string partial_line = "";
@@ -225,6 +218,7 @@ namespace dvl {
             if (n == 1) {
                 partial_line += c; // append to the end of the existing string
             } else if (n < 0) {
+                fd->attempt_reconnect();
                 throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
             } else { // n == 0: no data available (non-blocking read)
                 break;
@@ -243,9 +237,9 @@ namespace dvl {
             n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
         }
 
-        parseResponse(complete_line);
+        bool parse_is_success = parseResponse(complete_line);
 
-        if (complete_line[2] == expected_response) return true; 
+        if (complete_line[2] == expected_response && parse_is_success) return true; 
         return false;
     }
 
@@ -305,6 +299,7 @@ namespace dvl {
                     config.range_mode = fields[5];
                     config.periodic_cycling_enabled = fields[6];
 
+                    publishConfig();
                     return true;
                 }
 
@@ -336,7 +331,8 @@ namespace dvl {
                     vr.time_of_transmission = std::stoll(fields[9]);
                     vr.time = std::stof(fields[10]);
                     vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
-
+                    
+                    publishVR();
                     return true;
                 }
 
@@ -357,6 +353,7 @@ namespace dvl {
                     drr.yaw = std::stof(fields[7]);
                     drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
 
+                    publishDRR();
                     return true;
                 }
 
@@ -400,6 +397,7 @@ namespace dvl {
         std::string data = msg.str();
         ssize_t n = write(fd->get_fd(), data.c_str(), data.size());
         if (n < 0) {
+            fd->attempt_reconnect();
             throw std::runtime_error("Serial write error: " + std::string(strerror(errno)));
         }
 
@@ -407,20 +405,11 @@ namespace dvl {
     }
 
     void DVL::workLoop() {
-        // using clock = std::chrono::steady_clock;
-        // constexpr auto PUBLISH_RATE = std::chrono::milliseconds(100);
-        // auto last_publish = clock::now();
-
+        //reset all
         while (rclcpp::ok()) {
-            // auto now = clock::now();
-            // if((now - last_publish) >= PUBLISH_RATE) {
-            //     publishVR();
-            //     publishDRR();
-            //     publishConfig();
-
-            //     last_publish = now;
-            // }
+            //lock
             char cmd = getCommandFromSerial();
+            //unlock
             if(cmd != '0') publishCommandFromSerial(cmd);
         }    
     }

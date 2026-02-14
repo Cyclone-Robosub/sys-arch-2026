@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="dvl" tests="1" failures="0" time="0.965" errors="1" skipped="0">
-  <testcase classname="dvl" name="dvl_test.gtest.missing_result" time="0.965">
-    <error message="The test did not generate a result file:&#10;&#10;[==========] Running 7 tests from 1 test suite.&#10;[----------] Global test environment set-up.&#10;[----------] 7 tests from TestDVLInterface&#10;[ RUN      ] TestDVLInterface.DVLConstruction&#10;[       OK ] TestDVLInterface.DVLConstruction (112 ms)&#10;[ RUN      ] TestDVLInterface.ValidReadVelocityReport&#10;[       OK ] TestDVLInterface.ValidReadVelocityReport (18 ms)&#10;[ RUN      ] TestDVLInterface.ValidReadDRReport&#10;/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp:203: Failure&#10;Expected equality of these values:&#10;  drr.roll&#10;    Which is: 15.4&#10;  15.400000&#10;    Which is: 15.4&#10;&#10;/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp:204: Failure&#10;Expected equality of these values:&#10;  drr.status&#10;    Which is: '\x3' (3)&#10;  0.040000&#10;    Which is: 0.04&#10;&#10;[  FAILED  ] TestDVLInterface.ValidReadDRReport (16 ms)&#10;[ RUN      ] TestDVLInterface.ValidReadConfiguration&#10;unknown file: Failure&#10;C++ exception with description &quot;Serial write error: Bad file descriptor&quot; thrown in the test body.&#10;&#10;[  FAILED  ] TestDVLInterface.ValidReadConfiguration (22 ms)&#10;[ RUN      ] TestDVLInterface.DVLPublishVR&#10;"/>
-  </testcase>
-</testsuite>
+<testsuites tests="6" failures="1" disabled="0" errors="0" time="0.105" timestamp="2026-02-14T10:14:09.866" name="AllTests">
+  <testsuite name="TestDVLInterface" tests="6" failures="1" disabled="0" skipped="0" errors="0" time="0.105" timestamp="2026-02-14T10:14:09.866">
+    <testcase name="DVLConstruction" file="/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp" line="157" status="run" result="completed" time="0.038" timestamp="2026-02-14T10:14:09.866" classname="dvl.TestDVLInterface" />
+    <testcase name="ValidReadVelocityReport" file="/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp" line="169" status="run" result="completed" time="0.014" timestamp="2026-02-14T10:14:09.905" classname="dvl.TestDVLInterface" />
+    <testcase name="ValidReadDRReport" file="/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp" line="192" status="run" result="completed" time="0.013" timestamp="2026-02-14T10:14:09.919" classname="dvl.TestDVLInterface" />
+    <testcase name="DVLPublishVR" file="/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp" line="230" status="run" result="completed" time="0.013" timestamp="2026-02-14T10:14:09.933" classname="dvl.TestDVLInterface" />
+    <testcase name="DVLPublishDRR" file="/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp" line="277" status="run" result="completed" time="0.011" timestamp="2026-02-14T10:14:09.947" classname="dvl.TestDVLInterface" />
+    <testcase name="DVLPublishConfig" file="/home/quyent/Cyclone/sys-arch-2026/onboard/src/dvl/test/test_dvl.cpp" line="309" status="run" result="completed" time="0.012" timestamp="2026-02-14T10:14:09.958" classname="dvl.TestDVLInterface">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;Serial write error: Bad file descriptor&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "Serial write error: Bad file descriptor" thrown in the test body.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
