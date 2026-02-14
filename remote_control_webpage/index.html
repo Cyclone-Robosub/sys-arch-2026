@@ -30,8 +30,12 @@
 
   <!-- ROS connection -->
   <script>
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const rosHost = window.location.hostname;
+    const rosPort = 9090; // change if needed
+    console.log(`Connecting to ROS bridge at ${wsScheme}://${rosHost}:${rosPort}...`);
     const rosNode = new ROSLIB.Ros({
-      url: 'ws://localhost:9090' // Adjust to your ROS bridge server
+      url: `${wsScheme}://${rosHost}:${rosPort}`
     });
 
     rosNode.on('connection', () => {
