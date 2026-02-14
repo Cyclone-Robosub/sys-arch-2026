@@ -28,6 +28,10 @@ services:
       - /dev/i2c-5 
       - /dev/i2c-7 
       - /dev/i2c-9 
+      - /dev/video0
+      - /dev/video1
+      - /dev/video2
+      - /dev/video3
       # add pico
     environment:
       - PULSE_SERVER=unix:/run/user/1000/pulse/native
