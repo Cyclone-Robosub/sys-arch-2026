@@ -13,6 +13,11 @@ namespace dvl {
         config(error_config)
         {
 
+        if (this->fd->get_fd() < 0) {
+            RCLCPP_WARN(this->get_logger(), "Unable to connect to DVL.");
+            exit(42);
+        }
+
         //Services
         config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
         drr_service = this->create_service<std_srvs::srv::SetBool>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
@@ -176,18 +181,19 @@ namespace dvl {
     //Private Methods
     char DVL::getCommandFromSerial(){
         std::string curr_line = "";
-        ssize_t n;
-        char c;
+        ssize_t n = -1;
+        char c = '\0';
         
         while(curr_line.size() < 3){ //keep reading until curr_line is length 3
             n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
             if (n == 1) {
                 if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
-            } else if (n < 0) {
+            } else if (n <= 0) {
+                RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
                 fd->attempt_reconnect();
-                throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
-            } 
+                return '0';
+            }
         }
 
         return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
@@ -201,7 +207,8 @@ namespace dvl {
         std::string complete_line = "";
         char c;
         ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
-        if(n == -1){
+        if(n <= 0){
+            RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
             fd->attempt_reconnect();
             return false;
         }
@@ -217,10 +224,7 @@ namespace dvl {
             
             if (n == 1) {
                 partial_line += c; // append to the end of the existing string
-            } else if (n < 0) {
-                fd->attempt_reconnect();
-                throw std::runtime_error("Serial read error: " + std::string(strerror(errno)));
-            } else { // n == 0: no data available (non-blocking read)
+            } else if (n == 0) { // n == 0: no data available (non-blocking read)
                 break;
             }
 
@@ -235,6 +239,11 @@ namespace dvl {
             }
 
             n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+            if (n <= 0) {
+                RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
+                fd->attempt_reconnect();
+                return false;
+            }
         }
 
         bool parse_is_success = parseResponse(complete_line);
@@ -260,116 +269,111 @@ namespace dvl {
             complete_line.erase(complete_line.size() - 3);
         }
 
-        try {
-            switch (cmd) {
-                case 'v': // protocol version
-                    if (complete_line.size() > 4) {
-                        version = complete_line.substr(4);
-                        //std::cout << version << std::endl;
-                    } else {
-                        version = "";
-                        return false;
-                    }
-                    return true;
-
-                case 'w': // product details
-                    if (complete_line.size() > 4) {
-                        product_details = complete_line.substr(4);
-                    } else {
-                        product_details = "";
-                        return false;
-                    }
-                    return true;
-
-                case 'a': // acknowledge
-                    return true;
-
-                case 'c': { // configuration
-                    std::stringstream ss(complete_line);
-                    std::string field;
-                    std::vector<std::string> fields;
-                    while (std::getline(ss, field, ',')) fields.push_back(field);
-
-                    if (fields.size() < 7) return false;
-
-                    config.speed_of_sound = std::stof(fields[1]);
-                    config.mounting_rotation_offset = std::stof(fields[2]);
-                    config.acoustic_enabled = fields[3];
-                    config.dark_mode_enabled = fields[4];
-                    config.range_mode = fields[5];
-                    config.periodic_cycling_enabled = fields[6];
-
-                    publishConfig();
-                    return true;
-                }
-
-                case 'z': { // velocity report
-                    std::stringstream ss(complete_line);
-                    std::string field;
-                    std::vector<std::string> fields;
-                    while (std::getline(ss, field, ',')) fields.push_back(field);
-
-                    std::stringstream ss_covariance(fields[7]);
-                    std::vector<std::string> covariance_fields;
-                    while(std::getline(ss_covariance, field, ';')) covariance_fields.push_back(field);
-
-                    if (fields.size() < 10) return false;
-                    if (covariance_fields.size() < 9) return false;
-
-                    vr.vx = std::stof(fields[1]);
-                    vr.vy = std::stof(fields[2]);
-                    vr.vz = std::stof(fields[3]);
-                    vr.valid = !fields[4].empty() ? fields[4][0] : 'n';
-                    vr.altitude = std::stof(fields[5]);
-                    vr.fom = std::stof(fields[6]);
-
-                    for (int i = 0; i < 9; ++i) {
-                        vr.covariance[i] = std::stof(covariance_fields[i]);
-                    }
-
-                    vr.time_of_validity = std::stoll(fields[8]);
-                    vr.time_of_transmission = std::stoll(fields[9]);
-                    vr.time = std::stof(fields[10]);
-                    vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
-                    
-                    publishVR();
-                    return true;
-                }
-
-                case 'p': { // dead reckoning report
-                    std::stringstream ss(complete_line);
-                    std::string field;
-                    std::vector<std::string> fields;
-                    while (std::getline(ss, field, ',')) fields.push_back(field);
-
-                    if (fields.size() < 9) return false;
-
-                    drr.x = std::stof(fields[1]);
-                    drr.y = std::stof(fields[2]);
-                    drr.z = std::stof(fields[3]);
-                    drr.pos_std = std::stof(fields[4]);
-                    drr.roll = std::stof(fields[5]);
-                    drr.pitch = std::stof(fields[6]);
-                    drr.yaw = std::stof(fields[7]);
-                    drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
-
-                    publishDRR();
-                    return true;
-                }
-
-                case '?': // malformed request
-                case '!': // bad checksum
-                case 'n': // not acknowledged
+        switch (cmd) {
+            case 'v': // protocol version
+                if (complete_line.size() > 4) {
+                    version = complete_line.substr(4);
+                    //std::cout << version << std::endl;
+                } else {
+                    version = "";
                     return false;
+                }
+                return true;
 
-                default:
+            case 'w': // product details
+                if (complete_line.size() > 4) {
+                    product_details = complete_line.substr(4);
+                } else {
+                    product_details = "";
                     return false;
+                }
+                return true;
+
+            case 'a': // acknowledge
+                return true;
+
+            case 'c': { // configuration
+                std::stringstream ss(complete_line);
+                std::string field;
+                std::vector<std::string> fields;
+                while (std::getline(ss, field, ',')) fields.push_back(field);
+
+                if (fields.size() < 7) return false;
+
+                config.speed_of_sound = std::stof(fields[1]);
+                config.mounting_rotation_offset = std::stof(fields[2]);
+                config.acoustic_enabled = fields[3];
+                config.dark_mode_enabled = fields[4];
+                config.range_mode = fields[5];
+                config.periodic_cycling_enabled = fields[6];
+
+                publishConfig();
+                return true;
             }
-        } catch (const std::exception& e) {
-            // Catch any parsing errors (std::stof, std::stoll, etc.)
-            std::cerr << "parseResponse error: " << e.what() << std::endl;
-            return false;
+
+            case 'z': { // velocity report
+                std::stringstream ss(complete_line);
+                std::string field;
+                std::vector<std::string> fields;
+                while (std::getline(ss, field, ',')) fields.push_back(field);
+
+                std::stringstream ss_covariance(fields[7]);
+                std::vector<std::string> covariance_fields;
+                while(std::getline(ss_covariance, field, ';')) covariance_fields.push_back(field);
+
+                if (fields.size() < 10) return false;
+                if (covariance_fields.size() < 9) return false;
+
+                vr.vx = std::stof(fields[1]);
+                vr.vy = std::stof(fields[2]);
+                vr.vz = std::stof(fields[3]);
+                vr.valid = !fields[4].empty() ? fields[4][0] : 'n';
+                vr.altitude = std::stof(fields[5]);
+                vr.fom = std::stof(fields[6]);
+
+                for (int i = 0; i < 9; ++i) {
+                    vr.covariance[i] = std::stof(covariance_fields[i]);
+                }
+
+                vr.time_of_validity = std::stoll(fields[8]);
+                vr.time_of_transmission = std::stoll(fields[9]);
+                vr.time = std::stof(fields[10]);
+                vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
+                
+                publishVR();
+                return true;
+            }
+
+            case 'p': { // dead reckoning report
+                std::stringstream ss(complete_line);
+                std::string field;
+                std::vector<std::string> fields;
+                while (std::getline(ss, field, ',')) fields.push_back(field);
+
+                if (fields.size() < 9) return false;
+
+                drr.x = std::stof(fields[1]);
+                drr.y = std::stof(fields[2]);
+                drr.z = std::stof(fields[3]);
+                drr.pos_std = std::stof(fields[4]);
+                drr.roll = std::stof(fields[5]);
+                drr.pitch = std::stof(fields[6]);
+                drr.yaw = std::stof(fields[7]);
+                drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
+
+                publishDRR();
+                return true;
+            }
+
+            case '?': // malformed request
+            case '!': // bad checksum
+            case 'n': // not acknowledged
+                return false;
+
+            default:
+                return false;
         }
+        return false;
     }
 
     bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string>& options) { //cmd with optional input args
@@ -396,16 +400,21 @@ namespace dvl {
         // Write to serial port using POSIX write
         std::string data = msg.str();
         ssize_t n = write(fd->get_fd(), data.c_str(), data.size());
-        if (n < 0) {
+        if (n <= 0) {
             fd->attempt_reconnect();
-            throw std::runtime_error("Serial write error: " + std::string(strerror(errno)));
+            RCLCPP_WARN(this->get_logger(), "Failed to write to serial port. Attempting to reconnect to DVL.");
+            return false;
         }
 
         return true;
     }
 
     void DVL::workLoop() {
-        //reset all
+        sendCommand(CMD_RESET_DR);
+        getResponse(ACK);
+        sendCommand(CMD_CALIBRATE_GYRO);
+        getResponse(ACK);
+        // TODO: Reset VR
         while (rclcpp::ok()) {
             //lock
             char cmd = getCommandFromSerial();
@@ -466,14 +475,19 @@ DVL_FD::DVL_FD(std::string path) : Path_FD(path) {
 
 int DVL_FD::open_serial() {
     struct termios tty;
-    speed_t baud = 115200;
+    speed_t baud = 0010002; // This means baud rate of 115200
     int fd;
     
     if ((fd = open(path.c_str(), O_RDWR | O_NOCTTY | O_SYNC)) == -1) {
         return -1;
     }
     
-    fcntl(fd, F_SETFL, O_RDWR);
+    if (tcgetattr(fd, &tty) != 0) {
+        close(fd);
+        fprintf(stderr, "Failed to get terminal attributes\n");
+        return -1;
+    }
+
     
     // Get and modify current options:
     cfsetospeed(&tty, baud);
@@ -493,7 +507,11 @@ int DVL_FD::open_serial() {
     tty.c_cc[VMIN] = 0;  // non-blocking read
     tty.c_cc[VTIME] = 10; // 1 second timeout (VTIME is in deciseconds)
     
-    tcsetattr(fd, TCSANOW, &tty);
+    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
+        close(fd);
+        fprintf(stderr, "Failed to set terminal attributes\n");
+        return -1;
+    }
     
     return fd;
 }
