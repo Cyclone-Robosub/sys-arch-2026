@@ -1,3 +1,40 @@
+**Table of Contents:**
+- [Systems Architecture 2026](#systems-architecture-2026)
+  - [Quickstart](#quickstart)
+  - [Running unit tests](#running-unit-tests)
+  - [How to use launch files](#how-to-use-launch-files)
+- [How to Run the Robot with Manual Control Mode](#how-to-run-the-robot-with-manual-control-mode)
+  - [Overview](#overview)
+  - [Running the Robot](#running-the-robot)
+    - [How to Connect to the Pi 5](#how-to-connect-to-the-pi-5)
+      - [Steps](#steps)
+      - [Expected Output](#expected-output)
+      - [Explanation](#explanation)
+    - [Connecting to jetson nano orin](#connecting-to-jetson-nano-orin)
+      - [Via WiFi](#via-wifi)
+      - [Via Ethernet](#via-ethernet)
+    - [Running the Robot with the Bash Script (Preferred)](#running-the-robot-with-the-bash-script-preferred)
+      - [Steps](#steps-1)
+      - [Expected output](#expected-output-1)
+      - [Explanation](#explanation-1)
+      - [Using container on Jetson Nano Orin](#using-container-on-jetson-nano-orin)
+    - [Running the Robot Manually (If Script Fails)](#running-the-robot-manually-if-script-fails)
+      - [Steps](#steps-2)
+      - [Expected Output](#expected-output-2)
+      - [Explanation](#explanation-2)
+    - [Running Gamepad Processes](#running-gamepad-processes)
+      - [Steps](#steps-3)
+      - [Expected Output](#expected-output-3)
+      - [Explanation](#explanation-3)
+  - [Background](#background)
+    - [Understanding Linux/The Terminal](#understanding-linuxthe-terminal)
+      - [Why the terminal?](#why-the-terminal)
+      - [Understanding the terminal](#understanding-the-terminal)
+      - [Understanding Unix Filesystems](#understanding-unix-filesystems)
+      - [Navigating the filesystem through the terminal](#navigating-the-filesystem-through-the-terminal)
+    - [Understanding Local Machine vs Pi 5](#understanding-local-machine-vs-pi-5)
+    - [Using `tmux`](#using-tmux)
+    - [Stopping a program](#stopping-a-program)
 # Systems Architecture 2026
 The new and improved codebase for 2026 (and hopefully beyond)!
 
@@ -60,7 +97,7 @@ At a high level, running the robot manually requires remotely connecting to the 
 - `rosbridge_server`: connects the gamepad data to the Matlab code
 - `simple_joystick_controller`: interprets gamepad inputs and converts them to thruster power values
 
-The "Background" section provides some context on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the "Running the Robot" section.
+The [Background](#background) section provides some context on Linux and using the terminal. Feel free to skip past bits that aren't interesting or relevant. They are helpful for understanding the commands you're typing, but if you'd rather just blindly paste them in then you can skip ahead to the "Running the Robot" section.
 
 There is also a script that you can run that starts up all the robot components automatically. If it works properly, your work is greatly simplified: you have to do little more than `ssh` to the Pi 5 and run the script! If it doesn't work properly, you'll need to follow the step by step instructions in this guide under "Running the Robot Manually (If Script Fails)".
 
@@ -113,10 +150,17 @@ If you are successful, you should get a message similar to the expected output a
 
 > If you open a new terminal tab or window, **you will need to reconnect to the Pi 5 in that tab or window**. Again, you can verify that you are on the correct machine by checking the hostname (see "Understanding Local Machine vs Pi 5").
 
+### Connecting to jetson nano orin
+#### Via WiFi
+See the tutorial here to [use Tailscale](https://www.notion.so/crsucd/Jetson-Nano-Remote-Access-Desktop-2a98a3eca2f080dab4faf3eef6990b86)
+#### Via Ethernet
+The DNS is set up that you should be able to connect by `ssh nano@orin.local`. If not.... figure it out.
+
+
 ### Running the Robot with the Bash Script (Preferred)
 #### Steps
 Type the following into the terminal, followed by `Enter`:
-1. `ssh Pi5`
+1. `ssh pi5`
 2. `cd ~/sys-arch-2026`
 3. `git pull`
 4. `colcon build`
@@ -158,6 +202,9 @@ cyclone@cyclonepropulsion:~/sys-arch-2026$
 From there, type `./start_tmux_session.sh`. This will launch a new `tmux` session, splitting your terminal window into multiple panes, each running a component of the robot code. You will need to switch the focus to the `mux_controller` pane (the one with some text at the top indicating the current robot control mode, probably `cli` at first) and switch it to `Matlab mode` by typing `1` into the prompt and pressing `Enter`. You should see the mode at the top change to `matlab (ctrl)`.
 
 That's all that you need to do on the robot side! You still have to run the joystick processes, but these should be done on the local machine rather than the Pi 5.
+
+#### Using container on Jetson Nano Orin
+After connecting to the Jetson Nano Orin, instead of running `./start_tmux_session.sh`, run `docker compose up` to start the container and it runs `rosbridge`. Then you run `./start_tmux_session.sh --container` with the flag so it starts the processes inside the container. 
 
 ### Running the Robot Manually (If Script Fails)
 #### Steps
