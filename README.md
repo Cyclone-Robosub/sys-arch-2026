@@ -10,7 +10,7 @@
       - [Steps](#steps)
       - [Expected Output](#expected-output)
       - [Explanation](#explanation)
-    - [Connecting to jetson nano orin](#connecting-to-jetson-nano-orin)
+    - [Connecting to Jetson Nano Orin](#connecting-to-jetson-nano-orin)
       - [Via WiFi](#via-wifi)
       - [Via Ethernet](#via-ethernet)
     - [Running the Robot with the Bash Script (Preferred)](#running-the-robot-with-the-bash-script-preferred)
@@ -150,7 +150,7 @@ If you are successful, you should get a message similar to the expected output a
 
 > If you open a new terminal tab or window, **you will need to reconnect to the Pi 5 in that tab or window**. Again, you can verify that you are on the correct machine by checking the hostname (see "Understanding Local Machine vs Pi 5").
 
-### Connecting to jetson nano orin
+### Connecting to Jetson Nano Orin
 #### Via WiFi
 See the tutorial here to [use Tailscale](https://www.notion.so/crsucd/Jetson-Nano-Remote-Access-Desktop-2a98a3eca2f080dab4faf3eef6990b86)
 #### Via Ethernet
