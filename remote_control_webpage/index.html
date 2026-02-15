@@ -13,11 +13,27 @@
       width: 100%;        /* responsive */
       height: auto;       /* keep aspect ratio */
     }
+    #video-panel {
+      margin: 20px 0;
+      padding: 10px;
+      background: #f4f4f4;
+      border-radius: 5px;
+    }
+    #video-status {
+      font-size: 12px;
+      color: #444;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>PS5 Controller Test</h1>
   <pre id="output">Connect your controller…</pre>
+
+  <div id="video-panel">
+    <div id="video-status">connecting...</div>
+    <video id="cam" autoplay playsinline controls muted></video>
+  </div>
 
   <!-- roslibjs (correct path) -->
   <script src="https://cdn.jsdelivr.net/npm/roslib/build/roslib.min.js"></script>
@@ -133,6 +149,115 @@
     });
     window.addEventListener("beforeunload", () => {
         controllerPub.unadvertise();
+    });
+  </script>
+
+  <script>
+    const videoStatus = document.getElementById('video-status');
+    const videoEl = document.getElementById('cam');
+    let peerConnection;
+    let currentSessionUrl;
+    let reconnectTimer;
+
+    function defaultWhepUrl() {
+      const scheme = window.location.protocol === 'https:' ? 'https' : 'http';
+      const host = window.location.hostname;
+      return `${scheme}://${host}:8889/cam/whep`;
+    }
+
+    function setVideoStatus(message) {
+      videoStatus.textContent = message;
+    }
+
+    function scheduleReconnect() {
+      if (reconnectTimer) return;
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        startWhep().catch((error) => {
+          console.error('WHEP error:', error);
+          setVideoStatus('error');
+          scheduleReconnect();
+        });
+      }, 2000);
+    }
+
+    async function startWhep() {
+      stopWhep();
+
+      const whepUrl = defaultWhepUrl();
+      setVideoStatus('connecting...');
+
+      peerConnection = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+      });
+
+      peerConnection.ontrack = (event) => {
+        if (videoEl.srcObject !== event.streams[0]) {
+          videoEl.srcObject = event.streams[0];
+        }
+      };
+
+      peerConnection.onconnectionstatechange = () => {
+        setVideoStatus(peerConnection.connectionState);
+        if (['failed', 'disconnected', 'closed'].includes(peerConnection.connectionState)) {
+          scheduleReconnect();
+        }
+      };
+
+      const offer = await peerConnection.createOffer({ offerToReceiveVideo: true, offerToReceiveAudio: false });
+      await peerConnection.setLocalDescription(offer);
+
+      const response = await fetch(whepUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: offer.sdp
+      });
+
+      if (!response.ok) {
+        throw new Error(`WHEP POST failed: ${response.status}`);
+      }
+
+      currentSessionUrl = response.headers.get('location') || response.headers.get('Location') || null;
+      const answerSdp = await response.text();
+      await peerConnection.setRemoteDescription({ type: 'answer', sdp: answerSdp });
+      setVideoStatus('streaming');
+    }
+
+    async function stopWhep() {
+      if (peerConnection) {
+        peerConnection.getSenders().forEach((sender) => {
+          if (sender.track) sender.track.stop();
+        });
+        peerConnection.close();
+        peerConnection = null;
+      }
+
+      if (videoEl.srcObject) {
+        videoEl.srcObject.getTracks().forEach((track) => track.stop());
+        videoEl.srcObject = null;
+      }
+
+      if (currentSessionUrl) {
+        try {
+          await fetch(currentSessionUrl, { method: 'DELETE' });
+        } catch (error) {
+          console.warn('Failed to close WHEP session:', error);
+        }
+        currentSessionUrl = null;
+      }
+
+      setVideoStatus('idle');
+    }
+
+    startWhep().catch((error) => {
+      console.error('WHEP error:', error);
+      setVideoStatus('error');
+      scheduleReconnect();
+    });
+
+    window.addEventListener('beforeunload', () => {
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      stopWhep();
     });
   </script>
 </body>
