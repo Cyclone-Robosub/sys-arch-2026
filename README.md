@@ -206,6 +206,8 @@ That's all that you need to do on the robot side! You still have to run the joys
 #### Using container on Jetson Nano Orin
 After connecting to the Jetson Nano Orin, instead of running `./start_tmux_session.sh`, run `docker compose up` to start the container and it runs `rosbridge`. Then you run `./start_tmux_session.sh --container` with the flag so it starts the processes inside the container. 
 
+To stop the container, run `docker compose down` from the `sys-arch-2026` directory.
+
 ### Running the Robot Manually (If Script Fails)
 #### Steps
 Type the following into the terminal, followed by `Enter`:
