@@ -34,7 +34,7 @@ protected:
 namespace dvl {
 struct velocity_report {
     float vx = 0, vy = 0, vz = 0, altitude = 0, fom = 0, time = 0;
-    std::array<float,9> covariance = {0};
+    std::array<float,9> covariance = {0}; // all zeroes
     int64_t time_of_validity = 0, time_of_transmission = 0;
     char valid = 'n';
     uint8_t status = 0x00; 
@@ -143,7 +143,6 @@ class DVL : public rclcpp::Node {
         // PRIVATE METHODS //
         bool getResponse(const char expected_response);
         bool parseResponse(std::string& complete_line); //parses text string from DVL into the results structure
-        bool holdForResponse(const char expected_response); 
         bool sendCommand(uint8_t cmd, const std::vector<std::string>& options = {});
         
 };

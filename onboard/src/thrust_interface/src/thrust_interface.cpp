@@ -67,7 +67,7 @@ void Thrust_Interface::send_heartbeat_to_pico() {
     int length = serial_message.size();
     
     serial_mutex.lock();
-    ssize_t bytes_written = write(pico_fd->get_fd(), serial_message.c_str(), length);
+    ssize_t bytes_written = write(pico_fd->get_write_fd(), serial_message.c_str(), length);
     serial_mutex.unlock();
     
     if (bytes_written != length) {
@@ -89,7 +89,7 @@ void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
     int length = serial_message.size();
     
     serial_mutex.lock();
-    ssize_t bytes_written = write(pico_fd->get_fd(), serial_message.c_str(), length);
+    ssize_t bytes_written = write(pico_fd->get_write_fd(), serial_message.c_str(), length);
     serial_mutex.unlock();
     
     if (bytes_written != length) {

@@ -12,7 +12,8 @@ protected:
     int fd;
 public:
     explicit FD_Interface() {};
-    virtual int get_fd() = 0;
+    virtual int get_read_fd() = 0;
+    virtual int get_write_fd() = 0;
     virtual void attempt_reconnect() = 0;
     virtual void close_fd() = 0;
 };
@@ -23,16 +24,20 @@ protected:
     virtual int open_serial() = 0;
 public:
     explicit Path_FD(std::string path);
-    virtual int get_fd() override;
+    virtual int get_read_fd() override;
+    virtual int get_write_fd() override;
     virtual void attempt_reconnect() override;
     virtual void close_fd() override;
     virtual ~Path_FD();
 };
 
 class Direct_FD : public FD_Interface {
+protected:
+    int fd_write;
 public:
-    Direct_FD(int fd);
-    virtual int get_fd() override;
+    Direct_FD(int fd_read, int fd_write);
+    virtual int get_read_fd() override;
+    virtual int get_write_fd() override;
     virtual void attempt_reconnect() override;
     virtual void close_fd() override;
     virtual ~Direct_FD();

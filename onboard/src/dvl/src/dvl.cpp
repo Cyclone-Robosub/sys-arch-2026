@@ -13,7 +13,7 @@ namespace dvl {
         config(error_config)
         {
 
-        if (this->fd->get_fd() < 0) {
+        if (this->fd->get_read_fd() < 0 || this->fd->get_write_fd() < 0) {
             RCLCPP_WARN(this->get_logger(), "Unable to connect to DVL.");
             exit(42);
         }
@@ -28,7 +28,7 @@ namespace dvl {
         //Publishers
         velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
         drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("dead_reck_report", 10);
-        config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);  
+        config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);
     }
 
     // Ros2 publish functions
@@ -83,6 +83,7 @@ namespace dvl {
         if(getResponse(REC_VR)){
             return vr;
         } else {
+            std::cerr << "Returning error_vr\n";
             return error_vr;
         }
         
@@ -185,7 +186,7 @@ namespace dvl {
         char c = '\0';
         
         while(curr_line.size() < 3){ //keep reading until curr_line is length 3
-            n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+            n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
             if (n == 1) {
                 if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
@@ -206,7 +207,7 @@ namespace dvl {
     bool DVL::getResponse(const char expected_response){
         std::string complete_line = "";
         char c;
-        ssize_t n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+        ssize_t n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
         if(n <= 0){
             RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
             fd->attempt_reconnect();
@@ -224,8 +225,6 @@ namespace dvl {
             
             if (n == 1) {
                 partial_line += c; // append to the end of the existing string
-            } else if (n == 0) { // n == 0: no data available (non-blocking read)
-                break;
             }
 
             if (partial_line.empty()) {
@@ -238,7 +237,7 @@ namespace dvl {
                 break; //break out of the reading loop if an end-of-line char is detected
             }
 
-            n = read(fd->get_fd(), &c, 1); // read 1 byte from the serial port
+            n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
             if (n <= 0) {
                 RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
                 fd->attempt_reconnect();
@@ -248,7 +247,9 @@ namespace dvl {
 
         bool parse_is_success = parseResponse(complete_line);
 
-        if (complete_line[2] == expected_response && parse_is_success) return true; 
+        if (parse_is_success && complete_line[2] == expected_response) {
+            return true;
+        }
         return false;
     }
 
@@ -296,9 +297,11 @@ namespace dvl {
                 std::stringstream ss(complete_line);
                 std::string field;
                 std::vector<std::string> fields;
-                while (std::getline(ss, field, ',')) fields.push_back(field);
+                while (std::getline(ss, field, ',') && !field.empty()) fields.push_back(field);
 
-                if (fields.size() < 7) return false;
+                if (fields.size() < 7) {
+                    return false;
+                }
 
                 config.speed_of_sound = std::stof(fields[1]);
                 config.mounting_rotation_offset = std::stof(fields[2]);
@@ -315,19 +318,27 @@ namespace dvl {
                 std::stringstream ss(complete_line);
                 std::string field;
                 std::vector<std::string> fields;
-                while (std::getline(ss, field, ',')) fields.push_back(field);
+                while (std::getline(ss, field, ',') && !field.empty()) {
+                    fields.push_back(field);
+                }
 
                 std::stringstream ss_covariance(fields[7]);
                 std::vector<std::string> covariance_fields;
-                while(std::getline(ss_covariance, field, ';')) covariance_fields.push_back(field);
+                while(std::getline(ss_covariance, field, ';') && !field.empty()) {
+                    covariance_fields.push_back(field);
+                }
 
-                if (fields.size() < 10) return false;
-                if (covariance_fields.size() < 9) return false;
+                if (fields.size() < 10) {
+                    return false;
+                }
+                if (covariance_fields.size() < 9){
+                    return false;
+                }
 
                 vr.vx = std::stof(fields[1]);
                 vr.vy = std::stof(fields[2]);
                 vr.vz = std::stof(fields[3]);
-                vr.valid = !fields[4].empty() ? fields[4][0] : 'n';
+                vr.valid = fields[4][0];
                 vr.altitude = std::stof(fields[5]);
                 vr.fom = std::stof(fields[6]);
 
@@ -399,13 +410,12 @@ namespace dvl {
 
         // Write to serial port using POSIX write
         std::string data = msg.str();
-        ssize_t n = write(fd->get_fd(), data.c_str(), data.size());
+        ssize_t n = write(fd->get_write_fd(), data.c_str(), data.size());
         if (n <= 0) {
             fd->attempt_reconnect();
             RCLCPP_WARN(this->get_logger(), "Failed to write to serial port. Attempting to reconnect to DVL.");
             return false;
         }
-
         return true;
     }
 

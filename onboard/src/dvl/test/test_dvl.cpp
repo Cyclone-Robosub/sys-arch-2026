@@ -17,7 +17,8 @@ using namespace dvl;
 class TestDVLInterface : public::testing::Test {
 protected:
     std::shared_ptr<DVL> node;
-    int pipe_fds[2];  // [0] = read end, [1] = write end
+    int node_read_pipe_fds[2];  // [0] = read end, [1] = write end. For the node to read from.
+    int node_write_pipe_fds[2];  // [0] = read end, [1] = write end. For the node to write from.
     rclcpp::Subscription<custom_interfaces::msg::VR>::SharedPtr velocity_report_subscriber;
     custom_interfaces::msg::VR most_recent_velocity_report;
     int msg_count;
@@ -34,8 +35,8 @@ protected:
 
         // Create pipe for mock serial communication
         // pipe_fds[0] = read end, pipe_fds[1] = write end
-        if (pipe(pipe_fds) == -1) {
-            FAIL() << "Failed to create pipe for mock serial";
+        if (pipe(node_read_pipe_fds) == -1 || pipe(node_write_pipe_fds) == -1) {
+            FAIL() << "Failed to create pipes for mock serial";
         }
 
         msg_count = 0;
@@ -43,17 +44,16 @@ protected:
 
     void TearDown() override {
         node.reset();
-        close(pipe_fds[0]);
-        close(pipe_fds[1]);
+        close(node_read_pipe_fds[0]);
+        close(node_read_pipe_fds[1]);
+        close(node_write_pipe_fds[0]);
+        close(node_write_pipe_fds[1]);
     }
 
-    void create_node(uint8_t dvl_mode){
-        // Use pipe_fds[1] (write end) as the file descriptor
-        // The node will write to it, and we'll read from pipe_fds[0]
-        std::unique_ptr<FD_Interface> pipe_fd;
-        if(dvl_mode == DVL_READ) pipe_fd = std::make_unique<Direct_FD>(pipe_fds[0]);
-        else pipe_fd = std::make_unique<Direct_FD>(pipe_fds[1]);
-
+    void create_node(){
+        // We supply the DVL with both a read and write pipe. We can write to node_read_pipe_fds[1] for the 
+        // DVL to read from it, and read from node_write_pipe_fds[0] to verify that the DVL wrote correct data.
+        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(node_read_pipe_fds[0], node_write_pipe_fds[1]);
         node = std::make_shared<DVL>(std::move(pipe_fd));
     }
 
@@ -69,15 +69,15 @@ protected:
         struct timeval timeout;
         
         FD_ZERO(&readfds);
-        FD_SET(pipe_fds[0], &readfds);
+        FD_SET(node_write_pipe_fds[0], &readfds);
         
         timeout.tv_sec = timeout_ms / 1000;
         timeout.tv_usec = (timeout_ms % 1000) * 1000;
         
-        int result = select(pipe_fds[0] + 1, &readfds, nullptr, nullptr, &timeout);
+        int result = select(node_write_pipe_fds[0] + 1, &readfds, nullptr, nullptr, &timeout);
         
         if (result > 0) {
-            ssize_t bytes_read = read(pipe_fds[0], buffer, sizeof(buffer) - 1);
+            ssize_t bytes_read = read(node_write_pipe_fds[0], buffer, sizeof(buffer) - 1);
             if (bytes_read > 0) {
                 buffer[bytes_read] = '\0';
                 return std::string(buffer);
@@ -96,7 +96,7 @@ protected:
         std::string msg;
         get_serial_message(data_type, msg);
         int length = msg.size();
-        write(pipe_fds[1], msg.c_str(), length + 1);
+        write(node_read_pipe_fds[1], msg.c_str(), length + 1);
     }
 
     /**
@@ -110,7 +110,7 @@ protected:
         case VR_TYPE:
             msg = 
                 "wrz,1.000000,2.000000,3.000000," //vx, vy, vz
-                ",2.000000,1.000000," //valid, altitude, fom
+                "n,2.000000,1.000000," //valid, altitude, fom
                 "1.000000;2.000000;3.000000;4.000000;5.000000;" //covariance
                 "1.000000;2.000000;3.000000;4.000000," //covariance
                 "1,2,3.000000,0\r\n\r"; //time of validity, time of transmission, time, status
@@ -118,7 +118,7 @@ protected:
         case BAD_VR_TYPE:
             msg = 
                 "wrz,1.000000,2.000000,3.000000," //vx, vy, vz
-                ",2.000000,1.000000," //valid, altitude, fom
+                "n,2.000000,1.000000," //valid, altitude, fom
                 "1.000000;2.000000;3.000000;4.000000;5.000000;" //covariance
                 "1.000000;2.000000;3.000000;," //covariance missing 1 field
                 "1,2,3.000000,0\r\n\r"; //time of validity, time of transmission, time, status
@@ -130,7 +130,7 @@ protected:
             break;
         case CONFIG_TYPE:
             msg =
-                "wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
+                "wrc,1475.000000,0.000000,y," //speed of sound, mounting rotation offset, acoustic enabled
                 "n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
             break;
         default: 
@@ -169,7 +169,7 @@ protected:
  */
 TEST_F(TestDVLInterface, DVLConstruction) {
     ASSERT_NO_THROW({
-        create_node(DVL_READ);
+        create_node();
     });
 
     ASSERT_NE(node, nullptr);
@@ -180,7 +180,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  * @brief Test DVL reading Velocity
  */
  TEST_F(TestDVLInterface, ValidReadVelocityReport){
-    create_node(DVL_READ);
+    create_node();
     velocity_report vr;
 
     //write valid VR data into pipe_fds[1] 
@@ -200,20 +200,12 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  }
 
  TEST_F(TestDVLInterface, BadVelocityReport){
-    create_node(DVL_READ);
+    create_node();
     velocity_report vr;
 
     //write bad VR data into pipe_fds[1] 
     write_serial_message(BAD_VR_TYPE);
     ASSERT_NE(node, nullptr);
-    vr = node->readVelocityReport();
-    // this doesn't work for some reason
-    /*
-    ASSERT_EXIT({vr = node->readVelocityReport(); fprintf(stderr, "Still alive!"); exit(0);}, 
-                    ::testing::ExitedWithCode(0),
-                    "Still alive!");
-    */
-
     // vr should equal error_vr, which is an empty initialization 
     // of velocity_report if bad data is passed in
     EXPECT_FLOAT_EQ(vr.vx, 0);
@@ -230,7 +222,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  * @brief Test DVL reading DRReport
  */
  TEST_F(TestDVLInterface, ValidReadDRReport){
-    create_node(DVL_READ);
+    create_node();
     dead_reck_report drr;
 
     //write valid DRR data into pipe_fds[1]
@@ -244,31 +236,31 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     EXPECT_EQ(drr.status, 3);
  }
 
-//  /**
-//  * @brief Test DVL reading Config
-//  */
-//  TEST_F(TestDVLInterface, ValidReadConfiguration){
-//     create_node(DVL_READ);
-//     config_report config;
+ /**
+ * @brief Test DVL reading Config
+ */
+ TEST_F(TestDVLInterface, ValidReadConfiguration){
+    create_node();
+    config_report config;
 
-//     //write valid Config data into pipe_fds[1]
-//     write_serial_message(CONFIG_TYPE);
+    //write valid Config data into pipe_fds[1]
+    write_serial_message(CONFIG_TYPE);
     
-//     //check if config was read correctly
-//     config = node->readConfig();
-//     EXPECT_FLOAT_EQ(config.speed_of_sound, 1475.000000);
-//     EXPECT_FLOAT_EQ(config.mounting_rotation_offset, 0.000000);
-//     EXPECT_EQ(config.acoustic_enabled, "y");
-//     EXPECT_EQ(config.dark_mode_enabled, "n");
-//     EXPECT_EQ(config.range_mode, "auto");
-//     EXPECT_EQ(config.periodic_cycling_enabled, "y");
-//  }
+    //check if config was read correctly
+    config = node->readConfig();
+    EXPECT_FLOAT_EQ(config.speed_of_sound, 1475.000000);
+    EXPECT_FLOAT_EQ(config.mounting_rotation_offset, 0.000000);
+    EXPECT_EQ(config.acoustic_enabled, "y");
+    EXPECT_EQ(config.dark_mode_enabled, "n");
+    EXPECT_EQ(config.range_mode, "auto");
+    EXPECT_EQ(config.periodic_cycling_enabled, "y");
+ }
 
  /**
  * @brief Test DVL publishing VR
  */
  TEST_F(TestDVLInterface, DVLPublishVR) {
-    create_node(DVL_READ);
+    create_node();
 
     //write valid VR data into pipe_fds[1] 
     write_serial_message(VR_TYPE);
@@ -316,7 +308,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  * @brief Test DVL publishing bad VR
  */
  TEST_F(TestDVLInterface, DVLPublishBadVR) {
-    create_node(DVL_READ);
+    create_node();
 
     //write bad VR data into pipe_fds[1] 
     write_serial_message(BAD_VR_TYPE);
@@ -339,7 +331,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  * @brief Test DVL publishing DRR
  */
  TEST_F(TestDVLInterface, DVLPublishDRR){
-    create_node(DVL_READ);
+    create_node();
 
     //write valid DRR data into pipe_fds[1]
     write_serial_message(DRR_TYPE);
@@ -372,7 +364,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  * @brief Test DVL publishing Config
  */
 //  TEST_F(TestDVLInterface, DVLPublishConfig){
-//     create_node(DVL_READ);
+//     create_node();
 
 //     //write valid Config data into pipe_fds[1] 
 //     write_serial_message(CONFIG_TYPE);
@@ -389,8 +381,8 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 //     //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
 //     //"n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
 
-//     EXPECT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
-//     EXPECT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
+//     EXPECT_FLOAT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
+//     EXPECT_FLOAT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
 //     EXPECT_EQ(most_recent_config_report.acoustic_enabled, "y");
 //     EXPECT_EQ(most_recent_config_report.dark_mode_enabled, "n");
 //     EXPECT_EQ(most_recent_config_report.range_mode, "auto");
