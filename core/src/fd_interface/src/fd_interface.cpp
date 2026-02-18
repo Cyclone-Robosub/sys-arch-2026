@@ -47,7 +47,7 @@ void Direct_FD::close_fd() {
     if (fd >= 0) {
         close(fd);
     }
-    if (fd_write >= 0) {
+    if (fd_write >= 0 && fd_write != fd) {
         close(fd_write);
     }
 }
