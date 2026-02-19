@@ -14,7 +14,11 @@ Echo::Echo(std::unique_ptr<FD_Interface> fd) :
         "pwm_cmd", 10, 
         std::bind(&Echo::pwm_received_subscription_callback, this, std::placeholders::_1));
     
-    pwm_cmd_publisher = this->create_publisher<custom_interfaces::msg::Pwms>("pwm_cmd", 10);
+    pwm_publisher = this->create_publisher<custom_interfaces::msg::Pwms>("pwm_echo", 10);
+
+    heartbeat_publisher = this->create_publisher<std_msgs::msg::Bool>("echo_heartbeat", 10);
+    heartbeat_timer = this->create_wall_timer(500ms, 
+            std::bind(&Echo::heartbeat_callback, this));
 }
 
 void Echo::set_mode(Use_Mode mode) {
@@ -53,6 +57,7 @@ void Echo::echo_pwms() { // TODO: Do error checking (currently assumes perfectly
         ssize_t num_read = read(log_fd->get_read_fd(), line, 41);
         if (num_read == 0) {
             RCLCPP_INFO(this->get_logger(), "Finished reading from file. Exiting...");
+            rclcpp::shutdown();
             exit(0);
         } else if (num_read < 41) {
             RCLCPP_WARN(this->get_logger(), "Unable to read from PWM log file");
@@ -61,9 +66,14 @@ void Echo::echo_pwms() { // TODO: Do error checking (currently assumes perfectly
         pwms = parseLine(line);
 
         msg.pwms = pwms;
-        pwm_cmd_publisher->publish(msg);
+        pwm_publisher->publish(msg);
         current_time = std::chrono::steady_clock::now();
     }
+}
+
+void Echo::heartbeat_callback() {
+    std_msgs::msg::Bool msg;
+    heartbeat_publisher->publish(msg);
 }
 
 std::array<int32_t,8> Echo::parseLine(char* line) { // TODO: Do error checking (currently assumes perfectly formatted file)

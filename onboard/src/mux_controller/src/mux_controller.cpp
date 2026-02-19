@@ -3,7 +3,7 @@
 using namespace std::chrono_literals;
 
 Mux_Controller::Mux_Controller() : Node("mux_controller") {
-    current_control_mode_subscriber = this->create_subscription<std_msgs::msg::Bool>("current_mode", 10, 
+    current_control_mode_subscriber = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
         std::bind(&Mux_Controller::control_mode_callback, this, std::placeholders::_1));
     heartbeat_subscription = this->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, 
         std::bind(&Mux_Controller::mux_heartbeat_received_callback, this, std::placeholders::_1));
@@ -11,7 +11,7 @@ Mux_Controller::Mux_Controller() : Node("mux_controller") {
     heartbeat_timer = this->create_wall_timer(500ms, 
             std::bind(&Mux_Controller::heartbeat_check_callback, this)); // heartbeat timer    
 
-    client = this->create_client<std_srvs::srv::SetBool>("control_mode");
+    client = this->create_client<custom_interfaces::srv::ControlMode>("control_mode");
     force_pub = this->create_client<std_srvs::srv::SetBool>("force_pub");
     
     refresh_display();
@@ -25,13 +25,13 @@ void Mux_Controller::get_mux_mode_now() {
     force_pub->async_send_request(request);
 }
 
-void Mux_Controller::set_mux_mode(bool mode) {
+void Mux_Controller::set_mux_mode(int mode) {
     if (mode == current_control_mode || no_heartbeat) {
         refresh_display();
         return;
     }
-    std::shared_ptr<std_srvs::srv::SetBool::Request> request = std::make_shared<std_srvs::srv::SetBool::Request>();
-    request->data = mode;
+    std::shared_ptr<custom_interfaces::srv::ControlMode::Request> request = std::make_shared<custom_interfaces::srv::ControlMode::Request>();
+    request->mode = mode;
     client->async_send_request(request);
 }
 
@@ -58,7 +58,7 @@ void Mux_Controller::heartbeat_check_callback() {
     }
 }
 
-void Mux_Controller::control_mode_callback(std_msgs::msg::Bool::UniquePtr msg) {
+void Mux_Controller::control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg) {
     current_control_mode = msg->data;
     refresh_display();
 }
@@ -89,11 +89,28 @@ void Mux_Controller::refresh_display() {
         write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
     }
     else {
-        printf("Current mode is: %s\n\n", current_control_mode ? "matlab (ctrl)" : "cli" );
+        printf("Current mode is: ");
+        switch (current_control_mode) {
+            case 0:
+                printf("disabled");
+                break;
+            case 1:
+                printf("cli");
+                break;
+            case 2:
+                printf("matlab (ctrl)");
+                break;
+            case 3:
+                printf("echo (playback)");
+                break;
+        }
+        printf("\n\n");
     }
     printf("Enter the control mode you'd like to switch to.\n");
-    printf("[0]: CLI mode\n");
-    printf("[1]: Matlab mode\n");
+    printf("[0]: Disabled\n");
+    printf("[1]: CLI mode\n");
+    printf("[2]: Matlab mode\n");
+    printf("[3]: Echo mode\n");
     printf("[E]: Exit\n");
     printf("Mode: ");
     fflush(stdout);
@@ -240,7 +257,7 @@ void Mux_Controller::work_loop() {
             display_mutex.unlock();
             break;
         }
-        if (current_input[string_index] != '\n' || (mode != '0' && mode != '1')) {
+        if (current_input[string_index] != '\n' || (mode != '0' && mode != '1' && mode != '2' && mode != '3')) {
             printf("Invalid command. Try again: ");
             fflush(stdout);
             while (current_input[string_index] != '\n') {
@@ -250,7 +267,7 @@ void Mux_Controller::work_loop() {
             continue;
         }
         display_mutex.unlock();
-        set_mux_mode((bool)(mode - '0'));
+        set_mux_mode((int)(mode - '0'));
     }
 }
 
