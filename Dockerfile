@@ -12,3 +12,6 @@ RUN apt update && apt install -y \
     ros-jazzy-rosbridge-suite 
 RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
 RUN echo "source /root/sys-arch-2026/install/setup.bash" >> ~/.bashrc
+
+# Python packages
+RUN pip install matplotlib
