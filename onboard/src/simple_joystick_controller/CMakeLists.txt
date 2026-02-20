@@ -86,10 +86,6 @@ ament_target_dependencies(
 target_include_directories(Simple_Joystick_Controller PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(Simple_Joystick_Controller 
-    "/usr/local/MATLAB/R2025b/sys/os/glnxa64/orig/libstdc++.so.6"
-	${CMAKE_DL_LIBS}
-    )
 install(TARGETS Simple_Joystick_Controller
   EXPORT export_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME})
