@@ -1,0 +1,8 @@
+path: # dataset root dir
+train: train # train images (relative to 'path') 4 images
+val: val # val images (relative to 'path') 4 images
+
+kpt_shape: [4,3]  # number of keypoints, number of dims (3 for x,y,visible)
+
+names:
+  0: gate
