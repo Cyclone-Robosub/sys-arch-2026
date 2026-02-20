@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'Simple_Joystick_Controller'.
 //
-// Model version                  : 1.8
+// Model version                  : 1.10
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Jan 29 00:18:51 2026
+// C/C++ source code generated on : Thu Feb 19 19:35:40 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -25,22 +25,21 @@
 
 // Block signals (default storage)
 struct B_Simple_Joystick_Controller_T {
-  SL_Bus_custom_interfaces_Imu r;
-  SL_Bus_custom_interfaces_Pwms BusCreator3;// '<S5>/Bus Creator3'
-  SL_Bus_custom_interfaces_Gamepad In1;// '<S8>/In1'
-  SL_Bus_custom_interfaces_Gamepad rtb_SourceBlock_o2_g_m;
+  SL_Bus_custom_interfaces_Pwms BusCreator3;// '<S4>/Bus Creator3'
+  SL_Bus_custom_interfaces_Gamepad In1;// '<S6>/In1'
+  SL_Bus_custom_interfaces_Gamepad rtb_SourceBlock_o2_m;
   char_T b_zeroDelimTopic[16];
   char_T b_zeroDelimTopic_c[16];
   sJ4ih70VmKcvCeguWN0mNVF deadline;
-  sJ4ih70VmKcvCeguWN0mNVF deadline_k;
+  real_T pwms_vert_idx_0;
+  real_T pwms_vert_idx_1;
 };
 
 // Block states (default storage) for system '<Root>'
 struct DW_Simple_Joystick_Controller_T {
-  ros_slros2_internal_block_Sub_T obj; // '<S7>/SourceBlock'
-  ros_slros2_internal_block_Sub_T obj_e;// '<S1>/SourceBlock'
-  ros_slros2_internal_block_Pub_T obj_a;// '<S11>/SinkBlock'
-  ros_slros2_internal_block_Pub_T obj_l;// '<S10>/SinkBlock'
+  ros_slros2_internal_block_Sub_T obj; // '<S5>/SourceBlock'
+  ros_slros2_internal_block_Pub_T obj_a;// '<S9>/SinkBlock'
+  ros_slros2_internal_block_Pub_T obj_e;// '<S7>/SinkBlock'
 };
 
 // Real-time Model Data Structure
@@ -95,11 +94,9 @@ class Simple_Joystick_Controller final
   DW_Simple_Joystick_Controller_T Simple_Joystick_Controller_DW;
 
   // private member function(s) for subsystem '<Root>'
-  void Simple_J_Subscriber_setupImpl_m(const ros_slros2_internal_block_Sub_T
+  void Simple_Joy_Subscriber_setupImpl(const ros_slros2_internal_block_Sub_T
     *obj);
   void Simple_Jo_Publisher_setupImpl_m(const ros_slros2_internal_block_Pub_T
-    *obj);
-  void Simple_Joy_Subscriber_setupImpl(const ros_slros2_internal_block_Sub_T
     *obj);
   void Simple_Joys_Publisher_setupImpl(const ros_slros2_internal_block_Pub_T
     *obj);
@@ -126,17 +123,15 @@ extern volatile boolean_T runModel;
 //  Here is the system hierarchy for this model
 //
 //  '<Root>' : 'Simple_Joystick_Controller'
-//  '<S1>'   : 'Simple_Joystick_Controller/IMU'
-//  '<S2>'   : 'Simple_Joystick_Controller/Subsystem'
+//  '<S1>'   : 'Simple_Joystick_Controller/Subsystem'
+//  '<S2>'   : 'Simple_Joystick_Controller/Subsystem Reference'
 //  '<S3>'   : 'Simple_Joystick_Controller/joystick_to_pwm'
-//  '<S4>'   : 'Simple_Joystick_Controller/pwm_heartbeat_publisher'
-//  '<S5>'   : 'Simple_Joystick_Controller/pwm_publisher'
-//  '<S6>'   : 'Simple_Joystick_Controller/IMU/Enabled Subsystem'
-//  '<S7>'   : 'Simple_Joystick_Controller/Subsystem/Subscribe'
-//  '<S8>'   : 'Simple_Joystick_Controller/Subsystem/Subscribe/Enabled Subsystem'
-//  '<S9>'   : 'Simple_Joystick_Controller/joystick_to_pwm/joystick_inputs_to_body_forces1'
-//  '<S10>'  : 'Simple_Joystick_Controller/pwm_heartbeat_publisher/Publish1'
-//  '<S11>'  : 'Simple_Joystick_Controller/pwm_publisher/Publish'
+//  '<S4>'   : 'Simple_Joystick_Controller/pwm_publisher'
+//  '<S5>'   : 'Simple_Joystick_Controller/Subsystem/Subscribe'
+//  '<S6>'   : 'Simple_Joystick_Controller/Subsystem/Subscribe/Enabled Subsystem'
+//  '<S7>'   : 'Simple_Joystick_Controller/Subsystem Reference/Publish2'
+//  '<S8>'   : 'Simple_Joystick_Controller/joystick_to_pwm/joystick_inputs_to_body_forces'
+//  '<S9>'   : 'Simple_Joystick_Controller/pwm_publisher/Publish'
 
 #endif                                 // Simple_Joystick_Controller_h_
 
