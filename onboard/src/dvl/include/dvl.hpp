@@ -67,6 +67,7 @@ static constexpr uint8_t CMD_GET_VERSION = 'v';
 static constexpr uint8_t CMD_GET_PRODUCT_DETAIL = 'w';
 static constexpr uint8_t CMD_SET_SETTINGS = 's';
 static constexpr uint8_t CMD_GET_SETTINGS = 'c';
+static constexpr uint8_t CMD_RESET_VR = 'V';
 static constexpr uint8_t CMD_RESET_DR = 'r';
 static constexpr uint8_t CMD_TRIGGER_PING = 'x';
 static constexpr uint8_t CMD_CALIBRATE_GYRO = 'g';
@@ -79,10 +80,10 @@ static constexpr uint8_t REC_DRR = 'p'; //receive dead reckoning report
 static constexpr uint8_t ACK = 'a';
 
 // list of valid outgoing commands
-static constexpr std::array<char,8> VALID_OUT = {CMD_GET_VERSION, CMD_GET_PRODUCT_DETAIL, CMD_SET_SETTINGS, CMD_GET_SETTINGS, CMD_RESET_DR, CMD_TRIGGER_PING, CMD_CALIBRATE_GYRO, CMD_CHANGE_SER_OUTPUT};
+static constexpr std::array<char,9> VALID_OUT = {CMD_GET_VERSION, CMD_GET_PRODUCT_DETAIL, CMD_SET_SETTINGS, CMD_GET_SETTINGS, CMD_RESET_VR, CMD_RESET_DR, CMD_TRIGGER_PING, CMD_CALIBRATE_GYRO, CMD_CHANGE_SER_OUTPUT};
 
 // list of valid received commands
-static constexpr std::array<char,11> VALID_IN = {REC_VR, REC_TR, REC_DRR, CMD_GET_VERSION, CMD_GET_PRODUCT_DETAIL, CMD_SET_SETTINGS, CMD_GET_SETTINGS, CMD_RESET_DR, CMD_TRIGGER_PING, CMD_CALIBRATE_GYRO, CMD_CHANGE_SER_OUTPUT};
+static constexpr std::array<char,12> VALID_IN = {REC_VR, REC_TR, REC_DRR, CMD_GET_VERSION, CMD_GET_PRODUCT_DETAIL, CMD_SET_SETTINGS, CMD_GET_SETTINGS, CMD_RESET_VR, CMD_RESET_DR, CMD_TRIGGER_PING, CMD_CALIBRATE_GYRO, CMD_CHANGE_SER_OUTPUT};
 
 uint8_t crc8(uint8_t*, int);
 
@@ -105,6 +106,7 @@ class DVL : public rclcpp::Node {
 
         //sets (returns true if acknowledge was received)
         void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response);
+        void resetVR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //reset the velocity report
         void resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //reset the dead reckoning report
         void resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //zero the gyroscope
         void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
@@ -129,6 +131,8 @@ class DVL : public rclcpp::Node {
 
         Incoming messages are expected in the format "[SOP]{DIR_RESP][CMD],[option 1],[option 2],...,[option n],[CS],[CHECKSUM]\n" Options are only needed for some commands. EOP may be "\n", "\r", or "\r\n"
         */
+
+        std::mutex dvl_mutex;
 
         // PRIVATE VARS //
         std::unique_ptr<FD_Interface> fd;

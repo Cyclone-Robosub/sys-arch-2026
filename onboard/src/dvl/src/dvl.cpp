@@ -124,7 +124,7 @@ namespace dvl {
     config_report DVL::readConfig(){
         sendCommand(CMD_GET_SETTINGS); 
         
-        if(getResponse(CMD_GET_SETTINGS)){
+        if (getResponse(CMD_GET_SETTINGS)){
             return config;
         } else {
             return error_config;
@@ -139,44 +139,34 @@ namespace dvl {
 
     }
 
+    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response) {
+        bool success = sendCommand(CMD_RESET_VR);
+        response->success = success;
+        (void) request;
+    }
+
     void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
-        sendCommand(CMD_RESET_DR);
-        if(getResponse(ACK)){
-            response->success = true;
-        } else{
-            response->success = false;
-        }
+        bool success = sendCommand(CMD_RESET_DR);
+        response->success = success;      
         (void) request;
     }
 
     void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
-        sendCommand(CMD_CALIBRATE_GYRO);
-        if(getResponse(ACK)){
-            response->success = true;
-        } else{
-            response->success = false;
-        }
+        bool success = sendCommand(CMD_CALIBRATE_GYRO);
+        response->success = success;      
         (void) request;
     }
 
     void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
         sendCommand(CMD_TRIGGER_PING);
-        if(getResponse(ACK)){
-            response->success = true;
-        } else {
-            response->success = false;
-        }
+        response->success = getResponse(ACK);
         (void) request;
 
     }
 
     void DVL::setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response){
         sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(request->serial)}); //currently only can be used to start serial output
-        if(getResponse(ACK)){
-            response->success = true;
-        } else{
-            response->success = false;
-        }
+        response->success = getResponse(ACK);
     }
 
     //Private Methods
@@ -388,7 +378,8 @@ namespace dvl {
     }
 
     bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string>& options) { //cmd with optional input args
-         //std::cout << cmd << std::endl;
+        dvl_mutex.lock();
+        //std::cout << cmd << std::endl;
         std::stringstream msg;
 
         // Build message
@@ -411,24 +402,28 @@ namespace dvl {
         // Write to serial port using POSIX write
         std::string data = msg.str();
         ssize_t n = write(fd->get_write_fd(), data.c_str(), data.size());
+        dvl_mutex.unlock();
         if (n <= 0) {
             fd->attempt_reconnect();
             RCLCPP_WARN(this->get_logger(), "Failed to write to serial port. Attempting to reconnect to DVL.");
             return false;
         }
-        return true;
+        
+        return getResponse(ACK);
     }
 
     void DVL::workLoop() {
+        sendCommand(CMD_RESET_VR);
+        if(!getResponse(ACK)) std::cout<<"error with VR reset"<<std::endl;
         sendCommand(CMD_RESET_DR);
-        getResponse(ACK);
+        if(!getResponse(ACK)) std::cout<<"error with DR reset"<<std::endl;
         sendCommand(CMD_CALIBRATE_GYRO);
-        getResponse(ACK);
+        if(!getResponse(ACK)) std::cout<<"error with GYRO rest"<<std::endl;
         // TODO: Reset VR
         while (rclcpp::ok()) {
-            //lock
+            dvl_mutex.lock();
             char cmd = getCommandFromSerial();
-            //unlock
+            dvl_mutex.unlock();
             if(cmd != '0') publishCommandFromSerial(cmd);
         }    
     }

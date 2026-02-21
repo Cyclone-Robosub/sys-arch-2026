@@ -8,6 +8,7 @@ static constexpr uint8_t VR_TYPE = 'v';
 static constexpr uint8_t BAD_VR_TYPE = 'V';
 static constexpr uint8_t DRR_TYPE = 'd';
 static constexpr uint8_t CONFIG_TYPE = 'c';
+static constexpr uint8_t ACK_TYPE = 'k';
 
 static constexpr uint8_t DVL_READ = 'r';
 static constexpr uint8_t DVL_WRITE = 'w';
@@ -133,6 +134,10 @@ protected:
                 "wrc,1475.000000,0.000000,y," //speed of sound, mounting rotation offset, acoustic enabled
                 "n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
             break;
+        case ACK_TYPE:
+            msg = 
+                "wra\r\n\r";
+            break;
         default: 
             msg = "error";
         }
@@ -245,6 +250,11 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     //write valid Config data into pipe_fds[1]
     write_serial_message(CONFIG_TYPE);
+    //simulate acknowledgment from serial
+    write_serial_message(ACK_TYPE);
+
+    //check if serial was correctly written to
+    EXPECT_EQ(read_serial_output(), "wac");
     
     //check if config was read correctly
     config = node->readConfig();
@@ -363,31 +373,31 @@ TEST_F(TestDVLInterface, DVLConstruction) {
   /**
  * @brief Test DVL publishing Config
  */
-//  TEST_F(TestDVLInterface, DVLPublishConfig){
-//     create_node();
+ TEST_F(TestDVLInterface, DVLPublishConfig){
+    create_node();
 
-//     //write valid Config data into pipe_fds[1] 
-//     write_serial_message(CONFIG_TYPE);
+    //write valid Config data into pipe_fds[1] 
+    write_serial_message(CONFIG_TYPE);
 
-//     //subscribe to Config node
-//     subscribe_config_report();
+    //subscribe to Config node
+    subscribe_config_report();
 
-//     rclcpp::executors::SingleThreadedExecutor exec;
-//     exec.add_node(node);
+    rclcpp::executors::SingleThreadedExecutor exec;
+    exec.add_node(node);
 
-//     node->publishConfig();
-//     exec.spin_some();
+    node->publishConfig();
+    exec.spin_some();
 
-//     //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
-//     //"n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
+    //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
+    //"n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
 
-//     EXPECT_FLOAT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
-//     EXPECT_FLOAT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
-//     EXPECT_EQ(most_recent_config_report.acoustic_enabled, "y");
-//     EXPECT_EQ(most_recent_config_report.dark_mode_enabled, "n");
-//     EXPECT_EQ(most_recent_config_report.range_mode, "auto");
-//     EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
-//  }
+    EXPECT_FLOAT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
+    EXPECT_FLOAT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
+    EXPECT_EQ(most_recent_config_report.acoustic_enabled, "y");
+    EXPECT_EQ(most_recent_config_report.dark_mode_enabled, "n");
+    EXPECT_EQ(most_recent_config_report.range_mode, "auto");
+    EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
+ }
 
  #ifdef ENABLE_TESTING
     int main(int argc, char** argv) {
