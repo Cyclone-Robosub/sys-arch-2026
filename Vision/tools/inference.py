@@ -106,7 +106,7 @@ if __name__ == "__main__":
         print("Error opening video stream or file")
         sys.exit(1)
 
-    model = YOLO(MODEL_PATH)
+    model = YOLO(MODEL_PATH, task='pose')
 
     if args.record:
         fps = cap.get(cv.CAP_PROP_FPS) 
