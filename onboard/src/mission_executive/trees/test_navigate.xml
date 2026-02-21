@@ -1,0 +1,27 @@
+<root BTCPP_format="4">
+  <BehaviorTree ID="TestNavigate">
+    <!-- Battery check wraps the entire mission via ReactiveSequence -->
+    <!-- If BatteryOK fails, the whole tree halts cleanly -->
+    <ReactiveSequence>
+      <BatteryOK/>
+      <Sequence>
+        <!-- Navigate to first waypoint with retry + timeout -->
+        <RetryNode num_attempts="3">
+          <Timeout msec="39000">
+            <NavigateToWaypoint x="1.0" y="2.0" z="-1.0"/>
+          </Timeout>
+        </RetryNode>
+
+        <!-- Wait at waypoint -->
+        <WaitDuration duration="2.0"/>
+
+        <!-- Navigate to second waypoint -->
+        <RetryNode num_attempts="3">
+          <Timeout msec="39000">
+            <NavigateToWaypoint x="3.0" y="4.0" z="-1.0"/>
+          </Timeout>
+        </RetryNode>
+      </Sequence>
+    </ReactiveSequence>
+  </BehaviorTree>
+</root>
