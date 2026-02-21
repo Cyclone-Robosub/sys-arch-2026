@@ -1,7 +1,7 @@
 FROM ultralytics/ultralytics:latest-jetson-jetpack6
 
 # Set the working directory (replacing the manual cd)
-WORKDIR /root/sys-arch-2026
+WORKDIR /root/sys-arch-2026/Vision
 
 # Install ROS 2 Humble and necessary packages
 ENV DEBIAN_FRONTEND=noninteractive
