@@ -1,0 +1,23 @@
+FROM ultralytics/ultralytics:latest-jetson-jetpack6
+
+# Set environment variables (replacing -e or --env)
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+ENV PULSE_SERVER=unix:/run/user/1000/pulse/native
+
+# Set the working directory (replacing the manual cd)
+WORKDIR /root/sys-arch-2026
+
+# Install ROS 2 Humble and necessary packages
+RUN apt update && apt install -y locales curl
+RUN locale-gen en_US en_US.UTF-8
+RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+RUN export LANG=en_US.UTF-8
+
+RUN apt install -y software-properties-common
+RUN add-apt-repository universe
+
+RUN export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F\" '{print $4}')
+RUN curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release && echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"
+RUN dpkg -i /tmp/ros2-apt-source.deb
+RUN apt update
+RUN apt install -y ros-humble-desktop
