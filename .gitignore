@@ -124,6 +124,10 @@ cython_debug/
 # checkpoints
 Vision/runs
 *.pt
+*.engine
+*.onnx
+*.pth
+*.torchscript
 
 *.mp4
 *.MOV
