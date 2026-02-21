@@ -15,3 +15,4 @@ RUN echo "source /root/sys-arch-2026/install/setup.bash" >> ~/.bashrc
 
 # Python packages
 RUN pip install matplotlib
+RUN pip install torchvision==0.23.0
