@@ -2,7 +2,8 @@
 Tests ros publishing for the Command Line Interface
 
 Ways to see test results: 
-	colcon test --event-handlers console_cohesion+
+	colcon test --event-handlers console_cohesion+ --parallel-workers 1
+		(Avoids testing multiple ROS nodes at the same time)
 	pytest -v -s
 '''
 
@@ -79,30 +80,7 @@ def test_basic_ros(setup_publish_pwm):
 	assert cli.publish_pwm([1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]) == [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]
 
 
-# Test that publishing to cli_heartbeat is recieved every 0.25 seconds
-def test_heartbeat(setup_heartbeat):
-	heartbeat = setup_heartbeat
-	msg = True
-	recieve_times = []
-
-	subscriber = heartbeat.create_subscription(Bool, "cli_heartbeat", lambda msg: recieve_times.append(get_time()), 10)
-
-	# Runs until it publishes and recieves 10 messages on ROS
-	for x in range(0, 20):
-		rclpy.spin_once(heartbeat, timeout_sec=0.3)
-
-	# Check that >90% of messages were recieved
-	assert len(recieve_times) == 10
-
-	# Check that all messages are within one second of each other
-	for time in range(len(recieve_times) - 1):
-		assert recieve_times[time + 1] - recieve_times[time] < 1
-
-	heartbeat.destroy_subscription(subscriber)
-
-
-
-# WARNING: Waiting on up-to-date info on the pwm sets, so not all pwm sets listed are accurate
+# Test that default untimed pwms return the expected output
 def test_untimed_default_power_pwms(setup_publish_pwm):
 	publisher = setup_publish_pwm
 	STOP = 1500
@@ -131,11 +109,11 @@ def test_untimed_default_power_pwms(setup_publish_pwm):
 
 	command = RobotCommand("Rise")
 	command.pwm = command.command_dictionary()["Rise"]
-	assert publisher.publish_pwm(command.pwm) == [REV, FWD, REV, FWD, STOP, STOP, STOP, STOP]
+	assert publisher.publish_pwm(command.pwm) == [FWD, REV, FWD, REV, STOP, STOP, STOP, STOP]
 
 	command = RobotCommand("Sink")
 	command.pwm = command.command_dictionary()["Sink"]
-	assert publisher.publish_pwm(command.pwm) == [FWD, REV, FWD, REV, STOP, STOP, STOP, STOP]
+	assert publisher.publish_pwm(command.pwm) == [REV, FWD, REV, FWD, STOP, STOP, STOP, STOP]
 
 	command = RobotCommand("Yaw Counterclockwise")
 	command.pwm = command.command_dictionary()["Yaw Counterclockwise"]
@@ -145,18 +123,51 @@ def test_untimed_default_power_pwms(setup_publish_pwm):
 	command.pwm = command.command_dictionary()["Yaw Clockwise"]
 	assert publisher.publish_pwm(command.pwm) == [STOP, STOP, STOP, STOP, FWD, FWD, FWD, FWD]
 
-	command = RobotCommand("Pitch Forwards")
-	command.pwm = command.command_dictionary()["Pitch Forwards"]
-	assert publisher.publish_pwm(command.pwm) == [REV, REV, FWD, FWD, STOP, STOP, STOP, STOP]
+	command = RobotCommand("Pitch Up")
+	command.pwm = command.command_dictionary()["Pitch Up"]
+	assert publisher.publish_pwm(command.pwm) == [FWD, REV, REV, FWD, STOP, STOP, STOP, STOP]
 
-	command = RobotCommand("Pitch Backwards")
-	command.pwm = command.command_dictionary()["Pitch Backwards"]
-	assert publisher.publish_pwm(command.pwm) == [FWD, FWD, REV, REV, STOP, STOP, STOP, STOP]
+	command = RobotCommand("Pitch Down")
+	command.pwm = command.command_dictionary()["Pitch Down"]
+	assert publisher.publish_pwm(command.pwm) == [REV, FWD, FWD, REV, STOP, STOP, STOP, STOP]
 
 	command = RobotCommand("Roll Left")
 	command.pwm = command.command_dictionary()["Roll Left"]
-	assert publisher.publish_pwm(command.pwm) == [REV, FWD, REV, FWD, STOP, STOP, STOP, STOP]
+	assert publisher.publish_pwm(command.pwm) == [REV, REV, REV, REV, STOP, STOP, STOP, STOP]
 
 	command = RobotCommand("Roll Right")
 	command.pwm = command.command_dictionary()["Roll Right"]
-	assert publisher.publish_pwm(command.pwm) == [FWD, REV, FWD, REV, STOP, STOP, STOP, STOP]
+	assert publisher.publish_pwm(command.pwm) == [FWD, FWD, FWD, FWD, STOP, STOP, STOP, STOP]
+
+
+
+	# --- ROS Node Tests ---
+
+# Test that publishing to cli_heartbeat is recieved every 0.25 seconds
+	# NOTE: While testing, there is a ~1/100 chance for a 1 second pause that causes the test to fail
+		# This does not appear when listening in on the actual program
+			# Listening done with 'ros2 topic echo /cli_heartbeat --include-message-info'
+def test_heartbeat(setup_heartbeat):
+	heartbeat = setup_heartbeat
+	msg = True
+	recieve_times = []
+
+	subscriber = heartbeat.create_subscription(Bool, "cli_heartbeat", lambda msg: recieve_times.append(get_time()), 10)
+
+	# Runs until it publishes and recieves 10 messages on ROS
+	for x in range(0, 20):
+		rclpy.spin_once(heartbeat, timeout_sec=0.3)
+
+	# Check that >90% of messages were recieved
+	assert len(recieve_times) == 10
+
+	# Check that all messages are within one second of each other
+	for time in range(len(recieve_times) - 1):
+		assert recieve_times[time + 1] - recieve_times[time] < 1
+
+	heartbeat.destroy_subscription(subscriber)
+
+
+# Also Create 'test_console(setup_console)' to test that pwm sets are published properly
+
+

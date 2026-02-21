@@ -185,12 +185,12 @@ def translate_command(command):
 		cmd.name = "Yaw Clockwise"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "pitch" in command and "forwards" in command:
-		cmd.name = "Pitch Forwards"
+	if "pitch" in command and "up" in command:
+		cmd.name = "Pitch Up"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "pitch" in command and "backwards" in command:
-		cmd.name = "Pitch Backwards"
+	if "pitch" in command and "down" in command:
+		cmd.name = "Pitch Down"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
 	if "roll" in command and "left" in command:
@@ -238,7 +238,7 @@ def info():
 	print("\n")
 	print("Valid Robot Commands:")
 	print("\tstop | forwards | backwards | strafe left | strafe right | rise | sink |")
-	print("\tyaw counter clockwise | yaw clockwise | pitch forwards | pitch backwards | roll left | roll right")
+	print("\tyaw counter clockwise | yaw clockwise | pitch up | pitch down | roll left | roll right")
 	print("\tcustom [{pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}]")
 	print("\n")
 	print("All robot commands have optional power and time fields")
@@ -368,14 +368,14 @@ class RobotCommand():
 			"Move Backwards" : [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, pwm_rev, pwm_fwd, pwm_rev, pwm_fwd],
 			"Strafe Left" : [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, pwm_rev, pwm_rev, pwm_fwd, pwm_fwd],
 			"Strafe Right" : [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, pwm_fwd, pwm_fwd, pwm_rev, pwm_rev],
-			"Rise" : [pwm_rev, pwm_fwd, pwm_rev, pwm_fwd, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
-			"Sink" : [pwm_fwd, pwm_rev, pwm_fwd, pwm_rev, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
+			"Rise" : [pwm_fwd, pwm_rev, pwm_fwd, pwm_rev, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
+			"Sink" : [pwm_rev, pwm_fwd, pwm_rev, pwm_fwd, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
 			"Yaw Counterclockwise" : [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, pwm_rev, pwm_rev, pwm_rev, pwm_rev],
 			"Yaw Clockwise" : [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, pwm_fwd, pwm_fwd, pwm_fwd, pwm_fwd],
-			"Pitch Forwards" : [pwm_rev, pwm_rev, pwm_fwd, pwm_fwd, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
-			"Pitch Backwards" : [pwm_fwd, pwm_fwd, pwm_rev, pwm_rev, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
-			"Roll Left" : [pwm_rev, pwm_fwd, pwm_rev, pwm_fwd, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
-			"Roll Right" : [pwm_fwd, pwm_rev, pwm_fwd, pwm_rev, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO]
+			"Pitch Up" : [pwm_fwd, pwm_rev, pwm_rev, pwm_fwd, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
+			"Pitch Down" : [pwm_rev, pwm_fwd, pwm_fwd, pwm_rev, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
+			"Roll Left" : [pwm_rev, pwm_rev, pwm_rev, pwm_rev, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO],
+			"Roll Right" : [pwm_fwd, pwm_fwd, pwm_fwd, pwm_fwd, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO]
 		}
 
 	'''
