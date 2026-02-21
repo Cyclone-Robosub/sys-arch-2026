@@ -1,6 +1,8 @@
 services:
   jetson-app:
-    build: ./Dockerfile.humble
+    build: 
+      context: .
+      dockerfile: Dockerfile.humble
     runtime: nvidia
     network_mode: host
     shm_size: '8gb'
