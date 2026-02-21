@@ -13,8 +13,6 @@ services:
       - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket 
       - /var/run/docker.sock:/var/run/docker.sock 
       - /home/nano/Documents/jetson-containers/data:/data 
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
       - /run/user/1000/pulse:/run/user/1000/pulse
       - /run/jtop.sock:/run/jtop.sock
       - /home/nano/sys-arch-2026:/root/sys-arch-2026
