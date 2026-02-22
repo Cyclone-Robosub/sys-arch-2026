@@ -17,3 +17,5 @@ RUN apt update \
 	&& apt update \
 	&& apt install -y ros-humble-desktop \
 	&& rm -rf /var/lib/apt/lists/* /tmp/ros2-apt-source.deb
+
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
