@@ -24,6 +24,7 @@ SESSION="manny"
 
 USE_CONTAINER=false
 BRAIN_CONTAINER="manny_brain"
+VISION_CONTAINER="manny_vision"
 
 # Parse command-line flags until no arguments remain.
 while [[ $# -gt 0 ]]; do
@@ -99,7 +100,8 @@ MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX &&
 
 # --- ffmpeg ---
 if [[ "$USE_CONTAINER" == true ]]; then
-    tmux split-window -h -t $MEDIAMTX_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ffmpeg -f v4l2 -input_format h264 \
+# need to fix this
+    tmux split-window -h -t $MEDIAMTX_PANE "docker compose exec $VISION_CONTAINER bash -ic 'ffmpeg -f v4l2 -input_format h264 \ 
         -video_size 1920x1080 -framerate 30 \
         -fflags +genpts \
         -i /dev/video2 \
