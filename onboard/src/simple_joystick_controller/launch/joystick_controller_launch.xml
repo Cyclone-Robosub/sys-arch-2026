@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="simple_joystick_controller" exec="Simple_Joystick_Controller" name="simple_joystick_controller_node" />
+</launch>
