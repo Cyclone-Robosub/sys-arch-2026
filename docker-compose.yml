@@ -34,6 +34,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.jazzy
+    devices:
+      - /dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_027d485dbf80bb5f-if00:/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_60fdf513bf90cb73-if00
     command: [
       "bash", 
       "-lc", 
