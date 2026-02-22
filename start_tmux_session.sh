@@ -66,7 +66,7 @@ fi
 # --- Thrust Interface ---
 # Create new detached tmux session
 if [[ "$USE_CONTAINER" == true ]]; then
-	THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run thrust_interface thrust_interface'" )
+	THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run thrust_interface thrust_interface'; bash" )
 else 
     THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "source install/setup.sh && ros2 run thrust_interface thrust_interface; bash" )
 fi
@@ -74,7 +74,7 @@ fi
 
 # --- Software Multiplexer ---
 if [[ "$USE_CONTAINER" == true ]]; then
-	SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run soft_mux soft_mux'" )
+	SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run soft_mux soft_mux'; bash" )
 else
 	SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "source install/setup.sh && ros2 run soft_mux soft_mux; bash" )
 fi
@@ -84,7 +84,7 @@ tmux split-window -v -t $SOFT_MUX_PANE "btop; bash"
 
 # --- Mux Controller ---
 if [[ "$USE_CONTAINER" == true ]]; then
-    tmux split-window -v -t $THRUST_INTERFACE_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run mux_controller mux_controller'" 
+    tmux split-window -v -t $THRUST_INTERFACE_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run mux_controller mux_controller'; bash" 
 else
     tmux split-window -v -t $THRUST_INTERFACE_PANE "source install/setup.sh && ros2 run mux_controller mux_controller; bash"
 fi
@@ -129,7 +129,7 @@ fi
 ################################################################################
 
 if [[ "$USE_CONTAINER" == true ]]; then
-	JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run simple_joystick_controller Simple_Joystick_Controller'")
+	JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run simple_joystick_controller Simple_Joystick_Controller'; bash")
 else
 	JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "source install/setup.sh && ros2 run simple_joystick_controller Simple_Joystick_Controller; bash")
 fi

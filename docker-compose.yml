@@ -37,7 +37,7 @@ services:
     command: [
       "bash", 
       "-lc", 
-      "source /root/sys-arch-2026/install/setup.bash && PATH=/usr/bin:/bin:/usr/sbin:/sbin:/opt/ros/jazzy/bin ros2 launch rosbridge_server rosbridge_websocket_launch.xml"
+      "source /root/sys-arch-2026/install/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml"
       ]
 
   manny_vision:
