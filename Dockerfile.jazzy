@@ -5,5 +5,4 @@ FROM everything:l4t-r36.4.7
 WORKDIR /root/sys-arch-2026
 
 RUN apt update && apt install -y \
-    ros-jazzy-rosbridge-suite \
-    && echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc 
+    ros-jazzy-rosbridge-suite 
