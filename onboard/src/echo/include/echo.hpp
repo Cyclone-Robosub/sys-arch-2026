@@ -34,8 +34,8 @@ private:
     std::unique_ptr<FD_Interface> log_fd;
     std::unique_ptr<TUI_Interface> tui;
     State state;
-    bool write_active;
-    bool read_active;
+    bool write_log_active;
+    bool publish_active;
     bool finished_reading;
     std::array<int32_t,8> stop = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
 

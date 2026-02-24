@@ -9,8 +9,8 @@ Echo::Echo(std::unique_ptr<FD_Interface> fd, std::unique_ptr<TUI_Interface> tui)
     log_fd(std::move(fd)),
     tui(std::move(tui)),
     state(Get_Command),
-    write_active(false),
-    read_active(false),
+    write_log_active(false),
+    publish_active(false),
     finished_reading(false)
      {
 
@@ -28,7 +28,7 @@ Echo::Echo(std::unique_ptr<FD_Interface> fd, std::unique_ptr<TUI_Interface> tui)
 }
 
 void Echo::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
-    if (write_active) {
+    if (write_log_active) {
         log_pwms(pwms_msg->pwms);
     }
 }
@@ -47,12 +47,13 @@ void Echo::log_pwms(std::array<int32_t,8> pwms) {
 }
 
 void Echo::echo_pwms() { // TODO: Do error checking (currently assumes perfectly formatted file)
+    heartbeat_callback(); // Don't skip PWMs at the start of the file!
     auto current_time = std::chrono::steady_clock::now();
     std::array<int32_t,8> pwms;
     custom_interfaces::msg::Pwms msg;
     char line[42] = {0}; // 4 * 8 pwms = 32, 8 spaces, 1 newline, 1 null character
     lseek(log_fd->get_read_fd(), 0, SEEK_SET);
-    while (read_active) {
+    while (publish_active) {
         while (std::chrono::steady_clock::now() - current_time < 0.01s) {} // publish at 100 hz
         ssize_t num_read = read(log_fd->get_read_fd(), line, 41);
         if (num_read == 0) {
@@ -74,7 +75,9 @@ void Echo::echo_pwms() { // TODO: Do error checking (currently assumes perfectly
 
 void Echo::heartbeat_callback() {
     std_msgs::msg::Bool msg;
-    heartbeat_publisher->publish(msg);
+    if (publish_active && !finished_reading) { // Only publish heartbeat if we're actively writing PWMs
+        heartbeat_publisher->publish(msg);
+    }
 }
 
 std::array<int32_t,8> Echo::parse_log_line(char* line) { // TODO: Do error checking (currently assumes perfectly formatted file)
@@ -131,10 +134,10 @@ void Echo::work_loop() {
             tui->unfreeze_display();
             state = (State)((int)(mode - '0' + 1));
             if (state == Write_Log) {
-                write_active = true;
+                write_log_active = true;
             }
             else if (state == Read_Log) {
-                read_active = true;
+                publish_active = true;
                 std::thread echo_thread([&]() { // Needs to be seperate thread so that we can keep getting user input
                     echo_pwms();
                 });
@@ -144,7 +147,7 @@ void Echo::work_loop() {
         else if (state == Write_Log) {
             if (mode == 'e' || mode == 'q') {
                 tui->unfreeze_display();
-                write_active = false;
+                write_log_active = false;
                 state = Get_Command;
             }
             else {
@@ -155,7 +158,7 @@ void Echo::work_loop() {
         else if (state == Read_Log) {
             if (mode == 'e' || mode == 'q') {
                 tui->unfreeze_display();
-                read_active = false;
+                publish_active = false;
                 finished_reading = false;
                 state = Get_Command;
             }
