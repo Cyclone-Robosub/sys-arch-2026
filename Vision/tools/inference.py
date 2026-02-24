@@ -47,14 +47,22 @@ def visualize(image: np.ndarray, keypoints: np.ndarray, title="Image"):
     plt.show()
 
 def distance_angle(keypoints):
-    # Physical focal length / pixel size
+    """
+    Calculates the 3D distance and orientation (yaw/pitch) of the camera 
+    relative to a rectangular gate using Perspective-n-Point (PnP).
+
+    :param keypoints: np.ndarray of shape (4, 2) containing image coordinates 
+                      ordered: [top-left, top-right, bottom-right, bottom-left]
+    """
+    # Physical and Camera properties
     f_air = 2.97 / 0.0028
-    # Refractive index of water (n ≈ 1.333)
-    n_water = 1.45
-    f_underwater = f_air * n_water
-    # Center for 1080p
     cx, cy = 960, 540
 
+    # Account for light refraction (focal length increases in water)
+    n_water = 1.45
+    f_underwater = f_air * n_water
+
+    # Intrinsic Camera Matrix
     camera_matrix = np.array([
         [f_underwater, 0, cx],
         [0, f_underwater, cy],
@@ -63,6 +71,7 @@ def distance_angle(keypoints):
 
     dist_coeffs = np.zeros((4,1))
 
+    # Defining the gate dimensions
     w, h = 3.048, 1.524
     object_points = np.array([
         [-w/2,  h/2, 0], # Top-Left
@@ -73,6 +82,7 @@ def distance_angle(keypoints):
 
     image_points = keypoints
 
+    # Calculate using PnP
     success, rvec, tvec = cv.solvePnP(
         object_points, 
         image_points, 
@@ -82,15 +92,18 @@ def distance_angle(keypoints):
     )
 
     if success:
+        # Convert the rotation vector (3x1) to a rotation matrix (3x3)
         rmat, _ = cv.Rodrigues(rvec)
+
+        # Extract angle and distance
         yaw = np.degrees(np.arctan2(-rmat[2,0], np.sqrt(rmat[2,1]**2 + rmat[2,2]**2)))
         pitch = np.degrees(np.arctan2(rmat[2,1], rmat[2,2]))
         
         total_dist = np.linalg.norm(tvec)
         return {
-            "distance": total_dist,
-            "yaw": yaw,
-            "pitch": pitch
+            "distance": total_dist, # meters
+            "yaw": yaw, # degrees
+            "pitch": pitch # degrees
         }
 
 if __name__ == "__main__":
