@@ -100,10 +100,10 @@ void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
 }
 
 Pico_FD::Pico_FD(std::string path) : Path_FD(path) {
-    fd = open_serial();
+    fd = open_file();
 }
 
-int Pico_FD::open_serial() {
+int Pico_FD::open_file() {
     struct termios options;
     speed_t baud = 115200;
     int status, fd;

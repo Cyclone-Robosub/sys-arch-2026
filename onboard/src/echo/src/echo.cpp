@@ -87,37 +87,56 @@ std::array<int32_t,8> Echo::parseLine(char* line) { // TODO: Do error checking (
     return pwms;
 }
 
+void Echo::work_loop() {
+    while (true) {
+        char new_mode = '\0'; // TODO: Error checking
+        char should_be_newline;
+        printf("Select Mode: W for write, R for read, Q for quit: ");
+        scanf("%c", &new_mode);
+        scanf("%c", &should_be_newline);
+        new_mode = tolower(new_mode);
+        while (should_be_newline != '\n') {
+            scanf("%c", &should_be_newline);
+            new_mode = '\0'; // so we try again with an invalid mode error
+        }
+        if (new_mode == 'w') {
+            set_mode(Write);
+        } else if (new_mode == 'r') {
+            set_mode(Read);
+        } else if (new_mode == 'q' || new_mode == 'e') {
+            break;
+        } else {
+            std::cerr << "Invalid mode. Try again!\n";
+        }
+    }
+}
+
+Log_FD::Log_FD(std::string path) : Path_FD(path) {
+    fd = open_file();
+}
+
+int Log_FD::open_file() {
+    if ((fd = open(path.c_str(), O_CREAT | O_RDWR | O_APPEND, 0644)) == -1) {
+        return -1;
+    }
+    return fd;
+}
+
 #ifndef ENABLE_TESTING
 
 int main(int argc, char* argv[]) {
     std::string filepath = getenv("HOME");
     filepath += "/LOG.txt";
-    int log_fd = open(filepath.c_str(), O_CREAT | O_RDWR | O_APPEND, 0644);
-    std::unique_ptr<FD_Interface> fd = std::make_unique<Direct_FD>(log_fd, log_fd);
+    std::unique_ptr<FD_Interface> log_fd = std::make_unique<Log_FD>(filepath);
 
     rclcpp::init(argc, argv);
-    auto echo = std::make_shared<Echo>(std::move(fd));
+    auto echo = std::make_shared<Echo>(std::move(log_fd));
 
     std::thread ros_thread([&]() { // Needs to be seperate thread so that we can get user input from main()
         rclcpp::spin(echo);
     });
-    while (true) {
-        char mode = '\0'; // TODO: Error checking
-        printf("Select Mode: W for write, R for read, Q for quit: ");
-        scanf("%c", &mode);
-        getchar(); //eat newline
-        mode = tolower(mode);
-        if (mode == 'w') {
-            echo->set_mode(Write);
-        } else if (mode == 'r') {
-            echo->set_mode(Read);
-        } else if (mode == 'q') {
-            break;
-        } else {
-            std::cerr << "Invalid mode, not writing data!\n";
-        }
-    }
 
+    echo->work_loop();
     
     rclcpp::shutdown();
     ros_thread.join();

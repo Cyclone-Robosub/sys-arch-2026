@@ -28,7 +28,7 @@ class DVL_FD : public Path_FD {
 public:
     DVL_FD(std::string path);
 protected:
-    int open_serial() override;
+    int open_file() override;
 };
 
 namespace dvl {

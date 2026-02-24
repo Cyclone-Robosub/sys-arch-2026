@@ -10,12 +10,20 @@
 
 using namespace rclcpp;
 
+class Log_FD : public Path_FD {
+protected:
+    int open_file() override;
+public:
+    Log_FD(std::string path);
+};
+
 enum Use_Mode {None, Read, Write};
 
 class Echo : public Node {
 public:
     Echo(std::unique_ptr<FD_Interface> fd);
     void set_mode(Use_Mode mode);
+    void work_loop();
 private:
     std::unique_ptr<FD_Interface> log_fd;
     Use_Mode mode;

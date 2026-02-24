@@ -14,7 +14,7 @@ int Path_FD::get_write_fd() {
 }
 
 void Path_FD::attempt_reconnect() {
-    fd = open_serial();
+    fd = open_file();
 }
 
 void Path_FD::close_fd() {
