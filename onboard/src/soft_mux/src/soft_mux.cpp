@@ -62,7 +62,6 @@ void SoftMux::pwm_echo_callback(custom_interfaces::msg::Pwms::UniquePtr pwm) {
 
 void SoftMux::set_mode_srv(const std::shared_ptr<custom_interfaces::srv::ControlMode::Request> request) {
     this->control_mode = request->mode;
-    std::cout << "Mode set to: " << this->control_mode << "\n";
     publish_current_control_mode();
 }
 
