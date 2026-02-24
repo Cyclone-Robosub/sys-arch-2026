@@ -2,7 +2,7 @@
 
 using namespace std::chrono_literals;
 
-Mux_Controller::Mux_Controller(std::unique_ptr<Mux_Controller_TUI> tui) : Node("mux_controller"), tui(std::move(tui)) {
+Mux_Controller::Mux_Controller(std::unique_ptr<TUI_Interface> tui) : Node("mux_controller"), tui(std::move(tui)) {
     current_control_mode_subscriber = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
         std::bind(&Mux_Controller::control_mode_callback, this, std::placeholders::_1));
     heartbeat_subscription = this->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, 
@@ -146,7 +146,7 @@ void Mux_Controller_TUI::display_tui(va_list args) {
 
 int main(int argc, char* argv[]) {    
     rclcpp::init(argc, argv);
-    auto tui = std::make_unique<Mux_Controller_TUI>();
+    std::unique_ptr<TUI_Interface> tui = std::make_unique<Mux_Controller_TUI>();
     auto mux_controller = std::make_shared<Mux_Controller>(std::move(tui));
     
     std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run

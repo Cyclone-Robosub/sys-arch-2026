@@ -23,14 +23,14 @@ class Mux_Controller_TUI : public TUI_Interface {
 
 class Mux_Controller : public rclcpp::Node {
 public:
-    Mux_Controller(std::unique_ptr<Mux_Controller_TUI> tui);
+    Mux_Controller(std::unique_ptr<TUI_Interface> tui);
     void set_mux_mode(int mode);
     void get_mux_mode_now();
     void work_loop();
 private:
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscriber;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr heartbeat_subscription;
-    std::unique_ptr<Mux_Controller_TUI> tui;
+    std::unique_ptr<TUI_Interface> tui;
 
     void mux_heartbeat_received_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
     void heartbeat_check_callback();
