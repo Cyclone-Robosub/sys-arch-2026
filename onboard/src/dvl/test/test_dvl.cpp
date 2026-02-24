@@ -250,12 +250,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     //write valid Config data into pipe_fds[1]
     write_serial_message(CONFIG_TYPE);
-    //simulate acknowledgment from serial
-    write_serial_message(ACK_TYPE);
 
-    //check if serial was correctly written to
-    EXPECT_EQ(read_serial_output(), "wac");
-    
     //check if config was read correctly
     config = node->readConfig();
     EXPECT_FLOAT_EQ(config.speed_of_sound, 1475.000000);

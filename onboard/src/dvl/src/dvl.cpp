@@ -122,9 +122,10 @@ namespace dvl {
     }
 
     config_report DVL::readConfig(){
-        sendCommand(CMD_GET_SETTINGS); 
-        
-        if (getResponse(CMD_GET_SETTINGS)){
+        bool success = sendCommand(CMD_GET_SETTINGS); 
+        // was originally the same as readDetails, called sendCommand first then used getResponse for if else
+        // since sendCommand calls getResponse now, simplifed it to store success
+        if (success){
             return config;
         } else {
             return error_config;
@@ -408,8 +409,8 @@ namespace dvl {
             RCLCPP_WARN(this->get_logger(), "Failed to write to serial port. Attempting to reconnect to DVL.");
             return false;
         }
-        
-        return getResponse(ACK);
+        // ACK was not correct, should get for cmd
+        return getResponse(cmd);
     }
 
     void DVL::workLoop() {
