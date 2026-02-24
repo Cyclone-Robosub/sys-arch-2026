@@ -4,6 +4,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <mutex>
+#include <stdarg.h>
 
 #ifndef TUI_INTERFACE
 #define TUI_INTERFACE
@@ -19,17 +20,20 @@ protected:
     int cursor_pos = 0;
     int num_read = 0;
     struct termios orig_termios;
-public:
-    explicit TUI_Interface() {};
-    virtual void display_tui() = 0;
-    virtual void clear_display();
-    virtual void refresh_display();
     virtual void insert_into_input(char c);
     virtual void backspace();
     virtual void delete_or_direction();
+public:
+    explicit TUI_Interface() {};
+    virtual void display_tui(va_list args) = 0;
+    virtual void clear_display();
+    virtual void refresh_display(int numArgs, ...);
     virtual void process_input();
     virtual void init_terminal();
     virtual void restore_terminal();
+    virtual void freeze_display();
+    virtual void unfreeze_display();
+    virtual std::string get_current_input();
 
 };
 

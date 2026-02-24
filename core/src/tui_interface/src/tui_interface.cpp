@@ -4,14 +4,18 @@ void TUI_Interface::clear_display() {
     printf("\x1B[2J\x1B[H");
 }
 
-void TUI_Interface::refresh_display() {
+void TUI_Interface::refresh_display(int numArgs, ...) {
     display_mutex.lock();
+
+    va_list args;
+    va_start(args, numArgs);
+
     tcflush(STDIN_FILENO, TCIFLUSH);
     current_input = "";
     cursor_pos = 0;
     num_read = 0;
     clear_display();
-    display_tui();
+    display_tui(args);
     display_mutex.unlock();
 }
 
@@ -142,4 +146,16 @@ void TUI_Interface::init_terminal() {
 
 void TUI_Interface::restore_terminal() {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+}
+
+void TUI_Interface::freeze_display() {
+    display_mutex.lock();
+}
+
+void TUI_Interface::unfreeze_display() {
+    display_mutex.unlock();
+}
+
+std::string TUI_Interface::get_current_input() {
+    return current_input;
 }

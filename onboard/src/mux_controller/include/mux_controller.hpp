@@ -15,43 +15,37 @@
 
 using namespace rclcpp;
 
+class Mux_Controller_TUI : public TUI_Interface {
+    public:
+        explicit Mux_Controller_TUI() {};
+        virtual void display_tui(va_list args) override;
+};
+
 class Mux_Controller : public rclcpp::Node {
 public:
-    Mux_Controller();
+    Mux_Controller(std::unique_ptr<Mux_Controller_TUI> tui);
     void set_mux_mode(int mode);
     void get_mux_mode_now();
-    int get_current_control_mode();
-    bool is_no_heartbeat();
-    bool is_new_state();
+    void work_loop();
 private:
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscriber;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr heartbeat_subscription;
+    std::unique_ptr<Mux_Controller_TUI> tui;
 
     void mux_heartbeat_received_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
     void heartbeat_check_callback();
     void control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg);
-    
-    bool state_changed = false;
+    void refresh_display();
+
     int current_control_mode = 0; // 0 = Disabled, 1 = CLI, 2 = CTRL, 3 = Echo
     bool no_heartbeat = true;
-
-    std::mutex state_change_mutex;
 
     rclcpp::Client<custom_interfaces::srv::ControlMode>::SharedPtr client;
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub;
 
     rclcpp::TimerBase::SharedPtr heartbeat_timer;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_heartbeat;
-};
 
-class Mux_Controller_TUI : public TUI_Interface {
-    public:
-        explicit Mux_Controller_TUI(std::shared_ptr<Mux_Controller> mux_controller);
-        virtual void display_tui() override;
-        void run_tui();
-    protected:
-        std::shared_ptr<Mux_Controller> mux_controller;
-        void work_loop();
 };
 
 #endif
