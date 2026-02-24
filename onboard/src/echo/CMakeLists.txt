@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
 find_package(fd_interface REQUIRED)
+find_package(tui_interface REQUIRED)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
@@ -20,6 +21,7 @@ ament_target_dependencies(echo
   rclcpp
   custom_interfaces
   fd_interface
+  tui_interface
 )
 
 install(TARGETS

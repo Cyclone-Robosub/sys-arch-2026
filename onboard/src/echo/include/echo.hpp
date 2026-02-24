@@ -7,8 +7,15 @@
 #include "custom_interfaces/msg/pwms.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "fd_interface.hpp"
+#include "tui_interface.hpp"
 
 using namespace rclcpp;
+
+class Echo_TUI : public TUI_Interface {
+    public:
+        explicit Echo_TUI() {};
+        virtual void display_tui(va_list args) override;
+};
 
 class Log_FD : public Path_FD {
 protected:
@@ -17,16 +24,22 @@ public:
     Log_FD(std::string path);
 };
 
-enum State {Get_Command, Write_Log, Read_Log, Exit};
+enum State {Get_Command=0, Write_Log=1, Read_Log=2};
 
 class Echo : public Node {
 public:
-    Echo(std::unique_ptr<FD_Interface> fd);
+    Echo(std::unique_ptr<FD_Interface> fd, std::unique_ptr<TUI_Interface> tui);
     void work_loop();
 private:
     std::unique_ptr<FD_Interface> log_fd;
+    std::unique_ptr<TUI_Interface> tui;
     State state;
-    bool log_active;
+    bool write_active;
+    bool read_active;
+    bool finished_reading;
+    int num_recent_pwms;
+    int** recent_pwms;
+    std::array<int32_t,8> stop = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
 
     Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_received_subscription;
     Publisher<custom_interfaces::msg::Pwms>::SharedPtr pwm_publisher;
@@ -37,7 +50,9 @@ private:
     void log_pwms(std::array<int32_t,8> pwms);
     void echo_pwms();
     void heartbeat_callback();
-    void logging_loop();
+    void invalid_command(std::string input, int index);
+    void refresh_display();
+    void reset_recent_pwms();
+    void add_to_recent_pwms(std::array<int32_t,8> pwm);
     std::array<int32_t,8> parse_log_line(char* line);
-    State get_next_state();
 };
