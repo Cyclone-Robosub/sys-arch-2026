@@ -11,8 +11,7 @@ Echo::Echo(std::unique_ptr<FD_Interface> fd, std::unique_ptr<TUI_Interface> tui)
     state(Get_Command),
     write_active(false),
     read_active(false),
-    finished_reading(false),
-    num_recent_pwms(0)
+    finished_reading(false)
      {
 
     pwm_received_subscription = this->create_subscription<custom_interfaces::msg::Pwms>(
@@ -24,17 +23,13 @@ Echo::Echo(std::unique_ptr<FD_Interface> fd, std::unique_ptr<TUI_Interface> tui)
     heartbeat_publisher = this->create_publisher<std_msgs::msg::Bool>("echo_heartbeat", 10);
     heartbeat_timer = this->create_wall_timer(500ms, 
             std::bind(&Echo::heartbeat_callback, this));
-    
-    recent_pwms = (int**)malloc(5 * sizeof(int*));
-    
+        
     refresh_display();
 }
 
 void Echo::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
     if (write_active) {
         log_pwms(pwms_msg->pwms);
-        add_to_recent_pwms(pwms_msg->pwms);
-        refresh_display();
     }
 }
 
@@ -48,28 +43,6 @@ void Echo::log_pwms(std::array<int32_t,8> pwms) {
     }
     if (write(log_fd->get_write_fd(), "\n",  1) < 1) {
         RCLCPP_WARN(this->get_logger(), "Unable to write to PWM log file");
-    }
-}
-
-void Echo::reset_recent_pwms() {
-    for (int i = 0; i < num_recent_pwms; i++) {
-        free(recent_pwms[i]);
-    }
-    num_recent_pwms = 0;
-}
-
-void Echo::add_to_recent_pwms(std::array<int32_t,8> pwm) {
-    if (num_recent_pwms == 5) {
-        free(recent_pwms[4]);
-    } else {
-        num_recent_pwms++;
-    }
-    for (int i = num_recent_pwms-1; i > 0; i--) {
-        recent_pwms[i] = recent_pwms[i - 1];
-    }
-    recent_pwms[0] = (int*)malloc(8 * sizeof(int));
-    for (int i = 0; i < 8; i++) {
-        recent_pwms[0][i] = pwm[i];
     }
 }
 
@@ -90,17 +63,13 @@ void Echo::echo_pwms() { // TODO: Do error checking (currently assumes perfectly
         }
 
         pwms = parse_log_line(line);
-        add_to_recent_pwms(pwms);
-        refresh_display();
         msg.pwms = pwms;
         pwm_publisher->publish(msg);
         current_time = std::chrono::steady_clock::now();
     }
     msg.pwms = stop;
     pwm_publisher->publish(msg);
-    add_to_recent_pwms(stop);
     refresh_display();
-    reset_recent_pwms();
 }
 
 void Echo::heartbeat_callback() {
@@ -176,7 +145,6 @@ void Echo::work_loop() {
             if (mode == 'e' || mode == 'q') {
                 tui->unfreeze_display();
                 write_active = false;
-                reset_recent_pwms();
                 state = Get_Command;
             }
             else {
@@ -199,7 +167,7 @@ void Echo::work_loop() {
         else { // shouldn't ever happen
             tui->unfreeze_display();
         }
-        // refresh_display();
+        refresh_display();
     }
     tui->restore_terminal();
     tui->clear_display();
@@ -218,14 +186,12 @@ int Log_FD::open_file() {
 }
 
 void Echo::refresh_display() {
-    tui->refresh_display(2, state, finished_reading, num_recent_pwms, recent_pwms);
+    tui->refresh_display(2, state, finished_reading);
 }
 
 void Echo_TUI::display_tui(va_list args) {
     State current_state = (State)va_arg(args, int);
     bool finished_reading = (bool)va_arg(args, int);
-    int num_recent_pwms = (int)va_arg(args,int);
-    int** pwms = va_arg(args,int**);
     va_end(args);
 
     write(STDOUT_FILENO, "\x1B[5m", 4); // set blinking
@@ -249,34 +215,6 @@ void Echo_TUI::display_tui(va_list args) {
             break;
     }
     write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
-
-    if (current_state == Write_Log) {
-        printf("\n\n");
-        printf("               PWMS Logged:               \n");
-        printf("------------------------------------------\n");
-        for (int i = num_recent_pwms-1; i >= 0; i--) {
-            for (int j = 0; j < 8; j++) {
-                printf("%d ", pwms[i][j]);
-            }
-            printf("\n");
-        }
-        printf("------------------------------------------\n");
-        printf("\n\n");
-    }
-
-    if (current_state == Read_Log) {
-        printf("\n\n");
-        printf("            PWMS Published:            \n");
-        printf("---------------------------------------\n");
-        for (int i = num_recent_pwms-1; i >= 0; i--) {
-            for (int j = 0; j < 8; j++) {
-                printf("%d ", pwms[i][j]);
-            }
-            printf("\n");
-        }
-        printf("---------------------------------------\n");
-        printf("\n\n");
-    }
 
     switch (current_state) {
         case Get_Command:

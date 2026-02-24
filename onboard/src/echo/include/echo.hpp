@@ -37,8 +37,6 @@ private:
     bool write_active;
     bool read_active;
     bool finished_reading;
-    int num_recent_pwms;
-    int** recent_pwms;
     std::array<int32_t,8> stop = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
 
     Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_received_subscription;
@@ -52,7 +50,5 @@ private:
     void heartbeat_callback();
     void invalid_command(std::string input, int index);
     void refresh_display();
-    void reset_recent_pwms();
-    void add_to_recent_pwms(std::array<int32_t,8> pwm);
     std::array<int32_t,8> parse_log_line(char* line);
 };
