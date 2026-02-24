@@ -17,16 +17,16 @@ public:
     Log_FD(std::string path);
 };
 
-enum Use_Mode {None, Read, Write};
+enum State {Get_Command, Write_Log, Read_Log, Exit};
 
 class Echo : public Node {
 public:
     Echo(std::unique_ptr<FD_Interface> fd);
-    void set_mode(Use_Mode mode);
     void work_loop();
 private:
     std::unique_ptr<FD_Interface> log_fd;
-    Use_Mode mode;
+    State state;
+    bool log_active;
 
     Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_received_subscription;
     Publisher<custom_interfaces::msg::Pwms>::SharedPtr pwm_publisher;
@@ -37,5 +37,7 @@ private:
     void log_pwms(std::array<int32_t,8> pwms);
     void echo_pwms();
     void heartbeat_callback();
-    std::array<int32_t,8> parseLine(char* line);
+    void logging_loop();
+    std::array<int32_t,8> parse_log_line(char* line);
+    State get_next_state();
 };

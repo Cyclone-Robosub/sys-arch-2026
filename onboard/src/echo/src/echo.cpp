@@ -7,7 +7,8 @@ using namespace std::chrono_literals;
 Echo::Echo(std::unique_ptr<FD_Interface> fd) : 
     Node("echo"),
     log_fd(std::move(fd)),
-    mode(None)
+    state(Get_Command),
+    log_active(false)
      {
 
     pwm_received_subscription = this->create_subscription<custom_interfaces::msg::Pwms>(
@@ -21,15 +22,8 @@ Echo::Echo(std::unique_ptr<FD_Interface> fd) :
             std::bind(&Echo::heartbeat_callback, this));
 }
 
-void Echo::set_mode(Use_Mode mode) {
-    this-> mode = mode;
-    if (mode == Read) { // TODO: move this somewhere more sensible? Some kind of state machine maybe...
-        echo_pwms();
-    }
-}
-
 void Echo::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
-    if (mode == Write) {
+    if (log_active) {
         log_pwms(pwms_msg->pwms);
     }
 }
@@ -52,18 +46,18 @@ void Echo::echo_pwms() { // TODO: Do error checking (currently assumes perfectly
     std::array<int32_t,8> pwms;
     custom_interfaces::msg::Pwms msg;
     char line[42] = {0}; // 4 * 8 pwms = 32, 8 spaces, 1 newline, 1 null character
+    lseek(log_fd->get_read_fd(), 0, SEEK_SET);
     while (true) {
         while (std::chrono::steady_clock::now() - current_time < 0.01s) {} // publish at 100 hz
         ssize_t num_read = read(log_fd->get_read_fd(), line, 41);
         if (num_read == 0) {
-            RCLCPP_INFO(this->get_logger(), "Finished reading from file. Exiting...");
-            rclcpp::shutdown();
-            exit(0);
+            RCLCPP_INFO(this->get_logger(), "Finished reading from file.");
+            return;
         } else if (num_read < 41) {
             RCLCPP_WARN(this->get_logger(), "Unable to read from PWM log file");
         }
 
-        pwms = parseLine(line);
+        pwms = parse_log_line(line);
 
         msg.pwms = pwms;
         pwm_publisher->publish(msg);
@@ -76,7 +70,7 @@ void Echo::heartbeat_callback() {
     heartbeat_publisher->publish(msg);
 }
 
-std::array<int32_t,8> Echo::parseLine(char* line) { // TODO: Do error checking (currently assumes perfectly formatted file)
+std::array<int32_t,8> Echo::parse_log_line(char* line) { // TODO: Do error checking (currently assumes perfectly formatted file)
     std::array<int32_t,8> pwms;
     size_t start_index = 41 - 6; // index of last PWM
     for (int i = 7; i >= 0; i--) {
@@ -87,9 +81,32 @@ std::array<int32_t,8> Echo::parseLine(char* line) { // TODO: Do error checking (
     return pwms;
 }
 
-void Echo::work_loop() {
+void Echo::logging_loop() {
+    printf("Writing to file ~/LOG.txt...\n");
+    printf("Type 'q' when you are done: ");
+    log_active = true;
     while (true) {
-        char new_mode = '\0'; // TODO: Error checking
+        char quit = '\0';
+        char should_be_newline;
+        scanf("%c", &quit);
+        scanf("%c", &should_be_newline);
+        quit = tolower(quit);
+        while (should_be_newline != '\n') {
+            scanf("%c", &should_be_newline);
+            quit = '\0'; // so we try again with an invalid input error
+        }
+        if (quit == 'q') {
+            log_active = false;
+            return;
+        } else {
+            std::cout << "Invalid input. Try again: ";
+        }
+    }
+}
+
+State Echo::get_next_state() {
+    while (true) {
+        char new_mode = '\0';
         char should_be_newline;
         printf("Select Mode: W for write, R for read, Q for quit: ");
         scanf("%c", &new_mode);
@@ -100,13 +117,34 @@ void Echo::work_loop() {
             new_mode = '\0'; // so we try again with an invalid mode error
         }
         if (new_mode == 'w') {
-            set_mode(Write);
+            return Write_Log;
         } else if (new_mode == 'r') {
-            set_mode(Read);
+            return Read_Log;
         } else if (new_mode == 'q' || new_mode == 'e') {
-            break;
+            return Exit;
         } else {
-            std::cerr << "Invalid mode. Try again!\n";
+            std::cout << "Invalid mode. Try again!\n";
+        }
+    }
+}
+
+void Echo::work_loop() {
+    while (true) {
+        switch (state) {
+            case Get_Command:
+                state = get_next_state();
+                break;
+            case Write_Log:
+                logging_loop();
+                state = Get_Command;
+                break;
+            case Read_Log:
+                echo_pwms();
+                state = Get_Command;
+                break;
+            case Exit:
+            default:
+                return;
         }
     }
 }
