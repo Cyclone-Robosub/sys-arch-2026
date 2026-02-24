@@ -6,6 +6,7 @@
 #include <termios.h>
 #include <mutex>
 #include "rclcpp/rclcpp.hpp"
+#include "tui_interface.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
@@ -19,8 +20,9 @@ public:
     Mux_Controller();
     void set_mux_mode(int mode);
     void get_mux_mode_now();
-    void work_loop();
-    static void clear_display();
+    int get_current_control_mode();
+    bool is_no_heartbeat();
+    bool is_new_state();
 private:
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscriber;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr heartbeat_subscription;
@@ -28,26 +30,28 @@ private:
     void mux_heartbeat_received_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
     void heartbeat_check_callback();
     void control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg);
-    void refresh_display();
-    void process_input();
-    void backspace();
-    void delete_or_direction();
-    void insert(char c);
-
-    std::mutex display_mutex;
-
+    
+    bool state_changed = false;
     int current_control_mode = 0; // 0 = Disabled, 1 = CLI, 2 = CTRL, 3 = Echo
     bool no_heartbeat = true;
-    std::string current_input;
-    int cursor_pos = 0;
-    int num_read = 0;
+
+    std::mutex state_change_mutex;
 
     rclcpp::Client<custom_interfaces::srv::ControlMode>::SharedPtr client;
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub;
 
     rclcpp::TimerBase::SharedPtr heartbeat_timer;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_heartbeat;
+};
 
+class Mux_Controller_TUI : public TUI_Interface {
+    public:
+        explicit Mux_Controller_TUI(std::shared_ptr<Mux_Controller> mux_controller);
+        virtual void display_tui() override;
+        void run_tui();
+    protected:
+        std::shared_ptr<Mux_Controller> mux_controller;
+        void work_loop();
 };
 
 #endif

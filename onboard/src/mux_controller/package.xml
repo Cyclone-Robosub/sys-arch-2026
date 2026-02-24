@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>custom_interfaces</depend>
+  <depend>tui_interface</depend>
   <depend>std_msg</depend>
   <depend>std_srv</depend>
 
