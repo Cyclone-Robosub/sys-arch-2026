@@ -1,8 +1,12 @@
 # Use the base image that has ros and pytorch pre-installed
 FROM everything:l4t-r36.4.7
 
-# Set the working directory (replacing the manual cd)
-WORKDIR /root/sys-arch-2026
-
 RUN apt update && apt install -y \
     ros-jazzy-rosbridge-suite 
+
+# COPY ~/sys-arch-2026 /root/sys-arch-2026
+
+WORKDIR /root/sys-arch-2026
+
+# RUN colcon build
+# RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
