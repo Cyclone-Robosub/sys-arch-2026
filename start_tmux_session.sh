@@ -132,6 +132,7 @@ else
 	JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "source install/setup.sh && ros2 run simple_joystick_controller Simple_Joystick_Controller; bash")
 fi
 
+# Starting a simple HTTP server to serve the joystick webpage
 tmux split-window -v -t $JOYSTICK_PANE "cd ~/sys-arch-2026/remote_control_webpage && python3 -m http.server 8000; bash"
 
 ################################################################################
