@@ -36,6 +36,10 @@ services:
       dockerfile: Dockerfile.jazzy
     devices:
       - /dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_027d485dbf80bb5f-if00:/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_60fdf513bf90cb73-if00
+      - /dev/video0
+      - /dev/video1
+      - /dev/video2
+      - /dev/video3
     command: [
       "bash", 
       "-lc", 
@@ -47,9 +51,4 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.humble
-    devices:
-      - /dev/video0
-      - /dev/video1
-      - /dev/video2
-      - /dev/video3
     command: ["sleep", "infinity"]
