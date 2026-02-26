@@ -140,22 +140,19 @@ namespace dvl {
 
     }
 
-    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response) {
+    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
         bool success = sendCommand(CMD_RESET_VR);
         response->success = success;
-        (void) request;
     }
 
-    void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
+    void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
         bool success = sendCommand(CMD_RESET_DR);
         response->success = success;      
-        (void) request;
     }
 
-    void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
+    void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
         bool success = sendCommand(CMD_CALIBRATE_GYRO);
         response->success = success;      
-        (void) request;
     }
 
     void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
@@ -409,7 +406,9 @@ namespace dvl {
             return false;
         }
         // ACK was not correct, should get for cmd
-        bool success = getResponse(cmd);
+        bool success;
+        if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd);
+        else success = getResponse(ACK);
         dvl_mutex.unlock();
         return success;
     }

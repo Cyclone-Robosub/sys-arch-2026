@@ -8,6 +8,7 @@ static constexpr uint8_t VR_TYPE = 'v';
 static constexpr uint8_t BAD_VR_TYPE = 'V';
 static constexpr uint8_t DRR_TYPE = 'd';
 static constexpr uint8_t CONFIG_TYPE = 'c';
+static constexpr uint8_t ACK_TYPE = 'a';
 
 static constexpr uint8_t DVL_READ = 'r';
 static constexpr uint8_t DVL_WRITE = 'w';
@@ -132,6 +133,10 @@ protected:
             msg =
                 "wrc,1475.000000,0.000000,y," //speed of sound, mounting rotation offset, acoustic enabled
                 "n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
+            break;
+        case ACK_TYPE:
+            msg =  
+                "wra\r\n\r";
             break;
         default: 
             msg = "error";
@@ -388,6 +393,21 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     EXPECT_EQ(most_recent_config_report.dark_mode_enabled, "n");
     EXPECT_EQ(most_recent_config_report.range_mode, "auto");
     EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
+ }
+
+ TEST_F(TestDVLInterface, DVLResets){
+    create_node();
+
+    //pre-populated acknowledgements    
+    write_serial_message(ACK_TYPE);    
+
+
+    std::shared_ptr<std_srvs::srv::Trigger::Response> response = std::make_shared<std_srvs::srv::Trigger::Response>;    
+    node->resetVR(std::move(response));
+    EXPECT_TRUE(response->data);    
+    
+       
+    
  }
 
  #ifdef ENABLE_TESTING

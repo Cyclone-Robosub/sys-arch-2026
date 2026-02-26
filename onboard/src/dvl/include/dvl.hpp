@@ -21,6 +21,7 @@
 #include "std_msgs/msg/bool.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 #include "custom_interfaces/srv/set_config.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "custom_interfaces/srv/set_serial.hpp"
 #include "fd_interface.hpp"
 
@@ -106,9 +107,9 @@ class DVL : public rclcpp::Node {
 
         //sets (returns true if acknowledge was received)
         void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response);
-        void resetVR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //reset the velocity report
-        void resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //reset the dead reckoning report
-        void resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response); //zero the gyroscope
+        void resetVR(const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //reset the velocity report
+        void resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //reset the dead reckoning report
+        void resetGyro(const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //zero the gyroscope
         void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
         void triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
 
