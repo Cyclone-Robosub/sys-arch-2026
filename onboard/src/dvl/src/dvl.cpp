@@ -403,14 +403,15 @@ namespace dvl {
         // Write to serial port using POSIX write
         std::string data = msg.str();
         ssize_t n = write(fd->get_write_fd(), data.c_str(), data.size());
-        dvl_mutex.unlock();
         if (n <= 0) {
             fd->attempt_reconnect();
             RCLCPP_WARN(this->get_logger(), "Failed to write to serial port. Attempting to reconnect to DVL.");
             return false;
         }
         // ACK was not correct, should get for cmd
-        return getResponse(cmd);
+        bool success = getResponse(cmd);
+        dvl_mutex.unlock();
+        return success;
     }
 
     void DVL::workLoop() {
@@ -420,7 +421,7 @@ namespace dvl {
         if(!getResponse(ACK)) std::cout<<"error with DR reset"<<std::endl;
         sendCommand(CMD_CALIBRATE_GYRO);
         if(!getResponse(ACK)) std::cout<<"error with GYRO rest"<<std::endl;
-        // TODO: Reset VR
+       
         while (rclcpp::ok()) {
             dvl_mutex.lock();
             char cmd = getCommandFromSerial();

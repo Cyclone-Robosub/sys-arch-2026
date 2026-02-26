@@ -8,7 +8,6 @@ static constexpr uint8_t VR_TYPE = 'v';
 static constexpr uint8_t BAD_VR_TYPE = 'V';
 static constexpr uint8_t DRR_TYPE = 'd';
 static constexpr uint8_t CONFIG_TYPE = 'c';
-static constexpr uint8_t ACK_TYPE = 'k';
 
 static constexpr uint8_t DVL_READ = 'r';
 static constexpr uint8_t DVL_WRITE = 'w';
@@ -134,10 +133,6 @@ protected:
                 "wrc,1475.000000,0.000000,y," //speed of sound, mounting rotation offset, acoustic enabled
                 "n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
             break;
-        case ACK_TYPE:
-            msg = 
-                "wra\r\n\r";
-            break;
         default: 
             msg = "error";
         }
@@ -161,7 +156,7 @@ protected:
     }
 
     void subscribe_config_report() {
-        config_report_subscriber = node->create_subscription<custom_interfaces::msg::Config>("config_report", 10, std::bind(&TestDVLInterface::config_report_callback, this, std::placeholders::_1));
+        config_report_subscriber = node->create_subscription<custom_interfaces::msg::Config>("config", 10, std::bind(&TestDVLInterface::config_report_callback, this, std::placeholders::_1));
     }
 
     void config_report_callback(custom_interfaces::msg::Config config_report){
@@ -379,8 +374,9 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     rclcpp::executors::SingleThreadedExecutor exec;
     exec.add_node(node);
-
-    node->publishConfig();
+    
+    char cmd = node->getCommandFromSerial();
+    node->publishCommandFromSerial(cmd);
     exec.spin_some();
 
     //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
