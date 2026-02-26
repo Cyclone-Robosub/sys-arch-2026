@@ -415,12 +415,9 @@ namespace dvl {
     }
 
     void DVL::workLoop() {
-        sendCommand(CMD_RESET_VR);
-        if(!getResponse(ACK)) std::cout<<"error with VR reset"<<std::endl;
-        sendCommand(CMD_RESET_DR);
-        if(!getResponse(ACK)) std::cout<<"error with DR reset"<<std::endl;
-        sendCommand(CMD_CALIBRATE_GYRO);
-        if(!getResponse(ACK)) std::cout<<"error with GYRO rest"<<std::endl;
+        if(!sendCommand(CMD_RESET_VR)) std::cout<< "error with VR reset\n";
+        if(!sendCommand(CMD_RESET_DR)) std::cout<<"error with DR reset\n";
+        if(!sendCommand(CMD_CALIBRATE_GYRO)) std::cout<<"error with GYRO rest\n";
        
         while (rclcpp::ok()) {
             dvl_mutex.lock();
