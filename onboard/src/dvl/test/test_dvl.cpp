@@ -402,9 +402,9 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     write_serial_message(ACK_TYPE);    
 
 
-    std::shared_ptr<std_srvs::srv::Trigger::Response> response = std::make_shared<std_srvs::srv::Trigger::Response>;    
+    std::shared_ptr<std_srvs::srv::Trigger::Response> response = std::make_shared<std_srvs::srv::Trigger::Response>();    
     node->resetVR(std::move(response));
-    EXPECT_TRUE(response->data);    
+    EXPECT_TRUE(response->success);    
     
        
     

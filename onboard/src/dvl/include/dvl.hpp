@@ -122,8 +122,9 @@ class DVL : public rclcpp::Node {
         rclcpp::Publisher<custom_interfaces::msg::Config>::SharedPtr config_publisher;
 
         rclcpp::Service<custom_interfaces::srv::SetConfig>::SharedPtr config_service;
-        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr drr_service;
-        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr gyro_service;
+        rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr drr_service;
+        rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr gyro_service;
+        rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr vr_service;
         rclcpp::Service<custom_interfaces::srv::SetSerial>::SharedPtr set_serr_protocol;
         rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr trigger_ping;
 
