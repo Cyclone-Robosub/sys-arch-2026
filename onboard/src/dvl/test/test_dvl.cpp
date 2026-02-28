@@ -18,6 +18,7 @@ using namespace dvl;
 class TestDVLInterface : public::testing::Test {
 protected:
     std::shared_ptr<DVL> node;
+    int dev_fd;
     int node_read_pipe_fds[2];  // [0] = read end, [1] = write end. For the node to read from.
     int node_write_pipe_fds[2];  // [0] = read end, [1] = write end. For the node to write from.
     rclcpp::Subscription<custom_interfaces::msg::VR>::SharedPtr velocity_report_subscriber;
@@ -56,6 +57,21 @@ protected:
         // DVL to read from it, and read from node_write_pipe_fds[0] to verify that the DVL wrote correct data.
         std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(node_read_pipe_fds[0], node_write_pipe_fds[1]);
         node = std::make_shared<DVL>(std::move(pipe_fd));
+    }
+
+    void create_reset_fail_node(){
+        struct termios tty;
+        int dev_fd = open("/dev/null", O_RDWR);
+        if (tcgetattr(dev_fd, &tty) != 0) std::cout<<"Failed to get terminal attributes\n";
+        tty.c_lflag = 0; // non-canonical mode
+        if (tcsetattr(dev_fd, TCSANOW, &tty) != 0) std::cout<<"Failed to set terminal attributes\n";
+
+        std::unique_ptr<FD_Interface> dev_null_fd = std::make_unique<Direct_FD>(dev_fd, node_write_pipe_fds[1]);
+        node = std::make_shared<DVL>(std::move(dev_null_fd));
+    }
+
+    void close_dev_fd(){
+        close(dev_fd);
     }
 
     /**
@@ -465,7 +481,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  }
 
  TEST_F(TestDVLInterface, DVLResetVRFail){
-    create_node();
+    create_reset_fail_node();
     auto client = node->create_client<std_srvs::srv::Trigger>("set_vr");
     ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
 
@@ -479,11 +495,12 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
     auto future = client->async_send_request(request);
     std::cout << "Future obj created\n";
-    ASSERT_NE(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
     std::cout << "Beeep boop\n";
     EXPECT_FALSE(future.get()->success); // request should be recieved by service   
     executor.cancel();
     spin_thread.join();
+    close_dev_fd();
  }
 
  #ifdef ENABLE_TESTING
