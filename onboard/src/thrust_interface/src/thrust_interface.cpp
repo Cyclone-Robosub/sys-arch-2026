@@ -147,7 +147,7 @@ int Pico_FD::open_file() {
 
 int main(int argc, char* argv[]) {
     std::vector<int> thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
-    std::unique_ptr<FD_Interface> fd = std::make_unique<Pico_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_027d485dbf80bb5f-if00");
+    std::unique_ptr<FD_Interface> fd = std::make_unique<Pico_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
     rclcpp::init(argc, argv);
     auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, std::move(fd), 1200, 1800);
     rclcpp::spin(thrust_interface);
