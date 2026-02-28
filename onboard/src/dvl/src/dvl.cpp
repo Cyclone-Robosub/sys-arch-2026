@@ -20,8 +20,9 @@ namespace dvl {
 
         //Services
         config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
-        drr_service = this->create_service<std_srvs::srv::SetBool>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
-        gyro_service = this->create_service<std_srvs::srv::SetBool>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
+        drr_service = this->create_service<std_srvs::srv::Trigger>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
+        gyro_service = this->create_service<std_srvs::srv::Trigger>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
+        vr_service = this->create_service<std_srvs::srv::Trigger>("set_vr", std::bind(&dvl::DVL::resetVR, this, std::placeholders::_1, std::placeholders::_2));
         set_serr_protocol = this->create_service<custom_interfaces::srv::SetSerial>("set_serial_protocol", std::bind(&dvl::DVL::setSerialProtocol, this, std::placeholders::_1, std::placeholders::_2));
         trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -122,9 +123,10 @@ namespace dvl {
     }
 
     config_report DVL::readConfig(){
-        sendCommand(CMD_GET_SETTINGS); 
-        
-        if(getResponse(CMD_GET_SETTINGS)){
+        bool success = sendCommand(CMD_GET_SETTINGS); 
+        // was originally the same as readDetails, called sendCommand first then used getResponse for if else
+        // since sendCommand calls getResponse now, simplifed it to store success
+        if (success){
             return config;
         } else {
             return error_config;
@@ -139,44 +141,34 @@ namespace dvl {
 
     }
 
-    void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
-        sendCommand(CMD_RESET_DR);
-        if(getResponse(ACK)){
-            response->success = true;
-        } else{
-            response->success = false;
-        }
+    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+        bool success = sendCommand(CMD_RESET_VR);
+        response->success = success;
         (void) request;
     }
 
-    void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
-        sendCommand(CMD_CALIBRATE_GYRO);
-        if(getResponse(ACK)){
-            response->success = true;
-        } else{
-            response->success = false;
-        }
-        (void) request;
+    void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
+        bool success = sendCommand(CMD_RESET_DR);
+        response->success = success; 
+        (void) request;     
+    }
+
+    void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
+        bool success = sendCommand(CMD_CALIBRATE_GYRO);
+        response->success = success;     
+        (void) request; 
     }
 
     void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
         sendCommand(CMD_TRIGGER_PING);
-        if(getResponse(ACK)){
-            response->success = true;
-        } else {
-            response->success = false;
-        }
+        response->success = getResponse(ACK);
         (void) request;
 
     }
 
     void DVL::setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response){
         sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(request->serial)}); //currently only can be used to start serial output
-        if(getResponse(ACK)){
-            response->success = true;
-        } else{
-            response->success = false;
-        }
+        response->success = getResponse(ACK);
     }
 
     //Private Methods
@@ -197,6 +189,33 @@ namespace dvl {
             }
         }
 
+        return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
+    }
+
+    char DVL::getCommandFromSerial(std::chrono::time_point<std::chrono::steady_clock> start, std::chrono::milliseconds TIMEOUT){
+        using clock = std::chrono::steady_clock;
+        std::string curr_line = "";
+        ssize_t n = -1;
+        char c = '\0';
+        
+        std::cerr << "getCommandFromSerial Before loop\n";
+
+        while(curr_line.size() < 3 && clock::now() - start < TIMEOUT){ //keep reading until curr_line is length 3
+            std::cerr << "getCommandFromSerial during loop\n";
+            n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
+            // have to open pipe in noncanonical mode
+            std::cerr << "Got pass the read in getCommandFromSerial\n";
+            // not getting pass the read
+            if (n == 1) {
+                if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
+                curr_line += c; // append to the end of the existing string
+            } else if (n <= 0) {
+                RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
+                fd->attempt_reconnect();
+                return '0';
+            }
+        }
+        std::cerr << "getCommandFromSerial finish loop\n";
         return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
     }
 
@@ -388,7 +407,8 @@ namespace dvl {
     }
 
     bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string>& options) { //cmd with optional input args
-         //std::cout << cmd << std::endl;
+        dvl_mutex.lock();
+        //std::cout << cmd << std::endl;
         std::stringstream msg;
 
         // Build message
@@ -414,21 +434,40 @@ namespace dvl {
         if (n <= 0) {
             fd->attempt_reconnect();
             RCLCPP_WARN(this->get_logger(), "Failed to write to serial port. Attempting to reconnect to DVL.");
+            dvl_mutex.unlock();
             return false;
         }
-        return true;
+        // ACK was not correct, should get for cmd
+        bool success = false;
+        if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd);
+        else {
+            using clock = std::chrono::steady_clock;
+            constexpr auto TIMEOUT = std::chrono::milliseconds(100);
+            auto start = clock::now();
+            std::cerr << "SendCommand Before loop\n";
+            while(clock::now() - start < TIMEOUT){
+                std::cerr << "SendCommand during loop\n";
+                cmd = getCommandFromSerial(start, TIMEOUT);
+                if(cmd == ACK){
+                    success = true;
+                    break;
+                }
+            }
+        }
+        std::cerr << "SendCommand after loop" << success << "\n";
+        dvl_mutex.unlock();
+        return success;
     }
 
     void DVL::workLoop() {
-        sendCommand(CMD_RESET_DR);
-        getResponse(ACK);
-        sendCommand(CMD_CALIBRATE_GYRO);
-        getResponse(ACK);
-        // TODO: Reset VR
+        if(!sendCommand(CMD_RESET_VR)) std::cout<< "error with VR reset\n";
+        if(!sendCommand(CMD_RESET_DR)) std::cout<<"error with DR reset\n";
+        if(!sendCommand(CMD_CALIBRATE_GYRO)) std::cout<<"error with GYRO rest\n";
+       
         while (rclcpp::ok()) {
-            //lock
+            dvl_mutex.lock();
             char cmd = getCommandFromSerial();
-            //unlock
+            dvl_mutex.unlock();
             if(cmd != '0') publishCommandFromSerial(cmd);
         }    
     }
