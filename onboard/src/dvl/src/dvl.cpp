@@ -198,8 +198,14 @@ namespace dvl {
         ssize_t n = -1;
         char c = '\0';
         
+        std::cerr << "getCommandFromSerial Before loop\n";
+
         while(curr_line.size() < 3 && clock::now() - start < TIMEOUT){ //keep reading until curr_line is length 3
+            std::cerr << "getCommandFromSerial during loop\n";
             n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
+            // have to open pipe in noncanonical mode
+            std::cerr << "Got pass the read in getCommandFromSerial\n";
+            // not getting pass the read
             if (n == 1) {
                 if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
@@ -209,7 +215,7 @@ namespace dvl {
                 return '0';
             }
         }
-
+        std::cerr << "getCommandFromSerial finish loop\n";
         return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
     }
 
@@ -428,6 +434,7 @@ namespace dvl {
         if (n <= 0) {
             fd->attempt_reconnect();
             RCLCPP_WARN(this->get_logger(), "Failed to write to serial port. Attempting to reconnect to DVL.");
+            dvl_mutex.unlock();
             return false;
         }
         // ACK was not correct, should get for cmd
@@ -437,8 +444,9 @@ namespace dvl {
             using clock = std::chrono::steady_clock;
             constexpr auto TIMEOUT = std::chrono::milliseconds(100);
             auto start = clock::now();
-
+            std::cerr << "SendCommand Before loop\n";
             while(clock::now() - start < TIMEOUT){
+                std::cerr << "SendCommand during loop\n";
                 cmd = getCommandFromSerial(start, TIMEOUT);
                 if(cmd == ACK){
                     success = true;
@@ -446,6 +454,7 @@ namespace dvl {
                 }
             }
         }
+        std::cerr << "SendCommand after loop" << success << "\n";
         dvl_mutex.unlock();
         return success;
     }
