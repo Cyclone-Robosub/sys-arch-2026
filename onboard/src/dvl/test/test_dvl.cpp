@@ -8,6 +8,7 @@ static constexpr uint8_t VR_TYPE = 'v';
 static constexpr uint8_t BAD_VR_TYPE = 'V';
 static constexpr uint8_t DRR_TYPE = 'd';
 static constexpr uint8_t CONFIG_TYPE = 'c';
+static constexpr uint8_t ACK_TYPE = 'a';
 
 static constexpr uint8_t DVL_READ = 'r';
 static constexpr uint8_t DVL_WRITE = 'w';
@@ -133,6 +134,10 @@ protected:
                 "wrc,1475.000000,0.000000,y," //speed of sound, mounting rotation offset, acoustic enabled
                 "n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
             break;
+        case ACK_TYPE:
+            msg =  
+                "wra\r\n\r";
+            break;
         default: 
             msg = "error";
         }
@@ -156,7 +161,7 @@ protected:
     }
 
     void subscribe_config_report() {
-        config_report_subscriber = node->create_subscription<custom_interfaces::msg::Config>("config_report", 10, std::bind(&TestDVLInterface::config_report_callback, this, std::placeholders::_1));
+        config_report_subscriber = node->create_subscription<custom_interfaces::msg::Config>("config", 10, std::bind(&TestDVLInterface::config_report_callback, this, std::placeholders::_1));
     }
 
     void config_report_callback(custom_interfaces::msg::Config config_report){
@@ -245,7 +250,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     //write valid Config data into pipe_fds[1]
     write_serial_message(CONFIG_TYPE);
-    
+
     //check if config was read correctly
     config = node->readConfig();
     EXPECT_FLOAT_EQ(config.speed_of_sound, 1475.000000);
@@ -363,31 +368,123 @@ TEST_F(TestDVLInterface, DVLConstruction) {
   /**
  * @brief Test DVL publishing Config
  */
-//  TEST_F(TestDVLInterface, DVLPublishConfig){
-//     create_node();
+ TEST_F(TestDVLInterface, DVLPublishConfig){
+    create_node();
 
-//     //write valid Config data into pipe_fds[1] 
-//     write_serial_message(CONFIG_TYPE);
+    //write valid Config data into pipe_fds[1] 
+    write_serial_message(CONFIG_TYPE);
 
-//     //subscribe to Config node
-//     subscribe_config_report();
+    //subscribe to Config node
+    subscribe_config_report();
 
-//     rclcpp::executors::SingleThreadedExecutor exec;
-//     exec.add_node(node);
+    rclcpp::executors::SingleThreadedExecutor exec;
+    exec.add_node(node);
+    
+    char cmd = node->getCommandFromSerial();
+    node->publishCommandFromSerial(cmd);
+    exec.spin_some();
 
-//     node->publishConfig();
-//     exec.spin_some();
+    //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
+    //"n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
 
-//     //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
-//     //"n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
+    EXPECT_FLOAT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
+    EXPECT_FLOAT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
+    EXPECT_EQ(most_recent_config_report.acoustic_enabled, "y");
+    EXPECT_EQ(most_recent_config_report.dark_mode_enabled, "n");
+    EXPECT_EQ(most_recent_config_report.range_mode, "auto");
+    EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
+ }
 
-//     EXPECT_FLOAT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
-//     EXPECT_FLOAT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
-//     EXPECT_EQ(most_recent_config_report.acoustic_enabled, "y");
-//     EXPECT_EQ(most_recent_config_report.dark_mode_enabled, "n");
-//     EXPECT_EQ(most_recent_config_report.range_mode, "auto");
-//     EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
-//  }
+ TEST_F(TestDVLInterface, DVLResetVRSuccess){
+    create_node();
+    auto client = node->create_client<std_srvs::srv::Trigger>("set_vr");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
+    auto future = client->async_send_request(request);
+
+    write_serial_message(ACK_TYPE);
+
+    ASSERT_EQ (future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future.get()->success); // request should be recieved by service   
+    executor.cancel();
+    spin_thread.join();
+ }
+
+ TEST_F(TestDVLInterface, DVLResetDRRSuccess){
+    create_node();
+    auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
+    auto future = client->async_send_request(request);
+
+    write_serial_message(ACK_TYPE);
+
+    ASSERT_EQ (future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future.get()->success); // request should be recieved by service   
+    executor.cancel();
+    spin_thread.join();
+ }
+
+ TEST_F(TestDVLInterface, DVLResetGyroSuccess){
+    create_node();
+    auto client = node->create_client<std_srvs::srv::Trigger>("set_gyro");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
+    auto future = client->async_send_request(request);
+
+    write_serial_message(ACK_TYPE);
+
+    ASSERT_EQ (future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future.get()->success); // request should be recieved by service   
+    executor.cancel();
+    spin_thread.join();
+ }
+
+ TEST_F(TestDVLInterface, DVLResetVRFail){
+    create_node();
+    auto client = node->create_client<std_srvs::srv::Trigger>("set_vr");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
+    auto future = client->async_send_request(request);
+    std::cout << "Future obj created\n";
+    ASSERT_NE(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    std::cout << "Beeep boop\n";
+    EXPECT_FALSE(future.get()->success); // request should be recieved by service   
+    executor.cancel();
+    spin_thread.join();
+ }
 
  #ifdef ENABLE_TESTING
     int main(int argc, char** argv) {
