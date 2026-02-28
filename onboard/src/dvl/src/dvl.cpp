@@ -438,7 +438,7 @@ namespace dvl {
         if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd);
         else {
             using clock = std::chrono::steady_clock;
-            constexpr auto TIMEOUT = std::chrono::milliseconds(100);
+            constexpr auto TIMEOUT = std::chrono::milliseconds(5000);
             auto start = clock::now();
             while(clock::now() - start < TIMEOUT){
                 cmd = getCommandFromSerial(start, TIMEOUT);
