@@ -107,13 +107,14 @@ class DVL : public rclcpp::Node {
 
         //sets (returns true if acknowledge was received)
         void setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response);
-        void resetVR(const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //reset the velocity report
-        void resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //reset the dead reckoning report
-        void resetGyro(const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //zero the gyroscope
+        void resetVR(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //reset the velocity report
+        void resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //reset the dead reckoning report
+        void resetGyro(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response); //zero the gyroscope
         void setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response);
         void triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
 
         char getCommandFromSerial();
+        char getCommandFromSerial(std::chrono::time_point<std::chrono::steady_clock> start, std::chrono::milliseconds TIMEOUT);
         void publishCommandFromSerial(char cmd);
         void workLoop();
     private:

@@ -20,9 +20,9 @@ namespace dvl {
 
         //Services
         config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
-        // drr_service = this->create_service<std_srvs::srv::Trigger>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1));
-        // gyro_service = this->create_service<std_srvs::srv::Trigger>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1));
-        // vr_service = this->create_service<std_srvs::srv::Trigger>("set_vr", std::bind(&dvl::DVL::resetVR, this, std::placeholders::_1));
+        drr_service = this->create_service<std_srvs::srv::Trigger>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
+        gyro_service = this->create_service<std_srvs::srv::Trigger>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
+        vr_service = this->create_service<std_srvs::srv::Trigger>("set_vr", std::bind(&dvl::DVL::resetVR, this, std::placeholders::_1, std::placeholders::_2));
         set_serr_protocol = this->create_service<custom_interfaces::srv::SetSerial>("set_serial_protocol", std::bind(&dvl::DVL::setSerialProtocol, this, std::placeholders::_1, std::placeholders::_2));
         trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -141,19 +141,22 @@ namespace dvl {
 
     }
 
-    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
         bool success = sendCommand(CMD_RESET_VR);
         response->success = success;
+        (void) request;
     }
 
-    void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
+    void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
         bool success = sendCommand(CMD_RESET_DR);
-        response->success = success;      
+        response->success = success; 
+        (void) request;     
     }
 
-    void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
+    void DVL::resetGyro(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
         bool success = sendCommand(CMD_CALIBRATE_GYRO);
-        response->success = success;      
+        response->success = success;     
+        (void) request; 
     }
 
     void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
@@ -175,6 +178,27 @@ namespace dvl {
         char c = '\0';
         
         while(curr_line.size() < 3){ //keep reading until curr_line is length 3
+            n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
+            if (n == 1) {
+                if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
+                curr_line += c; // append to the end of the existing string
+            } else if (n <= 0) {
+                RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
+                fd->attempt_reconnect();
+                return '0';
+            }
+        }
+
+        return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
+    }
+
+    char DVL::getCommandFromSerial(std::chrono::time_point<std::chrono::steady_clock> start, std::chrono::milliseconds TIMEOUT){
+        using clock = std::chrono::steady_clock;
+        std::string curr_line = "";
+        ssize_t n = -1;
+        char c = '\0';
+        
+        while(curr_line.size() < 3 && clock::now() - start < TIMEOUT){ //keep reading until curr_line is length 3
             n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
             if (n == 1) {
                 if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
@@ -407,9 +431,21 @@ namespace dvl {
             return false;
         }
         // ACK was not correct, should get for cmd
-        bool success;
+        bool success = false;
         if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd);
-        else success = getResponse(ACK);
+        else {
+            using clock = std::chrono::steady_clock;
+            constexpr auto TIMEOUT = std::chrono::milliseconds(100);
+            auto start = clock::now();
+
+            while(clock::now() - start < TIMEOUT){
+                cmd = getCommandFromSerial(start, TIMEOUT);
+                if(cmd == ACK){
+                    success = true;
+                    break;
+                }
+            }
+        }
         dvl_mutex.unlock();
         return success;
     }
