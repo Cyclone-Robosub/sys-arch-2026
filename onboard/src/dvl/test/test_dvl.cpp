@@ -503,6 +503,52 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     close_dev_fd();
  }
 
+ TEST_F(TestDVLInterface, DVLResetDRRFail){
+    create_reset_fail_node();
+    auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
+    auto future = client->async_send_request(request);
+    std::cout << "Future obj created\n";
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    std::cout << "Beeep boop\n";
+    EXPECT_FALSE(future.get()->success); // request should be recieved by service   
+    executor.cancel();
+    spin_thread.join();
+    close_dev_fd();
+ }
+
+  TEST_F(TestDVLInterface, DVLResetGyroFail){
+    create_reset_fail_node();
+    auto client = node->create_client<std_srvs::srv::Trigger>("set_gyro");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
+    auto future = client->async_send_request(request);
+    std::cout << "Future obj created\n";
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    std::cout << "Beeep boop\n";
+    EXPECT_FALSE(future.get()->success); // request should be recieved by service   
+    executor.cancel();
+    spin_thread.join();
+    close_dev_fd();
+ }
+
  #ifdef ENABLE_TESTING
     int main(int argc, char** argv) {
         ::testing::InitGoogleTest(&argc, argv);
