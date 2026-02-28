@@ -519,10 +519,10 @@ namespace dvl {
 } //namespace
 
 DVL_FD::DVL_FD(std::string path) : Path_FD(path) {
-    fd = open_serial();
+    fd = open_file();
 }
 
-int DVL_FD::open_serial() {
+int DVL_FD::open_file() {
     struct termios tty;
     speed_t baud = 0010002; // This means baud rate of 115200
     int fd;

@@ -21,7 +21,7 @@ public:
 class Path_FD : public FD_Interface {
 protected:
     std::string path;
-    virtual int open_serial() = 0;
+    virtual int open_file() = 0;
 public:
     explicit Path_FD(std::string path);
     virtual int get_read_fd() override;

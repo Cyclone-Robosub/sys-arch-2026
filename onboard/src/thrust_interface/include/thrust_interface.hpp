@@ -14,7 +14,7 @@ using namespace rclcpp;
 
 class Pico_FD : public Path_FD {
 protected:
-    int open_serial() override;
+    int open_file() override;
 public:
     Pico_FD(std::string path);
 };
