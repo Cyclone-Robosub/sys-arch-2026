@@ -14,15 +14,20 @@ import time
 from pwm_cli.cli_console import *
 from pwm_cli.cli_publisher import *
 
+from rclpy.executors import SingleThreadedExecutor
+from rclpy.task import Future
+
 
 '''
 Initializes ROS before running any rests, then shuts it down when finished testing
 '''
 @pytest.fixture(scope='module')
 def init_ros():
-	rclpy.init()
+	with ros_mutex:
+		rclpy.init()
 	yield
-	rclpy.shutdown()
+	with ros_mutex:
+		rclpy.shutdown()
 
 
 '''
@@ -31,9 +36,11 @@ Creates a HeartbeatPublisher and passes it through, then destroys after use
 '''
 @pytest.fixture
 def setup_heartbeat(init_ros):
+	ros_mutex.acquire()
 	heartbeat = HeartbeatPublisher()
 	yield heartbeat
-	heartbeat.destroy_node()
+	with ros_mutex:
+		heartbeat.destroy_node()
 
 
 '''
@@ -169,5 +176,22 @@ def test_heartbeat(setup_heartbeat):
 
 
 # Also Create 'test_console(setup_console)' to test that pwm sets are published properly
+def test_console(setup_console):
+	console = setup_console
 
+	recieved_pwms = []
 
+	subscriber = console.create_subscription(Pwms, "pwm_cli", lambda msg: recieved_pwms.append(msg), 10)
+
+	console.publish_pwm([1720, 1720, 1720, 1720, 1500, 1500, 1500, 1500])
+	console.publish_pwm([1500, 1500, 1500, 1500, 1720, 1720, 1720, 1720])
+	console.publish_pwm([1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500])
+
+	exec = SingleThreadedExecutor()
+	exec.add_node(console)
+	future = Future()
+	exec.spin_until_future_complete(console, future)
+
+	assert recieved_pwms[0] == [1720, 1720, 1720, 1720, 1500, 1500, 1500, 1500]
+	assert recieved_pwms[1] == [1500, 1500, 1500, 1500, 1720, 1720, 1720, 1720]
+	assert recieved_pwms[2] == [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]

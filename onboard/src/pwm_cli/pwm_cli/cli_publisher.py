@@ -3,8 +3,14 @@
 import rclpy
 from rclpy.node import Node
 
+from threading import Lock
+
 from custom_interfaces.msg import Pwms
 from std_msgs.msg import Bool
+
+import sys
+
+ros_mutex = Lock()
 
 
 '''
@@ -27,14 +33,17 @@ Publishes 'True' 4 times per second
 Used to check whether connection between publisher and subscriber is lost
 '''
 class HeartbeatPublisher(Node):
-    def __init__(self):
-        super().__init__('heartbeat')
-        self.publisher_ = self.create_publisher(Bool, 'cli_heartbeat', 10)
-        timer_period = 0.25
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+	def __init__(self):
+		super().__init__('heartbeat')
+		self.publisher_ = self.create_publisher(Bool, 'cli_heartbeat', 10)
+		timer_period = 0.25
+		self.timer = self.create_timer(timer_period, self.timer_callback)
+		if ros_mutex.locked():
+			ros_mutex.release()
 
-    def timer_callback(self):
-        msg = Bool()
-        msg.data = True
-        self.publisher_.publish(msg)
+	def timer_callback(self):
+		if (rclpy.ok()):
+			msg = Bool()
+			msg.data = True
+			self.publisher_.publish(msg)
 		

@@ -60,7 +60,7 @@ def main():
 
 		# if an invalid command is inputted, warn the user
 		if command is None:
-			print(f"{user_input} is not a valid command: type 'help' for valid commands.")
+			print(f"{user_input} is not a valid command. Type 'help' for valid commands.")
 			continue
 
 		# Valid non-robot commands should output their result
@@ -95,7 +95,8 @@ def main():
 	# Stop robot before shutting down cli
 	cli.publish_pwm(EMERGENCY_BRAKES)
 
-	rclpy.shutdown()
+	with ros_mutex:
+		rclpy.shutdown()
 
 	print("Goodbye!")
 
@@ -284,19 +285,19 @@ Returns the number found, or None
 '''
 def find_num_in_string(string):
 	started = False
-	is_decimal = False
+	has_decimal_point = False
 	num = ""
 
 	for char in string:
-		if char.isdigit() or (char == '.' and not is_decimal):
+		if char.isdigit() or (char == '.' and not has_decimal_point):
 			num += str(char)
 			if char == '.':
-				is_decimal = True
+				has_decimal_point = True
 			if not started:
 				started = True
 		elif started:
 			break
-	if num == "":
+	if num == "" or num == ".":
 		return None
 	return num
 
@@ -322,7 +323,10 @@ Spins the HeartbeatPublisher
 Used as a threading target, as thread(rclpy.spin) crashes program
 '''
 def spin_heartbeat():
-	rclpy.spin(HeartbeatPublisher())
+	ros_mutex.acquire()
+	if (rclpy.ok()):
+		sys.stderr.write("RCLPY is okay")
+		rclpy.spin(HeartbeatPublisher())
 
 		
 '''
