@@ -22,8 +22,7 @@ namespace dvl {
         config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
         drr_service = this->create_service<std_srvs::srv::Trigger>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
         gyro_service = this->create_service<std_srvs::srv::Trigger>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
-        set_serr_protocol = this->create_service<custom_interfaces::srv::SetSerial>("set_serial_protocol", std::bind(&dvl::DVL::setSerialProtocol, this, std::placeholders::_1, std::placeholders::_2));
-        trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
+        trigger_ping = this->create_service<std_srvs::srv::Trigger>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
         //Publishers
         velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
@@ -83,7 +82,7 @@ namespace dvl {
         if(getResponse(REC_VR)){
             return vr;
         } else {
-            std::cerr << "Returning error_vr\n";
+            RCLCPP_WARN(this->get_logger(), "Returning error_vr");
             return error_vr;
         }
         
@@ -97,29 +96,6 @@ namespace dvl {
         }
     }
 
-    std::string DVL::readVersion(){
-
-        sendCommand(CMD_GET_VERSION); 
-        
-        if(getResponse(CMD_GET_VERSION)){
-            return version;
-        } else {
-            version = "x.x.x";
-            return version;
-        }
-
-    }
-
-    std::string DVL::readDetails(){
-        sendCommand(CMD_GET_PRODUCT_DETAIL); 
-        
-        if(getResponse(CMD_GET_PRODUCT_DETAIL)){
-            return product_details;
-        } else {
-            return "x,x,x,x";
-        }
-    }
-
     config_report DVL::readConfig(){
         bool success = sendCommand(CMD_GET_SETTINGS); 
         if (success){
@@ -128,7 +104,6 @@ namespace dvl {
             return error_config;
         }
     }
-
 
     // Public Writes
     void DVL::setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response) { /*float speed_of_sound, float mounting_rotation_offset, std::string acoustic_enabled, std::string dark_mode_enabled, std::string range_mode, std::string periodic_cycling_enabled*/
@@ -154,16 +129,10 @@ namespace dvl {
         (void) request; 
     }
 
-    void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
-        sendCommand(CMD_TRIGGER_PING);
-        response->success = getResponse(ACK);
+    void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
+        bool success = sendCommand(CMD_TRIGGER_PING);
+        response->success = success;
         (void) request;
-
-    }
-
-    void DVL::setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response){
-        sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(request->serial)}); //currently only can be used to start serial output
-        response->success = getResponse(ACK);
     }
 
     //Private Methods
@@ -210,7 +179,21 @@ namespace dvl {
     }
 
     void DVL::publishCommandFromSerial(char cmd){
-        getResponse(cmd);
+        if(getResponse(cmd)){
+            switch(cmd){
+                case 'c': // config
+                    publishConfig();
+                    break;
+                case 'z': // velocity report
+                    publishVR();
+                    break;
+                case 'p': // dead reckoning report
+                    publishDRR();
+                    break;
+                default:
+                    break;
+            }   
+        }
     }
     
     bool DVL::getResponse(const char expected_response){
@@ -279,24 +262,6 @@ namespace dvl {
         }
 
         switch (cmd) {
-            case 'v': // protocol version
-                if (complete_line.size() > 4) {
-                    version = complete_line.substr(4);
-                } else {
-                    version = "";
-                    return false;
-                }
-                return true;
-
-            case 'w': // product details
-                if (complete_line.size() > 4) {
-                    product_details = complete_line.substr(4);
-                } else {
-                    product_details = "";
-                    return false;
-                }
-                return true;
-
             case 'a': // acknowledge
                 return true;
 
@@ -317,7 +282,6 @@ namespace dvl {
                 config.range_mode = fields[5];
                 config.periodic_cycling_enabled = fields[6];
 
-                publishConfig();
                 return true;
             }
 
@@ -358,7 +322,6 @@ namespace dvl {
                 vr.time = std::stof(fields[10]);
                 vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
                 
-                publishVR();
                 return true;
             }
 
@@ -379,7 +342,6 @@ namespace dvl {
                 drr.yaw = std::stof(fields[7]);
                 drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
 
-                publishDRR();
                 return true;
             }
 
