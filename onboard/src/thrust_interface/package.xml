@@ -4,16 +4,14 @@
   <name>thrust_interface</name>
   <version>0.0.0</version>
   <description>Software interface for the robot thrusters</description>
-  <maintainer email="crs.aggie@gmail.com">Cyclone RoboSub</maintainer>
+  <maintainer email="crs.aggies@gmail.com">Cyclone RoboSub</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
-
   <depend>custom_interfaces</depend>
-  <depend>std_msg</depend>
+  <depend>std_msgs</depend>
+  <depend>fd_interface</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
