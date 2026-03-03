@@ -22,7 +22,6 @@ namespace dvl {
         config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
         drr_service = this->create_service<std_srvs::srv::Trigger>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
         gyro_service = this->create_service<std_srvs::srv::Trigger>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
-        vr_service = this->create_service<std_srvs::srv::Trigger>("set_vr", std::bind(&dvl::DVL::resetVR, this, std::placeholders::_1, std::placeholders::_2));
         set_serr_protocol = this->create_service<custom_interfaces::srv::SetSerial>("set_serial_protocol", std::bind(&dvl::DVL::setSerialProtocol, this, std::placeholders::_1, std::placeholders::_2));
         trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -141,12 +140,6 @@ namespace dvl {
 
     }
 
-    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
-        bool success = sendCommand(CMD_RESET_VR);
-        response->success = success;
-        (void) request;
-    }
-
     void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
         bool success = sendCommand(CMD_RESET_DR);
         response->success = success; 
@@ -204,7 +197,7 @@ namespace dvl {
             if (n == 1) {
                 if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
-            } else if (n <= 0) {
+            } else if (n < 0) {
                 RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
                 fd->attempt_reconnect();
                 return '0';
@@ -438,7 +431,7 @@ namespace dvl {
         if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd);
         else {
             using clock = std::chrono::steady_clock;
-            constexpr auto TIMEOUT = std::chrono::milliseconds(5000);
+            constexpr auto TIMEOUT = std::chrono::milliseconds(10000);
             auto start = clock::now();
             while(clock::now() - start < TIMEOUT){
                 cmd = getCommandFromSerial(start, TIMEOUT);
@@ -455,7 +448,6 @@ namespace dvl {
     }
 
     void DVL::workLoop() {
-        if(!sendCommand(CMD_RESET_VR)) std::cout<< "error with VR reset\n";
         if(!sendCommand(CMD_RESET_DR)) std::cout<<"error with DR reset\n";
         if(!sendCommand(CMD_CALIBRATE_GYRO)) std::cout<<"error with GYRO rest\n";
        

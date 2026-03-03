@@ -411,29 +411,6 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
  }
 
- TEST_F(TestDVLInterface, DVLResetVRSuccess){
-    create_node();
-    auto client = node->create_client<std_srvs::srv::Trigger>("set_vr");
-    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
-
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(node);
-
-    std::thread spin_thread([&executor]() {
-        executor.spin();
-    });
-
-    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
-    auto future = client->async_send_request(request);
-
-    write_serial_message(ACK_TYPE);
-
-    ASSERT_EQ (future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
-    EXPECT_TRUE(future.get()->success); // request should be recieved by service   
-    executor.cancel();
-    spin_thread.join();
- }
-
  TEST_F(TestDVLInterface, DVLResetDRRSuccess){
     create_node();
     auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
@@ -480,29 +457,6 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     spin_thread.join();
  }
 
- TEST_F(TestDVLInterface, DVLResetVRFail){
-    create_reset_fail_node();
-    auto client = node->create_client<std_srvs::srv::Trigger>("set_vr");
-    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
-
-    rclcpp::executors::SingleThreadedExecutor executor;
-    executor.add_node(node);
-
-    std::thread spin_thread([&executor]() {
-        executor.spin();
-    });
-
-    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
-    auto future = client->async_send_request(request);
-    std::cout << "Future obj created\n";
-    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
-    std::cout << "Beeep boop\n";
-    EXPECT_FALSE(future.get()->success); // request should be recieved by service   
-    executor.cancel();
-    spin_thread.join();
-    close_dev_fd();
- }
-
  TEST_F(TestDVLInterface, DVLResetDRRFail){
     create_reset_fail_node();
     auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
@@ -518,7 +472,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
     auto future = client->async_send_request(request);
     std::cout << "Future obj created\n";
-    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(15)), std::future_status::ready);
     std::cout << "Beeep boop\n";
     EXPECT_FALSE(future.get()->success); // request should be recieved by service   
     executor.cancel();
@@ -541,7 +495,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
     auto future = client->async_send_request(request);
     std::cout << "Future obj created\n";
-    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(15)), std::future_status::ready);
     std::cout << "Beeep boop\n";
     EXPECT_FALSE(future.get()->success); // request should be recieved by service   
     executor.cancel();
