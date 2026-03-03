@@ -22,9 +22,7 @@ namespace dvl {
         config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
         drr_service = this->create_service<std_srvs::srv::Trigger>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
         gyro_service = this->create_service<std_srvs::srv::Trigger>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
-        vr_service = this->create_service<std_srvs::srv::Trigger>("set_vr", std::bind(&dvl::DVL::resetVR, this, std::placeholders::_1, std::placeholders::_2));
-        set_serr_protocol = this->create_service<custom_interfaces::srv::SetSerial>("set_serial_protocol", std::bind(&dvl::DVL::setSerialProtocol, this, std::placeholders::_1, std::placeholders::_2));
-        trigger_ping = this->create_service<std_srvs::srv::SetBool>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
+        trigger_ping = this->create_service<std_srvs::srv::Trigger>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
         //Publishers
         velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
@@ -84,7 +82,7 @@ namespace dvl {
         if(getResponse(REC_VR)){
             return vr;
         } else {
-            std::cerr << "Returning error_vr\n";
+            RCLCPP_WARN(this->get_logger(), "Returning error_vr");
             return error_vr;
         }
         
@@ -98,34 +96,8 @@ namespace dvl {
         }
     }
 
-    std::string DVL::readVersion(){
-
-        sendCommand(CMD_GET_VERSION); 
-        
-        if(getResponse(CMD_GET_VERSION)){
-            //std::cout << version << std::endl;
-            return version;
-        } else {
-            version = "x.x.x";
-            return version;
-        }
-
-    }
-
-    std::string DVL::readDetails(){
-        sendCommand(CMD_GET_PRODUCT_DETAIL); 
-        
-        if(getResponse(CMD_GET_PRODUCT_DETAIL)){
-            return product_details;
-        } else {
-            return "x,x,x,x";
-        }
-    }
-
     config_report DVL::readConfig(){
         bool success = sendCommand(CMD_GET_SETTINGS); 
-        // was originally the same as readDetails, called sendCommand first then used getResponse for if else
-        // since sendCommand calls getResponse now, simplifed it to store success
         if (success){
             return config;
         } else {
@@ -133,18 +105,16 @@ namespace dvl {
         }
     }
 
-
     // Public Writes
     void DVL::setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response) { /*float speed_of_sound, float mounting_rotation_offset, std::string acoustic_enabled, std::string dark_mode_enabled, std::string range_mode, std::string periodic_cycling_enabled*/
-        //to do: add setting args
-        response->success = sendCommand(CMD_SET_SETTINGS, {std::to_string(request->config_data.speed_of_sound),std::to_string(request->config_data.mounting_rotation_offset), request->config_data.acoustic_enabled, request->config_data.range_mode, request->config_data.periodic_cycling_enabled});
-
-    }
-
-    void DVL::resetVR (const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
-        bool success = sendCommand(CMD_RESET_VR);
-        response->success = success;
-        (void) request;
+        response->success = sendCommand(CMD_SET_SETTINGS, 
+            {
+                std::to_string(request->config_data.speed_of_sound),
+                std::to_string(request->config_data.mounting_rotation_offset), 
+                request->config_data.acoustic_enabled, 
+                request->config_data.range_mode, 
+                request->config_data.periodic_cycling_enabled
+            });
     }
 
     void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
@@ -159,16 +129,10 @@ namespace dvl {
         (void) request; 
     }
 
-    void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response){
-        sendCommand(CMD_TRIGGER_PING);
-        response->success = getResponse(ACK);
+    void DVL::triggerPing(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
+        bool success = sendCommand(CMD_TRIGGER_PING);
+        response->success = success;
         (void) request;
-
-    }
-
-    void DVL::setSerialProtocol(const std::shared_ptr<custom_interfaces::srv::SetSerial::Request> request, const std::shared_ptr<custom_interfaces::srv::SetSerial::Response> response){
-        sendCommand(CMD_CHANGE_SER_OUTPUT,{std::to_string(request->serial)}); //currently only can be used to start serial output
-        response->success = getResponse(ACK);
     }
 
     //Private Methods
@@ -177,10 +141,10 @@ namespace dvl {
         ssize_t n = -1;
         char c = '\0';
         
-        while(curr_line.size() < 3){ //keep reading until curr_line is length 3
+        while(curr_line.size() < 3){ // keep reading until curr_line is length 3
             n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
             if (n == 1) {
-                if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
+                if(curr_line.size() == 0 && c != 'w') continue; // keep reading w/o appending, until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
             } else if (n <= 0) {
                 RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
@@ -198,29 +162,38 @@ namespace dvl {
         ssize_t n = -1;
         char c = '\0';
         
-        std::cerr << "getCommandFromSerial Before loop\n";
-
-        while(curr_line.size() < 3 && clock::now() - start < TIMEOUT){ //keep reading until curr_line is length 3
-            std::cerr << "getCommandFromSerial during loop\n";
-            n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
-            // have to open pipe in noncanonical mode
-            std::cerr << "Got pass the read in getCommandFromSerial\n";
-            // not getting pass the read
+        while(curr_line.size() < 3 && clock::now() - start < TIMEOUT){ //keep reading until curr_line is length 3 or times out
+            n = read(fd->get_read_fd(), &c, 1); 
             if (n == 1) {
-                if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
-                curr_line += c; // append to the end of the existing string
-            } else if (n <= 0) {
+                if(curr_line.size() == 0 && c != 'w') continue; 
+                curr_line += c; 
+            } else if (n < 0) {
                 RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
                 fd->attempt_reconnect();
                 return '0';
             }
         }
-        std::cerr << "getCommandFromSerial finish loop\n";
-        return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
+
+        if(curr_line.empty()) return '0';
+        return (curr_line[0] == 'w') ? curr_line[2] : '0'; 
     }
 
     void DVL::publishCommandFromSerial(char cmd){
-        getResponse(cmd);
+        if(getResponse(cmd)){
+            switch(cmd){
+                case 'c': // config
+                    publishConfig();
+                    break;
+                case 'z': // velocity report
+                    publishVR();
+                    break;
+                case 'p': // dead reckoning report
+                    publishDRR();
+                    break;
+                default:
+                    break;
+            }   
+        }
     }
     
     bool DVL::getResponse(const char expected_response){
@@ -247,13 +220,13 @@ namespace dvl {
             }
 
             if (partial_line.empty()) {
-                continue; //loop again if the the partial line is empty
+                continue; // loop again if the the partial line is empty
             }
 
-            complete_line += partial_line; //add the partial line to the complete line
+            complete_line += partial_line; // add the partial line to the complete line
 
             if (partial_line == "\n" || partial_line == "\r") {
-                break; //break out of the reading loop if an end-of-line char is detected
+                break; // break out of the reading loop if an end-of-line char is detected
             }
 
             n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
@@ -273,7 +246,6 @@ namespace dvl {
     }
 
     bool DVL::parseResponse(std::string& complete_line){
-        //std::cout << complete_line << std::endl;
 
         // Make sure we have at least 3 characters to safely access complete_line[2]
         if (complete_line.size() < 3) return false;
@@ -290,25 +262,6 @@ namespace dvl {
         }
 
         switch (cmd) {
-            case 'v': // protocol version
-                if (complete_line.size() > 4) {
-                    version = complete_line.substr(4);
-                    //std::cout << version << std::endl;
-                } else {
-                    version = "";
-                    return false;
-                }
-                return true;
-
-            case 'w': // product details
-                if (complete_line.size() > 4) {
-                    product_details = complete_line.substr(4);
-                } else {
-                    product_details = "";
-                    return false;
-                }
-                return true;
-
             case 'a': // acknowledge
                 return true;
 
@@ -329,7 +282,6 @@ namespace dvl {
                 config.range_mode = fields[5];
                 config.periodic_cycling_enabled = fields[6];
 
-                publishConfig();
                 return true;
             }
 
@@ -370,7 +322,6 @@ namespace dvl {
                 vr.time = std::stof(fields[10]);
                 vr.status = static_cast<uint8_t>(std::stoul(fields[11], nullptr, 10));
                 
-                publishVR();
                 return true;
             }
 
@@ -391,7 +342,6 @@ namespace dvl {
                 drr.yaw = std::stof(fields[7]);
                 drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
 
-                publishDRR();
                 return true;
             }
 
@@ -406,15 +356,13 @@ namespace dvl {
         return false;
     }
 
-    bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string>& options) { //cmd with optional input args
+    bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string>& options) { // cmd with optional input args
         dvl_mutex.lock();
-        //std::cout << cmd << std::endl;
         std::stringstream msg;
 
         // Build message
 
         msg << SOP << DIR_CMD << static_cast<char>(cmd);  // add start character, direction, and command
-        //std::cout << msg.str() << std::endl;
 
         for (const auto& opt : options) {               // add options as comma-separated
             msg << "," << opt;
@@ -426,8 +374,6 @@ namespace dvl {
 
         msg << CS << std::hex << std::setw(2) << std::setfill('0') << (int)crc << "\n";
 
-        //std::cout << msg.str() << std::endl;
-
         // Write to serial port using POSIX write
         std::string data = msg.str();
         ssize_t n = write(fd->get_write_fd(), data.c_str(), data.size());
@@ -437,16 +383,13 @@ namespace dvl {
             dvl_mutex.unlock();
             return false;
         }
-        // ACK was not correct, should get for cmd
         bool success = false;
-        if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd);
-        else {
+        if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd); // if setting config, check serial has published config
+        else { // else wait 15 seconds for an acknowledgement
             using clock = std::chrono::steady_clock;
-            constexpr auto TIMEOUT = std::chrono::milliseconds(100);
+            constexpr auto TIMEOUT = std::chrono::milliseconds(15000);
             auto start = clock::now();
-            std::cerr << "SendCommand Before loop\n";
             while(clock::now() - start < TIMEOUT){
-                std::cerr << "SendCommand during loop\n";
                 cmd = getCommandFromSerial(start, TIMEOUT);
                 if(cmd == ACK){
                     success = true;
@@ -454,15 +397,13 @@ namespace dvl {
                 }
             }
         }
-        std::cerr << "SendCommand after loop" << success << "\n";
         dvl_mutex.unlock();
         return success;
     }
 
     void DVL::workLoop() {
-        if(!sendCommand(CMD_RESET_VR)) std::cout<< "error with VR reset\n";
-        if(!sendCommand(CMD_RESET_DR)) std::cout<<"error with DR reset\n";
-        if(!sendCommand(CMD_CALIBRATE_GYRO)) std::cout<<"error with GYRO rest\n";
+        if(!sendCommand(CMD_RESET_DR)) RCLCPP_WARN(this->get_logger(), "Error with DR reset");
+        if(!sendCommand(CMD_CALIBRATE_GYRO)) RCLCPP_WARN(this->get_logger(), "Error with GYRO rest");
        
         while (rclcpp::ok()) {
             dvl_mutex.lock();
@@ -571,7 +512,7 @@ int DVL_FD::open_file() {
         std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>("/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D30I35JH-if00-port0");
         auto dvl = std::make_shared<dvl::DVL>(std::move(path_fd));
         
-        std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
+        std::thread ros_thread([&]() { 
             rclcpp::spin(dvl);
         });
         
