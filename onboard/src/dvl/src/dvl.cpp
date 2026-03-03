@@ -102,7 +102,6 @@ namespace dvl {
         sendCommand(CMD_GET_VERSION); 
         
         if(getResponse(CMD_GET_VERSION)){
-            //std::cout << version << std::endl;
             return version;
         } else {
             version = "x.x.x";
@@ -123,8 +122,6 @@ namespace dvl {
 
     config_report DVL::readConfig(){
         bool success = sendCommand(CMD_GET_SETTINGS); 
-        // was originally the same as readDetails, called sendCommand first then used getResponse for if else
-        // since sendCommand calls getResponse now, simplifed it to store success
         if (success){
             return config;
         } else {
@@ -135,9 +132,14 @@ namespace dvl {
 
     // Public Writes
     void DVL::setConfig(const std::shared_ptr<custom_interfaces::srv::SetConfig::Request> request, const std::shared_ptr<custom_interfaces::srv::SetConfig::Response> response) { /*float speed_of_sound, float mounting_rotation_offset, std::string acoustic_enabled, std::string dark_mode_enabled, std::string range_mode, std::string periodic_cycling_enabled*/
-        //to do: add setting args
-        response->success = sendCommand(CMD_SET_SETTINGS, {std::to_string(request->config_data.speed_of_sound),std::to_string(request->config_data.mounting_rotation_offset), request->config_data.acoustic_enabled, request->config_data.range_mode, request->config_data.periodic_cycling_enabled});
-
+        response->success = sendCommand(CMD_SET_SETTINGS, 
+            {
+                std::to_string(request->config_data.speed_of_sound),
+                std::to_string(request->config_data.mounting_rotation_offset), 
+                request->config_data.acoustic_enabled, 
+                request->config_data.range_mode, 
+                request->config_data.periodic_cycling_enabled
+            });
     }
 
     void DVL::resetDRR(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response){
@@ -170,10 +172,10 @@ namespace dvl {
         ssize_t n = -1;
         char c = '\0';
         
-        while(curr_line.size() < 3){ //keep reading until curr_line is length 3
+        while(curr_line.size() < 3){ // keep reading until curr_line is length 3
             n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
             if (n == 1) {
-                if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
+                if(curr_line.size() == 0 && c != 'w') continue; // keep reading w/o appending, until the start of a data sequence is reached
                 curr_line += c; // append to the end of the existing string
             } else if (n <= 0) {
                 RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
@@ -191,12 +193,11 @@ namespace dvl {
         ssize_t n = -1;
         char c = '\0';
         
-        while(curr_line.size() < 3 && clock::now() - start < TIMEOUT){ //keep reading until curr_line is length 3
-            n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
-            // not getting pass the read
+        while(curr_line.size() < 3 && clock::now() - start < TIMEOUT){ //keep reading until curr_line is length 3 or times out
+            n = read(fd->get_read_fd(), &c, 1); 
             if (n == 1) {
-                if(curr_line.size() == 0 && c != 'w') continue; //keep reading until the start of a data sequence is reached
-                curr_line += c; // append to the end of the existing string
+                if(curr_line.size() == 0 && c != 'w') continue; 
+                curr_line += c; 
             } else if (n < 0) {
                 RCLCPP_WARN(this->get_logger(), "Failed to read from serial port. Attempting to reconnect to DVL.");
                 fd->attempt_reconnect();
@@ -205,7 +206,7 @@ namespace dvl {
         }
 
         if(curr_line.empty()) return '0';
-        return (curr_line[0] == 'w') ? curr_line[2] : '0'; //checks if curr_line is a command 
+        return (curr_line[0] == 'w') ? curr_line[2] : '0'; 
     }
 
     void DVL::publishCommandFromSerial(char cmd){
@@ -236,13 +237,13 @@ namespace dvl {
             }
 
             if (partial_line.empty()) {
-                continue; //loop again if the the partial line is empty
+                continue; // loop again if the the partial line is empty
             }
 
-            complete_line += partial_line; //add the partial line to the complete line
+            complete_line += partial_line; // add the partial line to the complete line
 
             if (partial_line == "\n" || partial_line == "\r") {
-                break; //break out of the reading loop if an end-of-line char is detected
+                break; // break out of the reading loop if an end-of-line char is detected
             }
 
             n = read(fd->get_read_fd(), &c, 1); // read 1 byte from the serial port
@@ -262,7 +263,6 @@ namespace dvl {
     }
 
     bool DVL::parseResponse(std::string& complete_line){
-        //std::cout << complete_line << std::endl;
 
         // Make sure we have at least 3 characters to safely access complete_line[2]
         if (complete_line.size() < 3) return false;
@@ -282,7 +282,6 @@ namespace dvl {
             case 'v': // protocol version
                 if (complete_line.size() > 4) {
                     version = complete_line.substr(4);
-                    //std::cout << version << std::endl;
                 } else {
                     version = "";
                     return false;
@@ -395,15 +394,13 @@ namespace dvl {
         return false;
     }
 
-    bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string>& options) { //cmd with optional input args
+    bool DVL::sendCommand(uint8_t cmd, const std::vector<std::string>& options) { // cmd with optional input args
         dvl_mutex.lock();
-        //std::cout << cmd << std::endl;
         std::stringstream msg;
 
         // Build message
 
         msg << SOP << DIR_CMD << static_cast<char>(cmd);  // add start character, direction, and command
-        //std::cout << msg.str() << std::endl;
 
         for (const auto& opt : options) {               // add options as comma-separated
             msg << "," << opt;
@@ -415,8 +412,6 @@ namespace dvl {
 
         msg << CS << std::hex << std::setw(2) << std::setfill('0') << (int)crc << "\n";
 
-        //std::cout << msg.str() << std::endl;
-
         // Write to serial port using POSIX write
         std::string data = msg.str();
         ssize_t n = write(fd->get_write_fd(), data.c_str(), data.size());
@@ -426,12 +421,11 @@ namespace dvl {
             dvl_mutex.unlock();
             return false;
         }
-        // ACK was not correct, should get for cmd
         bool success = false;
-        if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd);
-        else {
+        if (cmd == CMD_GET_SETTINGS) success = getResponse(cmd); // if setting config, check serial has published config
+        else { // else wait 15 seconds for an acknowledgement
             using clock = std::chrono::steady_clock;
-            constexpr auto TIMEOUT = std::chrono::milliseconds(10000);
+            constexpr auto TIMEOUT = std::chrono::milliseconds(15000);
             auto start = clock::now();
             while(clock::now() - start < TIMEOUT){
                 cmd = getCommandFromSerial(start, TIMEOUT);
@@ -441,15 +435,13 @@ namespace dvl {
                 }
             }
         }
-        if(success) std::cout << "SendCommand after loop: Successful!\n";
-        else std::cout << "SendCommand after loop: Failed :(\n";
         dvl_mutex.unlock();
         return success;
     }
 
     void DVL::workLoop() {
-        if(!sendCommand(CMD_RESET_DR)) std::cout<<"error with DR reset\n";
-        if(!sendCommand(CMD_CALIBRATE_GYRO)) std::cout<<"error with GYRO rest\n";
+        if(!sendCommand(CMD_RESET_DR)) RCLCPP_WARN(this->get_logger(), "Error with DR reset");
+        if(!sendCommand(CMD_CALIBRATE_GYRO)) RCLCPP_WARN(this->get_logger(), "Error with GYRO rest");
        
         while (rclcpp::ok()) {
             dvl_mutex.lock();
@@ -558,7 +550,7 @@ int DVL_FD::open_file() {
         std::unique_ptr<FD_Interface> path_fd = std::make_unique<DVL_FD>("/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_D30I35JH-if00-port0");
         auto dvl = std::make_shared<dvl::DVL>(std::move(path_fd));
         
-        std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
+        std::thread ros_thread([&]() { 
             rclcpp::spin(dvl);
         });
         

@@ -62,9 +62,9 @@ protected:
     void create_reset_fail_node(){
         struct termios tty;
         int dev_fd = open("/dev/null", O_RDWR);
-        if (tcgetattr(dev_fd, &tty) != 0) std::cout<<"Failed to get terminal attributes\n";
+        tcgetattr(dev_fd, &tty);
         tty.c_lflag = 0; // non-canonical mode
-        if (tcsetattr(dev_fd, TCSANOW, &tty) != 0) std::cout<<"Failed to set terminal attributes\n";
+        tcsetattr(dev_fd, TCSANOW, &tty);
 
         std::unique_ptr<FD_Interface> dev_null_fd = std::make_unique<Direct_FD>(dev_fd, node_write_pipe_fds[1]);
         node = std::make_shared<DVL>(std::move(dev_null_fd));
@@ -220,6 +220,9 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     EXPECT_EQ(vr.valid, 'n'); 
  }
 
+ /**
+ * @brief Test DVL reading a bad velocity report, ie missing covariance values
+ */
  TEST_F(TestDVLInterface, BadVelocityReport){
     create_node();
     velocity_report vr;
@@ -251,7 +254,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     //check if drr was read correctly
     drr = node->readDRReport();
-    EXPECT_EQ(drr.time_stamp, 0); //time stamp is never set? ask Kory??
+    EXPECT_EQ(drr.time_stamp, 0); 
     EXPECT_FLOAT_EQ(drr.x, 1716814976.000000);
     EXPECT_FLOAT_EQ(drr.roll, 15.4);
     EXPECT_EQ(drr.status, 3);
@@ -296,13 +299,6 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     node->publishCommandFromSerial(cmd);
     exec.spin_some();
 
-    /*
-    "\t\tz,1.000000,2.000000,3.000000," //vx, vy, vz
-        ",2.000000,1.000000," //valid, altitude, fom
-    "1.000000,2.000000,3.000000,4.000000,5.000000," //covariance
-                "1.000000,2.000000,3.000000,4.000000," //covariance
-                "1,2,3.000000,0,\n"; //time of validity, time of transmission, time, status
-    */
     EXPECT_EQ(most_recent_velocity_report.velocity_data.x, 1.000000);
     EXPECT_EQ(most_recent_velocity_report.velocity_data.y, 2.000000);
     EXPECT_EQ(most_recent_velocity_report.velocity_data.z, 3.000000);
@@ -367,9 +363,6 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     node->publishCommandFromSerial(cmd);
     exec.spin_some();
 
-    //"\t\tp,1716814976.000000,0.110000,0.280000,0.040000," //x, y, z, pos_std
-    //"15.400000,-1.100000,-0.300000,3,\n"; //roll, pitch, yaw, status
-
     EXPECT_EQ(most_recent_drr_report.time_stamp, 0);
     EXPECT_FLOAT_EQ(most_recent_drr_report.position.x, 1716814976.000000);
     EXPECT_FLOAT_EQ(most_recent_drr_report.position.y, 0.110000);
@@ -400,9 +393,6 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     node->publishCommandFromSerial(cmd);
     exec.spin_some();
 
-    //"wrc,1475.000000,0.000000,y" //speed of sound, mounting rotation offset, acoustic enabled
-    //"n,auto,y\r\n\r"; //dark mode enabled, range mode, periodic cycling enabled
-
     EXPECT_FLOAT_EQ(most_recent_config_report.speed_of_sound, 1475.000000);
     EXPECT_FLOAT_EQ(most_recent_config_report.mounting_rotation_offset, 0.000000);
     EXPECT_EQ(most_recent_config_report.acoustic_enabled, "y");
@@ -411,6 +401,9 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     EXPECT_EQ(most_recent_config_report.periodic_cycling_enabled, "y");
  }
 
+ /**
+ * @brief Test DVL successfully resetting DRR
+ */
  TEST_F(TestDVLInterface, DVLResetDRRSuccess){
     create_node();
     auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
@@ -434,6 +427,9 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     spin_thread.join();
  }
 
+ /**
+ * @brief Test DVL successfully resetting GYRO
+ */
  TEST_F(TestDVLInterface, DVLResetGyroSuccess){
     create_node();
     auto client = node->create_client<std_srvs::srv::Trigger>("set_gyro");
@@ -457,6 +453,9 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     spin_thread.join();
  }
 
+ /**
+ * @brief Test DVL resetting DRR with no acknowledgement
+ */
  TEST_F(TestDVLInterface, DVLResetDRRFail){
     create_reset_fail_node();
     auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
@@ -471,16 +470,17 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
     auto future = client->async_send_request(request);
-    std::cout << "Future obj created\n";
-    ASSERT_EQ(future.wait_for(std::chrono::seconds(15)), std::future_status::ready);
-    std::cout << "Beeep boop\n";
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(16)), std::future_status::ready);
     EXPECT_FALSE(future.get()->success); // request should be recieved by service   
     executor.cancel();
     spin_thread.join();
     close_dev_fd();
  }
 
-  TEST_F(TestDVLInterface, DVLResetGyroFail){
+ /**
+ * @brief Test DVL resetting GYRO with no acknowledgement
+ */
+ TEST_F(TestDVLInterface, DVLResetGyroFail){
     create_reset_fail_node();
     auto client = node->create_client<std_srvs::srv::Trigger>("set_gyro");
     ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
@@ -494,9 +494,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();    
     auto future = client->async_send_request(request);
-    std::cout << "Future obj created\n";
-    ASSERT_EQ(future.wait_for(std::chrono::seconds(15)), std::future_status::ready);
-    std::cout << "Beeep boop\n";
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(16)), std::future_status::ready);
     EXPECT_FALSE(future.get()->success); // request should be recieved by service   
     executor.cancel();
     spin_thread.join();
