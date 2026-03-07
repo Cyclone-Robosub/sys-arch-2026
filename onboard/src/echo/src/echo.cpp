@@ -221,9 +221,9 @@ void Echo_TUI::display_tui(va_list args) {
 
     switch (current_state) {
         case Get_Command:
-            printf("Select whether you would like to read or write to/from the PWM log file.\n");
-            printf("[0]: Write mode\n");
-            printf("[1]: Read mode\n");
+            printf("Select whether you would like to record or replay to/from the PWM log file.\n");
+            printf("[0]: Record mode\n");
+            printf("[1]: Replay mode\n");
             printf("[E]: Exit\n");
             printf("Mode: ");
             break;
