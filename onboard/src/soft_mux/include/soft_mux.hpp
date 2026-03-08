@@ -75,7 +75,7 @@ class SoftMux : public rclcpp::Node {
 
         int control_mode;
         bool no_ctrl_heartbeat;
-        bool no_joystick_heartbeat;
         bool no_cli_heartbeat;
         bool no_echo_heartbeat;
+        bool no_joystick_heartbeat;
 };
