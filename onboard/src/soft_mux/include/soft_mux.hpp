@@ -58,6 +58,7 @@ class SoftMux : public rclcpp::Node {
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cli_subscriber;
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_echo_subscriber;
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr ctrl_heartbeat_subscriber;
+        rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr joystick_heartbeat_subscriber;
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr cli_heartbeat_subscriber;
        
         rclcpp::Publisher<custom_interfaces::msg::Pwms>::SharedPtr pwm_cmd_publisher;

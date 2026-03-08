@@ -11,6 +11,7 @@ SoftMux::SoftMux() : rclcpp::Node("SoftMux"), control_mode(Disabled), no_ctrl_he
     pwm_cli_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_cli", 10, std::bind(&SoftMux::pwm_cli_callback, this, std::placeholders::_1));
     pwm_echo_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_echo", 10, std::bind(&SoftMux::pwm_echo_callback, this, std::placeholders::_1));
     ctrl_heartbeat_subscriber = this->create_subscription<std_msgs::msg::Bool>("ctrl_heartbeat", 10, std::bind(&SoftMux::ctrl_heartbeat_callback, this, std::placeholders::_1));
+    joystick_heartbeat_subscriber = this->create_subscription<std_msgs::msg::Bool>("joystick_heartbeat", 10, std::bind(&SoftMux::joystick_heartbeat_callback, this, std::placeholders::_1));
     cli_heartbeat_subscriber= this->create_subscription<std_msgs::msg::Bool>("cli_heartbeat",10, std::bind(&SoftMux::cli_heartbeat_callback, this, std::placeholders::_1));
     cli_heartbeat_subscriber= this->create_subscription<std_msgs::msg::Bool>("echo_heartbeat",10, std::bind(&SoftMux::echo_heartbeat_callback, this, std::placeholders::_1));
 
