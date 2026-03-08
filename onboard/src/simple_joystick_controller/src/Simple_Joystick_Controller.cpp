@@ -63,7 +63,7 @@ void Simple_Joystick_Controller::Simple_Jo_Publisher_setupImpl_m(const
   rmw_qos_profile_t qos_profile;
   sJ4ih70VmKcvCeguWN0mNVF lifespan;
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
-  char_T b_zeroDelimTopic[10];
+  char_T b_zeroDelimTopic[14];
   qos_profile = rmw_qos_profile_default;
 
   // Start for MATLABSystem: '<S9>/SinkBlock'
@@ -79,7 +79,7 @@ void Simple_Joystick_Controller::Simple_Jo_Publisher_setupImpl_m(const
                  Simple_Joystick_Controller_B.deadline, lifespan,
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
-  for (int32_T i{0}; i < 10; i++) {
+  for (int32_T i{0}; i < 14; i++) {
     // Start for MATLABSystem: '<S9>/SinkBlock'
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
