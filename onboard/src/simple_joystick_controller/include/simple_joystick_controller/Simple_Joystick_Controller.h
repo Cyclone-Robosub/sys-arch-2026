@@ -28,8 +28,8 @@ struct B_Simple_Joystick_Controller_T {
   SL_Bus_custom_interfaces_Pwms BusCreator3;// '<S4>/Bus Creator3'
   SL_Bus_custom_interfaces_Gamepad In1;// '<S6>/In1'
   SL_Bus_custom_interfaces_Gamepad rtb_SourceBlock_o2_m;
-  char_T b_zeroDelimTopic[16];
-  char_T b_zeroDelimTopic_c[16];
+  char_T b_zeroDelimTopic[20];
+  char_T b_zeroDelimTopic_c[20];
   sJ4ih70VmKcvCeguWN0mNVF deadline;
   real_T pwms_vert_idx_0;
   real_T pwms_vert_idx_1;

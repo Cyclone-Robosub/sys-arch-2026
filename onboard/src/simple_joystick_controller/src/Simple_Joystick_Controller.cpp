@@ -91,7 +91,7 @@ void Simple_Joystick_Controller::Simple_Jo_Publisher_setupImpl_m(const
 void Simple_Joystick_Controller::Simple_Joys_Publisher_setupImpl(const
   ros_slros2_internal_block_Pub_T *obj)
 {
-  static const char_T b_zeroDelimTopic[16]{ "/ctrl_heartbeat" };
+  static const char_T b_zeroDelimTopic[20]{ "/joystick_heartbeat" };
 
   rmw_qos_profile_t qos_profile;
   sJ4ih70VmKcvCeguWN0mNVF deadline;
@@ -111,7 +111,7 @@ void Simple_Joystick_Controller::Simple_Joys_Publisher_setupImpl(const
                  RMW_QOS_POLICY_RELIABILITY_RELIABLE, deadline, lifespan,
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
-  for (int32_T i{0}; i < 16; i++) {
+  for (int32_T i{0}; i < 20; i++) {
     // Start for MATLABSystem: '<S7>/SinkBlock'
     Simple_Joystick_Controller_B.b_zeroDelimTopic[i] = b_zeroDelimTopic[i];
   }
