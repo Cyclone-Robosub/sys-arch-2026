@@ -9,7 +9,7 @@
 #include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 
-enum ControlMode {Disabled=0, CLI=1, CTRL=2, Echo=3};
+enum ControlMode {Disabled=0, CLI=1, CTRL=2, JOYSTICK=3, Echo=4};
 
 
 class SoftMux : public rclcpp::Node {
@@ -29,6 +29,7 @@ class SoftMux : public rclcpp::Node {
         friend class TestSoftMuxInterface_DisabledPublishesStopSets_Test;
         SoftMux();
         void pwm_ctrl_callback(custom_interfaces::msg::Pwms::UniquePtr pwm);
+        void pwm_joystick_callback(custom_interfaces::msg::Pwms::UniquePtr pwm);
         void pwm_cli_callback(custom_interfaces::msg::Pwms::UniquePtr pwm);
         void pwm_echo_callback(custom_interfaces::msg::Pwms::UniquePtr pwm);
         void set_mode_srv(const std::shared_ptr<custom_interfaces::srv::ControlMode::Request> request);
@@ -37,6 +38,8 @@ class SoftMux : public rclcpp::Node {
         void heartbeat_callback();
         void ctrl_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
         void ctrl_heartbeat_check();
+        void joystick_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
+        void joystick_heartbeat_check();
         void cli_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
         void cli_heartbeat_check();
         void echo_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
@@ -51,6 +54,7 @@ class SoftMux : public rclcpp::Node {
         rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr force_pub_service;
        
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_ctrl_subscriber;
+        rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_joystick_subscriber;
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cli_subscriber;
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_echo_subscriber;
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr ctrl_heartbeat_subscriber;
@@ -63,12 +67,14 @@ class SoftMux : public rclcpp::Node {
         rclcpp::TimerBase::SharedPtr heartbeat_timer;
 
         std::chrono::time_point<std::chrono::steady_clock> recent_ctrl_heartbeat;
+        std::chrono::time_point<std::chrono::steady_clock> recent_joystick_heartbeat;
         std::chrono::time_point<std::chrono::steady_clock> recent_cli_heartbeat;
         std::chrono::time_point<std::chrono::steady_clock> recent_echo_heartbeat;
 
 
         int control_mode;
         bool no_ctrl_heartbeat;
+        bool no_joystick_heartbeat;
         bool no_cli_heartbeat;
         bool no_echo_heartbeat;
 };

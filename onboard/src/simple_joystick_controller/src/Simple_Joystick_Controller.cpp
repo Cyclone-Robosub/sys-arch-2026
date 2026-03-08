@@ -58,7 +58,7 @@ void Simple_Joystick_Controller::Simple_Joy_Subscriber_setupImpl(const
 void Simple_Joystick_Controller::Simple_Jo_Publisher_setupImpl_m(const
   ros_slros2_internal_block_Pub_T *obj)
 {
-  static const char_T b_zeroDelimTopic_0[10]{ "/pwm_ctrl" };
+  static const char_T b_zeroDelimTopic_0[14]{ "/pwm_joystick" };
 
   rmw_qos_profile_t qos_profile;
   sJ4ih70VmKcvCeguWN0mNVF lifespan;

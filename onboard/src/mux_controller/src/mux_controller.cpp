@@ -86,7 +86,7 @@ void Mux_Controller::work_loop() {
             tui->unfreeze_display();
             break;
         }
-        if (current_input[string_index] != '\n' || (mode != '0' && mode != '1' && mode != '2' && mode != '3')) {
+        if (current_input[string_index] != '\n' || (mode != '0' && mode != '1' && mode != '2' && mode != '3' && mode != '4')) {
             printf("Invalid command. Try again: ");
             fflush(stdout);
             while (current_input[string_index] != '\n') {
@@ -129,6 +129,9 @@ void Mux_Controller_TUI::display_tui(va_list args) {
                 printf("matlab (ctrl)");
                 break;
             case 3:
+                printf("joystick");
+                break;
+            case 4:
                 printf("echo (playback)");
                 break;
         }
@@ -138,7 +141,8 @@ void Mux_Controller_TUI::display_tui(va_list args) {
     printf("[0]: Disabled\n");
     printf("[1]: CLI mode\n");
     printf("[2]: Matlab mode\n");
-    printf("[3]: Echo mode\n");
+    printf("[3]: Joystick mode\n");
+    printf("[4]: Echo mode\n");
     printf("[E]: Exit\n");
     printf("Mode: ");
     fflush(stdout);

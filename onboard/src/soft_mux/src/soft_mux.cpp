@@ -7,6 +7,7 @@ using namespace std::chrono_literals;
 SoftMux::SoftMux() : rclcpp::Node("SoftMux"), control_mode(Disabled), no_ctrl_heartbeat(true), no_cli_heartbeat(true), no_echo_heartbeat(true) {
     //Inputs
     pwm_ctrl_subscriber = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_ctrl", 10, std::bind(&SoftMux::pwm_ctrl_callback, this, std::placeholders::_1));
+    pwm_joystick_subscriber = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_joystick", 10, std::bind(&SoftMux::pwm_joystick_callback, this, std::placeholders::_1));
     pwm_cli_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_cli", 10, std::bind(&SoftMux::pwm_cli_callback, this, std::placeholders::_1));
     pwm_echo_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_echo", 10, std::bind(&SoftMux::pwm_echo_callback, this, std::placeholders::_1));
     ctrl_heartbeat_subscriber = this->create_subscription<std_msgs::msg::Bool>("ctrl_heartbeat", 10, std::bind(&SoftMux::ctrl_heartbeat_callback, this, std::placeholders::_1));
@@ -36,6 +37,15 @@ void SoftMux::pwm_ctrl_callback(custom_interfaces::msg::Pwms::UniquePtr pwm) {
         return;
     }
     if (control_mode == CTRL) {
+        pwm_cmd_publish(std::move(pwm));
+    }
+}
+
+void SoftMux::pwm_joystick_callback(custom_interfaces::msg::Pwms::UniquePtr pwm) {
+    if (no_joystick_heartbeat) {
+        return;
+    }
+    if (control_mode == JOYSTICK) {
         pwm_cmd_publish(std::move(pwm));
     }
 }
@@ -97,6 +107,7 @@ void SoftMux::ctrl_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat) 
 void SoftMux::heartbeat_callback() {
     mux_heartbeat_send();
     ctrl_heartbeat_check();
+    joystick_heartbeat_check();
     cli_heartbeat_check();
     echo_heartbeat_check();
     publish_stop_if_disabled();
@@ -112,6 +123,28 @@ void SoftMux::ctrl_heartbeat_check() {
         }
         else {
             no_ctrl_heartbeat = false;
+        }
+    }
+}
+
+void SoftMux::joystick_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat) {
+    recent_joystick_heartbeat = std::chrono::steady_clock::now();
+    if (no_joystick_heartbeat) {
+        no_joystick_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
+    }
+    (void) heartbeat; // stop compiler complaining about unused variables
+}
+
+void SoftMux::joystick_heartbeat_check() {
+    if (control_mode == JOYSTICK) {
+        auto current_time = std::chrono::steady_clock::now();
+        if (current_time - recent_joystick_heartbeat > 1s) {
+            RCLCPP_INFO(this->get_logger(), "Didn't get heartbeat from joystick. Sending stop command.");
+            no_joystick_heartbeat = true;
+            publish_stop_command();
+        }
+        else {
+            no_joystick_heartbeat = false;
         }
     }
 }
