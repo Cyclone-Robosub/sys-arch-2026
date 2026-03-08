@@ -237,12 +237,16 @@ namespace dvl {
             }
         }
 
-        bool parse_is_success = parseResponse(complete_line);
+        bool parse_is_success;
 
-        if (parse_is_success && complete_line[2] == expected_response) {
-            return true;
+        try {
+            parse_is_success = parseResponse(complete_line);
+        } catch (const std::exception& e) {
+            parse_is_success = false;
         }
-        return false;
+        
+
+        return parse_is_success && complete_line[2] == expected_response;
     }
 
     bool DVL::parseResponse(std::string& complete_line){
