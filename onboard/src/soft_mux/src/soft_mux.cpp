@@ -4,7 +4,7 @@
 using namespace std::chrono_literals;
 
 
-SoftMux::SoftMux() : rclcpp::Node("SoftMux"), control_mode(Disabled), no_ctrl_heartbeat(true), no_cli_heartbeat(true), no_echo_heartbeat(true) {
+SoftMux::SoftMux() : rclcpp::Node("SoftMux"), control_mode(Disabled), no_ctrl_heartbeat(true), no_cli_heartbeat(true), no_echo_heartbeat(true), no_joystick_heartbeat(true) {
     //Inputs
     pwm_ctrl_subscriber = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_ctrl", 10, std::bind(&SoftMux::pwm_ctrl_callback, this, std::placeholders::_1));
     pwm_joystick_subscriber = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_joystick", 10, std::bind(&SoftMux::pwm_joystick_callback, this, std::placeholders::_1));
