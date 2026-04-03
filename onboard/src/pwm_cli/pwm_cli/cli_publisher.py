@@ -3,14 +3,8 @@
 import rclpy
 from rclpy.node import Node
 
-from threading import Lock
-
 from custom_interfaces.msg import Pwms
 from std_msgs.msg import Bool
-
-import sys
-
-ros_mutex = Lock()
 
 
 '''
@@ -38,8 +32,6 @@ class HeartbeatPublisher(Node):
 		self.publisher_ = self.create_publisher(Bool, 'cli_heartbeat', 10)
 		timer_period = 0.25
 		self.timer = self.create_timer(timer_period, self.timer_callback)
-		if ros_mutex.locked():
-			ros_mutex.release()
 
 	def timer_callback(self):
 		if (rclpy.ok()):

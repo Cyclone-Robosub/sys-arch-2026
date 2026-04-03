@@ -95,8 +95,7 @@ def main():
 	# Stop robot before shutting down cli
 	cli.publish_pwm(EMERGENCY_BRAKES)
 
-	with ros_mutex:
-		rclpy.shutdown()
+	rclpy.shutdown()
 
 	print("Goodbye!")
 
@@ -323,10 +322,10 @@ Spins the HeartbeatPublisher
 Used as a threading target, as thread(rclpy.spin) crashes program
 '''
 def spin_heartbeat():
-	ros_mutex.acquire()
-	if (rclpy.ok()):
-		sys.stderr.write("RCLPY is okay")
-		rclpy.spin(HeartbeatPublisher())
+	while (not rclpy.ok):
+		pass
+	rclpy.spin(HeartbeatPublisher())
+	
 
 		
 '''
