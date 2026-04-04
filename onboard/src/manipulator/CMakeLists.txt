@@ -9,7 +9,6 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(custom_interfaces REQUIRED)
 find_package(fd_interface REQUIRED)
 
 # Include directories
@@ -21,7 +20,6 @@ include_directories(
 add_executable(manipulator src/manipulator.cpp)
 ament_target_dependencies(manipulator
   rclcpp
-  custom_interfaces
   std_msgs
   fd_interface
 )
@@ -39,7 +37,6 @@ if(BUILD_TESTING)
   target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
   ament_target_dependencies(${PROJECT_NAME}_lib
     rclcpp
-    custom_interfaces
     std_msgs
     fd_interface
   )
@@ -58,7 +55,6 @@ if(BUILD_TESTING)
   )
   ament_target_dependencies(${PROJECT_NAME}_test
     rclcpp
-    custom_interfaces
     std_msgs
     fd_interface
   )

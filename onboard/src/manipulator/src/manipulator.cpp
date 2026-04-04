@@ -1,109 +1,49 @@
-#include "thrust_interface.hpp"
+#include "manipulator.hpp"
 #include <vector>
 
 using namespace std::chrono_literals;
 using namespace rclcpp;
 
-Thrust_Interface::Thrust_Interface(std::vector<int> thrusters, 
-                                   std::unique_ptr<FD_Interface> pico_fd, 
-                                   int min_pwm, int max_pwm) :
-    Node("thrust_interface"), 
-    thrusters(thrusters), 
-    pico_fd(std::move(pico_fd)),
-    min_pwm(min_pwm), 
-    max_pwm(max_pwm),
-    no_heartbeat(true)
+Manipulator::Manipulator(std::unique_ptr<FD_Interface> arduino_fd) :
+    Node("manipulator"), 
+    arduino_fd(std::move(arduino_fd))
      {
     
-    pwm_received_subscription = this->create_subscription<custom_interfaces::msg::Pwms>(
-        "pwm_cmd", 10, 
-        std::bind(&Thrust_Interface::pwm_received_subscription_callback, this, std::placeholders::_1));
-
-    heartbeat_subscription = this->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, 
-            std::bind(&Thrust_Interface::mux_heartbeat_received_callback, this, std::placeholders::_1));
-    
-    heartbeat_timer = this->create_wall_timer(500ms, 
-            std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer
-}
-    
-void Thrust_Interface::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
-    if (no_heartbeat) {
-        return;
-    }
-    std::array<int, 8> pwms = pwms_msg->pwms;
-    
-    for (int i = 0; i < 8; i++) {
-        if (pwms[i] != 0) {
-            pwms[i] = std::max(pwms[i], min_pwm);
-            pwms[i] = std::min(pwms[i], max_pwm);
-        }
-        send_pwm_to_pico(thrusters[i], pwms[i]);
-    }
+    command_received_subscription = this->create_subscription<std_msgs::msg::UInt8>(
+        "manipulator_cmd", 10, 
+        std::bind(&Manipulator::command_received_subscription_callback, this, std::placeholders::_1));
 }
 
-void Thrust_Interface::mux_heartbeat_received_callback(std_msgs::msg::Bool::UniquePtr heartbeat) {
-    most_recent_heartbeat = std::chrono::steady_clock::now();
-    if (no_heartbeat) {
-        no_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
+bool Manipulator::is_valid_command(uint8_t command) {
+    return command == 0 || command == 1;
+}
+    
+void Manipulator::command_received_subscription_callback(std_msgs::msg::UInt8 command) {
+    uint8_t manipulator_command = command.data;
+    if (is_valid_command(manipulator_command)) {
+        send_command_to_arduino(manipulator_command);
     }
-    (void)heartbeat; // stop compiler complaining
+    
 }
 
-void Thrust_Interface::evaluate_mux_heartbeat_freshness() {
-    auto current_time = std::chrono::steady_clock::now();
-    if (current_time - most_recent_heartbeat > 1s) {
-        RCLCPP_INFO(this->get_logger(), "Didn't get heartbeat from mux. Sending stop command.");
-        no_heartbeat = true;
-        for (int i = 0; i < 8; i++) {
-            send_pwm_to_pico(thrusters[i], 1500);
-        }
-    }
-    else {
-        no_heartbeat = false;
-    }
-}
-void Thrust_Interface::send_heartbeat_to_pico() {
-    std::string serial_message = "ping\n";
+void Manipulator::send_command_to_arduino(uint8_t command) {
+    std::string serial_message = std::to_string(command)+ "\r\n";
     int length = serial_message.size();
     
-    serial_mutex.lock();
-    ssize_t bytes_written = write(pico_fd->get_write_fd(), serial_message.c_str(), length);
-    serial_mutex.unlock();
+    ssize_t bytes_written = write(arduino_fd->get_write_fd(), serial_message.c_str(), length);
     
     if (bytes_written != length) {
         RCLCPP_WARN(this->get_logger(), 
-                    "Failed to ping Pico (wrote %zd/%d bytes)", 
+                    "Failed to write complete to manipulator (wrote %zd/%d bytes)", 
                     bytes_written, length);
-        RCLCPP_WARN(this->get_logger(), "Attempting to reconnect to Pico."); // Just do it here so we only try every 1/2 second
-        pico_fd->attempt_reconnect();
     }
 }
 
-void Thrust_Interface::heartbeat_callback() {
-    send_heartbeat_to_pico();
-    evaluate_mux_heartbeat_freshness();
-}
-
-void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
-    std::string serial_message = "Set " + std::to_string(thruster) + " PWM " + std::to_string(pwm) + "\n";
-    int length = serial_message.size();
-    
-    serial_mutex.lock();
-    ssize_t bytes_written = write(pico_fd->get_write_fd(), serial_message.c_str(), length);
-    serial_mutex.unlock();
-    
-    if (bytes_written != length) {
-        RCLCPP_WARN(this->get_logger(), 
-                    "Failed to write complete message for thruster %d (wrote %zd/%d bytes)", 
-                    thruster, bytes_written, length);
-    }
-}
-
-Pico_FD::Pico_FD(std::string path) : Path_FD(path) {
+Arduino_FD::Arduino_FD(std::string path) : Path_FD(path) {
     fd = open_file();
 }
 
-int Pico_FD::open_file() {
+int Arduino_FD::open_file() {
     struct termios options;
     speed_t baud = 115200;
     int status, fd;
@@ -146,11 +86,10 @@ int Pico_FD::open_file() {
 #ifndef ENABLE_TESTING
 
 int main(int argc, char* argv[]) {
-    std::vector<int> thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
-    std::unique_ptr<FD_Interface> fd = std::make_unique<Pico_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
+    std::unique_ptr<FD_Interface> fd = std::make_unique<Arduino_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00"); // TODO replace with real ID
     rclcpp::init(argc, argv);
-    auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, std::move(fd), 1200, 1800);
-    rclcpp::spin(thrust_interface);
+    auto manipulator = std::make_shared<Manipulator>(std::move(fd));
+    rclcpp::spin(manipulator);
     
     rclcpp::shutdown();
     
