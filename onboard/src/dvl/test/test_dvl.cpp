@@ -142,8 +142,8 @@ protected:
             break;
         case DRR_TYPE:
             msg =
-                "wrp,1716814976.000000,0.110000,0.280000,0.040000," //x, y, z, pos_std
-                "15.400000,-1.100000,-0.300000,3\r\n\r"; //roll, pitch, yaw, status
+                "wrp,1716814976.000000,0.110000,0.280000,0.040000," //timestamp, x, y, z
+                "15.400000,-1.100000,-0.300000,18.800000, 0\r\n\r"; //pos_std, roll, pitch, yaw, status
             break;
         case CONFIG_TYPE:
             msg =
@@ -254,10 +254,10 @@ TEST_F(TestDVLInterface, DVLConstruction) {
 
     //check if drr was read correctly
     drr = node->readDRReport();
-    EXPECT_EQ(drr.time_stamp, 0); 
-    EXPECT_FLOAT_EQ(drr.x, 1716814976.000000);
-    EXPECT_FLOAT_EQ(drr.roll, 15.4);
-    EXPECT_EQ(drr.status, 3);
+    EXPECT_EQ(drr.time_stamp, 1716814976.000000); 
+    EXPECT_FLOAT_EQ(drr.x, 0.110000);
+    EXPECT_FLOAT_EQ(drr.roll, -1.100000);
+    EXPECT_EQ(drr.status, 0);
  }
 
  /**
@@ -363,15 +363,15 @@ TEST_F(TestDVLInterface, DVLConstruction) {
     node->publishCommandFromSerial(cmd);
     exec.spin_some();
 
-    EXPECT_EQ(most_recent_drr_report.time_stamp, 0);
-    EXPECT_FLOAT_EQ(most_recent_drr_report.position.x, 1716814976.000000);
-    EXPECT_FLOAT_EQ(most_recent_drr_report.position.y, 0.110000);
-    EXPECT_FLOAT_EQ(most_recent_drr_report.position.z, 0.280000);
-    EXPECT_FLOAT_EQ(most_recent_drr_report.pos_std, 0.040000);
-    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.x, 15.400000);
-    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.y, -1.100000);
-    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.z, -0.300000);
-    EXPECT_EQ(most_recent_drr_report.status, 3);
+    EXPECT_EQ(most_recent_drr_report.time_stamp, 1716814976.000000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.position.x, 0.110000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.position.y, 0.280000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.position.z, 0.040000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.pos_std, 15.400000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.x, -1.100000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.y, -0.300000);
+    EXPECT_FLOAT_EQ(most_recent_drr_report.angle.z, 18.800000);
+    EXPECT_EQ(most_recent_drr_report.status, 0);
  }
 
   /**

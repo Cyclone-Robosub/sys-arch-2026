@@ -237,12 +237,16 @@ namespace dvl {
             }
         }
 
-        bool parse_is_success = parseResponse(complete_line);
+        bool parse_is_success;
 
-        if (parse_is_success && complete_line[2] == expected_response) {
-            return true;
+        try {
+            parse_is_success = parseResponse(complete_line);
+        } catch (const std::exception& e) {
+            parse_is_success = false;
         }
-        return false;
+        
+
+        return parse_is_success && complete_line[2] == expected_response;
     }
 
     bool DVL::parseResponse(std::string& complete_line){
@@ -333,14 +337,15 @@ namespace dvl {
 
                 if (fields.size() < 9) return false;
 
-                drr.x = std::stof(fields[1]);
-                drr.y = std::stof(fields[2]);
-                drr.z = std::stof(fields[3]);
-                drr.pos_std = std::stof(fields[4]);
-                drr.roll = std::stof(fields[5]);
-                drr.pitch = std::stof(fields[6]);
-                drr.yaw = std::stof(fields[7]);
-                drr.status = static_cast<uint8_t>(std::stoul(fields[8], nullptr, 10));
+                drr.time_stamp = std::stof(fields[1]);
+                drr.x = std::stof(fields[2]);
+                drr.y = std::stof(fields[3]);
+                drr.z = std::stof(fields[4]);
+                drr.pos_std = std::stof(fields[5]);
+                drr.roll = std::stof(fields[6]);
+                drr.pitch = std::stof(fields[7]);
+                drr.yaw = std::stof(fields[8]);
+                drr.status = static_cast<uint8_t>(std::stoul(fields[9], nullptr, 10));
 
                 return true;
             }
