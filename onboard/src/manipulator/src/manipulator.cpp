@@ -1,5 +1,6 @@
 #include "manipulator.hpp"
 #include <vector>
+#include <iostream>
 
 using namespace std::chrono_literals;
 using namespace rclcpp;
@@ -8,34 +9,34 @@ Manipulator::Manipulator(std::unique_ptr<FD_Interface> arduino_fd) :
     Node("manipulator"), 
     arduino_fd(std::move(arduino_fd))
      {
-    
     command_received_subscription = this->create_subscription<std_msgs::msg::UInt8>(
         "manipulator_cmd", 10, 
         std::bind(&Manipulator::command_received_subscription_callback, this, std::placeholders::_1));
 }
 
 bool Manipulator::is_valid_command(uint8_t command) {
-    return command == 0 || command == 1;
+    return command == 1 || command == 2;
 }
     
-void Manipulator::command_received_subscription_callback(std_msgs::msg::UInt8 command) {
-    uint8_t manipulator_command = command.data;
+void Manipulator::command_received_subscription_callback(std_msgs::msg::UInt8::UniquePtr command) {
+    uint8_t manipulator_command = command->data;
     if (is_valid_command(manipulator_command)) {
-        send_command_to_arduino(manipulator_command);
+        send_command_to_arduino(manipulator_command + 48); // +48 to offset to 1/2
+        usleep(2000000);  // 2000ms
+        send_command_to_arduino('r'); // Go back to reset position
     }
-    
 }
 
-void Manipulator::send_command_to_arduino(uint8_t command) {
-    std::string serial_message = std::to_string(command)+ "\r\n";
+void Manipulator::send_command_to_arduino(char command) {
+    std::string serial_message = std::string(1,command) + "\r\n";
     int length = serial_message.size();
     
     ssize_t bytes_written = write(arduino_fd->get_write_fd(), serial_message.c_str(), length);
     
     if (bytes_written != length) {
-        RCLCPP_WARN(this->get_logger(), 
-                    "Failed to write complete to manipulator (wrote %zd/%d bytes)", 
-                    bytes_written, length);
+        // RCLCPP_WARN(this->get_logger(), 
+        //             "Failed to write complete to manipulator (wrote %zd/%d bytes)", 
+        //             bytes_written, length);
     }
 }
 

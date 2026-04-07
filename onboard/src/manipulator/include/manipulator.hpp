@@ -2,7 +2,6 @@
 #define THRUST_INTERFACE_HPP
 
 #include <rclcpp/rclcpp.hpp>
-#include <custom_interfaces/msg/pwms.hpp>
 #include "std_msgs/msg/u_int8.hpp"
 #include "fd_interface.hpp"
 #include <mutex>
@@ -25,8 +24,8 @@ public:
     Manipulator(std::unique_ptr<FD_Interface> arduino_fd);
 
 private:
-    void command_received_subscription_callback(std_msgs::msg::UInt8 command);
-    void send_command_to_arduino(uint8_t command);
+    void command_received_subscription_callback(std_msgs::msg::UInt8::UniquePtr command);
+    void send_command_to_arduino(char command);
     bool is_valid_command(uint8_t command);
     
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr command_received_subscription;
