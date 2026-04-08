@@ -34,9 +34,10 @@ void Manipulator::send_command_to_arduino(char command) {
     ssize_t bytes_written = write(arduino_fd->get_write_fd(), serial_message.c_str(), length);
     
     if (bytes_written != length) {
-        // RCLCPP_WARN(this->get_logger(), 
-        //             "Failed to write complete to manipulator (wrote %zd/%d bytes)", 
-        //             bytes_written, length);
+        RCLCPP_WARN(this->get_logger(), 
+                    "Failed to write complete to manipulator (wrote %zd/%d bytes)", 
+                    bytes_written, length);
+        arduino_fd->attempt_reconnect();
     }
 }
 
@@ -46,7 +47,7 @@ Arduino_FD::Arduino_FD(std::string path) : Path_FD(path) {
 
 int Arduino_FD::open_file() {
     struct termios options;
-    speed_t baud = 115200;
+    speed_t baud = 9600;
     int status, fd;
     
     if ((fd = open(path.c_str(), O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK)) == -1) {
