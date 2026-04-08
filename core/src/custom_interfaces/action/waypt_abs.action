@@ -1,0 +1,8 @@
+float32[] waypt
+bool[] mask
+float32 hold_time
+---
+string result
+---
+float32[] delta 
+# delta is defined as goal - current position

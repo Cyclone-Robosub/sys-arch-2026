@@ -1,0 +1,8 @@
+float32[] world_waypt
+bool[] waypt_mask
+string object
+---
+string result
+---
+float32[] delta 
+# delta is defined as goal - current position
