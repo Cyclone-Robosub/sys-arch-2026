@@ -76,6 +76,7 @@ def main():
 		elif command.confirm_command():
 			cli.publish_pwm(command.pwm)
 			if (command.time != -1):
+				# TODO: Only stops a previous timed command if another timed command is being run. Needs to also shut down prev with an untimed command
 				if timed_command_thread is not None and timed_command_thread.is_alive():
 					timer_running = False
 					timed_command_thread.join()
@@ -206,14 +207,15 @@ def translate_command(command):
 	if "custom" in command and '[' in command and ']' in command:
 		cmd.name = "Custom pwm"
 		flt = get_custom_pwm(command[command.index("["):])
-		frt = get_custom_pwm(command[command.index("{flt}") + len(flt):])
-		rlt = get_custom_pwm(command[command.index("{frt}") + len(frt):])
-		rrt = get_custom_pwm(command[command.index("{rlt}") + len(rlt):])
-		flb = get_custom_pwm(command[command.index("{rrt}") + len(rrt):])
-		frb = get_custom_pwm(command[command.index("{flb}") + len(flb):])
-		rlb = get_custom_pwm(command[command.index("{frb}") + len(frb):])
-		rrb = get_custom_pwm(command[command.index("{rlb}") + len(rlb):])
-		extra = get_custom_pwm(command[command.index("{rrb}") + len(rrb):])
+		frt = get_custom_pwm(command[command.index(f"{flt}") + len(flt):])
+		rlt = get_custom_pwm(command[command.index(f"{frt}") + len(frt):])
+		rrt = get_custom_pwm(command[command.index(f"{rlt}") + len(rlt):])
+		flb = get_custom_pwm(command[command.index(f"{rrt}") + len(rrt):])
+		frb = get_custom_pwm(command[command.index(f"{flb}") + len(flb):])
+		rlb = get_custom_pwm(command[command.index(f"{frb}") + len(frb):])
+		rrb = get_custom_pwm(command[command.index(f"{rlb}") + len(rlb):])
+		extra = get_custom_pwm(command[command.index(f"{rrb}") + len(rrb):])
+		# TODO: Code breaks if the same number is inputted multiple times. Best solution is likely to store the index where each number is found
 		if (flt is not None and frt is not None and rlt is not None and rrt is not None 
 				and flb is not None and frb is not None and rlb is not None and rrb is not None and extra is None):
 			cmd.pwm = [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
@@ -260,10 +262,16 @@ def get_current_command():
 	global current_command
 	if current_command.name == "Stop":
 		return "There is no currently active command\n"
-	elif current_command.time == -1:
-		return f"Current Command: {current_command.name} at {current_command.power}% power\n"
-	else:
-		return f"Current Command: {current_command.name} for {current_command.time} seconds at {current_command.power}% power\n"
+	
+	# Current command string start is dependent on whether the command is a custom pwm
+	str_start = f"Current Command: Custom pwm {current_command.pwm}" \
+				if current_command.name == "Custom pwm" \
+				else f"Current Command: {current_command.name} at {current_command.power}% power"
+	
+	# Current command string end is dependent on whether the command is timed
+	str_end = "\n" if current_command.time == -1 else f" for {current_command.time} seconds"
+
+	return str_start + str_end
 
 
 '''
@@ -387,7 +395,12 @@ class RobotCommand():
 	Returns whether the command should be run
 	'''
 	def confirm_command(self):
-		if self.time == -1:
-			return confirm(f"Are you sure you want to {self.name} at {self.power}% power until stopped? [yes/no]\n")
-		else:
-			return confirm(f"Are you sure you want to {self.name} at {self.power}% power for {self.time} seconds? [yes/no]\n")
+		# Confirmation string start is dependent on whether the command is a custom pwm
+		str_start = f"Are you sure you want to run the Custom pwm {self.pwm}" \
+					if self.name == "Custom pwm" \
+					else f"Are you sure you want to {self.name} at {self.power}% power"
+		# Confirmation string end is dependent on whether the command is timed
+		str_end = " until stopped? [yes/no]\n" if self.time == -1 else f" for {self.time} seconds? [yes/no]\n"
+		confirm_str = str_start + str_end
+
+		return confirm(confirm_str)

@@ -24,7 +24,8 @@ def simulate_input():
 	builtins.input = store_input
 
 '''
-DESCRIPTION
+Pass by parameter for any tests that need to check print() results
+Stores default print() function to reset when test is finished running
 '''
 @pytest.fixture
 def catch_output():
@@ -35,7 +36,8 @@ def catch_output():
 	builtins.print = store_print
 
 '''
-DESCRIPTION
+Outputs the next string in a list each time it is called
+Used to override input() function for testing the main loop of cli_console
 '''
 def input_iterator(outputs: list[str]):
 	iterator = iter(outputs)
@@ -79,11 +81,11 @@ def test_invalid_commands(simulate_input, catch_output):
 
 # Tests that cli_console can handle invalid time inputs
 def test_invalid_times(simulate_input, catch_output):
-	builtins.input = input_iterator(["time: ", "t: ", "time: . ", "t: . ", "", "end session"])
+	builtins.input = input_iterator(["time: ", "t: ", "time: . ", "t: . ", "end session"])
 	main()
 	output_list = catch_output
-	# assert output_list[INFO_OFFSET] == ""
-	# Include assertions for all values in iterator
+	for out_num in range(0, 4):
+		assert output_list[INFO_OFFSET + out_num] == "Invalid time inputted\n"
 
 
 # Tests that cli_console can handle invalid power inputs
@@ -91,7 +93,7 @@ def test_invalid_powers(simulate_input, catch_output):
 	builtins.input = input_iterator(["power: ", "p: ", "power: . ", "p: . ", "p: 999", "end session"])
 	main()
 	output_list = catch_output
-	# assert output_list[INFO_OFFSET] == ""
-	# Include assertions for all values in iterator
+	for out_num in range(0, 5):
+		assert output_list[INFO_OFFSET + out_num] == "Invalid power inputted\n"
 
 
