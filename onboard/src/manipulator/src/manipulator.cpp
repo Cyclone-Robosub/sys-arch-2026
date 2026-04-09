@@ -88,7 +88,7 @@ int Arduino_FD::open_file() {
 #ifndef ENABLE_TESTING
 
 int main(int argc, char* argv[]) {
-    std::unique_ptr<FD_Interface> fd = std::make_unique<Arduino_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00"); // TODO replace with real ID
+    std::unique_ptr<FD_Interface> fd = std::make_unique<Arduino_FD>("/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_34331323635351B01182-if00");
     rclcpp::init(argc, argv);
     auto manipulator = std::make_shared<Manipulator>(std::move(fd));
     rclcpp::spin(manipulator);
