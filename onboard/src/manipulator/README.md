@@ -1,16 +1,23 @@
 # `manipulator`
 
-# TODO: Make correct (replace thrust_interface stuff)
-
 ## What is it?
-This ROS node communicates with the Pi Pico over serial, sending PWM signals that it has received from `soft_mux`. It expects to find the Pico in `/dev/serial/by-id/PICO_ID`. If you replace the Pico, you'll need to update the this file path to the correct Pico ID in the `main()` method in `thrust_interface.cpp`.
+The `manipulator` node provides a way for our system to deploy the dropper through ROS2. It listens on a single topic (`manipulator_cmd`) for either a 1 or a 2. If it receives a 1 it deploys dropper 1, and if it receives a 2 it deploys dropper 2. In either case, there is a 2-second period after a deployment in which the deployment thread blocks while waiting to subsequently reset the dropper back to its rest position. It is recommended to wait until a dropper has finished its deployment (2 seconds) before requesting another deployment. It sends its messages over UART to an Arduino Uno, which then adjusts the servo on the dropper to the correct position.
 
 ## How do I use it?
-To communicate with this node, publish PWMs that you want to send to the Pi Pico on the `pwm_cmd` topic, and publish a heartbeat on the `mux_heartbeat` topic. This heartbeat must be published at least once per second, or the node will send a stop command (all 1500 PWMs) to the Pico. It's recommended to publish the heartbeat every half a second to prevent unintentional stop commands. `thrust_interface` itself doesn't publish to any topics.
+Once the node is running, publish a 1 on the `manipulator_cmd` topic (accepts a ROS2 standard message type of unsigned 8-bit integer) to deploy dropper 1 and a 2 to deploy dropper 2. Wait 2 seconds between dropper deployments to allow the dropper to return to its rest state.
 
-## What nodes/topics/services does depend on?
-- Nodes: none in particular, but will need some node to publish to the topics it's subscribed to (below)
-- Topics:
-    - `pwm_cmd`: contains the list of 8 PWM signals that should be sent to the robot thrusters
-    - `mux_heartbeat`: used to determine if we have an established connection to `soft_mux`.
-- Services: none
+The package and node are both called `manipulator`, so you can run the node with `ros2 run manipulator manipulator`.
+
+## What topics/services does the package use for input?
+- Topics: `manipulator_cmd`: an unsigned 8-bit integer for which dropper to release
+- Services: None
+
+## What topics/services does the package use for output?
+- Topics: None
+- Services: None
+
+## What custom message types or libraries does the package use?
+- Messages: None
+- Services: None
+- Libraries:
+    - `fd_interface`
