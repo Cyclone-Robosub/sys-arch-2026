@@ -11,3 +11,4 @@ string result
 # Feedback
 # delta is defined as goal - current position
 float64[6] delta
+float64 time_in_tolerance
