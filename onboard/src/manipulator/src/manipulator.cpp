@@ -21,7 +21,7 @@ bool Manipulator::is_valid_command(uint8_t command) {
 void Manipulator::command_received_subscription_callback(std_msgs::msg::UInt8::UniquePtr command) {
     uint8_t manipulator_command = command->data;
     if (is_valid_command(manipulator_command)) {
-        send_command_to_arduino(manipulator_command + OFFSET_TO_ONE); // +48 to offset to 1/2
+        send_command_to_arduino(manipulator_command + OFFSET_TO_ONE); // Convert raw number to ASCII
         usleep(2000000);  // 2000ms
         send_command_to_arduino('r'); // Go back to reset position
     }
