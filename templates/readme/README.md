@@ -8,8 +8,8 @@ Provide the necessary instructions to interact with the project from a user (not
 
 Provide launch instructions for each node in the package (i.e. `ros2 run package_name node_name` or a launch file instruction).
 
-## What topics/services does the package provide?
-This is for topics and services that the package publishes to or services that it responds to when called (i.e. its outputs). List them and provide a brief description of what they mean (for topics) or do (for services).
+## What topics/services does the package use for input?
+This is for topics that the package subscribes to and services that it responds to when called. List them and provide a brief description of what they mean and are used for.
 - Topics:
     - `topic_name`: description
     - `topic_name`: description
@@ -17,8 +17,8 @@ This is for topics and services that the package publishes to or services that i
     - `service_name`: description
     - `service_name`: description
 
-## What topics/services does the package listen to/call?
-This is for topics and services that the package subscribes to or calls (i.e. its inputs), rather than providing for other packages to use. List them and provide a brief description of what they are used for.
+## What topics/services does the package use for output?
+This is for topics that the package publishes to and services that it calls. List them and provide a brief description of what they meand and are used for.
 - Topics:
     - `topic_name`: description
     - `topic_name`: description
