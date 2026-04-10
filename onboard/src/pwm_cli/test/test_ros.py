@@ -160,7 +160,13 @@ def test_pwm_powers(setup_publish_pwm):
 
 	# Checks that default power sends the right pwms
 	check_all_commands(publisher, 1780, 1220)
-	# TODO: Add multiple other calls to check_all_commands()
+	check_all_commands(publisher, 1900, 1100, 100)
+	check_all_commands(publisher, 1500, 1500, 0.1)
+	check_all_commands(publisher, 1700, 1300, 50)
+	check_all_commands(publisher, 1672, 1328, 43.25)
+	check_all_commands(publisher, 1608, 1392, 27.76)
+	check_all_commands(publisher, 1884, 1116, 96.44)
+	check_all_commands(publisher, 1516, 1484, 4.46)
 
 
 	# --- ROS Node Tests ---
