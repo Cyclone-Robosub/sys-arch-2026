@@ -1,6 +1,14 @@
-string trick
-
-float hold_time
+# Goal
+string trick                        
+float64[6] trick_end_body_waypoint
+bool[6] waypoint_mask               # [1,1,1,1,1,1] = Default to ROS param if unspecified
+float64 hold_time
+# Tolerance is set from the blackboard
+# float64[6] tolerance
 ---
-
+# Result
+bool success
 ---
+# Feedback
+float64[6] current_pose
+float64 time_in_tolerance

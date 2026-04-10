@@ -1,0 +1,14 @@
+# Goal
+float64[] trackPos
+bool[6] waypoint_mask  
+string object
+# Tolerance is set from the blackboard
+# float64[6] tolerance
+float64 hold_time
+---
+# Result
+string result
+---
+# Feedback
+float64[] delta 
+# delta is defined as tracking Position - current Position

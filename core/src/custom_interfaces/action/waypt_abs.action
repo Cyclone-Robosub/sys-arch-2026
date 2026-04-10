@@ -1,8 +1,13 @@
-float32[] waypt
-bool[] mask
-float32 hold_time
+# Goal
+float64[6] waypoint
+bool[6] waypoint_mask
+float64 hold_time
+# Tolerance is set from the blackboard
+# float64[6] tolerance
 ---
+# Result
 string result
 ---
-float32[] delta 
+# Feedback
 # delta is defined as goal - current position
+float64[6] delta
