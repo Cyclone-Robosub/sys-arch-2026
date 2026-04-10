@@ -1,5 +1,5 @@
-#ifndef THRUST_INTERFACE_HPP
-#define THRUST_INTERFACE_HPP
+#ifndef MANIPULATOR_HPP
+#define MANIPULATOR_HPP
 
 #include <rclcpp/rclcpp.hpp>
 #include "std_msgs/msg/u_int8.hpp"
@@ -22,6 +22,7 @@ public:
 class Manipulator : public rclcpp::Node {
 public:
     Manipulator(std::unique_ptr<FD_Interface> arduino_fd);
+    const int OFFSET_TO_ONE = 48;
 
 private:
     void command_received_subscription_callback(std_msgs::msg::UInt8::UniquePtr command);
@@ -32,4 +33,4 @@ private:
     std::unique_ptr<FD_Interface> arduino_fd;
 };
 
-#endif // THRUST_INTERFACE_HPP
+#endif // MANIPULATOR_HPP
