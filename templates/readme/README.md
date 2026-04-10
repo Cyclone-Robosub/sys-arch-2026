@@ -1,21 +1,42 @@
-# `mux_controller`
+# `package_name`
 
 ## What is it?
-This is a small terminal program to control the `soft_mux` node (i.e. to switch between listening to the CLI or listening to Matlab). It monitors the current mux mode and updates when it changes, whether the change was initiated by `mux_controller` or a different node.
+Provide an overview of the package. Specify what it does and how it integrates with the rest of our system, and and provide a brief overview of how it works on a high level.
 
 ## How do I use it?
-Run it in the terminal, and type either `0` or `1` to select which input `soft_mux` listens to. If you get a message saying `No heartbeat detected from Mux!`, `soft_mux` probably isn't running or isn't able to connect to this program. Check that you're on the same network as `soft_mux`.
+Provide the necessary instructions to interact with the project from a user (not developer) perspective. For example, if your package has a user interface, specify valid inputs and the corresponding behaviour/output. Specify any common error messages or user mistakes, and resolutions.
 
-The package and node are both called `mux_controller`, so to run it type `ros2 run mux_controller mux_controller`.
+Provide launch instructions for each node in the package (i.e. `ros2 run package_name node_name` or a launch file instruction).
 
-## What nodes/topics/services does depend on?
-- Node: `softmux`
+## What topics/services does the package provide?
+This is for topics and services that the package publishes to or services that it responds to when called (i.e. its outputs). List them and provide a brief description of what they mean (for topics) or do (for services).
 - Topics:
-    - `current_mode`: used to determine what mode `soft_mux` is currently in.
-    - `mux_heartbeat`: used to determine if we have an established connection to `soft_mux`.
+    - `topic_name`: description
+    - `topic_name`: description
 - Services:
-    - `control_mode`: used to modify (set) the current control mode on `soft_mux`.
-    - `force_pub`: used when `mux_controller` needs to request the current control mode during startup (`soft_mux` otherwise only publishes when its mode changes).
+    - `service_name`: description
+    - `service_name`: description
 
-## What's up with the crazy input parsing stuff going on in the code?
-In order to handle screen refreshes erasing typed input, we want to maintain our own input buffer that we can discard whenever the screen is refreshed. In order to do this, we have to read in text *before* the user hits \<Enter\>. From what I can tell, this can only really be done in non-canonical input mode, which also has the effect of treating control characters (like backspace, arrow keys, etc.) as regular input characters, and therefore creating a very unintuitive and annoying user experience. To mitigate this, I have implemented my own rudimentary input parser that handles common control characters as expected. If you have a better, more elegant solution, feel free to improve it! I know it's pretty intense.
+## What topics/services does the package listen to/call?
+This is for topics and services that the package subscribes to or calls (i.e. its inputs), rather than providing for other packages to use. List them and provide a brief description of what they are used for.
+- Topics:
+    - `topic_name`: description
+    - `topic_name`: description
+- Services:
+    - `service_name`: description
+    - `service_name`: description
+
+## What custom message types or libraries does the package use?
+This is the place to list all custom messages, services, or libraries (from `/core/src`) that are used in the project. An example of a custom message is `Gamepad.msg`; an example of a custom service is `ControlMode.srv`; an example of of a custom library is `fd_interface`. This provides an easy way to check for breaking changes when we update our API. A simple list sufficies here.
+- Messages:
+    - `message_type`
+    - `message_type`
+- Services:
+    - `service_type`
+    - `service_type`
+- Libraries:
+    - `library`
+    - `library`
+
+## Notes (Optional)
+If there is any extra information that would be useful for a fellow team member to understand the project, include it here.
