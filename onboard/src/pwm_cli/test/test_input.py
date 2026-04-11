@@ -104,10 +104,50 @@ def test_invalid_powers(simulate_input, catch_output):
 	for out_num in range(0, 5):
 		assert output_list[INFO_OFFSET + out_num] == "Invalid power inputted\n"
 
+
+def test_invalid_custom_pwms(simulate_input, catch_output):
+	builtins.input = input_iterator([\
+		"custom [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000]",
+		"custom [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]",
+		"custom [1000]",
+		"custom [1500]",
+		"custom [2000]",
+		"custom [2000, 1000]",
+		"custom [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]",
+		"custom [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]",
+		"custom [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500] p: 50 t: 20",
+		"custom p: 50 t: 20 [1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500]",
+		"end session"])
+	main()
+	output_list = catch_output
+	assert output_list[INFO_OFFSET] == "Invalid custom pwms inputted: ['1000', '1000', '1000', '1000', '1000', '1000', '1000', '1000']\n"
+	assert output_list[INFO_OFFSET+1] == "Invalid custom pwms inputted: ['2000', '2000', '2000', '2000', '2000', '2000', '2000', '2000']\n"
+	assert output_list[INFO_OFFSET+2] == "Invalid custom pwms inputted: ['1000'] (Note: 1 pwm recieved, expected 8)\n"
+	assert output_list[INFO_OFFSET+3] == "Invalid custom pwms inputted: ['1500'] (Note: 1 pwm recieved, expected 8)\n"
+	assert output_list[INFO_OFFSET+4] == "Invalid custom pwms inputted: ['2000'] (Note: 1 pwm recieved, expected 8)\n"
+	assert output_list[INFO_OFFSET+5] == "Invalid custom pwms inputted: ['2000', '1000'] (Note: 2 pwms recieved, expected 8)\n"
+	assert output_list[INFO_OFFSET+6] == "Invalid custom pwms inputted: ['2000', '2000', '2000', '2000', '2000', '2000', '2000', '2000', '2000'] (Note: 9 pwms recieved, expected 8)\n"
+	assert output_list[INFO_OFFSET+7] == "Invalid custom pwms inputted: ['1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500'] (Note: 9 pwms recieved, expected 8)\n"
+	assert output_list[INFO_OFFSET+8] == "Invalid custom pwms inputted: ['1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500'] (Note: 9 pwms recieved, expected 8)\n"
+
+
 # Test that the custom pwm command can handle repeated PWMS.
-def test_repeated_custom_pwm(simulate_input, catch_output):
+def test_repeated_custom_pwms(simulate_input, catch_output):
 	builtins.input = input_iterator(["custom [1500, 1200, 1500, 1200, 1500, 1200, 1500, 1200]", "yes", "current command", "end session"])
 	main()
 	output_list = catch_output
 	pwms = ['1500', '1200', '1500', '1200', '1500', '1200', '1500', '1200']
 	assert output_list[INFO_OFFSET] == f"Current Command: Custom pwm {pwms}\n"
+
+def test_custom_pwms(simulate_input, catch_output):
+	builtins.input = input_iterator([\
+		"custom [1500, 1400, 1300, 1200, 1100, 1250, 1550, 1900]", "yes", "current command",\
+		"custom [1500, 1400, 1300, 1200, 1100, 1250, 1550, 1900] t: 5", "yes", "current command",\
+		"custom t: 5 [1500, 1400, 1300, 1200, 1100, 1250, 1550, 1900]", "yes", "current command",\
+		"end session"])
+	main()
+	output_list = catch_output
+	pwms = ['1500', '1400', '1300', '1200', '1100', '1250', '1550', '1900']
+	assert output_list[INFO_OFFSET] == f"Current Command: Custom pwm {pwms}\n"
+	assert output_list[INFO_OFFSET+1] == f"Current Command: Custom pwm {pwms} for 5 seconds\n"
+	assert output_list[INFO_OFFSET+2] == f"Current Command: Custom pwm {pwms} for 5 seconds\n"

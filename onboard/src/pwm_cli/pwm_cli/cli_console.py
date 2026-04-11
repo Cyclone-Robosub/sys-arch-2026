@@ -209,38 +209,31 @@ def translate_command(command):
 
 		# Let the substring be the command starting that the opening square bracket
 		ss = command[command.index("["):]
-		# Find the first pwm
-		flt = get_custom_pwm(ss)
+		
+		# Ensures the pwms will not be read past the closing square bracket ']'
+		ending_len = len(command[command.index("]"):])
 
-		# For each following pwm, search for the next pwm in the substring starting after the previous pwm
-		ss = ss[ss.index(f"{flt}") + len(flt):]
-		frt = get_custom_pwm(ss)
+		pwms = []
+		# While there are still numbers in the pwm array, search for the next pwm in the substring starting after the previous pwm
+		while ss and len(ss) > ending_len:
+			pwms.append(find_num_in_string(ss))
+			# If another number is not read in the string
+			if (pwms[-1] is None):
+				pwms.pop()
+				break
+			# Update the substring to remove the just-added number
+			ss = ss[ss.index(f"{pwms[-1]}") + len(pwms[-1]):]
 
-		ss = ss[ss.index(f"{frt}") + len(frt):]
-		rlt = get_custom_pwm(ss)
-
-		ss = ss[ss.index(f"{rlt}") + len(rlt):]
-		rrt = get_custom_pwm(ss)
-
-		ss = ss[ss.index(f"{rrt}") + len(rrt):]
-		flb = get_custom_pwm(ss)
-
-		ss = ss[ss.index(f"{flb}") + len(flb):]
-		frb = get_custom_pwm(ss)
-
-		ss = ss[ss.index(f"{frb}") + len(frb):]
-		rlb = get_custom_pwm(ss)
-
-		ss = ss[ss.index(f"{rlb}") + len(rlb):]
-		rrb = get_custom_pwm(ss)
-
-		ss = ss[ss.index(f"{rrb}") + len(rrb):]
-		extra = get_custom_pwm(ss)
-
-		if (flt is not None and frt is not None and rlt is not None and rrt is not None 
-				and flb is not None and frb is not None and rlb is not None and rrb is not None and extra is None):
-			cmd.pwm = [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
+		cmd.pwm = pwms
+		# If 8 pwms were entered and every pwm is a valid pwm,
+		if (len(cmd.pwm) == 8) and (all(i is not None and int(i) >= 1100 and int(i) <= 1900 for i in cmd.pwm)):
 			return cmd
+		else:
+			# Prints: "Invalid custom pwms inputted: [...] (Note: X pwms recieved, expected 8)\n"
+			return f"Invalid custom pwms inputted: {cmd.pwm}" +\
+				   (f" (Note: {len(cmd.pwm)} pwm" + ( "" if len(cmd.pwm) == 1 else "s") + " recieved, expected 8)\n"
+				   if (not len(cmd.pwm) == 8)
+				   else "\n")
 
 	return None
 
@@ -290,21 +283,9 @@ def get_current_command():
 				else f"Current Command: {current_command.name} at {current_command.power}% power"
 	
 	# Current command string end is dependent on whether the command is timed
-	str_end = "\n" if current_command.time == -1 else f" for {current_command.time} seconds"
+	str_end = "\n" if current_command.time == -1 else f" for {current_command.time} seconds\n"
 
 	return str_start + str_end
-
-
-'''
-Uses find_num_in_string() to look for a valid pwm value (between 1100 and 1900)
-string is the string to look through
-returns pwm if valid, or None otherwise
-'''
-def get_custom_pwm(string):
-	pwm = find_num_in_string(string)
-	if pwm is not None and int(pwm) >= 1100 and int(pwm) <= 1900:
-		return pwm
-	return None
 
 '''
 Looks through a string for the first number in it
