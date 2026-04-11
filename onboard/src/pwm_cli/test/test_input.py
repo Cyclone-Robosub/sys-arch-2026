@@ -41,7 +41,7 @@ Used to override input() function for testing the main loop of cli_console
 '''
 def input_iterator(outputs: list[str]):
 	iterator = iter(outputs)
-	def my_input(input):
+	def my_input(input = None):
 		return next(iterator)
 	return my_input
 
@@ -96,4 +96,9 @@ def test_invalid_powers(simulate_input, catch_output):
 	for out_num in range(0, 5):
 		assert output_list[INFO_OFFSET + out_num] == "Invalid power inputted\n"
 
-
+def test_repeated_custom_pwm(simulate_input, catch_output):
+	builtins.input = input_iterator(["custom [1500, 1200, 1500, 1200, 1500, 1200, 1500, 1200]", "yes", "current command", "end session"])
+	main()
+	output_list = catch_output
+	pwms = ['1500', '1200', '1500', '1200', '1500', '1200', '1500', '1200']
+	assert output_list[INFO_OFFSET] == f"Current Command: Custom pwm {pwms}\n"

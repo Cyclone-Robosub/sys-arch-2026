@@ -206,16 +206,37 @@ def translate_command(command):
 	# custom pwm syntax: "Custom pwm [flt, frt, rlt, rrt, flb, frb, rlb, rrb]"
 	if "custom" in command and '[' in command and ']' in command:
 		cmd.name = "Custom pwm"
-		flt = get_custom_pwm(command[command.index("["):])
-		frt = get_custom_pwm(command[command.index(f"{flt}") + len(flt):])
-		rlt = get_custom_pwm(command[command.index(f"{frt}") + len(frt):])
-		rrt = get_custom_pwm(command[command.index(f"{rlt}") + len(rlt):])
-		flb = get_custom_pwm(command[command.index(f"{rrt}") + len(rrt):])
-		frb = get_custom_pwm(command[command.index(f"{flb}") + len(flb):])
-		rlb = get_custom_pwm(command[command.index(f"{frb}") + len(frb):])
-		rrb = get_custom_pwm(command[command.index(f"{rlb}") + len(rlb):])
-		extra = get_custom_pwm(command[command.index(f"{rrb}") + len(rrb):])
-		# TODO: Code breaks if the same number is inputted multiple times. Best solution is likely to store the index where each number is found
+
+		# Let the substring be the command starting that the opening square bracket
+		ss = command[command.index("["):]
+		# Find the first pwm
+		flt = get_custom_pwm(ss)
+
+		# For each following pwm, search for the next pwm in the substring starting after the previous pwm
+		ss = ss[ss.index(f"{flt}") + len(flt):]
+		frt = get_custom_pwm(ss)
+
+		ss = ss[ss.index(f"{frt}") + len(frt):]
+		rlt = get_custom_pwm(ss)
+
+		ss = ss[ss.index(f"{rlt}") + len(rlt):]
+		rrt = get_custom_pwm(ss)
+
+		ss = ss[ss.index(f"{rrt}") + len(rrt):]
+		flb = get_custom_pwm(ss)
+
+		ss = ss[ss.index(f"{flb}") + len(flb):]
+		frb = get_custom_pwm(ss)
+
+		ss = ss[ss.index(f"{frb}") + len(frb):]
+		rlb = get_custom_pwm(ss)
+
+		ss = ss[ss.index(f"{rlb}") + len(rlb):]
+		rrb = get_custom_pwm(ss)
+
+		ss = ss[ss.index(f"{rrb}") + len(rrb):]
+		extra = get_custom_pwm(ss)
+
 		if (flt is not None and frt is not None and rlt is not None and rrt is not None 
 				and flb is not None and frb is not None and rlb is not None and rrb is not None and extra is None):
 			cmd.pwm = [flt, frt, rlt, rrt, flb, frb, rlb, rrb]
