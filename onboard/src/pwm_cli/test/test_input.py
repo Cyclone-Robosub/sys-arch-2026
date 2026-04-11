@@ -140,36 +140,31 @@ def test_invalid_custom_pwms(simulate_input, catch_output):
 		# --- VALID INPUT TESTS ---
 
 # Check that default power correctly updates after 'set power' is processed
-def test_set_power(simulate_input, catch_output):
-	# TODO
+def test_set_power(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
 
 # DESCRIPTION
-def test_current_command(simulate_input, catch_output):
-	# TODO
+def test_current_command(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
 
 # DESCRIPTION
-def test_custom_powers(simulate_input, catch_output):
-	# TODO
+def test_custom_powers(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
 
 # DESCRIPTION
-def test_custom_times(simulate_input, catch_output):
-	# TODO
+def test_custom_times(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
 
 # DESCRIPTION
-def test_robot_commands(simulate_input, catch_output):
-	# TODO
+def test_robot_commands(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
@@ -193,7 +188,6 @@ def test_custom_pwms(simulate_input, catch_output):
 
 
 # DESCRIPTION
-def test_timed_commands(simulate_input, catch_output):
-	# TODO
+def test_timed_commands(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["wait 1", "end session"])
 	main()
