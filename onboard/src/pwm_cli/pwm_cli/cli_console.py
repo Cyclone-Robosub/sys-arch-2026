@@ -118,7 +118,7 @@ def translate_command(command):
 	if "set" in command and "power" in command:
 		new_power = find_num_in_string(command[command.index("power"):])
 		if new_power == None or int(new_power) > 100:
-			return None
+			return "Invalid default power inputted\n"
 		default_power = new_power
 		return f"Set default power to {new_power}\n"
 

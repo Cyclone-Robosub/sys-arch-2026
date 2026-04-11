@@ -87,6 +87,14 @@ def test_invalid_times(simulate_input, catch_output):
 	for out_num in range(0, 4):
 		assert output_list[INFO_OFFSET + out_num] == "Invalid time inputted\n"
 
+# Tests that cli_console can handle invalid default power inputs
+def test_invalid_set_power(simulate_input, catch_output):
+	builtins.input = input_iterator(["set power ", "set power . ", "set power 101", "set power 999", "end session"])
+	main()
+	output_list = catch_output
+	for out_num in range(0, 4):
+		assert output_list[INFO_OFFSET + out_num] == "Invalid default power inputted\n"
+
 
 # Tests that cli_console can handle invalid power inputs
 def test_invalid_powers(simulate_input, catch_output):
@@ -96,6 +104,7 @@ def test_invalid_powers(simulate_input, catch_output):
 	for out_num in range(0, 5):
 		assert output_list[INFO_OFFSET + out_num] == "Invalid power inputted\n"
 
+# Test that the custom pwm command can handle repeated PWMS.
 def test_repeated_custom_pwm(simulate_input, catch_output):
 	builtins.input = input_iterator(["custom [1500, 1200, 1500, 1200, 1500, 1200, 1500, 1200]", "yes", "current command", "end session"])
 	main()
