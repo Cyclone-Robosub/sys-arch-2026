@@ -19,3 +19,6 @@ Distance meters
 - `02:19 to 03:04` 3.9m
 - `03:20 to 03:39` 4.2m
 - `04:19 to 04:59`(end) 4.2m
+
+# LOGS
+- `robo2.mp4` made from `ffmpeg -ss 00:13:00 -i Recordings/output_20260307_154017.mp4 -c copy  robo2.mp4`

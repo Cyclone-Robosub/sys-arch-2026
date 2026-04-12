@@ -98,7 +98,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run inference on a video source")
     parser.add_argument("source", help="Video source (file path or camera index)")
     parser.add_argument("-m", "--model_path", type=str, default=MODEL_PATH, help="Path to the YOLO model checkpoint")
-    parser.add_argument("-o", "--output_path", type=str, default='output.mp4', help="Optional output file path to save the recorded video")
+    parser.add_argument("-o", "--output_path", type=str, default=None, help="Optional output file path to save the recorded video")
     args = parser.parse_args()
 
     source = args.source
@@ -154,39 +154,8 @@ if __name__ == "__main__":
             # Draw keypoints on the frame
             for (x, y) in kpts_pixel.astype(int):
                 cv.circle(frame, (x, y), 5, (0, 255, 0), -1)
-
-            if len(keypoints) == 4:
-                margin = 5
-                on_edge = np.any((kpts_pixel[:, 0] <= margin) | (kpts_pixel[:, 0] >= w - margin) |
-                                (kpts_pixel[:, 1] <= margin) | (kpts_pixel[:, 1] >= h - margin))
-
-                if not on_edge:
-                    pixel_coords = kpts_pixel[[0, 2, 3, 1]].astype(np.float32)
-                    da = distance_angle(pixel_coords)
-                    
-                    if da:
-                        dist_m = da.get('distance')
-                        yaw = da.get('yaw')
-                        pitch = da.get('pitch')
-
-                        dist_str = f"Distance: {dist_m:.2f}m"
-                        angle_str= f"Yaw: {yaw:.1f}  Pitch: {pitch:.1f}"
-                        
-                        cv.putText(frame, dist_str, (50, 50), 
-                                cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA)
-                        cv.putText(frame, angle_str, (50, 85), 
-                                cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 255, 0), 2, cv.LINE_AA)
-                    else:  
-                        cv.putText(frame, "OUT OF BOUNDS", (50, 50), 
-                                cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv.LINE_AA)
-                else:  
-                    cv.putText(frame, "OUT OF BOUNDS", (50, 50), 
-                            cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv.LINE_AA)
-            else:  
-                cv.putText(frame, "OUT OF BOUNDS", (50, 50), 
-                        cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv.LINE_AA)
         else:  
-            cv.putText(frame, "OUT OF BOUNDS", (50, 50), 
+            cv.putText(frame, "No keypoints detected", (50, 50), 
                     cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv.LINE_AA)
         
         if args.output_path:
