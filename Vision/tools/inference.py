@@ -97,7 +97,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Run inference on a video source")
     parser.add_argument("source", help="Video source (file path or camera index)")
-    parser.add_argument("--record", type=str, default=None, help="Optional output file path to save the recorded video")
+    parser.add_argument("-m", "--model_path", type=str, default=MODEL_PATH, help="Path to the YOLO model checkpoint")
+    parser.add_argument("-o", "--output_path", type=str, default='output.mp4', help="Optional output file path to save the recorded video")
     args = parser.parse_args()
 
     source = args.source
@@ -106,12 +107,12 @@ if __name__ == "__main__":
         print("Error opening video stream or file")
         sys.exit(1)
 
-    model = YOLO(MODEL_PATH, task='pose')
+    model = YOLO(args.model_path, task='pose')
 
-    if args.record:
+    if args.output_path:
         fps = cap.get(cv.CAP_PROP_FPS) 
         fourcc = cv.VideoWriter_fourcc(*'mp4v')
-        out = cv.VideoWriter(args.record, fourcc, fps, (int(cap.get(3)), int(cap.get(4))))
+        out = cv.VideoWriter(args.output_path, fourcc, fps, (int(cap.get(3)), int(cap.get(4))))
     
     fps = cap.get(cv.CAP_PROP_FPS)
     frame_count = 0
@@ -188,14 +189,14 @@ if __name__ == "__main__":
             cv.putText(frame, "OUT OF BOUNDS", (50, 50), 
                     cv.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv.LINE_AA)
         
-        if args.record:
+        if args.output_path:
             out.write(frame)
 
         cv.imshow('Inference', frame)
         if cv.waitKey(1) == ord('q'):
             break
 
-    if args.record:
+    if args.output_path:
         out.release()
     cap.release()
     cv.destroyAllWindows()
