@@ -1,37 +1,39 @@
-#include "include/commands/waypt_abs.hpp"
+#include "include/commands/dis_trick_client.hpp"
 
 using namespace BT;
 
 namespace CycloneCommands {
-    WayptAbs::WayptAbs(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<WayptAbs>(name, conf, params) {
+    DisTrick::DisTrick(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<WayptAbs>(name, conf, params) {
         startTime = std::chrono::steady_clock::now();
-        feedback_.delta = {0, 0, 0, 0, 0, 0};
-        feedback_.time_in_tolerance = 0;
     }
-
-    bool WayptAbs::setGoal(RosActionNode::Goal& goal) override {
+    bool DisTrick::setGoal(RosActionNode::Goal& goal) override {
         // get "order" from the Input port
         getInput("order", goal.order);
         // return true, if we were able to set the goal correctly.
         return true;
     }
 
-    NodeStatus WayptAbs::onResultReceived (const WrappedResult& result) override {
+    NodeStatus DisTrick::onResultReceived (const WrappedResult& result) override {
         // bit unsure about how to code this
     }
 
     static PortsList providedPorts() {
         return { InputPort<float64[]>("tolerance") };
     }
-    NodeStatus WayptAbs::tick() override  {
-        // check whether the robot is within tolerance
-        // extract waypoint and hold time from goal
-        auto goal_msg = WayptAbs::Goal();
-        float64[6] waypt_t = goal_msg->waypoint;
+    NodeStatus DisTrick::tick() override  {
+        // extract ...  from goal
+        auto goal_msg = DisTrick::Goal();
+        std::string trick = goal_msg->trick;
+        auto duration = goal_msg->duration;
         auto mask = goal_msg->waypoint_mask;
         float64 hold_time = goal_msg->hold_time;
-
-        // get tolerance from blackboard, not sure
+        
+        // execute the trick
+        while (std::chrono::steady_clock::now() - startTime <= duration) {
+            std::cout << "executing trick " << trick << "\n";
+        }
+        // check whether the robot is within tolerance
+        // get tolerance from blackboard, should be changed to service
         auto msg = getInput<float64[]>("tolerance");
         if (!msg) {
             throw BT::RuntimeError("missing required input [tolerance]: ", msg.error() );
@@ -42,14 +44,14 @@ namespace CycloneCommands {
         while (true) {
             for (int i = 0; i < 6; i++) {
                 if (mask[i]) {
-                    if ((waypt_t[i] - tolerance[i] > currentPos[i]) || (currentPos[i] > waypt_t[i] + tolerance[i])) {
+                    if ((ogPos[i] - tolerance[i] > currentPos[i]) || (currentPos[i] > ogPos[i] + tolerance[i])) {
                         // not in tolerance for state ith
                         if (isInTolerance) {
                             isInTolerance = false;
                             startTime = std::chrono::steady_clock::now();
                         }     
                         break;               
-                    }
+                    }   
                     if (!startTolerance) {
                         startTolerance = True;
                     }
@@ -73,4 +75,5 @@ namespace CycloneCommands {
             }
         }   
     }
+
 }

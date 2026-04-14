@@ -1,3 +1,4 @@
+#include <behaviortree_ros2/bt_action_node.hpp>
 #include <chrono>
 using namespace BT;
 class WayptAbs : public RosActionNode<WayptAbs> {
@@ -11,4 +12,6 @@ class WayptAbs : public RosActionNode<WayptAbs> {
         float64 startTime;
         float64 currentTime;
         bool isInTolerance = false;
+    protected:
+        Action::Feedback feedback_;
 }

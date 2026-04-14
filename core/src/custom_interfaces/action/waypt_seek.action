@@ -2,8 +2,6 @@
 float64[] world_waypoint
 bool[] waypoint_mask
 string object
-# is hold time necessary? not found in notion docu
-float64 hold_time
 # Tolerance is set from the blackboard
 # float64[6] tolerance
 ---
