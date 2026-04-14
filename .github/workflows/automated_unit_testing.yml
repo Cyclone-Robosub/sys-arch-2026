@@ -25,7 +25,7 @@ jobs:
         #   - {ROS_DISTRO: melodic, ROS_REPO: testing}
     env:
       CCACHE_DIR: "${{ github.workspace }}/.ccache" # directory for ccache (and how we enable ccache in industrial_ci)
-      AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: "apt-get install -y libudev1 libudev-dev libusb-1.0-0-dev && apt-get install -y build-essential python3 libbz2-dev libz-dev libicu-dev libboost-all-dev"
+      AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: "apt-get install -y libudev1 libudev-dev libusb-1.0-0-dev && apt-get install -y build-essential libbz2-dev libz-dev libicu-dev libboost-all-dev"
     steps:
       - uses: actions/checkout@v4 # clone target repository
       - uses: actions/cache@v4 # fetch/store the directory used by ccache before/after the ci run
