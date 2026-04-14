@@ -26,7 +26,8 @@ jobs:
     env:
       CCACHE_DIR: "${{ github.workspace }}/.ccache" # directory for ccache (and how we enable ccache in industrial_ci)
     steps:
-      - run: sudo apt install -y libudev1
+      - run: apt list --installed
+      - run: sudo apt install -y libudev1 libusb-1.0-0-dev
       - uses: actions/checkout@v4 # clone target repository
       - uses: actions/cache@v4 # fetch/store the directory used by ccache before/after the ci run
         with:
