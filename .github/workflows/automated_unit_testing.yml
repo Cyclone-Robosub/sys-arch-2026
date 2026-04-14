@@ -26,6 +26,7 @@ jobs:
     env:
       CCACHE_DIR: "${{ github.workspace }}/.ccache" # directory for ccache (and how we enable ccache in industrial_ci)
     steps:
+      - run: sudo apt install -y libudev1
       - uses: actions/checkout@v4 # clone target repository
       - uses: actions/cache@v4 # fetch/store the directory used by ccache before/after the ci run
         with:
@@ -42,5 +43,3 @@ jobs:
           ROS_REPO: ${{ matrix.ROS_REPO }}
         # with: # or pass the full matrix as config
         #    config: ${{toJSON(matrix)}}
-        script:
-          - apt install libudev1
