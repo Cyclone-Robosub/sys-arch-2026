@@ -145,25 +145,25 @@ def test_set_power(simulate_input, catch_output):	# TODO
 	main()
 
 
-# DESCRIPTION
+# Check that get_current_command() works as expected
 def test_current_command(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
 
-# DESCRIPTION
+# Check that creating a robot command with a custom power works as expected
 def test_custom_powers(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
 
-# DESCRIPTION
+# Check that creating a robot command with a custom time works as expected
 def test_custom_times(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
 
 
-# DESCRIPTION
+# Tests to make sure that every robot command can be read as expected
 def test_robot_commands(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["", "end session"])
 	main()
@@ -187,7 +187,7 @@ def test_custom_pwms(simulate_input, catch_output):
 	assert output_list[INFO_OFFSET+3] == f"Current Command: Custom pwm {pwms} for 5 seconds\n"
 
 
-# DESCRIPTION
+# Checks that timed commands work properly. Makes sure timed stop command is overridden whenever a new command is run
 def test_timed_commands(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator(["wait 1", "end session"])
 	main()
