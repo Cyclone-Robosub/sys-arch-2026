@@ -346,9 +346,9 @@ Returns True if response is yes, or False if no
 def confirm(prompt):
 	while True:
 		response = input(prompt).lower()
-		if "yes" in response:
+		if "yes" in response or response == "y":
 			return True
-		elif "no" in response:
+		elif "no" in response or response == "n":
 			return False
 
 

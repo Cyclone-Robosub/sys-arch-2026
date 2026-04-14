@@ -147,8 +147,83 @@ def test_set_power(simulate_input, catch_output):	# TODO
 
 # Check that get_current_command() works as expected
 def test_current_command(simulate_input, catch_output):	# TODO
-	builtins.input = input_iterator(["", "end session"])
+	builtins.input = input_iterator([\
+		"current command",\
+		"forwards", "yes", "current command",\
+		"forwards t:5 p:60", "yes", "current command",\
+		"backwards", "yes", "current command",\
+		"backwards t:5 p:60", "yes", "current command",\
+		"strafe left", "yes", "current command",\
+		"strafe left t: 5 p:60", "yes", "current command",\
+		"strafe right", "yes", "current command",\
+		"strafe right t: 5 p:60", "yes", "current command",\
+		"rise", "yes", "current command",\
+		"rise t: 5 p:60", "yes", "current command",\
+		"sink", "yes", "current command",\
+		"sink t: 5 p:60", "yes", "current command",\
+		"yaw counter clockwise", "yes", "current command",\
+		"yaw counter clockwise t: 5 p:60", "yes", "current command",\
+		"yaw clockwise", "yes", "current command",\
+		"yaw clockwise t: 5 p:60", "yes", "current command",\
+		"pitch up", "yes", "current command",\
+		"pitch up t: 5 p:60", "yes", "current command",\
+		"pitch down", "yes", "current command",\
+		"pitch down t: 5 p:60", "yes", "current command",\
+		"roll left", "yes", "current command",\
+		"roll left t: 5 p:60", "yes", "current command",\
+		"roll right", "yes", "current command",\
+		"roll right t: 5 p:60", "yes", "current command",\
+		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100]", "yes", "current command",\
+		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100] t: 5", "yes", "current command",\
+		"set power 20", "current command",\
+		"forwards", "yes", "current command",\
+		"stop", "current command",\
+		"forwards", "yes", "info", "current command",\
+		"help", "current command",\
+		"end session"\
+	])
 	main()
+	output_list = catch_output
+	expected_outputs = [
+		"There is no currently active command\n",\
+		"Current Command: Move Forwards at 70% power\n",\
+		"Current Command: Move Forwards at 60% power for 5 seconds\n",\
+		"Current Command: Move Backwards at 70% power\n",\
+		"Current Command: Move Backwards at 60% power for 5 seconds\n",\
+		"Current Command: Strafe Left at 70% power\n",\
+		"Current Command: Strafe Left at 60% power for 5 seconds\n",\
+		"Current Command: Strafe Right at 70% power\n",\
+		"Current Command: Strafe Right at 60% power for 5 seconds\n",\
+		"Current Command: Rise at 70% power\n",\
+		"Current Command: Rise at 60% power for 5 seconds\n",\
+		"Current Command: Sink at 70% power\n",\
+		"Current Command: Sink at 60% power for 5 seconds\n",\
+		"Current Command: Yaw Counterclockwise at 70% power\n",\
+		"Current Command: Yaw Counterclockwise at 60% power for 5 seconds\n",\
+		"Current Command: Yaw Clockwise at 70% power\n",\
+		"Current Command: Yaw Clockwise at 60% power for 5 seconds\n",\
+		"Current Command: Pitch Up at 70% power\n",\
+		"Current Command: Pitch Up at 60% power for 5 seconds\n",\
+		"Current Command: Pitch Down at 70% power\n",\
+		"Current Command: Pitch Down at 60% power for 5 seconds\n",\
+		"Current Command: Roll Left at 70% power\n",\
+		"Current Command: Roll Left at 60% power for 5 seconds\n",\
+		"Current Command: Roll Right at 70% power\n",\
+		"Current Command: Roll Right at 60% power for 5 seconds\n",\
+		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100']\n",\
+		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",\
+		"Set default power to 20\n",\
+		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",\
+		"Current Command: Move Forwards at 20% power\n",\
+		"There is no currently active command\n",\
+	]
+	for i in range(0,len(expected_outputs)):
+		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
+
+	assert output_list[INFO_OFFSET*2 + len(expected_outputs)+1] ==\
+		   output_list[INFO_OFFSET*3 + len(expected_outputs)+3] ==\
+		   "Current Command: Move Forwards at 20% power\n"
+
 
 
 # Check that creating a robot command with a custom power works as expected
@@ -180,9 +255,9 @@ def test_custom_pwms(simulate_input, catch_output):
 	main()
 	output_list = catch_output
 	pwms = ['1500', '1400', '1300', '1200', '1100', '1250', '1550', '1900']
-	pwms2 = ['1500', '1200', '1500', '1200', '1500', '1200', '1500', '1200']
+	repeated_pwms = ['1500', '1200', '1500', '1200', '1500', '1200', '1500', '1200']
 	assert output_list[INFO_OFFSET] == f"Current Command: Custom pwm {pwms}\n"
-	assert output_list[INFO_OFFSET+1] == f"Current Command: Custom pwm {pwms2}\n"
+	assert output_list[INFO_OFFSET+1] == f"Current Command: Custom pwm {repeated_pwms}\n"
 	assert output_list[INFO_OFFSET+2] == f"Current Command: Custom pwm {pwms} for 5 seconds\n"
 	assert output_list[INFO_OFFSET+3] == f"Current Command: Custom pwm {pwms} for 5 seconds\n"
 
