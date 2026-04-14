@@ -24,9 +24,8 @@ jobs:
         # exclude: # specific configuration can be excludes
         #   - {ROS_DISTRO: melodic, ROS_REPO: testing}
     env:
-      global:
-        - AFTER_INIT_EMBED='sudo apt install -y libusb-1.0-0-dev'
       CCACHE_DIR: "${{ github.workspace }}/.ccache" # directory for ccache (and how we enable ccache in industrial_ci)
+      AFTER_INIT_EMBED: "sudo apt install -y libusb-1.0-0-dev"
     steps:
       - uses: actions/checkout@v4 # clone target repository
       - uses: actions/cache@v4 # fetch/store the directory used by ccache before/after the ci run
