@@ -73,4 +73,8 @@ namespace CycloneCommands {
             }
         }   
     }
+    NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override {
+        
+
+    }
 }

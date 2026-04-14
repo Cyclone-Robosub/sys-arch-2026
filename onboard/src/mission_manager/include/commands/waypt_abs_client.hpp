@@ -7,11 +7,12 @@ class WayptAbs : public RosActionNode<WayptAbs> {
         NodeStatus tick() override;
         bool setGoal(RosActionNode::Goal& goal) override;
         static PortsList providedPorts();
+        NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback);
     private:
         float64[6] currentPos;
         float64 startTime;
         float64 currentTime;
         bool isInTolerance = false;
     protected:
-        Action::Feedback feedback_;
+        std::shared_ptr<const Feedback> feedback;
 }
