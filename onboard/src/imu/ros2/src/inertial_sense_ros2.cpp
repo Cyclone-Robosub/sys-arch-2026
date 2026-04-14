@@ -320,7 +320,7 @@ void InertialSenseROS::load_params(YAML::Node& node) {
     int dynamic_model = nh_->declare_parameter<int>("dynamic_model", DYNAMIC_MODEL_AIRBORNE_4G);
     ph.nodeParamEnum("dynamic_model", dynamicModel_, dyn_model_set, dynamic_model);
 
-    bool cov_enabled = nh_->declare_parameter<bool>("enable_covariance", false);
+    bool cov_enabled = nh_->declare_parameter<bool>("enable_covariance", true);
     ph.nodeParam("enable_covariance", covariance_enabled_, cov_enabled);
 
     YAML::Node insMsgs = ph.node(insNode, "messages", 2);
