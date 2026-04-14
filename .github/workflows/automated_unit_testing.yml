@@ -25,7 +25,7 @@ jobs:
         #   - {ROS_DISTRO: melodic, ROS_REPO: testing}
     env:
       CCACHE_DIR: "${{ github.workspace }}/.ccache" # directory for ccache (and how we enable ccache in industrial_ci)
-      AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: "apt-get install -y systemd systemd-dev libudev1 libusb-1.0-0-dev pkg-config"
+      AFTER_INSTALL_TARGET_DEPENDENCIES_EMBED: "apt-get install -y systemd systemd-sysv dbus dbus-user-session libudev1 libusb-1.0-0-dev pkg-config"
     steps:
       - uses: actions/checkout@v4 # clone target repository
       - uses: actions/cache@v4 # fetch/store the directory used by ccache before/after the ci run
