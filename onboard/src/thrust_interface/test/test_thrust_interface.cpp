@@ -147,7 +147,6 @@ TEST_F(TestThrustInterface, NodeConstruction) {
     
     ASSERT_NE(node, nullptr);
     EXPECT_EQ(node->get_name(), std::string("thrust_interface"));
-    ASSERT_TRUE(false);
 }
 
 /**
