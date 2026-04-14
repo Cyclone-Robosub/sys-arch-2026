@@ -178,11 +178,11 @@ def translate_command(command):
 		cmd.name = "Sink"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "yaw" in command and "counter" in command and "clockwise" in command:
+	if "yaw" in command and (("counter" in command and "clockwise" in command) or "ccw" in command):
 		cmd.name = "Yaw Counterclockwise"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "yaw" in command and "clockwise" in command:
+	if "yaw" in command and ("clockwise" in command or "cw" in command):
 		cmd.name = "Yaw Clockwise"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd

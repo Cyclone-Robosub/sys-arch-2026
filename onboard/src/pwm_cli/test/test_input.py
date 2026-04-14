@@ -146,7 +146,7 @@ def test_set_power(simulate_input, catch_output):	# TODO
 
 
 # Check that get_current_command() works as expected
-def test_current_command(simulate_input, catch_output):	# TODO
+def test_current_command(simulate_input, catch_output):
 	builtins.input = input_iterator([\
 		"current command",\
 		"forwards", "yes", "current command",\
@@ -162,8 +162,10 @@ def test_current_command(simulate_input, catch_output):	# TODO
 		"sink", "yes", "current command",\
 		"sink t: 5 p:60", "yes", "current command",\
 		"yaw counter clockwise", "yes", "current command",\
+		"yaw ccw", "yes", "current command",\
 		"yaw counter clockwise t: 5 p:60", "yes", "current command",\
 		"yaw clockwise", "yes", "current command",\
+		"yaw cw", "yes", "current command",\
 		"yaw clockwise t: 5 p:60", "yes", "current command",\
 		"pitch up", "yes", "current command",\
 		"pitch up t: 5 p:60", "yes", "current command",\
@@ -199,7 +201,9 @@ def test_current_command(simulate_input, catch_output):	# TODO
 		"Current Command: Sink at 70% power\n",\
 		"Current Command: Sink at 60% power for 5 seconds\n",\
 		"Current Command: Yaw Counterclockwise at 70% power\n",\
+		"Current Command: Yaw Counterclockwise at 70% power\n",\
 		"Current Command: Yaw Counterclockwise at 60% power for 5 seconds\n",\
+		"Current Command: Yaw Clockwise at 70% power\n",\
 		"Current Command: Yaw Clockwise at 70% power\n",\
 		"Current Command: Yaw Clockwise at 60% power for 5 seconds\n",\
 		"Current Command: Pitch Up at 70% power\n",\
