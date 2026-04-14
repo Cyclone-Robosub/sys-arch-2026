@@ -4,7 +4,7 @@
 name: CI
 
 on: # this determines when this workflow is run
-  push:
+  # push: # Uncomment for running tests on every push
   pull_request:
     branches: [ main, staging ] # when there is a pull request into main or staging
   # schedule: # uncomment to run periodically
