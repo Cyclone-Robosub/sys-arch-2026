@@ -42,5 +42,5 @@ jobs:
           ROS_REPO: ${{ matrix.ROS_REPO }}
         # with: # or pass the full matrix as config
         #    config: ${{toJSON(matrix)}}
-    script:
-      - apt install libudev1
+        script:
+          - apt install libudev1
