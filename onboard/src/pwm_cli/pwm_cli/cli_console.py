@@ -23,6 +23,7 @@ EMERGENCY_BRAKES = [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, 
 def main():
 	global current_command
 	global default_power
+	default_power = 70
 	current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
 
 	rclpy.init(args=None)
@@ -117,7 +118,7 @@ def translate_command(command):
 	# Non-Robot Commands
 	if "set" in command and "power" in command:
 		new_power = find_num_in_string(command[command.index("power"):])
-		if new_power == None or int(new_power) > 100:
+		if new_power == None or int(new_power) > 100 or int(new_power) == 0:
 			return "Invalid default power inputted\n"
 		default_power = new_power
 		return f"Set default power to {new_power}\n"
