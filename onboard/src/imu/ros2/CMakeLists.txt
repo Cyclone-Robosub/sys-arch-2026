@@ -20,12 +20,10 @@ find_package(Threads)
 add_definitions(-DROS2)
 
 set(RESOLVED_ROS_DIR "${CMAKE_CURRENT_LIST_DIR}/../inertial-sense-sdk/ROS/")
-message(RESOLVED_ROS_DIR="${RESOLVED_ROS_DIR}")
 set(SDK_PATH "${CMAKE_CURRENT_LIST_DIR}/../inertial-sense-sdk/")
 
 set(RELATIVE_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/../inertial-sense-sdk/scripts/build_is_sdk.sh")
 get_filename_component(ABSOLUTE_SCRIPT_PATH ${RELATIVE_SCRIPT_PATH} ABSOLUTE BASE_DIR ${CMAKE_SOURCE_DIR})
-message(ABSOLUTE_SCRIPT_PATH="${ABSOLUTE_SCRIPT_PATH}")
 
 add_custom_command(OUTPUT ${RESOLVED_ROS_DIR}/../build/libInertialSenseSDK.a
     COMMAND ${CMAKE_COMMAND} -E env bash ${ABSOLUTE_SCRIPT_PATH}
