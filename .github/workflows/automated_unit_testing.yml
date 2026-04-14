@@ -6,7 +6,7 @@ name: CI
 on: # this determines when this workflow is run
   push:
   pull_request:
-    branches: [ main staging ] # when there is a pull request into main or staging
+    branches: [ main, staging ] # when there is a pull request into main or staging
   # schedule: # uncomment to run periodically
   #  - cron: '0 4 * * *' # every day at 4 AM (UTC)
   workflow_dispatch: # allow manually starting this workflow
