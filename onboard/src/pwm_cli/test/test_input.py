@@ -47,6 +47,7 @@ def input_iterator(outputs: list[str]):
 		next_input = next(iterator)
 		if "wait " in next_input:
 			time.sleep(float(next_input[5:]))
+			return next(iterator)
 		return next_input
 	return my_input
 
@@ -265,5 +266,59 @@ def test_custom_pwms(simulate_input, catch_output):
 # Checks that timed commands work properly. Makes sure timed stop command is overridden whenever a new command is run
 def test_timed_commands(simulate_input, catch_output):	# TODO
 	builtins.input = input_iterator([
-		"wait 1", "end session"])
+		# Test 1: Timed -> Timeout
+		"forwards t: 0.5", "yes",
+		"current command",
+		"wait 1",
+		"current command",
+		# Test 2: Timed -> Timed
+		"strafe left t: 1.5", "yes",
+		"current command",
+		"wait 1",
+		"strafe right t: 1.5", "yes",
+		"current command",
+		"wait 1",
+		"current command",
+		"wait 1",
+		"current command",
+		# Test 3: Timed -> Untimed
+		"rise t: 0.5", "yes",
+		"current command",
+		"sink", "yes",
+		"current command",
+		"wait 1",
+		"current command",		
+		# Test 4: Timed -> Stop -> Untimed
+		"pitch up t: 0.5", "yes",
+		"current command",
+		"stop",
+		"current command",
+		"pitch down", "yes",
+		"current command",
+		"wait 1",
+		"current command",
+		"end session"])
 	main()
+	output_list = catch_output
+	excepted_outputs = [
+		# Test 1
+		"Current Command: Move Forwards at 70% power for 0.5 seconds\n",
+		"There is no currently active command\n",
+		# Test 2
+		"Current Command: Strafe Left at 70% power for 1.5 seconds\n",
+		"Current Command: Strafe Right at 70% power for 1.5 seconds\n",
+		"Current Command: Strafe Right at 70% power for 1.5 seconds\n",
+		"There is no currently active command\n",
+		# Test 3
+		"Current Command: Rise at 70% power for 0.5 seconds\n",
+		"Current Command: Sink at 70% power\n",
+		"Current Command: Sink at 70% power\n",
+		# Test 4
+		"Current Command: Pitch Up at 70% power for 0.5 seconds\n",
+		"There is no currently active command\n",
+		"Current Command: Pitch Down at 70% power\n",
+		"Current Command: Pitch Down at 70% power\n",
+	]
+
+	for i in range(0, len(excepted_outputs)):
+		assert output_list[INFO_OFFSET + i] == excepted_outputs[i]
