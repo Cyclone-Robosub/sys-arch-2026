@@ -17,13 +17,20 @@ namespace CycloneCommands {
     }
 
     NodeStatus WayptAbs::onResultReceived (const WrappedResult& result) override {
-        // bit unsure about how to code this
+        switch (result.result) {
+            case "RUNNING":
+                return NodeStatus::RUNNING;
+            case "SUCCESS":
+                return NodeStatus::SUCCESS;
+        }
     }
 
     static PortsList providedPorts() {
         return { InputPort<float64[]>("tolerance") };
     }
     NodeStatus WayptAbs::tick() override  {
+        /*
+        CODE IS WRONG PROBABLY
         // check whether the robot is within tolerance
         // extract waypoint and hold time from goal
         auto goal_msg = WayptAbs::Goal();
@@ -72,6 +79,7 @@ namespace CycloneCommands {
                 return NodeStatus::RUNNING;
             }
         }   
+            */
     }
     NodeStatus WayptAbs::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
         for (auto num : feedback->delta) {
