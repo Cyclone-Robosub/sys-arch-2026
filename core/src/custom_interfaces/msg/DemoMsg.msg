@@ -1,2 +1,2 @@
-unit8 demo_iteration
+uint8 demo_iteration
 float32 demo_value
