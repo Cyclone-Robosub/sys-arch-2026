@@ -121,7 +121,7 @@ def translate_command(command):
 		if new_power == None or int(new_power) > 100 or int(new_power) == 0:
 			return "Invalid default power inputted\n"
 		default_power = new_power
-		return f"Set default power to {new_power}\n"
+		return f"Set default power to {new_power}%\n"
 
 	if "current" in command and "command" in command:
 		return get_current_command()
