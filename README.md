@@ -22,8 +22,7 @@ chmod +x start_tmux_session.sh
 
 ## Running unit tests
 1. Run `colcon build`
-2. Run `colcon test --parallel-workers 1`
-> This argument is needed to prevent node tests from interfering with each other: if different tests create publishers and subscribers on the same topic, this can create unexpected behaviour!
+2. Run `colcon test`
 3. If there are any errors, view them with  `colcon test-result --verbose | less`
 
 
