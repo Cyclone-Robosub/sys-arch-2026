@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
-#include <custom_interfaces/msg/pwms.hpp>
+#include <custom_interfaces/msg/demo.hpp>
 #include "std_msgs/msg/bool.hpp"
 #include "thrust_interface.hpp"
 #include <fcntl.h>
