@@ -14,7 +14,6 @@ setup(
         (str(Path('share') / package_name / 'launch'), list(map(str, Path('launch').glob('*')))),
     ],
     install_requires=['setuptools'],
-	tests_require=['pytest'],
     zip_safe=True,
     maintainer='leish',
     maintainer_email='slolei@ucdavis.edu',
