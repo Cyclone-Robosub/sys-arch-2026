@@ -121,7 +121,7 @@ def translate_command(command):
 		if new_power == None or int(new_power) > 100 or int(new_power) == 0:
 			return "Invalid default power inputted\n"
 		default_power = new_power
-		return f"Set default power to {new_power}\n"
+		return f"Set default power to {new_power}%\n"
 
 	if "current" in command and "command" in command:
 		return get_current_command()
@@ -179,11 +179,11 @@ def translate_command(command):
 		cmd.name = "Sink"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "yaw" in command and "counter" in command and "clockwise" in command:
+	if "yaw" in command and (("counter" in command and "clockwise" in command) or "ccw" in command):
 		cmd.name = "Yaw Counterclockwise"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
-	if "yaw" in command and "clockwise" in command:
+	if "yaw" in command and ("clockwise" in command or "cw" in command):
 		cmd.name = "Yaw Clockwise"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
 		return cmd
