@@ -1,10 +1,5 @@
 '''
-Tests ros publishing for the Command Line Interface
-
-Ways to see test results: 
-	colcon test --event-handlers console_cohesion+ --parallel-workers 1
-		(Avoids testing multiple ROS nodes at the same time)
-	pytest -v -s
+Tests ROS2 publishing for the Command Line Interface
 '''
 
 import pytest
@@ -145,9 +140,6 @@ def check_all_commands(publisher, fwd_amt, rev_amt, power = 70):
 
 
 # --- BEGIN TESTS ---
-	# --- NOTE ---
-		# Most tests should rely on setup_publish_pwm(),
-		# but at least a couple tests should exist that actually set up a subscriber
 
 # Makes sure that publish_pwm pytest fixture works properly
 def test_basic_ros(setup_publish_pwm):

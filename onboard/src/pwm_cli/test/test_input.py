@@ -1,11 +1,5 @@
 '''
 Tests input parsing for the Command Line Interface
-
-Ways to see test results: 
-	colcon test --event-handlers console_cohesion+ --parallel-workers 1
-		(Avoids testing multiple ROS nodes at the same time)
-		--pytest-args --packages-select pwm_cli (If I need to only run pwm_cli tests)
-	pytest -v -s
 '''
 import builtins
 import pytest
@@ -169,7 +163,6 @@ def test_set_power(simulate_input, catch_output):
 	]
 	for i in range(0,len(expected_outputs)):
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
-
 
 
 # Check that get_current_command() works as expected
@@ -410,7 +403,7 @@ def test_custom_pwms(simulate_input, catch_output):
 
 
 # Checks that timed commands work properly. Makes sure timed stop command is overridden whenever a new command is run
-def test_timed_commands(simulate_input, catch_output):	# TODO
+def test_timed_commands(simulate_input, catch_output):
 	builtins.input = input_iterator([
 		# Test 1: Timed -> Timeout
 		"forwards t: 0.5", "yes",

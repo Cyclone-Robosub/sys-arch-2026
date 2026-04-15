@@ -75,12 +75,11 @@ def main():
 		
 		# A robot command should be processed after the user confirms it was intended
 		elif command.confirm_command():
+			if timed_command_thread is not None and timed_command_thread.is_alive():
+				timer_running = False
+				timed_command_thread.join()
 			cli.publish_pwm(command.pwm)
 			if (command.time != -1):
-				# TODO: Only stops a previous timed command if another timed command is being run. Needs to also shut down prev with an untimed command
-				if timed_command_thread is not None and timed_command_thread.is_alive():
-					timer_running = False
-					timed_command_thread.join()
 				timed_command_thread = threading.Thread(name="timed_command_thread", target=run_command_timer, args=[command.time])
 				timer_running = True
 				timed_command_thread.start()
@@ -208,7 +207,7 @@ def translate_command(command):
 	if "custom" in command and '[' in command and ']' in command:
 		cmd.name = "Custom pwm"
 
-		# Let the substring be the command starting that the opening square bracket
+		# Let the substring be the command starting at the opening square bracket
 		ss = command[command.index("["):]
 		
 		# Ensures the pwms will not be read past the closing square bracket ']'
