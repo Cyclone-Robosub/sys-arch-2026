@@ -1,3 +1,4 @@
+from pathlib import Path
 from setuptools import find_packages, setup
 
 package_name = 'pwm_cli'
@@ -10,6 +11,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (str(Path('share') / package_name / 'launch'), list(map(str, Path('launch').glob('*')))),
     ],
     install_requires=['setuptools'],
 	tests_require=['pytest'],
