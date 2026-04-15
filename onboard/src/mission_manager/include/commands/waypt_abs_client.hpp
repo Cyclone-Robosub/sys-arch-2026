@@ -13,6 +13,5 @@ class WayptAbs : public RosActionNode<WayptAbs> {
         float64 startTime;
         float64 currentTime;
         bool isInTolerance = false;
-    protected:
-        std::shared_ptr<const Feedback> feedback;
+   
 }

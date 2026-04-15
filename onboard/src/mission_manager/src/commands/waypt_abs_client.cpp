@@ -73,8 +73,13 @@ namespace CycloneCommands {
             }
         }   
     }
-    NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override {
-        
-
+    NodeStatus WayptAbs::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
+        for (auto num : feedback->delta) {
+            std::cout << num << " ";
+        }
+        std::cout << "\n";
+        std::cout << feedback->time_in_tolerance << "\n";
+        return NodeStatus::RUNNING;
     }
+    
 }

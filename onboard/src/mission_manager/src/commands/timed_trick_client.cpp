@@ -75,5 +75,11 @@ namespace CycloneCommands {
             }
         }   
     }
+    NodeStatus TimedTrick::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
+        std::cout << feedback->remaining_duration << "\n";
+        std::cout << feedback->time_in_tolerance << "\n";
+        return NodeStatus::RUNNING;
+    }
+
 
 }

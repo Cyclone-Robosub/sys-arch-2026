@@ -7,6 +7,7 @@ class TimedTrick : public RosActionNode<TimedTrick> {
         NodeStatus tick() override;
         bool setGoal(RosActionNode::Goal& goal) override;
         static PortsList providedPorts();
+        NodeStatus onFeedback(const std::shared_ptr<GoalHandleWayptSeek> goal_handle);
     private:
         float64[6] ogPos;
         float64[6] currentPos;

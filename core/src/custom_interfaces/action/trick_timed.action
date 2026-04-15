@@ -10,5 +10,5 @@ float64 hold_time
 bool success
 ---
 # Feedback
-float64 remaining duration
+float64 remaining_duration
 float64 time_in_tolerance
