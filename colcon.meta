@@ -1,0 +1,7 @@
+{
+  "names": {
+    "vision": {
+      "cmake-args": ["-DTorch_DIR=/opt/libtorch/share/cmake/Torch"]
+    }
+  }
+}
