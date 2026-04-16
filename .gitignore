@@ -130,6 +130,7 @@ Vision/runs
 *.torchscript
 
 *.mp4
+*.avi
 *.MOV
 Vision/**/*.txt
 *.jpg
