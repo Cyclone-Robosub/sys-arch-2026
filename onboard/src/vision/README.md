@@ -52,6 +52,24 @@ Set the library path so the linker can find LibTorch at runtime:
 export LD_LIBRARY_PATH=/opt/libtorch/lib:$LD_LIBRARY_PATH
 ```
 
+## Running
+
+Source the workspace and launch the node:
+
+```bash
+source install/setup.bash
+ros2 launch vision keypoint_node.launch.py \
+  model_path:=/path/to/model.torchscript \
+  video_path:=/path/to/video.mp4
+```
+
+Monitor output:
+
+```bash
+ros2 topic echo /keypoint_detections
+ros2 topic hz /keypoint_detections
+```
+
 ## Testing
 
 Build with tests enabled:
