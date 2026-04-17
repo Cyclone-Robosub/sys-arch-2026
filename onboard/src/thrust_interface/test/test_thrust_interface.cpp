@@ -91,7 +91,7 @@ protected:
     void create_node_with_params(int min_pwm, int max_pwm) {
         // Use pipe_fds[1] (write end) as the file descriptor
         // The node will write to it, and we'll read from pipe_fds[0]
-        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(pipe_fds[1]);
+        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(-1, pipe_fds[1]);
 
         node = std::make_shared<Thrust_Interface>(
             test_thrusters, 
@@ -147,57 +147,6 @@ TEST_F(TestThrustInterface, NodeConstruction) {
     
     ASSERT_NE(node, nullptr);
     EXPECT_EQ(node->get_name(), std::string("thrust_interface"));
-}
-
-
-/**
- * @brief Test PWM clamping to minimum value
- */
-TEST_F(TestThrustInterface, PWMClampingMinimum) {
-    create_node_with_params(1200, 1800);
-    
-    auto msg = std::make_shared<custom_interfaces::msg::Pwms>();
-    // Set all PWMs below minimum
-    for (int i = 0; i < 8; i++) {
-        msg->pwms[i] = 1000;  // Below min_pwm of 1200
-    }
-    publish_heartbeat();
-    publish_and_process(msg);
-    
-    // Read all serial output
-    std::string output = read_serial_output(200);
-    
-    // Verify that all commands have PWM value of 1200 (clamped)
-    for (int i = 0; i < 8; i++) {
-        std::string expected = "Set " + std::to_string(test_thrusters[i]) + " PWM 1200";
-        EXPECT_NE(output.find(expected), std::string::npos) 
-            << "Expected clamped PWM command for thruster " << test_thrusters[i];
-    }
-}
-
-/**
- * @brief Test PWM clamping to maximum value
- */
-TEST_F(TestThrustInterface, PWMClampingMaximum) {
-    create_node_with_params(1200, 1800);
-    
-    auto msg = std::make_shared<custom_interfaces::msg::Pwms>();
-    // Set all PWMs above maximum
-    for (int i = 0; i < 8; i++) {
-        msg->pwms[i] = 2000;  // Above max_pwm of 1800
-    }
-    
-    publish_heartbeat();
-    publish_and_process(msg);
-    
-    std::string output = read_serial_output(200);
-    
-    // Verify that all commands have PWM value of 1800 (clamped)
-    for (int i = 0; i < 8; i++) {
-        std::string expected = "Set " + std::to_string(test_thrusters[i]) + " PWM 1800";
-        EXPECT_NE(output.find(expected), std::string::npos)
-            << "Expected clamped PWM command for thruster " << test_thrusters[i];
-    }
 }
 
 /**
@@ -269,6 +218,56 @@ TEST_F(TestThrustInterface, SubscriptionExists) {
     auto subscriptions = node->get_subscriptions_info_by_topic("pwm_cmd");
     
     EXPECT_GE(subscriptions.size(), 1);
+}
+
+/**
+ * @brief Test PWM clamping to minimum value
+ */
+TEST_F(TestThrustInterface, PWMClampingMinimum) {
+    create_node_with_params(1200, 1800);
+    
+    auto msg = std::make_shared<custom_interfaces::msg::Pwms>();
+    // Set all PWMs below minimum
+    for (int i = 0; i < 8; i++) {
+        msg->pwms[i] = 1000;  // Below min_pwm of 1200
+    }
+    publish_heartbeat();
+    publish_and_process(msg);
+    
+    // Read all serial output
+    std::string output = read_serial_output(200);
+    
+    // Verify that all commands have PWM value of 1200 (clamped)
+    for (int i = 0; i < 8; i++) {
+        std::string expected = "Set " + std::to_string(test_thrusters[i]) + " PWM 1200";
+        EXPECT_NE(output.find(expected), std::string::npos) 
+            << "Expected clamped PWM command for thruster " << test_thrusters[i];
+    }
+}
+
+/**
+ * @brief Test PWM clamping to maximum value
+ */
+TEST_F(TestThrustInterface, PWMClampingMaximum) {
+    create_node_with_params(1200, 1800);
+    
+    auto msg = std::make_shared<custom_interfaces::msg::Pwms>();
+    // Set all PWMs above maximum
+    for (int i = 0; i < 8; i++) {
+        msg->pwms[i] = 2000;  // Above max_pwm of 1800
+    }
+    
+    publish_heartbeat();
+    publish_and_process(msg);
+    
+    std::string output = read_serial_output(200);
+    
+    // Verify that all commands have PWM value of 1800 (clamped)
+    for (int i = 0; i < 8; i++) {
+        std::string expected = "Set " + std::to_string(test_thrusters[i]) + " PWM 1800";
+        EXPECT_NE(output.find(expected), std::string::npos)
+            << "Expected clamped PWM command for thruster " << test_thrusters[i];
+    }
 }
 
 /**

@@ -8,9 +8,12 @@
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <test_depend>ament_cmake_ros</test_depend>
 
+  <depend>rclcpp</depend>
   <depend>custom_interfaces</depend>
   <depend>std_msgs</depend>
+  <depend>fd_interface</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

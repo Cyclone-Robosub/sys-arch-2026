@@ -9,7 +9,9 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclcpp</depend>
   <depend>custom_interfaces</depend>
+  <depend>tui_interface</depend>
   <depend>std_msgs</depend>
   <depend>std_srvs</depend>
 

@@ -2,8 +2,8 @@
 
 using namespace std::chrono_literals;
 
-Mux_Controller::Mux_Controller() : Node("mux_controller") {
-    current_control_mode_subscriber = this->create_subscription<std_msgs::msg::Bool>("current_mode", 10, 
+Mux_Controller::Mux_Controller(std::unique_ptr<TUI_Interface> tui) : Node("mux_controller"), tui(std::move(tui)) {
+    current_control_mode_subscriber = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
         std::bind(&Mux_Controller::control_mode_callback, this, std::placeholders::_1));
     heartbeat_subscription = this->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, 
         std::bind(&Mux_Controller::mux_heartbeat_received_callback, this, std::placeholders::_1));
@@ -11,13 +11,11 @@ Mux_Controller::Mux_Controller() : Node("mux_controller") {
     heartbeat_timer = this->create_wall_timer(500ms, 
             std::bind(&Mux_Controller::heartbeat_check_callback, this)); // heartbeat timer    
 
-    client = this->create_client<std_srvs::srv::SetBool>("control_mode");
+    client = this->create_client<custom_interfaces::srv::ControlMode>("control_mode");
     force_pub = this->create_client<std_srvs::srv::SetBool>("force_pub");
     
     refresh_display();
 }
-
-/* ROS FUNCTIONS START */
 
 void Mux_Controller::get_mux_mode_now() {
     std::shared_ptr<std_srvs::srv::SetBool::Request> request = std::make_shared<std_srvs::srv::SetBool::Request>();
@@ -25,13 +23,13 @@ void Mux_Controller::get_mux_mode_now() {
     force_pub->async_send_request(request);
 }
 
-void Mux_Controller::set_mux_mode(bool mode) {
+void Mux_Controller::set_mux_mode(int mode) {
     if (mode == current_control_mode || no_heartbeat) {
         refresh_display();
         return;
     }
-    std::shared_ptr<std_srvs::srv::SetBool::Request> request = std::make_shared<std_srvs::srv::SetBool::Request>();
-    request->data = mode;
+    std::shared_ptr<custom_interfaces::srv::ControlMode::Request> request = std::make_shared<custom_interfaces::srv::ControlMode::Request>();
+    request->mode = mode;
     client->async_send_request(request);
 }
 
@@ -58,30 +56,60 @@ void Mux_Controller::heartbeat_check_callback() {
     }
 }
 
-void Mux_Controller::control_mode_callback(std_msgs::msg::Bool::UniquePtr msg) {
+void Mux_Controller::control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg) {
     current_control_mode = msg->data;
     refresh_display();
 }
 
-/* ROS FUNCTIONS END */
+void Mux_Controller::work_loop() {
+    char mode = 0;
+    int string_index = 0;
 
-/*
- * For ANSI escape sequences, see: https://gist.github.com/ConnerWill/d4b6c776b509add763e17f9f113fd25b
-*/
+    tui->init_terminal();
 
-/* DISPLAY FUNCTIONS START */
+    while (rclcpp::ok()) {
+        tui->process_input();
+        tui->freeze_display();
+        std::string current_input = tui->get_current_input();
+        mode = current_input[0];
+        mode = tolower(mode);
 
-void Mux_Controller::clear_display() {
-    printf("\x1B[2J\x1B[H");
+        if (current_input.size() < 2) {
+            printf("Invalid command. Try again: ");
+            fflush(stdout);
+            tui->unfreeze_display();
+            continue; 
+        }
+
+        string_index = 1;
+        if (mode == 'e' || mode == 'q') {
+            tui->unfreeze_display();
+            break;
+        }
+        if (current_input[string_index] != '\n' || (mode != '0' && mode != '1' && mode != '2' && mode != '3')) {
+            printf("Invalid command. Try again: ");
+            fflush(stdout);
+            while (current_input[string_index] != '\n') {
+                string_index++;
+            }
+            tui->unfreeze_display();
+            continue;
+        }
+        tui->unfreeze_display();
+        set_mux_mode((int)(mode - '0'));
+    }
+    tui->restore_terminal();
+    tui->clear_display();
 }
 
 void Mux_Controller::refresh_display() {
-    display_mutex.lock();
-    tcflush(STDIN_FILENO, TCIFLUSH);
-    current_input = "";
-    cursor_pos = 0;
-    num_read = 0;
-    clear_display();
+    tui->refresh_display(2, no_heartbeat, current_control_mode);
+}
+
+void Mux_Controller_TUI::display_tui(va_list args) {
+    bool no_heartbeat = (bool)va_arg(args, int);
+    int current_control_mode = va_arg(args, int);
+    va_end(args);
     if (no_heartbeat) {
         write(STDOUT_FILENO, "\x1B[5m", 4); // set blinking
         write(STDOUT_FILENO, "\x1B[1;7m", 6); // set bold, inverted
@@ -89,194 +117,46 @@ void Mux_Controller::refresh_display() {
         write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
     }
     else {
-        printf("Current mode is: %s\n\n", current_control_mode ? "matlab (ctrl)" : "cli" );
+        printf("Current mode is: ");
+        switch (current_control_mode) {
+            case 0:
+                printf("disabled");
+                break;
+            case 1:
+                printf("cli");
+                break;
+            case 2:
+                printf("matlab (ctrl)");
+                break;
+            case 3:
+                printf("echo (playback)");
+                break;
+        }
+        printf("\n\n");
     }
     printf("Enter the control mode you'd like to switch to.\n");
-    printf("[0]: CLI mode\n");
-    printf("[1]: Matlab mode\n");
+    printf("[0]: Disabled\n");
+    printf("[1]: CLI mode\n");
+    printf("[2]: Matlab mode\n");
+    printf("[3]: Echo mode\n");
     printf("[E]: Exit\n");
     printf("Mode: ");
     fflush(stdout);
-    display_mutex.unlock();
-}
-
-void Mux_Controller::insert(char c) {
-    char new_val = c;
-    int orig_pos = cursor_pos;
-    while (cursor_pos < num_read) {
-        char old_val = current_input[cursor_pos];
-        current_input[cursor_pos] = new_val;
-        printf("%c", new_val);
-        fflush(stdout);
-        cursor_pos++;
-        new_val = old_val;
-    }
-    current_input.push_back(new_val);
-    printf("%c", new_val);
-    fflush(stdout);
-    cursor_pos++;
-    while (cursor_pos > orig_pos + 1) {
-        write(STDOUT_FILENO, "\x1B[1D", 4);
-        cursor_pos--;
-    }
-    num_read++;
-}
-
-
-void Mux_Controller::backspace() {
-    int orig_pos = cursor_pos;
-    write(STDOUT_FILENO, "\x1B[1D", 4); // move left to prepare for deletion
-    while (cursor_pos < num_read) {
-        char old_val = current_input[cursor_pos];
-        current_input[cursor_pos - 1] = old_val;
-        printf("%c", old_val);
-        fflush(stdout);
-        cursor_pos++;
-    }
-    current_input.pop_back();
-    write(STDOUT_FILENO, " ", 1);
-    while (cursor_pos >= orig_pos) {
-        write(STDOUT_FILENO, "\x1B[1D", 4);
-        cursor_pos--;
-    }
-    num_read--;
-}
-
-/* Here we make the totally not dangerous assumption that some identifiers don't matter. :) */
-void Mux_Controller::delete_or_direction() {
-    char c = 0;
-    read(STDIN_FILENO, &c, 1);
-    read(STDIN_FILENO, &c, 1);
-    if (c == 51) { // delete key
-        read(STDIN_FILENO, &c, 1);
-        if (c == 126 && cursor_pos < num_read) { // standard delete
-            write(STDOUT_FILENO, "\x1B[1C", 4);
-            cursor_pos++;
-            backspace();
-        }
-        if (c == 59) { // ctrl + delete
-            read(STDIN_FILENO, &c, 1); // clear extra identifier
-            read(STDIN_FILENO, &c, 1); // clear extra identifier
-            write(STDOUT_FILENO, "\x1B[0K", 4); // erase from cursor to end of line
-            num_read -= (current_input.size() - cursor_pos);
-            current_input.erase(cursor_pos, std::string::npos);
-        }
-    }
-    else { // direction key
-        if (c == 67 && cursor_pos < num_read) { // right
-            write(STDOUT_FILENO, "\x1B[1C", 4);
-            cursor_pos++;
-        }
-        if (c == 68 && cursor_pos > 0) { // left
-            write(STDOUT_FILENO, "\x1B[1D", 4);
-            cursor_pos--;
-        }
-    }
-}
-
-/*
- * Known limitations:
-    * ctrl + arrow keys missing
-    * page up / page down missing
-    * line wrapping missing and breaks backspace
-    * delete_or_direction() doesn't check full scancodes
-*/
-
-void Mux_Controller::process_input() {
-    display_mutex.lock();
-    cursor_pos = 0;
-    num_read = 0;
-    int c = 0;
-    current_input = "";
-    display_mutex.unlock();
-    while (true) {
-	usleep(10000);
-        while (read(STDIN_FILENO, &c, 1) != 0) {
-            display_mutex.lock();
-            if ((c >= 32 && c <= 126) || c == '\n') {
-                insert(c);
-                if (c == '\n') {
-                    display_mutex.unlock();
-                    return;
-                }
-            }
-            if (c == 127 && cursor_pos > 0) {
-                backspace();
-            }
-            if (c == 8) { // ctrl + backspace
-                while (cursor_pos > 0) {
-                    backspace();
-                }
-            }
-            if (c == 27) {
-                delete_or_direction();
-            }
-            display_mutex.unlock();
-        }
-    }
-}
-
-/* DISPLAY FUNCTIONS END */
-
-void Mux_Controller::work_loop() {
-    char mode = 0;
-    int string_index = 0;
-
-    while (rclcpp::ok()) {
-        process_input();
-        display_mutex.lock();
-        mode = current_input[0];
-        mode = tolower(mode);
-
-        if (current_input.size() < 2) {
-            printf("Invalid command. Try again: ");
-            fflush(stdout);
-            display_mutex.unlock();
-            continue; 
-        }
-
-        string_index = 1;
-        if (mode == 'e' || mode == 'q') {
-            display_mutex.unlock();
-            break;
-        }
-        if (current_input[string_index] != '\n' || (mode != '0' && mode != '1')) {
-            printf("Invalid command. Try again: ");
-            fflush(stdout);
-            while (current_input[string_index] != '\n') {
-                string_index++;
-            }
-            display_mutex.unlock();
-            continue;
-        }
-        display_mutex.unlock();
-        set_mux_mode((bool)(mode - '0'));
-    }
 }
 
 int main(int argc, char* argv[]) {    
     rclcpp::init(argc, argv);
-    auto mux_controller = std::make_shared<Mux_Controller>();
+    std::unique_ptr<TUI_Interface> tui = std::make_unique<Mux_Controller_TUI>();
+    auto mux_controller = std::make_shared<Mux_Controller>(std::move(tui));
     
     std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
         rclcpp::spin(mux_controller);
     });
 
-    struct termios orig_termios;
-    tcgetattr(STDIN_FILENO, &orig_termios);
-    struct termios raw = orig_termios;
-    raw.c_lflag &= ~(ICANON | ECHO);  // no line buffering or echoing
-    raw.c_cc[VMIN] = 0;
-    raw.c_cc[VTIME] = 0;
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-
     mux_controller->work_loop();
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
 
     rclcpp::shutdown();
     ros_thread.join();
-
-    Mux_Controller::clear_display();
     
     return 0;
 }

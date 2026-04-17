@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
+find_package(tui_interface REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 
@@ -24,6 +25,7 @@ ament_target_dependencies(mux_controller
   std_msgs
   std_srvs
   custom_interfaces
+  tui_interface
 )
 
 # Install main executable

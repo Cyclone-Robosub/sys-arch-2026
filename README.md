@@ -60,8 +60,7 @@ If you are using containers on the Jetson Nano Orin, see [Using container on Jet
 
 ## Running unit tests
 1. Run `colcon build`
-2. Run `colcon test --parallel-workers 1`
-> This argument is needed to prevent node tests from interfering with each other: if different tests create publishers and subscribers on the same topic, this can create unexpected behaviour!
+2. Run `colcon test`
 3. If there are any errors, view them with  `colcon test-result --verbose | less`
 
 
@@ -70,8 +69,8 @@ If you are using containers on the Jetson Nano Orin, see [Using container on Jet
 Launch files are a alternative to bash script for runnign ROS nodes
 1. Run `colcon build` in the workspace
 2. Run `source install/setup.bash`
-3. Run `ros2 launch $pkg_name $launch_file_name` wher the `pkg_name` is the name of the package and `launch_file_name` is the name fo the launch file.
-4. For example, the command for the pwm_ci package would be `ros2 launch pwm_cli cli_launch.py` (presuming you have done step 1 and 2)
+3. Run `ros2 launch $pkg_name $launch_file_name` wher the `pkg_name` is the name of the package and `launch_file_name` is the name for the launch file.
+4. For example, the command for the pwm_cli package would be `ros2 launch pwm_cli cli_launch.py` (presuming you have done steps 1 and 2)
 ```
 .
 ├── onboard
