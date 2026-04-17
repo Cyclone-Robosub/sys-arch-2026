@@ -254,7 +254,7 @@ def info():
 	print("\n")
 	print("Valid Robot Commands:")
 	print("\tstop | forwards | backwards | strafe left | strafe right | rise | sink |")
-	print("\tyaw counter clockwise | yaw clockwise | pitch up | pitch down | roll left | roll right")
+	print("\tyaw counter clockwise (yaw ccw) | yaw clockwise (yaw cw) | pitch up | pitch down | roll left | roll right")
 	print("\tcustom [{pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}]")
 	print("\n")
 	print("All robot commands have optional power and time fields")
@@ -402,7 +402,7 @@ class RobotCommand():
 					if self.name == "Custom pwm" \
 					else f"Are you sure you want to {self.name} at {self.power}% power"
 		# Confirmation string end is dependent on whether the command is timed
-		str_end = " until stopped? [yes/no]\n" if self.time == -1 else f" for {self.time} seconds? [yes/no]\n"
+		str_end = " until stopped? [(y)es/(n)o]\n" if self.time == -1 else f" for {self.time} seconds? [(y)es/(n)o]\n"
 		confirm_str = str_start + str_end
 
 		return confirm(confirm_str)
