@@ -3,9 +3,9 @@
 using namespace BT;
 
 namespace CycloneCommands {
-    DisTrick::DisTrick(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<WayptAbs>(name, conf, params) {
-        startTime = std::chrono::steady_clock::now();
-    }
+    DisTrick::DisTrick(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<WayptAbs>(name, conf, params) 
+    {}
+    
     bool DisTrick::setGoal(RosActionNode::Goal& goal) override {
         // get "order" from the Input port
         getInput("order", goal.order);
@@ -14,13 +14,19 @@ namespace CycloneCommands {
     }
 
     NodeStatus DisTrick::onResultReceived (const WrappedResult& result) override {
-        // bit unsure about how to code this
+        switch (result.result) {
+            case "RUNNING":
+                return NodeStatus::RUNNING;
+            case "SUCCESS":
+                return NodeStatus::SUCCESS;
+        }
     }
 
     static PortsList providedPorts() {
         return { InputPort<float64[]>("tolerance") };
     }
     NodeStatus DisTrick::tick() override  {
+        /*
         // extract ...  from goal
         auto goal_msg = DisTrick::Goal();
         std::string trick = goal_msg->trick;
@@ -74,6 +80,7 @@ namespace CycloneCommands {
                 return NodeStatus::RUNNING;
             }
         }   
+            */
     }
     NodeStatus DisTrick::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
         for (auto num : feedback->current_pose) {

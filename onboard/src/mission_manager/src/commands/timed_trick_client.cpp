@@ -14,13 +14,20 @@ namespace CycloneCommands {
     }
 
     NodeStatus TimedTrick::onResultReceived (const WrappedResult& result) override {
-        // bit unsure about how to code this
+        switch (result.result) {
+            case "RUNNING":
+                return NodeStatus::RUNNING;
+            case "SUCCESS":
+                return NodeStatus::SUCCESS;
+        }
     }
 
     static PortsList providedPorts() {
         return { InputPort<float64[]>("tolerance") };
     }
     NodeStatus TimedTrick::tick() override  {
+        
+        /*
         // extract ...  from goal
         auto goal_msg = TimedTrick::Goal();
         std::string trick = goal_msg->trick;
@@ -73,7 +80,8 @@ namespace CycloneCommands {
             } else {
                 return NodeStatus::RUNNING;
             }
-        }   
+        }  
+            */ 
     }
     NodeStatus TimedTrick::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
         std::cout << feedback->remaining_duration << "\n";

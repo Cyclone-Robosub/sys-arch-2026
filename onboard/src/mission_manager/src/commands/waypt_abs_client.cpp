@@ -19,15 +19,18 @@ namespace CycloneCommands {
     NodeStatus WayptAbs::onResultReceived (const WrappedResult& result) override {
         switch (result.result) {
             case "RUNNING":
-                return NodeStatus::RUNNING;
+                return NodeStatus::FAILURE;
             case "SUCCESS":
                 return NodeStatus::SUCCESS;
+            default:
+                return NodeStatus::FAILURE;
         }
     }
-
+    /*
     static PortsList providedPorts() {
         return { InputPort<float64[]>("tolerance") };
     }
+    */
     NodeStatus WayptAbs::tick() override  {
         /*
         CODE IS WRONG PROBABLY

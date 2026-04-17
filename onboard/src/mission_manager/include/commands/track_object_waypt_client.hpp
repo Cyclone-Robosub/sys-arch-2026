@@ -5,14 +5,18 @@ using namespace BT;
 class ObjectWaypt: public RosActionNode<ObjectWaypt> {
     public:
         ObjectWaypt(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-        NodeStatus tick() override;
+        // NodeStatus tick() override;
         bool setGoal(RosActionNode::Goal& goal) override;
+        NodeStatus onResultReceived(const WrappedResult& wr) override;
         static PortsList providedPorts();
+        NodeStatus ObjectWaypt::onFailure(ActionNodeErrorCode error);
+        NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback);
 
+    
     private:
-        float64[6] currentPos;
-        float64 startTime;
-        float64 currentTime;
+        double[6] currentPos;
+        double startTime;
+        double currentTime;
         bool isInTolerance = false;
         std::string objectID;
         

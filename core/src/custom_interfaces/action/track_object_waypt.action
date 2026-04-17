@@ -1,8 +1,8 @@
 # Goal
-float64[6] tracking_position
+double[6] tracking_position
 bool[6] waypoint_mask
 string object
-float64 hold_time
+# float64 hold_time
 # Tolerance is set from the blackboard
 # float64[6] tolerance
 ---
@@ -11,5 +11,5 @@ string result
 ---
 # Feedback
 # delta is defined as goal - current position
-float64[6] delta
-float64 time_in_tolerance
+double[6] delta
+double time_in_tolerance
