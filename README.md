@@ -31,8 +31,8 @@ chmod +x start_tmux_session.sh
 Launch files are a alternative to bash script for runnign ROS nodes
 1. Run `colcon build` in the workspace
 2. Run `source install/setup.bash`
-3. Run `ros2 launch $pkg_name $launch_file_name` wher the `pkg_name` is the name of the package and `launch_file_name` is the name fo the launch file.
-4. For example, the command for the pwm_ci package would be `ros2 launch pwm_cli cli_launch.py` (presuming you have done step 1 and 2)
+3. Run `ros2 launch $pkg_name $launch_file_name` wher the `pkg_name` is the name of the package and `launch_file_name` is the name for the launch file.
+4. For example, the command for the pwm_cli package would be `ros2 launch pwm_cli cli_launch.py` (presuming you have done steps 1 and 2)
 ```
 .
 ├── onboard
