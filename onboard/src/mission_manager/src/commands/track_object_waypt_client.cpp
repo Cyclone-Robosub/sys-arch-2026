@@ -25,12 +25,13 @@ namespace CycloneCommand {
         if (wr.result ->  ) { 
             return NodeStatus::SUCCESS;
         } else if () {
-            return NodeStatus::RUNNING;
+         
+        }   return//  NodeStatus::RUNNING;
         }
         return NodeStatus::FAILURE;
-    }
+//     }
 
-    NodeStatus ObjectWaypt::onFailure(ActionNodeErrorCode error) {
+    NodeStatus ObjectWaypt::onFai// lure(ActionNodeErrorCode error) {
         RCLCPP_ERROR(logger(), "Error: %d", error);
         return NodeStatus::FAILURE;
     }
