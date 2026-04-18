@@ -14,6 +14,7 @@ find_package(rclcpp      REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs    REQUIRED)
 find_package(cv_bridge   REQUIRED)
+find_package(custom_interfaces REQUIRED)
 
 # ── OpenCV ────────────────────────────────────────────────────────────────────
 find_package(OpenCV REQUIRED)
@@ -66,6 +67,7 @@ ament_target_dependencies(keypoint_node
   sensor_msgs
   std_msgs
   cv_bridge
+  custom_interfaces
 )
 
 # ── install ───────────────────────────────────────────────────────────────────

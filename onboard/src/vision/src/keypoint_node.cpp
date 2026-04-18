@@ -9,6 +9,8 @@
 #include <opencv2/opencv.hpp>
 
 #include "vision/keypoint_detector.hpp"
+#include "custom_interfaces/msg/vision_observation.hpp"
+#include "custom_interfaces/msg/vision_observations.hpp"
 
 // ---------------------------------------------------------------------------
 // Helpers

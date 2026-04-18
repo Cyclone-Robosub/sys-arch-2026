@@ -1,4 +1,4 @@
-BoundingBox[] bounding_box
+BoundingBox bounding_box
 Keypoint[] keypoints
 
 # gate: 4 keypoints
