@@ -43,6 +43,7 @@ target_link_libraries(keypoint_detector
 
 ament_target_dependencies(keypoint_detector
   rclcpp
+  custom_interfaces
 )
 
 # ── keypoint_node executable ──────────────────────────────────────────────────

@@ -1,4 +1,5 @@
 #include "vision/keypoint_detector.hpp"
+#include "custom_interfaces/msg/vision_observations.hpp"
 
 #include <stdexcept>
 

@@ -9,47 +9,11 @@
 #include <opencv2/opencv.hpp>
 
 #include "vision/keypoint_detector.hpp"
-#include "custom_interfaces/msg/vision_observation.hpp"
 #include "custom_interfaces/msg/vision_observations.hpp"
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-static std::string detections_to_json(const std::vector<vision::Detection> & dets)
-{
-  std::ostringstream ss;
-  ss << "[";
-  for (size_t d = 0; d < dets.size(); ++d) {
-    const auto & det = dets[d];
-    if (d > 0) {
-      ss << ",";
-    }
-    ss     << "{"
-           << "\"x1\":" << det.x1 << ","
-           << "\"y1\":" << det.y1 << ","
-           << "\"x2\":" << det.x2 << ","
-           << "\"y2\":" << det.y2 << ","
-           << "\"confidence\":" << det.confidence << ","
-           << "\"class_id\":" << det.class_id << ","
-           << "\"keypoints\":[";
-
-    for (size_t k = 0; k < det.keypoints.size(); ++k) {
-      const auto & kp = det.keypoints[k];
-      if (k > 0) {
-        ss << ",";
-      }
-      ss       << "{"
-               << "\"x\":" << kp.x << ","
-               << "\"y\":" << kp.y << ","
-               << "\"visibility\":" << kp.visibility
-               << "}";
-    }
-    ss << "]}";
-  }
-  ss << "]";
-  return ss.str();
-}
 
 static void draw_detections(
   cv::Mat & frame,
@@ -112,15 +76,12 @@ public:
                     model_path.c_str(), video_path.c_str(), num_keypoints);
 
         // Publishers
-    detections_pub_ = this->create_publisher<std_msgs::msg::String>(
-            "keypoint_detections", 10);
-    image_pub_ = this->create_publisher<sensor_msgs::msg::Image>(
-            "keypoint_image", 10);
+    detections_pub_ = this->create_publisher<custom_interfaces::msg::VisionObservations>("keypoint_detections", 10);
+    image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("keypoint_image", 10);
 
         // Timer drives the processing loop
     const auto period = std::chrono::duration<double>(1.0 / fps);
-    timer_ = this->create_wall_timer(period,
-                    std::bind(&KeypointNode::timer_callback, this));
+    timer_ = this->create_wall_timer(period, std::bind(&KeypointNode::timer_callback, this));
   }
 
 private:
@@ -138,9 +99,11 @@ private:
 
     auto dets = detector_->detect(frame);
 
-        // Publish JSON detections
-    auto det_msg = std_msgs::msg::String();
-    det_msg.data = detections_to_json(dets);
+        // Publish observations
+    auto det_msg = custom_interfaces::msg::VisionObservations();
+    for (const auto & det : dets) {
+      det_msg.observations.push_back(det.to_ros_msg());
+    }
     detections_pub_->publish(det_msg);
 
         // Publish annotated image
@@ -154,7 +117,7 @@ private:
   cv::VideoCapture cap_;
   std::unique_ptr<vision::KeypointDetector> detector_;
 
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr    detections_pub_;
+  rclcpp::Publisher<custom_interfaces::msg::VisionObservations>::SharedPtr detections_pub_;
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr  image_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 };

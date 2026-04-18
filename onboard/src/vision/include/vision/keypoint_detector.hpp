@@ -1,10 +1,17 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <torch/script.h>
 #include <opencv2/opencv.hpp>
+
+#include "custom_interfaces/msg/keypoint.hpp"
+#include "custom_interfaces/msg/bounding_box.hpp"
+#include "custom_interfaces/msg/vision_observation.hpp"
+#include "custom_interfaces/msg/vision_observations.hpp"
 
 namespace vision
 {
@@ -14,6 +21,15 @@ struct Keypoint
   float x;
   float y;
   float visibility;
+
+  custom_interfaces::msg::Keypoint to_ros_msg() const
+  {
+    custom_interfaces::msg::Keypoint msg;
+    msg.x = x;
+    msg.y = y;
+    msg.visibility = visibility;
+    return msg;
+  }
 };
 
 struct Detection
@@ -22,6 +38,25 @@ struct Detection
   float confidence;
   float class_id;
   std::vector<Keypoint> keypoints;
+
+  inline static const std::unordered_map<int8_t, std::string> ClassNameById{
+    {0, "gate"}
+  };
+
+  custom_interfaces::msg::VisionObservation to_ros_msg() const
+  {
+    custom_interfaces::msg::VisionObservation msg;
+    msg.bounding_box.x1 = x1;
+    msg.bounding_box.y1 = y1;
+    msg.bounding_box.x2 = x2;
+    msg.bounding_box.y2 = y2;
+    msg.bounding_box.confidence = confidence;
+    msg.category = ClassNameById.at(static_cast<int8_t>(class_id));
+    for (const auto & kp : keypoints) {
+      msg.keypoints.push_back(kp.to_ros_msg());
+    }
+    return msg;
+  }
 };
 
 class KeypointDetector {
