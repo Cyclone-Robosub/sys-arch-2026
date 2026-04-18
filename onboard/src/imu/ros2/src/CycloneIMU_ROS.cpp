@@ -30,7 +30,17 @@ void CycloneIMU_ROS::imu_callback(std::shared_ptr<sensor_msgs::msg::Imu> msg)
         isBenchmarkCompletedIMU = true;
     }
 }
+void CycloneIMU_ROS::ins1_callback(const inertialsense_msgs::msg::Ins1::SharedPtr msg)
+{
+    std::unique_lock<std::mutex> lock(ins1_mutex);
+    ins1_ptr = msg;
+    lock.unlock();
 
+    // Optional: Print for debugging (convert radians to degrees for readability)
+    // float roll_deg = msg->theta.x * (180.0 / M_PI);
+    // float pitch_deg = msg->theta.y * (180.0 / M_PI);
+    // std::cout << "Current Roll: " << roll_deg << " Pitch: " << pitch_deg << std::endl;
+}
 void CycloneIMU_ROS::mag_callback(std::shared_ptr<sensor_msgs::msg::MagneticField> msg)
 {
     std::unique_lock<std::mutex> lock(mag_mutex);
@@ -76,6 +86,13 @@ void CycloneIMU_ROS::Controls_Publisher()
           std::cout <<"linear Acceleration x" << custom_msg.imu_fusion.linear_acceleration.x << std::endl;
         }
         lock_imu.unlock();
+        std::unique_lock<std::mutex> lock_ins1(ins1_mutex);
+        if (ins1_ptr)
+        {
+            custom_msg.roll = ins1_ptr->theta.x;
+            custom_msg.pitch = ins1_ptr->theta.y;
+        }
+        lock_ins1.unlock();
         std::unique_lock<std::mutex> lockmag(mag_mutex);
         if (mag_ptr)
         {

@@ -9,3 +9,6 @@ sensor_msgs/FluidPressure pressure
 #AHRS (x, y, z, vx, vy, vz, roll, pitch, yaw) Covariance Arrays Included
 # https://docs.ros.org/en/noetic/api/nav_msgs/html/msg/Odometry.html
 nav_msgs/Odometry ahrs_database
+
+float64 roll
+float64 pitch
