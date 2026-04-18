@@ -15,3 +15,4 @@ Readme [here](../onboard/src/vision/README.md)
 - [ ] Add two more camera feed publisher nodes
 - [ ] Make the keypoint detector node read from a camera feed topic instead of a video file
 - [ ] Use a custom message type for keypoint results instead of a string
+- [x] Use a custom message type for keypoint results instead of a string
