@@ -30,10 +30,10 @@ void CycloneIMU_ROS::imu_callback(std::shared_ptr<sensor_msgs::msg::Imu> msg)
         isBenchmarkCompletedIMU = true;
     }
 }
-void CycloneIMU_ROS::ins1_callback(const inertialsense_msgs::msg::Ins1::SharedPtr msg)
+void CycloneIMU_ROS::DIDINS1_callback(const inertial_sense_ros2::msg::DIDINS1::SharedPtr msg)
 {
-    std::unique_lock<std::mutex> lock(ins1_mutex);
-    ins1_ptr = msg;
+    std::unique_lock<std::mutex> lock(DIDINS1_mutex);
+    DIDINS1_ptr = msg;
     lock.unlock();
 
     // Optional: Print for debugging (convert radians to degrees for readability)
@@ -86,13 +86,13 @@ void CycloneIMU_ROS::Controls_Publisher()
           std::cout <<"linear Acceleration x" << custom_msg.imu_fusion.linear_acceleration.x << std::endl;
         }
         lock_imu.unlock();
-        std::unique_lock<std::mutex> lock_ins1(ins1_mutex);
-        if (ins1_ptr)
+        std::unique_lock<std::mutex> lock_DIDINS1(DIDINS1_mutex);
+        if (DIDINS1_ptr)
         {
-            custom_msg.roll = ins1_ptr->theta.x;
-            custom_msg.pitch = ins1_ptr->theta.y;
+            custom_msg.roll = DIDINS1_ptr->theta[0];
+            custom_msg.pitch = DIDINS1_ptr->theta[1];
         }
-        lock_ins1.unlock();
+        lock_DIDINS1.unlock();
         std::unique_lock<std::mutex> lockmag(mag_mutex);
         if (mag_ptr)
         {
