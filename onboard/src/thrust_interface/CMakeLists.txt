@@ -7,6 +7,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(custom_interfaces REQUIRED)
@@ -49,7 +50,7 @@ if(BUILD_TESTING)
   )
   
   # Add test executable and link with library
-  ament_add_gtest(${PROJECT_NAME}_test test/test_thrust_interface.cpp)
+  ament_add_ros_isolated_gtest(${PROJECT_NAME}_test test/test_thrust_interface.cpp)
   target_compile_definitions(${PROJECT_NAME}_test PUBLIC ENABLE_TESTING)
   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib)
   target_include_directories(${PROJECT_NAME}_test PUBLIC

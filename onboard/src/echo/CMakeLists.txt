@@ -11,6 +11,7 @@ find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
 find_package(fd_interface REQUIRED)
 find_package(tui_interface REQUIRED)
+find_package(std_msgs REQUIRED)
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
@@ -19,6 +20,7 @@ include_directories(
 add_executable(echo src/echo.cpp)
 ament_target_dependencies(echo
   rclcpp
+  std_msgs
   custom_interfaces
   fd_interface
   tui_interface

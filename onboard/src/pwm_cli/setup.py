@@ -1,6 +1,7 @@
+from pathlib import Path
 from setuptools import find_packages, setup
 
-package_name = 'cli'
+package_name = 'pwm_cli'
 
 setup(
     name=package_name,
@@ -10,13 +11,15 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (str(Path('share') / package_name / 'launch'), list(map(str, Path('launch').glob('*')))),
     ],
     install_requires=['setuptools'],
+	tests_require=['pytest'],
     zip_safe=True,
-    maintainer='william',
-    maintainer_email='wobarber@outlook.com',
+    maintainer='declan-whitlock',
+    maintainer_email='dcwhitlock@ucdavis.edu',
     description='TODO: Package description',
-    license='TODO: License declaration',
+    license='Apache-2.0',
     extras_require={
         'test': [
             'pytest',
@@ -24,7 +27,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'cli = cli.cli:main'
+			'pwm_cli_node = pwm_cli.cli_console:main'
         ],
     },
 )
