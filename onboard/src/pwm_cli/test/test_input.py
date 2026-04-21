@@ -46,7 +46,7 @@ def input_iterator(outputs: list[str]):
 	return my_input
 
 # Used to denote the first important value of catch_output, as the info() command prints 24 times on program start
-INFO_OFFSET = 24
+INFO_OFFSET = 25
 
 
 # --- BEGIN TESTS ---
@@ -132,6 +132,24 @@ def test_invalid_custom_pwms(simulate_input, catch_output):
 	assert output_list[INFO_OFFSET+8] == "Invalid custom pwms inputted: ['1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500'] (Note: 9 pwms recieved, expected 8)\n"
 
 
+# Tests that cli_console can handle invalid custom pwm inputs
+def test_invalid_run_thruster(simulate_input, catch_output):
+	builtins.input = input_iterator([
+		"run thruster 8",
+		"run thruster 100000",
+		"run thruster 0 pwm: 1000",
+		"run thruster 0 pwm: 2000",
+		"run thruster 1 t:6",
+		"end session"])
+	main()
+	output_list = catch_output
+	assert output_list[INFO_OFFSET] == "Invalid thruster number inputted: 8, max 7\n"
+	assert output_list[INFO_OFFSET+1] == "Invalid thruster number inputted: 100000, max 7\n"
+	assert output_list[INFO_OFFSET+2] == "Invalid thruster pwm inputted: 1000\n"
+	assert output_list[INFO_OFFSET+3] == "Invalid thruster pwm inputted: 2000\n"
+	assert output_list[INFO_OFFSET+4] == "NOTE: Custom times are ignored for thruster commands.\n"
+
+
 		# --- VALID INPUT TESTS ---
 
 # Check that default power correctly updates after 'set power' is processed
@@ -142,10 +160,13 @@ def test_set_power(simulate_input, catch_output):
 		"forwards", "yes", "current command",
 		"backwards", "yes", "current command",
 		"strafe left", "yes", "current command",
+		"run thruster 0", "yes", "current command",
 		"set power 10",
+		"run thruster 3", "yes", "current command",
 		"forwards", "yes", "current command",
 		"backwards", "yes", "current command",
 		"strafe left", "yes", "current command",
+		"run thruster 0", "yes", "current command",
 		"end session"
 		])
 	main()
@@ -156,10 +177,13 @@ def test_set_power(simulate_input, catch_output):
 		"Current Command: Move Forwards at 100% power\n",
 		"Current Command: Move Backwards at 100% power\n",
 		"Current Command: Strafe Left at 100% power\n",
+		"Current Command: Run Thruster 0 at 1900"
 		"Set default power to 10%\n",
+		"Current Command: Run Thrusters 0 at 1900, 3 at 1540"
 		"Current Command: Move Forwards at 10% power\n",
 		"Current Command: Move Backwards at 10% power\n",
 		"Current Command: Strafe Left at 10% power\n",
+		"Current Command: Run Thrusters 0 at 1540"
 	]
 	for i in range(0,len(expected_outputs)):
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
@@ -176,6 +200,8 @@ def test_current_command(simulate_input, catch_output):
 		"strafe right", "yes", "current command",
 		"roll right t: 5 p:60", "yes", "current command",
 		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100] t: 5", "yes", "current command",
+		"run thruster 0", "yes", "current command",
+		"run thruster 5 pwm:1300", "yes", "current command",
 		"set power 20", "current command",
 		"forwards", "yes", "current command",
 		"stop", "current command",
@@ -194,6 +220,8 @@ def test_current_command(simulate_input, catch_output):
 		"Current Command: Strafe Right at 70% power\n",
 		"Current Command: Roll Right at 60% power for 5 seconds\n",
 		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",
+		"Current Command: Run Thruster 0 at 1780"
+		"Current Command: Run Thrusters 0 at 1780, 5 at 1300"
 		"Set default power to 20%\n",
 		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",
 		"Current Command: Move Forwards at 20% power\n",
@@ -236,6 +264,7 @@ def test_custom_powers(simulate_input, catch_output):
 		"pitch down p:50", "yes", "current command",
 		"roll left p:50", "yes", "current command",
 		"roll right p:50", "yes", "current command",
+		"run thruster 0 p:50", "yes", "current command",
 		"end session"
 	])
 	main()
@@ -267,6 +296,7 @@ def test_custom_powers(simulate_input, catch_output):
 		"Current Command: Pitch Down at 50% power\n",
 		"Current Command: Roll Left at 50% power\n",
 		"Current Command: Roll Right at 50% power\n",
+		"Current Command: Run Thruster 0 at 1700\n",
 	]
 	for i in range(0,len(expected_outputs)):
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
@@ -359,6 +389,7 @@ def test_robot_commands(simulate_input, catch_output):
 		"roll left", "yes", "current command",
 		"roll right", "yes", "current command",
 		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100]", "yes", "current command",
+		"run thruster 0", "yes", "current command",
 		"end session"
 	])
 	main()
@@ -379,6 +410,7 @@ def test_robot_commands(simulate_input, catch_output):
 		"Current Command: Roll Left at 70% power\n",
 		"Current Command: Roll Right at 70% power\n",
 		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100']\n",
+		"Current Command: Run Thruster 0 at 1780\n",
 	]
 	for i in range(0,len(expected_outputs)):
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]

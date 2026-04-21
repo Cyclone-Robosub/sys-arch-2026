@@ -256,6 +256,7 @@ def info():
 	print("\tstop | forwards | backwards | strafe left | strafe right | rise | sink |")
 	print("\tyaw counter clockwise (yaw ccw) | yaw clockwise (yaw cw) | pitch up | pitch down | roll left | roll right")
 	print("\tcustom [{pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}]")
+	print("run thruster {number} [pwm: {pwm}] | stop thruster {number}")
 	print("\n")
 	print("All robot commands have optional power and time fields")
 	print("\t'power: {num}' or 'p: {num}' for a custom power (as a percentage)")
