@@ -2,6 +2,7 @@
 double[6] tracking_position
 bool[6] waypoint_mask
 string object
+double timeout_sec
 # float64 hold_time
 # Tolerance is set from the blackboard
 # float64[6] tolerance

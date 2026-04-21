@@ -9,16 +9,18 @@ class ObjectWaypt: public RosActionNode<ObjectWaypt> {
         bool setGoal(RosActionNode::Goal& goal) override;
         NodeStatus onResultReceived(const WrappedResult& wr) override;
         static PortsList providedPorts();
-        NodeStatus ObjectWaypt::onFailure(ActionNodeErrorCode error);
-        NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback);
+        NodeStatus onFailure(ActionNodeErrorCode error) override;
+        NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override;
+        NodeStatus onTick(const std::shared_ptr<TopicT>& last_msg) override;
 
     
     private:
-        double[6] currentPos;
-        double startTime;
-        double currentTime;
+        // double[6] currentPos;
+        std::chrono::steady_clock::time_point start_time;
+        // double currentTime;
         bool isInTolerance = false;
-        std::string objectID;
+        double timeout_sec;
+        // std::string objectID;
         
 
 }
