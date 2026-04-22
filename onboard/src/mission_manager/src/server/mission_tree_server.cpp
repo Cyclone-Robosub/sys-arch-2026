@@ -1,5 +1,12 @@
 #include "include/server/mission_tree.hpp"
+void MissionTreeServer::onTreeCreated(BT::Tree& tree) override {
+    logger_cout_ = std::make_shared<CustomLogger>(tree);
 
+}
+
+std::optional<std::string> MissionTreeServer::onLoopFeedback() override{
+    return current_command;
+}
 
 void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& factory) override {
     factory.registerNodeType<Idle>("Idle",  BT::RosNodeParams(node(), "/idle"));

@@ -8,8 +8,7 @@ class WayptSeek : public RosActionNode<WayptSeek> {
         static PortsList providedPorts();
         NodeStatus onFeedback(const std::shared_ptr<GoalHandleWayptSeek> goal_handle)
     private:
-        float64[6] currentPos;
-        float64 startTime;
-        float64 currentTime;
-        bool isConfident = false;
+        float64[6] currentPos; // unsure as to whether this is necessary
+        std::chrono::steady_clock::time_point startTime;
+        bool isConfident = false; // unsure as to whether this is necessary
 }

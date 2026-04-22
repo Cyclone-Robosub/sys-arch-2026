@@ -7,15 +7,18 @@ namespace CycloneCommands {
         
     }
 
-    NodeStatus WayptSeek::tick() override{
-        // move based on server directive
-        // call onFeedback
-        // check if goal has been accomplished 
-        // (i.e. found object with confidence)
+    NodeStatus WayptSeek::tick() override {
+        NodeStatus status; // has to come from the server, i.e. the matlab side?
+        if (status == NodeStatus::RUNNING) {
+            if (now - start_time > timeout_sec) {
+                return NodeStatus::FAILURE;
+            }
+        }
     }
 
     bool WayptSeek::setGoal(RosActionNode::Goal& goal) override{
-
+        // set attributes for the goal
+        startTime = std::chrono::steady_clock::now();
     }
 
     static WayptSeek::PortsList providedPorts(){
