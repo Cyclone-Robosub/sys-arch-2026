@@ -31,6 +31,12 @@ colcon build --packages-select vision \
     -DTorch_DIR=/opt/libtorch/share/cmake/Torch
 ```
 
+In container on jetson nano:
+
+```bash
+colcon build --packages-select vision --cmake-args -DCMAKE_PREFIX_PATH='/opt/venv/lib/python3.12/site-packages/torch/share/cmake/Torch'
+```
+
 **Side Note:** use `colcon.meta` to avoid repeating the `--cmake-args` every time.
 ```
 cat > ~/sys-arch-2026/colcon.meta << 'EOF'
@@ -50,6 +56,11 @@ Set the library path so the linker can find LibTorch at runtime:
 
 ```bash
 export LD_LIBRARY_PATH=/opt/libtorch/lib:$LD_LIBRARY_PATH
+```
+
+For container on jetson nano:
+```bash
+export LD_LIBRARY_PATH=/opt/venv/lib/python3.12/site-packages/torch/lib:$LD_LIBRARY_PATH
 ```
 
 ## Running
