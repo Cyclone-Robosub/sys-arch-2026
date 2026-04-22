@@ -97,7 +97,7 @@ void CycloneIMU_ROS::Controls_Publisher()
         if (mag_ptr)
         {
                 custom_msg.mag_array = *mag_ptr;
-             std::cout << "mag: " << custom_msg.mag_array.magnetic_field.x << std::endl;
+    //         std::cout << "mag: " << custom_msg.mag_array.magnetic_field.x << std::endl;
         }
         else
         {
@@ -115,7 +115,7 @@ void CycloneIMU_ROS::Controls_Publisher()
         if (odom_ptr)
         {
                 custom_msg.ahrs_database = *odom_ptr;
-                std::cout <<" Twist linear x" <<custom_msg.ahrs_database.twist.twist.linear.x << std::endl;
+          //      std::cout <<" Twist linear x" <<custom_msg.ahrs_database.twist.twist.linear.x << std::endl;
             
         }
         lock_odom.unlock();
