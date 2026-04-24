@@ -69,9 +69,9 @@ def main():
 			print(command)
 		
 		# A stop command should be processed immediately
-		elif command.name == "Stop":
+		elif "Stop" in command.name:
 			cli.publish_pwm(command.pwm)
-			current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
+			current_command = command
 		
 		# A robot command should be processed after the user confirms it was intended
 		elif command.confirm_command():
@@ -104,7 +104,7 @@ def main():
 '''
 Reads a string and takes the action requested or outputs a robot command
 command is the string to process
-returns a robot command or the result of the non-robot action taken
+Returns a robot command or the result of the non-robot action taken
 '''
 def translate_command(command):
 
@@ -150,10 +150,38 @@ def translate_command(command):
 		return "Invalid time inputted\n"
 
 	# Robot Commands
-	if "stop" in command:
-		cmd.name = "Stop"
-		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
+	if "stop" in command and "thruster" in command:
+		# If there is not a run thruster command running, just send a stop set.
+		if (current_command is None) or ("Thruster" not in current_command.name):
+			cmd.name = "Stop"
+			cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
+			return cmd
+		
+		cmd.name = "Stop Thruster"
+		# Copy the pwms of the previous [run thruster] command
+		cmd.pwm = current_command.pwm
+
+		# Get and validate thruster number
+		thruster_num = find_num_in_string(command[command.index("thruster"):])
+		if thruster_num is None:
+			return "No thruster number inputted\n"
+		thruster_num = int(thruster_num)
+		if thruster_num > 7:
+			return f"Invalid thruster number inputted: {thruster_num}, max 7\n"
+		cmd.pwm[thruster_num] = PWM_ZERO
+
+		# After updating the pwm, if the pwm set is a stop set, change the command to a stop command
+		if cmd.pwm == cmd.command_dictionary()["Stop"]:
+			cmd.name = "Stop"
+
+		# Ignore custom time if provided
+		if cmd.time != -1:
+			print("Note: Custom times are ignored for thruster commands.\n")
+			cmd.time = -1
+		
 		return cmd
+	if "stop" in command:
+		return RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
 	if "forwards" in command:
 		cmd.name = "Move Forwards"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
@@ -201,6 +229,49 @@ def translate_command(command):
 	if "roll" in command and "right" in command:
 		cmd.name = "Roll Right"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
+		return cmd
+
+	if "run" in command and "thruster" in command:
+		# If the previous command was not a run/stop thruster command, initialize the new command pwm set to a stop set
+		if current_command is None or "Thruster" not in current_command.name:
+			cmd.pwm = cmd.command_dictionary()["Stop"]
+		# ... Otherwise, copy it from the previous commands
+		else:
+			cmd.pwm = current_command.pwm
+
+		# Ignore custom time if provided
+		if cmd.time != -1:
+			print("Note: Custom times are ignored for thruster commands.\n")
+			cmd.time = -1
+		
+		cmd.name = "Run Thruster"
+		
+		# Get and validate thruster number
+		thruster_num = find_num_in_string(command[command.index("thruster"):])
+		if thruster_num is None:
+			return "No thruster number inputted\n"
+		thruster_num = int(thruster_num)
+		if thruster_num > 7:
+			return f"Invalid thruster number inputted: {thruster_num}, max 7\n"
+		
+		# Handle explicitly pwm value
+		if "pwm:" in command:
+			pwm_val = find_num_in_string(command[command.index("pwm:"):])
+			if pwm_val is None:
+				return "No thruster pwm inputted\n"
+			pwm_val = int(pwm_val)
+			if pwm_val > 1900 or pwm_val < 1100:
+				return f"Invalid thruster pwm inputted: {pwm_val}\n"
+
+			cmd.pwm[thruster_num] = pwm_val
+
+		# If there is no pwm value given, use default power
+		else:
+			cmd.pwm[thruster_num] = math.floor(PWM_ZERO + 400 * (int(cmd.power) / 100))
+
+		# Indicate which thruster was changed for the confirmation
+		cmd.thruster = thruster_num
+
 		return cmd
 
 	# custom pwm syntax: "Custom pwm [flt, frt, rlt, rrt, flb, frb, rlb, rrb]"
@@ -271,7 +342,7 @@ def info():
 
 '''
 Describes the currently running RobotCommand, or says no commands are running
-returns a string describing current command to user
+Returns a string describing current command to user
 '''
 def get_current_command():
 	global current_command
@@ -281,12 +352,34 @@ def get_current_command():
 	# Current command string start is dependent on whether the command is a custom pwm
 	str_start = f"Current Command: Custom pwm {current_command.pwm}" \
 				if current_command.name == "Custom pwm" \
-				else f"Current Command: {current_command.name} at {current_command.power}% power"
+				else (get_thruster_command_text(current_command) \
+				if "Thruster" in current_command.name \
+				else f"Current Command: {current_command.name} at {current_command.power}% power")
 	
 	# Current command string end is dependent on whether the command is timed
 	str_end = "\n" if current_command.time == -1 else f" for {current_command.time} seconds\n"
 
 	return str_start + str_end
+
+'''
+Due to the complexity of the current command text for the run thruster command,
+I have broken it out into a seperate function to not clutter get_current_command.
+
+Returns the thruster command text.
+'''
+def get_thruster_command_text(cmd):
+	num_thrusters = 0
+	thrusters_string = ""
+	# For each nonzero thruster, add its number and value to the string
+	for i in range(len(cmd.pwm)):
+		cur_pwm = cmd.pwm[i]
+		if cur_pwm != 1500:
+			num_thrusters += 1
+			if num_thrusters != 1:
+				thrusters_string += (", ")
+			thrusters_string += f"{i} at {cur_pwm}"
+	# Assemble and return the string
+	return f"Current Command: Run Thruster" + ("s " if num_thrusters > 1 else " ") + thrusters_string
 
 '''
 Looks through a string for the first number in it
@@ -401,7 +494,10 @@ class RobotCommand():
 		# Confirmation string start is dependent on whether the command is a custom pwm
 		str_start = f"Are you sure you want to run the Custom pwm {self.pwm}" \
 					if self.name == "Custom pwm" \
-					else f"Are you sure you want to {self.name} at {self.power}% power"
+					else (\
+					f"Are you sure to want to run thruster {self.thruster} at {self.pwm[self.thruster]}"
+					if "Thruster" in self.name \
+					else f"Are you sure you want to {self.name} at {self.power}% power")
 		# Confirmation string end is dependent on whether the command is timed
 		str_end = " until stopped? [(y)es/(n)o]\n" if self.time == -1 else f" for {self.time} seconds? [(y)es/(n)o]\n"
 		confirm_str = str_start + str_end

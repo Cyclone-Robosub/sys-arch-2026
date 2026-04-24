@@ -87,6 +87,7 @@ def test_invalid_times(simulate_input, catch_output):
 	for out_num in range(0, 4):
 		assert output_list[INFO_OFFSET + out_num] == "Invalid time inputted\n"
 
+
 # Tests that cli_console can handle invalid default power inputs
 def test_invalid_set_power(simulate_input, catch_output):
 	builtins.input = input_iterator(["set power ", "set power . ", "set power 0","set power 101", "set power 999", "end session"])
@@ -132,22 +133,39 @@ def test_invalid_custom_pwms(simulate_input, catch_output):
 	assert output_list[INFO_OFFSET+8] == "Invalid custom pwms inputted: ['1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500', '1500'] (Note: 9 pwms recieved, expected 8)\n"
 
 
-# Tests that cli_console can handle invalid custom pwm inputs
-def test_invalid_run_thruster(simulate_input, catch_output):
+# Tests that cli_console can handle invalid run and stop thruster commands
+def test_invalid_thruster(simulate_input, catch_output):
 	builtins.input = input_iterator([
+		"run thruster",
+		"run thruster 0", "yes",
+		"stop thruster",
+		"stop thruster 8",
+		"stop thruster 100000",
 		"run thruster 8",
 		"run thruster 100000",
-		"run thruster 0 pwm: 1000",
-		"run thruster 0 pwm: 2000",
-		"run thruster 1 t:6",
+		"run thruster 0 pwm: 1099",
+		"run thruster 0 pwm: 1901",
+		"run thruster 0 pwm: 10000000000000",
+		"run thruster 0 pwm:",
+		"run thruster 1 t:6", "yes",
 		"end session"])
 	main()
 	output_list = catch_output
-	assert output_list[INFO_OFFSET] == "Invalid thruster number inputted: 8, max 7\n"
-	assert output_list[INFO_OFFSET+1] == "Invalid thruster number inputted: 100000, max 7\n"
-	assert output_list[INFO_OFFSET+2] == "Invalid thruster pwm inputted: 1000\n"
-	assert output_list[INFO_OFFSET+3] == "Invalid thruster pwm inputted: 2000\n"
-	assert output_list[INFO_OFFSET+4] == "NOTE: Custom times are ignored for thruster commands.\n"
+	expected_outputs = [
+		"No thruster number inputted\n",
+		"No thruster number inputted\n",
+		"Invalid thruster number inputted: 8, max 7\n",
+		"Invalid thruster number inputted: 100000, max 7\n",
+		"Invalid thruster number inputted: 8, max 7\n",
+		"Invalid thruster number inputted: 100000, max 7\n",
+		"Invalid thruster pwm inputted: 1099\n",
+		"Invalid thruster pwm inputted: 1901\n",
+		"Invalid thruster pwm inputted: 10000000000000\n",
+		"No thruster pwm inputted\n",
+		"Note: Custom times are ignored for thruster commands.\n"
+	]
+	for i in range(0,len(expected_outputs)):
+		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
 
 
 		# --- VALID INPUT TESTS ---
@@ -177,13 +195,13 @@ def test_set_power(simulate_input, catch_output):
 		"Current Command: Move Forwards at 100% power\n",
 		"Current Command: Move Backwards at 100% power\n",
 		"Current Command: Strafe Left at 100% power\n",
-		"Current Command: Run Thruster 0 at 1900"
+		"Current Command: Run Thruster 0 at 1900\n",
 		"Set default power to 10%\n",
-		"Current Command: Run Thrusters 0 at 1900, 3 at 1540"
+		"Current Command: Run Thrusters 0 at 1900, 3 at 1540\n",
 		"Current Command: Move Forwards at 10% power\n",
 		"Current Command: Move Backwards at 10% power\n",
 		"Current Command: Strafe Left at 10% power\n",
-		"Current Command: Run Thrusters 0 at 1540"
+		"Current Command: Run Thruster 0 at 1540\n"
 	]
 	for i in range(0,len(expected_outputs)):
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
@@ -202,6 +220,9 @@ def test_current_command(simulate_input, catch_output):
 		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100] t: 5", "yes", "current command",
 		"run thruster 0", "yes", "current command",
 		"run thruster 5 pwm:1300", "yes", "current command",
+		"stop thruster 0", "current command",
+		"stop thruster 5", "current command",
+		"custom [1100, 1100, 1100, 1100, 1100, 1100, 1100, 1100] t: 5", "yes", "current command",
 		"set power 20", "current command",
 		"forwards", "yes", "current command",
 		"stop", "current command",
@@ -220,10 +241,13 @@ def test_current_command(simulate_input, catch_output):
 		"Current Command: Strafe Right at 70% power\n",
 		"Current Command: Roll Right at 60% power for 5 seconds\n",
 		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",
-		"Current Command: Run Thruster 0 at 1780"
-		"Current Command: Run Thrusters 0 at 1780, 5 at 1300"
+		"Current Command: Run Thruster 0 at 1780\n",
+		"Current Command: Run Thrusters 0 at 1780, 5 at 1300\n",
+		"Current Command: Run Thruster 5 at 1300\n",
+		"There is no currently active command\n",
+		"Current Command: Custom pwm ['1100', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",
 		"Set default power to 20%\n",
-		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",
+		"Current Command: Custom pwm ['1100', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 5 seconds\n",
 		"Current Command: Move Forwards at 20% power\n",
 		"There is no currently active command\n",
 	]
