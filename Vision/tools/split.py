@@ -1,7 +1,7 @@
+import argparse
 import os
 import random
 import shutil
-import sys
 
 def split_yolo_dataset(dataset_path: str, train_ratio=0.8):
     """
@@ -38,22 +38,19 @@ def split_yolo_dataset(dataset_path: str, train_ratio=0.8):
 
     for s in splits:
         for sd in subdirs:
-            os.makedirs(os.path.join(s, sd), exist_ok=True)
+            os.makedirs(os.path.join(dataset_path, s, sd), exist_ok=True)
 
     def move_data(file_list, target_split):
         for img_name in file_list:
-            # Move Image
-            shutil.move(os.path.join(img_dir, img_name), 
-                        os.path.join(target_split, 'images', img_name))
-            
-            # Move corresponding Label (.txt)
+            shutil.move(os.path.join(img_dir, img_name),
+                        os.path.join(dataset_path, target_split, 'images', img_name))
+
             label_name = os.path.splitext(img_name)[0] + '.txt'
             src_label_path = os.path.join(lbl_dir, label_name)
             if os.path.exists(src_label_path):
-                shutil.move(src_label_path, 
-                            os.path.join(target_split, 'labels', label_name))
+                shutil.move(src_label_path,
+                            os.path.join(dataset_path, target_split, 'labels', label_name))
 
-    # Perform moves
     move_data(train_files, 'train')
     move_data(val_files, 'val')
 
@@ -64,10 +61,9 @@ def split_yolo_dataset(dataset_path: str, train_ratio=0.8):
     print(f"Split completed: {len(train_files)} train, {len(val_files)} val.")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python split.py <dataset_path>")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description="Split a YOLO dataset into train/val sets.")
+    parser.add_argument("dataset_path", help="Path to the dataset directory")
+    parser.add_argument("--train-ratio", type=float, default=0.8, help="Fraction of data for training (default: 0.8)")
+    args = parser.parse_args()
 
-    dataset_path = sys.argv[1]
-
-    split_yolo_dataset(dataset_path=dataset_path)
+    split_yolo_dataset(dataset_path=args.dataset_path, train_ratio=args.train_ratio)
