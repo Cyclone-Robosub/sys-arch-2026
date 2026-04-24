@@ -82,7 +82,22 @@ namespace CycloneCommands {
             }
         }  
             */ 
+
+        NodeStatus status = RosActionNode<cyclone_msgs::action::TrackObjectWaypt>::tick();
+
+        if (status == NodeStatus::RUNNING) {
+            std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+            double elapsed = std::chrono::duration<double>(now - start_time).count();
+            if (elapsed > timeout_sec) {
+                RCLCPP_ERROR(logger(), "Error: %d", error);
+                return NodeStatus::FAILURE;
+            }
+        }
+
+        return status;
+        
     }
+    
     NodeStatus TimedTrick::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
         std::cout << feedback->remaining_duration << "\n";
         std::cout << feedback->time_in_tolerance << "\n";

@@ -2,6 +2,7 @@
 float64[6] waypoint
 bool[6] waypoint_mask
 float64 hold_time
+double timeout_sec
 # Tolerance is set from the blackboard
 # float64[6] tolerance
 ---

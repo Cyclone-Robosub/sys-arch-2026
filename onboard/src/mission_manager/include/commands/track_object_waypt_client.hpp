@@ -11,7 +11,7 @@ class ObjectWaypt: public RosActionNode<ObjectWaypt> {
         static PortsList providedPorts();
         NodeStatus onFailure(ActionNodeErrorCode error) override;
         NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override;
-        NodeStatus onTick(const std::shared_ptr<TopicT>& last_msg) override;
+        NodeStatus tick() override;
 
     
     private:

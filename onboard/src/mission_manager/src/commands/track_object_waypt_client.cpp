@@ -8,8 +8,8 @@ namespace CycloneCommands {
     }
 
     static BT::PortsList providedPorts() {
-        return providedBasicPorts{InputPort<double[]>("tracking_position"), 
-        InputPort<bool[]>("waypoint_mask"), InputPort<std::string>("object"), InputPort<double>("timeout_sec") };
+        return providedBasicPorts({InputPort<double[]>("tracking_position"), 
+        InputPort<bool[]>("waypoint_mask"), InputPort<std::string>("object"), InputPort<double>("timeout_sec") });
     }
 
     bool ObjectWaypt::setGoal(RosActionNode::Goal& goal) {
@@ -51,18 +51,20 @@ namespace CycloneCommands {
 
     }
 
-    NodeStatus ObjectWaypt::onTick(const std::shared_ptr<TopicT>& last_msg) {
+    NodeStatus ObjectWaypt::tick() {
         NodeStatus status = RosActionNode<cyclone_msgs::action::TrackObjectWaypt>::tick();
 
-        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-
         if (status == NodeStatus::RUNNING) {
-            if (now - start_time > timeout_sec) {
+            std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+            double elapsed = std::chrono::duration<double>(now - start_time).count();
+            if (elapsed > timeout_sec) {
+                RCLCPP_ERROR(logger(), "Error: %d", error);
                 return NodeStatus::FAILURE;
             }
         }
 
-        return NodeStatus::RUNNING;
+        return status;
+
     }
 
 

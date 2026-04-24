@@ -7,13 +7,28 @@ namespace CycloneCommands {
         
     }
 
-    NodeStatus WayptSeek::tick() override {
-        NodeStatus status; // has to come from the server, i.e. the matlab side?
+    // NodeStatus WayptSeek::tick() override {
+    //     NodeStatus status; // has to come from the server, i.e. the matlab side?
+    //     if (status == NodeStatus::RUNNING) {
+    //         if (now - start_time > timeout_sec) {
+    //             return NodeStatus::FAILURE;
+    //         }
+    //     }
+    // }
+    NodeStatus WayptSeek::tick() {
+        NodeStatus status = RosActionNode<cyclone_msgs::action::TrackObjectWaypt>::tick();
+
         if (status == NodeStatus::RUNNING) {
-            if (now - start_time > timeout_sec) {
+            std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+            double elapsed = std::chrono::duration<double>(now - start_time).count();
+            if (elapsed > timeout_sec) {
+                RCLCPP_ERROR(logger(), "Error: %d", error);
                 return NodeStatus::FAILURE;
             }
         }
+
+        return status;
+        
     }
 
     bool WayptSeek::setGoal(RosActionNode::Goal& goal) override{

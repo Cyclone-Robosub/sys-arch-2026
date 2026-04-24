@@ -1,11 +1,21 @@
 #include "include/server/mission_tree.hpp"
+#include "include/server/custom_logger.hpp"
+
 void MissionTreeServer::onTreeCreated(BT::Tree& tree) override {
     logger_cout_ = std::make_shared<CustomLogger>(tree);
 
 }
 
+std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus status) override{
+    if (progress_dirty_) {
+
+        progress_dirty_ = false;
+    }
+    return std::nullopt;
+}
+
 std::optional<std::string> MissionTreeServer::onLoopFeedback() override{
-    return current_command;
+    
 }
 
 void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& factory) override {
