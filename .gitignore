@@ -136,3 +136,6 @@ Vision/**/*.txt
 *.png
 *.jpeg
 *.zip
+*.csv
+*.cache
+*.avi
