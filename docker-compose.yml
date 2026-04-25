@@ -35,7 +35,7 @@ services:
       context: .
       dockerfile: Dockerfile.jazzy
     devices:
-      - /dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_027d485dbf80bb5f-if00:/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_60fdf513bf90cb73-if00
+      # - /dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_027d485dbf80bb5f-if00:/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_60fdf513bf90cb73-if00
       - /dev/video0
       - /dev/video1
       - /dev/video2
@@ -43,12 +43,5 @@ services:
     command: [
       "bash", 
       "-lc", 
-      "source /root/sys-arch-2026/install/setup.bash && ros2 launch rosbridge_server rosbridge_websocket_launch.xml"
+      "sleep infinity"
       ]
-
-  manny_vision:
-    <<: *common
-    build:
-      context: .
-      dockerfile: Dockerfile.humble
-    command: ["sleep", "infinity"]
