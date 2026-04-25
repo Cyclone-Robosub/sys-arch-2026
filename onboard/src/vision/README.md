@@ -1,17 +1,31 @@
 # vision
 
-ROS 2 package for keypoint detection using a TorchScript model.
+ROS 2 package containing vision nodes for the robot.
+
+| Node | Description |
+|---|---|
+| `camera_feed_node` | Ingests a raw H264 camera stream, forwards it to mediaMTX via RTSP, and publishes decoded frames as a ROS image topic |
+| `keypoint_node` | Runs a TorchScript keypoint-detection model on an image source and publishes detections |
 
 ## Dependencies
 
 - ROS 2 Jazzy
-- LibTorch (C++ API)
-- OpenCV
+- GStreamer 1.0 + gstreamer-app (camera_feed_node)
+- LibTorch C++ API (keypoint_node)
+- OpenCV, cv_bridge
 
-Install ROS dependencies:
+Install system dependencies:
 
 ```bash
-sudo apt install libopencv-dev ros-jazzy-cv-bridge
+# added to the Dockerfile
+sudo apt install \
+  libopencv-dev \
+  ros-jazzy-cv-bridge \
+  libgstreamer1.0-dev \
+  libgstreamer-plugins-base1.0-dev \
+  gstreamer1.0-plugins-good \
+  gstreamer1.0-plugins-bad \
+  gstreamer1.0-rtsp
 ```
 
 Download LibTorch from [pytorch.org](https://pytorch.org/get-started/locally/) (select LibTorch, C++, Linux) and extract it:
@@ -31,7 +45,7 @@ colcon build --packages-select vision \
     -DTorch_DIR=/opt/libtorch/share/cmake/Torch
 ```
 
-In container on jetson nano:
+In container on Jetson Nano:
 
 ```bash
 colcon build --packages-select vision --cmake-args -DCMAKE_PREFIX_PATH='/opt/venv/lib/python3.12/site-packages/torch/share/cmake/Torch'
@@ -50,6 +64,7 @@ cat > ~/sys-arch-2026/colcon.meta << 'EOF'
 EOF
 ```
 Then you can just run `colcon build --packages-select vision` without the extra arguments.
+
 ---
 
 Set the library path so the linker can find LibTorch at runtime:
@@ -58,15 +73,104 @@ Set the library path so the linker can find LibTorch at runtime:
 export LD_LIBRARY_PATH=/opt/libtorch/lib:$LD_LIBRARY_PATH
 ```
 
-For container on jetson nano:
+For container on Jetson Nano:
 ```bash
 export LD_LIBRARY_PATH=/opt/venv/lib/python3.12/site-packages/torch/lib:$LD_LIBRARY_PATH
 ```
 
-## Running
+---
 
-Source the workspace and launch the node:
+## camera_feed_node
 
+Opens a V4L2 H264 camera using GStreamer. The stream is split via a `tee`:
+- One branch pushes the raw H264 to mediaMTX via `rtspclientsink`
+- The other decodes with `nvv4l2decoder` (Jetson hardware) and publishes BGR frames to `/camera/image_raw`
+
+**GStreamer pipeline:**
+```
+v4l2src device=<device> !
+video/x-h264,width=<W>,height=<H>,framerate=<fps>/1 !
+h264parse !
+tee name=t
+  t. ! queue ! rtspclientsink location=<rtsp_url>
+  t. ! queue ! nvv4l2decoder ! nvvidconv !
+       video/x-raw,format=BGRx ! videoconvert !
+       video/x-raw,format=BGR !
+       appsink name=appsink sync=false max-buffers=1 drop=true
+```
+
+**Published topic:** `/camera/image_raw` (`sensor_msgs/msg/Image`, BGR8)
+
+**Parameters:**
+
+| Parameter | Default | Description |
+|---|---|---|
+| `device` | `/dev/video2` | V4L2 device path |
+| `rtsp_url` | `rtsp://localhost:8554/cam` | mediaMTX RTSP push URL |
+| `width` | `1920` | Frame width |
+| `height` | `1080` | Frame height |
+| `fps` | `30` | Camera frame rate |
+
+**Launch:**
+```bash
+source install/setup.bash
+ros2 launch vision camera_feed_node.launch.py \
+  device:=/dev/video2 \
+  rtsp_url:=rtsp://localhost:8554/cam
+```
+
+**Monitor:**
+```bash
+ros2 topic hz /camera/image_raw
+```
+
+### mediaMTX configuration
+
+mediaMTX accepts publishers on all paths by default so no changes are strictly required. Add the following to `mediamtx.yml` to configure the `/cam` path explicitly (auth, recording, etc.):
+
+```yaml
+paths:
+  cam:
+    source: publisher
+    # Uncomment to require authentication for publishing:
+    # publishUser: myuser
+    # publishPass: mypass
+
+    # Uncomment to require authentication for viewers:
+    # readUser: viewer
+    # readPass: viewerpass
+
+    # Uncomment to record the stream to disk:
+    # record: yes
+    # recordPath: ./recordings/%path/%Y-%m-%d_%H-%M-%S-%f
+```
+
+If mediaMTX runs in Docker, ensure `network_mode: host` is set (already done in `docker-compose.yml`) so `localhost:8554` resolves correctly from the ROS container.
+
+---
+
+## keypoint_node
+
+Runs a TorchScript keypoint-detection model on a video file and publishes detections.
+
+**Published topics:**
+
+| Topic | Type | Description |
+|---|---|---|
+| `/keypoint_detections` | `custom_interfaces/msg/VisionObservations` | Bounding boxes and keypoints |
+| `/keypoint_image` | `sensor_msgs/msg/Image` | Annotated frame |
+
+**Parameters:**
+
+| Parameter | Default | Description |
+|---|---|---|
+| `model_path` | `model.pt` | Path to TorchScript model |
+| `video_path` | `video.mp4` | Path to input video file |
+| `num_keypoints` | `17` | Keypoints per detection |
+| `conf_threshold` | `0.5` | Minimum detection confidence |
+| `fps` | `30.0` | Processing rate |
+
+**Launch:**
 ```bash
 source install/setup.bash
 ros2 launch vision keypoint_node.launch.py \
@@ -74,12 +178,13 @@ ros2 launch vision keypoint_node.launch.py \
   video_path:=/path/to/video.mp4
 ```
 
-Monitor output:
-
+**Monitor:**
 ```bash
 ros2 topic echo /keypoint_detections
 ros2 topic hz /keypoint_detections
 ```
+
+---
 
 ## Testing
 

@@ -19,6 +19,10 @@ find_package(custom_interfaces REQUIRED)
 # ── OpenCV ────────────────────────────────────────────────────────────────────
 find_package(OpenCV REQUIRED)
 
+# ── GStreamer ─────────────────────────────────────────────────────────────────
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
+
 # ── LibTorch ──────────────────────────────────────────────────────────────────
 # Set TORCH_DIR to your LibTorch installation, e.g.:
 #   cmake .. -DTORCH_DIR=/opt/libtorch/share/cmake/Torch
@@ -71,8 +75,29 @@ ament_target_dependencies(keypoint_node
   custom_interfaces
 )
 
+# ── camera_feed_node executable ───────────────────────────────────────────────
+add_executable(camera_feed_node
+  src/camera_feed_node.cpp
+)
+
+target_include_directories(camera_feed_node PRIVATE
+  ${GST_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+)
+
+target_link_libraries(camera_feed_node
+  ${GST_LIBRARIES}
+  ${OpenCV_LIBS}
+)
+
+ament_target_dependencies(camera_feed_node
+  rclcpp
+  sensor_msgs
+  cv_bridge
+)
+
 # ── install ───────────────────────────────────────────────────────────────────
-install(TARGETS keypoint_detector keypoint_node
+install(TARGETS keypoint_detector keypoint_node camera_feed_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME}
