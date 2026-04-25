@@ -123,7 +123,7 @@ else
 fi
 # --- DVL Node ---
 if [[ "$USE_CONTAINER" == true ]]; then
-  tmux split-window -v -t $SENSOR_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run dvl dvl;' bash"
+  tmux split-window -v -t $SENSOR_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run dvl dvl'; bash"
 else
   tmux split-window -v -t $SENSOR_PANE "ros2 run dvl dvl; bash"
 
@@ -142,7 +142,7 @@ else
 ################################################################################
 
 if [[ "#USE_CONTAINER" == true ]]; then
-  CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAINC_CONTAINER bash -ic 'ros2 run pwm_cli pwm_cli_node;' bash")
+  CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAINC_CONTAINER bash -ic 'ros2 run pwm_cli pwm_cli_node'; bash")
 else
   CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run pwm_cli pwm_cli_node; bash")
 
