@@ -1,7 +1,7 @@
 {
   "names": {
     "vision": {
-      "cmake-args": ["-DTorch_DIR=/opt/libtorch/share/cmake/Torch"]
+      "cmake-args": ["-DCMAKE_PREFIX_PATH=/opt/venv/lib/python3.12/site-packages/torch/share/cmake/Torch"]
     }
   }
 }
