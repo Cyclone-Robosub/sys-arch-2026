@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-rtsp \
     && rm -rf /var/lib/apt/lists/*
 
+ENV LD_LIBRARY_PATH=/opt/venv/lib/python3.12/site-packages/torch/lib:${LD_LIBRARY_PATH}
 # COPY ~/sys-arch-2026 /root/sys-arch-2026
 
 WORKDIR /root/sys-arch-2026
