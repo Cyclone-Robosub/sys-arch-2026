@@ -117,15 +117,16 @@ fi
 
 # --- IMU Node ---
 if [[ "$USE_CONTAINER" == true ]]; then
-	tmux new-window -t $SESSION "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node'" 
+	SENSOR_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node'")
 else
-	tmux new-window -t $SESSION "ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash"
+	SENSOR_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash")
 fi
 # --- DVL Node ---
 if [[ "$USE_CONTAINER" == true ]]; then
   tmux split-window -v -t $SENSOR_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run dvl dvl'; bash"
 else
   tmux split-window -v -t $SENSOR_PANE "ros2 run dvl dvl; bash"
+fi
 
 ################################################################################
 # SECTION 4: (Optional) Joystick controller
@@ -141,10 +142,11 @@ else
 # SECTION 5: Additional Components: CLI
 ################################################################################
 
-if [[ "#USE_CONTAINER" == true ]]; then
-  CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAINC_CONTAINER bash -ic 'ros2 run pwm_cli pwm_cli_node'; bash")
+if [[ "$USE_CONTAINER" == true ]]; then
+  CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run pwm_cli pwm_cli_node'; bash")
 else
   CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run pwm_cli pwm_cli_node; bash")
+fi
 
 ################################################################################
 # Attach to Session
