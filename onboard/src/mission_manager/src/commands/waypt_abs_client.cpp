@@ -35,60 +35,7 @@ namespace CycloneCommands {
     }
     */
     NodeStatus WayptAbs::tick() override  {
-        /*
-        CODE IS WRONG PROBABLY
-        // check whether the robot is within tolerance
-        // extract waypoint and hold time from goal
-        auto goal_msg = WayptAbs::Goal();
-        float64[6] waypt_t = goal_msg->waypoint;
-        auto mask = goal_msg->waypoint_mask;
-        float64 hold_time = goal_msg->hold_time;
-
-        // get tolerance from blackboard, not sure
-        auto msg = getInput<float64[]>("tolerance");
-        if (!msg) {
-            throw BT::RuntimeError("missing required input [tolerance]: ", msg.error() );
-        }
-        float64[6] tolerance = msg.value();
-
-        bool startTolerance = false;
-        while (true) {
-            for (int i = 0; i < 6; i++) {
-                if (mask[i]) {
-                    if ((waypt_t[i] - tolerance[i] > currentPos[i]) || (currentPos[i] > waypt_t[i] + tolerance[i])) {
-                        // not in tolerance for state ith
-                        if (isInTolerance) {
-                            isInTolerance = false;
-                            startTime = std::chrono::steady_clock::now();
-                        }     
-                        break;               
-                    }
-                    if (!startTolerance) {
-                        startTolerance = True;
-                    }
-                }
-            }
-            if (startTolerance && (!isInTolerance)) {
-                // now in tolerance for the first time / exited out of tolerance
-                startTime = std::chrono::steady_clock::now();
-                isInTolerance = true;
-                startTolerance = false;
-            } else if ((isInTolerance)) {
-                // measure how long it's been in tolerance
-                currentTime = std::chrono::steady_clock::now();
-                if ((currentTime - startTime) >= hold_time) {
-                    return NodeStatus::SUCCESS;
-                } else {
-                    return NodeStatus::RUNNING;
-                }
-            } else {
-                return NodeStatus::RUNNING;
-            }
-        }   
-            */
-
-        NodeStatus status = RosActionNode<cyclone_msgs::action::TrackObjectWaypt>::tick();
-
+        NodeStatus status = RosActionNode<cyclone_msgs::action::WayptAbs>::tick();
         if (status == NodeStatus::RUNNING) {
             std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
             double elapsed = std::chrono::duration<double>(now - start_time).count();
@@ -97,9 +44,7 @@ namespace CycloneCommands {
                 return NodeStatus::FAILURE;
             }
         }
-
         return status;
-        
     }
     NodeStatus WayptAbs::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
         for (auto num : feedback->delta) {

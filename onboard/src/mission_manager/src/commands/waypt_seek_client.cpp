@@ -15,6 +15,18 @@ namespace CycloneCommands {
     //         }
     //     }
     // }
+
+    NodeStatus WayptSeek::onResultReceived (const WrappedResult& result) override {
+        switch (result.result) {
+            case "RUNNING":
+                return NodeStatus::FAILURE;
+            case "SUCCESS":
+                return NodeStatus::SUCCESS;
+            default:
+                return NodeStatus::FAILURE;
+        }
+    }
+    
     NodeStatus WayptSeek::tick() {
         NodeStatus status = RosActionNode<cyclone_msgs::action::TrackObjectWaypt>::tick();
 

@@ -1,5 +1,3 @@
-#include "include/commands/dis_trick_client.hpp"
-
 using namespace BT;
 
 namespace CycloneCommands {

@@ -1,19 +1,19 @@
-#include "include/commands/timed_trick_client.hpp"
+#include "include/commands/duration_trick_client.hpp"
 
 using namespace BT;
 
 namespace CycloneCommands {
-    TimedTrick::TimedTrick(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<WayptAbs>(name, conf, params) {
+    DurationTrick::DurationTrick(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<WayptAbs>(name, conf, params) {
         startTime = std::chrono::steady_clock::now();
     }
-    bool TimedTrick::setGoal(RosActionNode::Goal& goal) override {
+    bool DurationTrick::setGoal(RosActionNode::Goal& goal) override {
         // get "order" from the Input port
         getInput("order", goal.order);
         // return true, if we were able to set the goal correctly.
         return true;
     }
 
-    NodeStatus TimedTrick::onResultReceived (const WrappedResult& result) override {
+    NodeStatus DurationTrick::onResultReceived (const WrappedResult& result) override {
         switch (result.result) {
             case "RUNNING":
                 return NodeStatus::RUNNING;
@@ -25,7 +25,7 @@ namespace CycloneCommands {
     static PortsList providedPorts() {
         return { InputPort<float64[]>("tolerance") };
     }
-    NodeStatus TimedTrick::tick() override  {
+    NodeStatus DurationTrick::tick() override  {
         
         /*
         // extract ...  from goal
@@ -83,7 +83,7 @@ namespace CycloneCommands {
         }  
             */ 
 
-        NodeStatus status = RosActionNode<cyclone_msgs::action::TrackObjectWaypt>::tick();
+        NodeStatus status = RosActionNode<cyclone_msgs::action::TrickDuration>::tick();
 
         if (status == NodeStatus::RUNNING) {
             std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
@@ -98,7 +98,7 @@ namespace CycloneCommands {
         
     }
     
-    NodeStatus TimedTrick::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
+    NodeStatus DurationTrick::onFeedback(const std::shared_ptr<const Feedback> feedback) override {
         std::cout << feedback->remaining_duration << "\n";
         std::cout << feedback->time_in_tolerance << "\n";
         return NodeStatus::RUNNING;

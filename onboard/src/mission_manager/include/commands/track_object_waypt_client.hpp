@@ -15,10 +15,7 @@ class ObjectWaypt: public RosActionNode<ObjectWaypt> {
 
     
     private:
-        // double[6] currentPos;
         std::chrono::steady_clock::time_point start_time;
-        // double currentTime;
-        bool isInTolerance = false;
         double timeout_sec;
         // std::string objectID;
         
