@@ -84,9 +84,8 @@ private:
       "tee name=t "
         "t. ! queue ! rtspclientsink location=" + rtsp_url_ + " "
         "t. ! queue ! nvv4l2decoder ! nvvidconv ! "
-          "video/x-raw,format=BGRx ! videoconvert ! "
-          "video/x-raw,format=BGR ! "
-          "appsink name=appsink emit-signals=false sync=false "
+          "video/x-raw,format=BGRx ! " 
+          "appsink name=appsink emit-signals=false sync=false " // Use signals for C++ callbacks
             "max-buffers=1 drop=true";
 
     RCLCPP_INFO(this->get_logger(), "Pipeline: %s", pipeline_str.c_str());
