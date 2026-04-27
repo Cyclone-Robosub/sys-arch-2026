@@ -45,8 +45,8 @@ def input_iterator(outputs: list[str]):
 		return next_input
 	return my_input
 
-# Used to denote the first important value of catch_output, as the info() command prints 24 times on program start
-INFO_OFFSET = 25
+# Used to denote the first important value of catch_output, as the info() command prints 26 times on program start
+INFO_OFFSET = 26
 
 
 # --- BEGIN TESTS ---
@@ -513,6 +513,121 @@ def test_timed_commands(simulate_input, catch_output):
 		"There is no currently active command\n",
 		"Current Command: Pitch Down at 70% power\n",
 		"Current Command: Pitch Down at 70% power\n",
+	]
+
+	for i in range(0, len(excepted_outputs)):
+		assert output_list[INFO_OFFSET + i] == excepted_outputs[i]
+
+
+# Check that the last command behaves properly
+def test_last_command(simulate_input, catch_output):
+	builtins.input = input_iterator([
+		# -- 1: No command --
+		"last", "current command"
+		# -- 2: Forwards --
+		"forwards t:0.5", "yes", "current command",
+		"wait 1", "current command",
+		"last", "current command",
+		"wait 1", "current command",
+		# -- 3: Custom PWM --
+		"custom [1200 1700 1100 1600 1500 1330 1193 1342] t:1.5", "yes", "current command",
+		"wait 2", "current command",
+		"last", "current command",
+		"wait 2", "current command",
+		# -- 4: Forwards, count --
+		"forwards", "yes", "current command",
+		"stop", "current command",
+		"last", "current command",
+		"last 3", "current command",
+		# -- 5: Pitch Up --
+		"pitch up t:0.5", "yes", "current command",
+		"wait 1", "current command",
+		"last", "current command",
+		"wait 1", "current command",
+		# -- 6: Roll left, count --
+		"roll left", "yes", "current command",
+		"stop", "current command",
+		"last", "current command",
+		"last 3", "current command",
+		# -- 7: Roll left, count cont. --
+		"roll left", "yes", "current command",
+		"stop", "current command",
+		"last 2", "current command",
+		# -- 8: Run thruster, count --
+		"run thruster 1", "yes", "run thruster 3", "yes", "current command",
+		"stop thruster 3", "current command",
+		"last 2", "current command",
+		"last 2", "current command",
+		"stop thruster 1", "current command",
+		# -- 9: Run thruster timed --
+		"run thruster 1 t:0.5", "yes", "current command",
+		"wait 1", "current command",
+		"last", "current command",
+		"wait 1", "current command",
+		# -- 10: Recursive --
+		"forwards t:0.1", "yes", "current command",
+		"wait 0.125", "current command",
+		"last", "current command",
+		"wait 0.125", "current command",
+		"last", "current command",
+		"wait 0.125", "current command",
+		"last", "current command",
+		# -- - --
+		"end session"
+	])
+	main()
+	output_list = catch_output
+	excepted_outputs = [
+		# -- 1 --
+		"There is no currently active command",
+		# -- 2 --
+		"Current Command: Move Forwards at 70% power for 0.5 seconds\n",
+		"There is no currently active command",
+		"Current Command: Move Forwards at 70% power for 0.5 seconds\n",
+		"There is no currently active command",
+		# -- 3 --
+		"Current Command: Custom pwm ['1200', 1700', '1100', '1600', '1500', '1330', '1193', '1342] for 1.5 seconds\n",
+		"There is no currently active command",
+		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 1.5 seconds\n",
+		"There is no currently active command",
+		# -- 4 --
+		"Current Command: Move Forwards at 70% power\n",
+		"There is no currently active command",
+		"There is no currently active command",
+		"Current Command: Move Forwards at 70% power\n",
+		# -- 5 --
+		"Current Command: Pitch Up at 70% power for 0.5 seconds\n",
+		"There is no currently active command",
+		"Current Command: Pitch Up at 70% power for 0.5 seconds\n",
+		"There is no currently active command",
+		# -- 6 --
+		"Current Command: Roll Left at 70% power\n",
+		"There is no currently active command",
+		"There is no currently active command",
+		"Current Command: Roll Left at 70% power\n",
+		# -- 7 --
+		"Current Command: Roll Left at 70% power\n",
+		"There is no currently active command",
+		"Current Command: Roll Left at 70% power\n",
+		# -- 8 --
+		"Current Command: Run Thrusters 1 at 1780, 3 at 1780\n",
+		"Current Command: Run Thruster 1 at 1780\n",
+		"Current Command: Run Thrusters 1 at 1780, 3 at 1780\n",
+		"Current Command: Run Thruster 1 at 1780\n",
+		"There is no currently active command",
+		# -- 9 --
+		"Current Command: Run Thruster 1 at 1780\n",
+		"There is no currently active command",
+		"Current Command: Run Thruster 1 at 1780\n",
+		"There is no currently active command",
+		# -- 10 --
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
+		"There is no currently active command",
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
+		"There is no currently active command",
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
+		"There is no currently active command",
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
 	]
 
 	for i in range(0, len(excepted_outputs)):
