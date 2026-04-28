@@ -148,6 +148,9 @@ else
   CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run pwm_cli pwm_cli_node; bash")
 fi
 
+# Starting a simple HTTP server to serve the joystick webpage
+tmux split-window -v -t $JOYSTICK_PANE "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8000; bash"
+
 ################################################################################
 # Attach to Session
 ################################################################################
