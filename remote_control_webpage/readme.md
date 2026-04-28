@@ -1,19 +1,42 @@
-# PS5 Gamepad to control the submarine
+# sv
 
-# Type name: `Gamepad`
-| Name  | Type      | Value range | Notes                 |
-| ----- | --------- | ----------- | --------------------- |
-| x     | `float32` | [-1.0, 1.0] | Left joystick x axis  |
-| y     | `float32` | [-1.0, 1.0] | Left joystick y axis  |
-| rise  | `float32` | [0.0, 1.0]  | Activates rise (RT)   |
-| sink  | `float32` | [0.0, 1.0]  | Activates sink (LT)   |
-| yaw   | `float32` | [-1.0, 1.0] | Right joystick x axis |
-| pitch | `float32` | [-1.0, 1.0] | Right joystick y axis |
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-## How to run the web controller
-0. `source install/setup.bash`
-1. Run the rosbridge server first. This node bridge ros to the browser. 
+## Creating a project
+
+If you're seeing this, you've probably already done this step. Congrats!
+
+```sh
+# create a new project
+npx sv create my-app
 ```
-ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+
+To recreate this project with the same configuration:
+
+```sh
+# recreate this project
+bun x sv@0.15.1 create --template minimal --types ts --install bun ./
 ```
-2. Run `ros2 run joystick_logger logger` to advertise the Gamepad topic.
+
+## Developing
+
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```sh
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```sh
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
