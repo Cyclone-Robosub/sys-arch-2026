@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+
 	type FeedStatus = 'idle' | 'connecting' | 'streaming' | 'error' | RTCPeerConnectionState;
 
 	let { name, label = name }: { name: string; label?: string } = $props();
@@ -7,10 +9,12 @@
 	let status = $state<FeedStatus>('idle');
 	let recording = $state(false);
 
+	// Non-reactive — read inside $effect cleanup, must not trigger re-runs
 	let pc: RTCPeerConnection | null = null;
 	let sessionUrl: string | null = null;
 	let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 	let recorder: MediaRecorder | null = null;
+	let isRecording = false;
 	let chunks: BlobPart[] = [];
 
 	function whepUrl(): string {
@@ -28,7 +32,7 @@
 		};
 		pc.onconnectionstatechange = () => {
 			if (!pc) return;
-			status = pc.connectionState;
+			status = pc.connectionState === 'connected' ? 'streaming' : pc.connectionState;
 			if (['failed', 'disconnected', 'closed'].includes(pc.connectionState)) {
 				scheduleReconnect();
 			}
@@ -50,7 +54,7 @@
 	}
 
 	function stop(): void {
-		if (recording) stopRecording();
+		if (isRecording) stopRecording();
 		pc?.close();
 		pc = null;
 		if (videoEl?.srcObject) {
@@ -82,7 +86,9 @@
 			? 'video/webm;codecs=vp9'
 			: 'video/webm';
 		recorder = new MediaRecorder(videoEl.srcObject as MediaStream, { mimeType });
-		recorder.ondataavailable = (e) => chunks.push(e.data);
+		recorder.ondataavailable = (e) => {
+			if (e.data.size > 0) chunks.push(e.data);
+		};
 		recorder.onstop = () => {
 			const blob = new Blob(chunks, { type: 'video/webm' });
 			const url = URL.createObjectURL(blob);
@@ -93,23 +99,30 @@
 			URL.revokeObjectURL(url);
 		};
 		recorder.start();
+		isRecording = true;
 		recording = true;
 	}
 
 	function stopRecording(): void {
+		isRecording = false;
+		recording = false;
 		recorder?.stop();
 		recorder = null;
-		recording = false;
 	}
 
+	// untrack prevents reactive reads inside start()/stop() from re-triggering this effect
 	$effect(() => {
-		start().catch(() => {
-			status = 'error';
-			scheduleReconnect();
+		untrack(() => {
+			start().catch(() => {
+				status = 'error';
+				scheduleReconnect();
+			});
 		});
 		return () => {
-			if (reconnectTimer) clearTimeout(reconnectTimer);
-			stop();
+			untrack(() => {
+				if (reconnectTimer) clearTimeout(reconnectTimer);
+				stop();
+			});
 		};
 	});
 </script>
@@ -117,9 +130,14 @@
 <div class="feed">
 	<div class="feed-header">
 		<span class="feed-label">{label}</span>
-		<span class="feed-status" class:ok={status === 'streaming'} class:err={status === 'error'}>
-			{status}
-		</span>
+		<div class="feed-right">
+			{#if recording}
+				<span class="rec-indicator">● REC</span>
+			{/if}
+			<span class="feed-status" class:ok={status === 'streaming'} class:err={status === 'error'}>
+				{status}
+			</span>
+		</div>
 	</div>
 	<video bind:this={videoEl} autoplay playsinline muted></video>
 	<div class="feed-controls">
@@ -154,6 +172,23 @@
 	}
 
 	.feed-label { color: #7eb8f7; }
+
+	.feed-right {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.rec-indicator {
+		color: #f44336;
+		font-size: 0.72rem;
+		animation: blink 1s step-start infinite;
+	}
+
+	@keyframes blink {
+		50% { opacity: 0; }
+	}
+
 	.feed-status { color: #444; }
 	.feed-status.ok { color: #4caf50; }
 	.feed-status.err { color: #f44336; }
