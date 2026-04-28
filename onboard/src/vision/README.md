@@ -123,31 +123,6 @@ ros2 launch vision camera_feed_node.launch.py \
 ros2 topic hz /camera/image_raw
 ```
 
-### mediaMTX configuration
-
-mediaMTX accepts publishers on all paths by default so no changes are strictly required. Add the following to `mediamtx.yml` to configure the `/cam` path explicitly (auth, recording, etc.):
-
-```yaml
-paths:
-  cam:
-    source: publisher
-    # Uncomment to require authentication for publishing:
-    # publishUser: myuser
-    # publishPass: mypass
-
-    # Uncomment to require authentication for viewers:
-    # readUser: viewer
-    # readPass: viewerpass
-
-    # Uncomment to record the stream to disk:
-    # record: yes
-    # recordPath: ./recordings/%path/%Y-%m-%d_%H-%M-%S-%f
-```
-
-If mediaMTX runs in Docker, ensure `network_mode: host` is set (already done in `docker-compose.yml`) so `localhost:8554` resolves correctly from the ROS container.
-
----
-
 ## keypoint_node
 
 Runs a TorchScript keypoint-detection model on a video file and publishes detections.
