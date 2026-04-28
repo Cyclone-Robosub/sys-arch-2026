@@ -94,8 +94,7 @@ h264parse !
 tee name=t
   t. ! queue ! rtspclientsink location=<rtsp_url>
   t. ! queue ! nvv4l2decoder ! nvvidconv !
-       video/x-raw,format=BGRx ! videoconvert !
-       video/x-raw,format=BGR !
+       video/x-raw,format=BGRx !
        appsink name=appsink sync=false max-buffers=1 drop=true
 ```
 

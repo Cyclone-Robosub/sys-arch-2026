@@ -74,7 +74,7 @@ private:
     GError * err = nullptr;
 
     // nvv4l2decoder outputs NVMM memory on Jetson; nvvidconv brings it to system
-    // memory as BGRx, then videoconvert converts to BGR for cv::Mat.
+    // memory as BGRx. The BGR conversion is done in the frame callback via cvtColor.
     std::string pipeline_str =
       "v4l2src device=" + device_ + " ! "
       "video/x-h264,width=" + std::to_string(width_) +
@@ -143,8 +143,10 @@ private:
 
       GstMapInfo map;
       if (gst_buffer_map(buffer, &map, GST_MAP_READ)) {
-        // BGR data, 3 bytes per pixel.
-        cv::Mat frame(h, w, CV_8UC3, map.data);
+        // nvvidconv outputs BGRx (4 bytes/pixel); strip the X channel to BGR.
+        cv::Mat bgrx(h, w, CV_8UC4, map.data);
+        cv::Mat frame;
+        cv::cvtColor(bgrx, frame, cv::COLOR_BGRA2BGR);
 
         auto img_msg = cv_bridge::CvImage(
           std_msgs::msg::Header(), "bgr8", frame).toImageMsg();
