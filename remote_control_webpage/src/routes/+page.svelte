@@ -2,7 +2,6 @@
 	import CameraFeed from '$lib/CameraFeed.svelte';
 
 	type RosStatus = 'connected' | 'disconnected' | 'error';
-	type CamName = 'left' | 'right' | 'down';
 
 	interface ControllerState {
 		x: number;
@@ -13,12 +12,19 @@
 		sink: number;
 	}
 
-	const cams: CamName[] = ['left', 'right', 'down'];
+	const cams = [
+		{ name: 'cam', label: 'Front' },
+		{ name: 'left', label: 'Left' },
+		{ name: 'right', label: 'Right' },
+		{ name: 'down', label: 'Down' }
+	] as const;
+
+	type CamName = (typeof cams)[number]['name'];
 
 	let rosStatus = $state<RosStatus>('disconnected');
 	let controllerConnected = $state(false);
 	let ctrl = $state<ControllerState>({ x: 0, y: 0, yaw: 0, pitch: 0, rise: 0, sink: 0 });
-	let show = $state<Record<CamName, boolean>>({ left: false, right: false, down: false });
+	let show = $state<Record<CamName, boolean>>({ cam: false, left: false, right: false, down: false });
 
 	let controllerPub: RoslibTopic | null = null;
 	let animId: number | null = null;
@@ -107,32 +113,32 @@
 			</table>
 		</section>
 
-		<section class="panel cam-panel">
-			<h2>Front</h2>
-			<CameraFeed name="cam" label="Front" />
+		<section class="panel cameras">
+			<div class="cameras-header">
+				<h2>Cameras</h2>
+				<div class="toggles">
+					{#each cams as cam}
+						<button
+							class:active={show[cam.name]}
+							onclick={() => (show[cam.name] = !show[cam.name])}
+						>
+							{cam.label}
+						</button>
+					{/each}
+				</div>
+			</div>
+
+			{#if Object.values(show).some(Boolean)}
+				<div class="feed-row">
+					{#each cams as cam}
+						{#if show[cam.name]}
+							<CameraFeed name={cam.name} label={cam.label} />
+						{/if}
+					{/each}
+				</div>
+			{/if}
 		</section>
 	</main>
-
-	<section class="extra">
-		<div class="extra-header">
-			<h2>Extra Cameras</h2>
-			<div class="toggles">
-				{#each cams as cam}
-					<button class:active={show[cam]} onclick={() => (show[cam] = !show[cam])}>
-						{cam}
-					</button>
-				{/each}
-			</div>
-		</div>
-
-		{#if show.left || show.right || show.down}
-			<div class="feed-row">
-				{#if show.left}<CameraFeed name="left" label="Left" />{/if}
-				{#if show.right}<CameraFeed name="right" label="Right" />{/if}
-				{#if show.down}<CameraFeed name="down" label="Down" />{/if}
-			</div>
-		{/if}
-	</section>
 </div>
 
 <style>
@@ -195,6 +201,7 @@
 		grid-template-columns: 200px 1fr;
 		gap: 12px;
 		padding: 12px;
+		align-items: start;
 	}
 
 	.panel {
@@ -203,8 +210,6 @@
 		border-radius: 6px;
 		padding: 12px;
 	}
-
-	.cam-panel { padding: 12px 12px 0; }
 
 	h2 {
 		font-size: 0.68rem;
@@ -220,15 +225,13 @@
 	td.val { text-align: right; color: #3a4a60; font-variant-numeric: tabular-nums; }
 	td.val.active { color: #7eb8f7; }
 
-	.extra { padding: 0 12px 12px; }
-
-	.extra-header {
+	.cameras-header {
 		display: flex;
 		align-items: center;
 		gap: 14px;
 		margin-bottom: 10px;
 	}
-	.extra-header h2 { margin-bottom: 0; }
+	.cameras-header h2 { margin-bottom: 0; }
 
 	.toggles { display: flex; gap: 6px; }
 
@@ -248,5 +251,10 @@
 	.toggles button:hover { border-color: #7eb8f7; color: #7eb8f7; }
 	.toggles button.active { background: #1a2a40; border-color: #7eb8f7; color: #7eb8f7; }
 
-	.feed-row { display: flex; gap: 12px; flex-wrap: wrap; }
+	.feed-row {
+		display: flex;
+		gap: 12px;
+		flex-wrap: wrap;
+		margin-top: 12px;
+	}
 </style>
