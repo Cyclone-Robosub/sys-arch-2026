@@ -94,16 +94,19 @@ tmux split-window -v -t $THRUST_INTERFACE_PANE "$(ros2_cmd mux_controller mux_co
 # Create new window 
 MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX && ./mediamtx; bash")
 
-# --- ffmpeg ---
+# --- camera_feed_node (cam 1) ---
 if [[ "$USE_CONTAINER" == true ]]; then
-    tmux split-window -h -t $MEDIAMTX_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 -fflags +genpts -i /dev/video2 -c:v copy -f rtsp rtsp://localhost:8554/cam'; bash" # Stream only
+    CAM1_PANE=$(tmux split-window -h -t $MEDIAMTX_PANE -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'source install/setup.sh && ros2 launch vision camera_feed_node.launch.py device:=/dev/video2 rtsp_url:=rtsp://localhost:8554/left topic:=/cameras/left; exec bash'")
+
+# --- camera_feed_node (cam 2) ---
+    tmux split-window -v -t $CAM1_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'source install/setup.sh && ros2 launch vision camera_feed_node.launch.py device:=/dev/video6 rtsp_url:=rtsp://localhost:8554/right topic:=/cameras/right; exec bash'"
+
 else
-    tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 \
+	tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 \
         -video_size 1920x1080 -framerate 30 \
         -fflags +genpts \
         -i /dev/video2 \
-        -c:v copy -f rtsp rtsp://localhost:8554/cam \
-        -c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S).mp4; bash" # Record 
+        -c:v copy -f rtsp rtsp://localhost:8554/cam1; bash"
 fi
 
 ################################################################################
