@@ -16,8 +16,6 @@
 #     └─────────────────┴─────────────────┘
 ################################################################################
 
-source install/setup.sh
-
 SESSION="manny"
 
 ################################################################################
@@ -59,6 +57,8 @@ done
 
 if [[ "$USE_CONTAINER" == true ]]; then
 	echo "Running components inside container..."
+else
+    source install/setup.sh
 fi
 
 ros2_cmd() {
