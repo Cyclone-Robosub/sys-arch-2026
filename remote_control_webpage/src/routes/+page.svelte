@@ -6,10 +6,24 @@
 	interface ControllerState {
 		x: number;
 		y: number;
-		yaw: number;
-		pitch: number;
 		rise: number;
 		sink: number;
+		yaw: number;
+		pitch: number;
+		cross_button: boolean;
+		square_button: boolean;
+		triangle_button: boolean;
+		circle_button: boolean;
+		dpad_down: boolean;
+		dpad_left: boolean;
+		dpad_up: boolean;
+		dpad_right: boolean;
+		bumper_left: boolean;
+		bumper_right: boolean;
+		start: boolean;
+		select: boolean;
+		joystick_press_left: boolean;
+		joystick_press_right: boolean;
 	}
 
 	const cams = [
@@ -23,7 +37,13 @@
 
 	let rosStatus = $state<RosStatus>('disconnected');
 	let controllerConnected = $state(false);
-	let ctrl = $state<ControllerState>({ x: 0, y: 0, yaw: 0, pitch: 0, rise: 0, sink: 0 });
+	let ctrl = $state<ControllerState>({
+		x: 0, y: 0, rise: 0, sink: 0, yaw: 0, pitch: 0,
+		cross_button: false, square_button: false, triangle_button: false, circle_button: false,
+		dpad_down: false, dpad_left: false, dpad_up: false, dpad_right: false,
+		bumper_left: false, bumper_right: false, start: false, select: false,
+		joystick_press_left: false, joystick_press_right: false
+	});
 	let show = $state<Record<CamName, boolean>>({ cam: false, left: false, right: false, down: false });
 
 	let controllerPub: RoslibTopic | null = null;
@@ -36,13 +56,28 @@
 	function poll(): void {
 		const gp = navigator.getGamepads()[0];
 		if (gp) {
+			const b = gp.buttons;
 			const next: ControllerState = {
 				x: dz(gp.axes[0]),
 				y: dz(-gp.axes[1]),
 				yaw: dz(gp.axes[2]),
 				pitch: dz(-gp.axes[3]),
-				rise: gp.buttons[7].value,
-				sink: gp.buttons[6].value
+				rise: b[7].value,
+				sink: b[6].value,
+				cross_button: b[0].pressed,
+				circle_button: b[1].pressed,
+				square_button: b[2].pressed,
+				triangle_button: b[3].pressed,
+				bumper_left: b[4].pressed,
+				bumper_right: b[5].pressed,
+				select: b[8].pressed,
+				start: b[9].pressed,
+				joystick_press_left: b[10].pressed,
+				joystick_press_right: b[11].pressed,
+				dpad_up: b[12].pressed,
+				dpad_down: b[13].pressed,
+				dpad_left: b[14].pressed,
+				dpad_right: b[15].pressed
 			};
 			ctrl = next;
 			controllerPub?.publish(new window.ROSLIB.Message(next));
