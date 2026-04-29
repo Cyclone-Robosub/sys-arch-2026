@@ -115,7 +115,8 @@ tee name=t
 source install/setup.bash
 ros2 launch vision camera_feed_node.launch.py \
   device:=/dev/video2 \
-  rtsp_url:=rtsp://localhost:8554/cam
+  rtsp_url:=rtsp://localhost:8554/cam \
+  # need to specify the ros topic it publishes to as well
 ```
 
 **Monitor:**
