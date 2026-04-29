@@ -22,8 +22,9 @@ public:
   CameraFeedNode()
   : Node("camera_feed_node"), running_(false)
   {
-    this->declare_parameter<std::string>("device",   "/dev/video2");
-    this->declare_parameter<std::string>("rtsp_url", "rtsp://localhost:8554/cam");
+    this->declare_parameter<std::string>("device",      "/dev/video2");
+    this->declare_parameter<std::string>("rtsp_url",    "rtsp://localhost:8554/cam");
+    this->declare_parameter<std::string>("topic",       "camera/image_raw");
     this->declare_parameter<int>("width",   1920);
     this->declare_parameter<int>("height",  1080);
     this->declare_parameter<int>("fps",     30);
@@ -34,7 +35,8 @@ public:
     height_   = this->get_parameter("height").as_int();
     fps_      = this->get_parameter("fps").as_int();
 
-    image_pub_ = this->create_publisher<sensor_msgs::msg::Image>("camera/image_raw", 10);
+    auto topic = this->get_parameter("topic").as_string();
+    image_pub_ = this->create_publisher<sensor_msgs::msg::Image>(topic, 10);
 
     if (!init_pipeline()) {
       throw std::runtime_error("Failed to initialise GStreamer pipeline");

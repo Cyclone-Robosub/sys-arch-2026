@@ -17,6 +17,11 @@ def generate_launch_description():
             description='RTSP URL of the mediaMTX server to push the stream to'
         ),
         DeclareLaunchArgument(
+            'topic',
+            default_value='camera/image_raw',
+            description='ROS topic to publish the camera feed on'
+        ),
+        DeclareLaunchArgument(
             'width',
             default_value='1920',
             description='Frame width in pixels'
@@ -42,6 +47,7 @@ def generate_launch_description():
                 'width':    LaunchConfiguration('width'),
                 'height':   LaunchConfiguration('height'),
                 'fps':      LaunchConfiguration('fps'),
+                'topic':    LaunchConfiguration('topic'),
             }],
             output='screen',
         ),
