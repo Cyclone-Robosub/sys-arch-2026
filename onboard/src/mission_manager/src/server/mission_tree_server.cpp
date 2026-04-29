@@ -8,14 +8,10 @@ void MissionTreeServer::onTreeCreated(BT::Tree& tree) override {
 
 std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus status) override{
     if (progress_dirty_) {
-
+        // publish message with current subtree, command, and status
         progress_dirty_ = false;
     }
     return std::nullopt;
-}
-
-std::optional<std::string> MissionTreeServer::onLoopFeedback() override{
-    
 }
 
 void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& factory) override {

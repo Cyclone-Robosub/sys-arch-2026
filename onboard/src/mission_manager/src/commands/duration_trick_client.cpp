@@ -7,8 +7,10 @@ namespace CycloneCommands {
         startTime = std::chrono::steady_clock::now();
     }
     bool DurationTrick::setGoal(RosActionNode::Goal& goal) override {
-        // get "order" from the Input port
-        getInput("order", goal.order);
+        getInput("trick", goal.trick);
+        getInput("duration", goal.duration);
+        getInput("waypoint_mask", goal.waypoint_mask);
+        getInput("hold_time", goal.hold_time);
         // return true, if we were able to set the goal correctly.
         return true;
     }

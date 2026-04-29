@@ -2,5 +2,7 @@
 using namespace BT;
 
 class CustomLogger : public RosLogger {
-    void callback (Duration timestamp, const TreeNode& node, NodeStatus prev_status, NodeStatus status) override {};       
+    void callback (Duration timestamp, const TreeNode& node, NodeStatus prev_status, NodeStatus status) override {}; 
+   
+
 }

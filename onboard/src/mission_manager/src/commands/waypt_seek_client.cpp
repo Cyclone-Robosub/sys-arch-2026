@@ -6,7 +6,15 @@ namespace CycloneCommands {
     WayptSeek::WayptSeek(const std::string& name, const NodeConfig& conf, const RosNodeParams& params){
         
     }
-
+    bool WayptSeek::setGoal(RosActionNode::Goal& goal) override {
+        // get parameters from the Input port
+        getInput("waypoint", goal.waypoint);
+        getInput("waypoint_mask", goal.waypoint_mask);
+        getInput("hold_time", goal.hold_time);
+        getInput("tolerance", goal.tolerance);
+        // return true, if we were able to set the goal correctly.
+        return true;
+    }
     // NodeStatus WayptSeek::tick() override {
     //     NodeStatus status; // has to come from the server, i.e. the matlab side?
     //     if (status == NodeStatus::RUNNING) {

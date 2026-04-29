@@ -13,13 +13,10 @@ namespace CycloneCommands {
     }
 
     bool ObjectWaypt::setGoal(RosActionNode::Goal& goal) {
-        getInput("trackingPos", goal.tracking_position); 
-        getInput("waypointMask", goal.waypoint_mask);
+        getInput("tracking_position", goal.tracking_position); 
         getInput("object", goal.object);
-        // getInput("timeout_sec", goal.timeout_sec);
-
-        start_time = std::chrono::steady_clock::now();        
-        getInput("timeout_sec", timeout_sec);
+        getInput("waypoint_mask", goal.waypoint_mask);
+        getInput("hold_time", goal.hold_time)
         return true;
     }
 

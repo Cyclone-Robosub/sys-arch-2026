@@ -5,8 +5,10 @@ namespace CycloneCommands {
     {}
     
     bool DisTrick::setGoal(RosActionNode::Goal& goal) override {
-        // get "order" from the Input port
-        getInput("order", goal.order);
+        getInput("waypoint", goal.waypoint);
+        getInput("waypoint_mask", goal.waypoint_mask);
+        getInput("hold_time", goal.hold_time);
+        getInput("tolerance", goal.tolerance);
         // return true, if we were able to set the goal correctly.
         return true;
     }
