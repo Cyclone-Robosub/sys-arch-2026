@@ -98,7 +98,7 @@ tee name=t
        appsink name=appsink sync=false max-buffers=1 drop=true
 ```
 
-**Published topic:** `/camera/image_raw` (`sensor_msgs/msg/Image`, BGR8)
+**Published topic:** Configurable via the `topic` parameter (`sensor_msgs/msg/Image`, BGR8)
 
 **Parameters:**
 
@@ -106,6 +106,7 @@ tee name=t
 |---|---|---|
 | `device` | `/dev/video2` | V4L2 device path |
 | `rtsp_url` | `rtsp://localhost:8554/cam` | mediaMTX RTSP push URL |
+| `topic` | `camera/image_raw` | ROS topic to publish frames on |
 | `width` | `1920` | Frame width |
 | `height` | `1080` | Frame height |
 | `fps` | `30` | Camera frame rate |
@@ -116,12 +117,12 @@ source install/setup.bash
 ros2 launch vision camera_feed_node.launch.py \
   device:=/dev/video2 \
   rtsp_url:=rtsp://localhost:8554/cam \
-  # need to specify the ros topic it publishes to as well
+  topic:=camera/image_raw
 ```
 
 **Monitor:**
 ```bash
-ros2 topic hz /camera/image_raw
+ros2 topic hz /camera/image_raw  # adjust to match your topic parameter
 ```
 
 ## keypoint_node
