@@ -61,35 +61,30 @@ if [[ "$USE_CONTAINER" == true ]]; then
 	echo "Running components inside container..."
 fi
 
+ros2_cmd() {
+    local pkg="$1" node="$2"
+    if [[ "$USE_CONTAINER" == true ]]; then
+        echo "docker compose exec $BRAIN_CONTAINER bash -ic 'source install/setup.sh && ros2 run $pkg $node; exec bash'"
+    else
+        echo "source install/setup.sh && ros2 run $pkg $node; bash"
+    fi
+}
+
 ################################################################################
 # SECTION 1: Main Window - Core System Components
 ################################################################################
 
 # --- Thrust Interface ---
-# Create new detached tmux session
-if [[ "$USE_CONTAINER" == true ]]; then
-	THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run thrust_interface thrust_interface'; bash" )
-else 
-    THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "ros2 run thrust_interface thrust_interface; bash" )
-fi
-
+THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "$(ros2_cmd thrust_interface thrust_interface)")
 
 # --- Software Multiplexer ---
-if [[ "$USE_CONTAINER" == true ]]; then
-	SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run soft_mux soft_mux'; bash" )
-else
-	SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "ros2 run soft_mux soft_mux; bash" )
-fi
+SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "$(ros2_cmd soft_mux soft_mux)")
 
 # --- System Monitor (btop) ---
 tmux split-window -v -t $SOFT_MUX_PANE "btop; bash"
 
 # --- Mux Controller ---
-if [[ "$USE_CONTAINER" == true ]]; then
-    tmux split-window -v -t $THRUST_INTERFACE_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run mux_controller mux_controller'; bash" 
-else
-    tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run mux_controller mux_controller; bash"
-fi
+tmux split-window -v -t $THRUST_INTERFACE_PANE "$(ros2_cmd mux_controller mux_controller)"
 
 ################################################################################
 # SECTION 2: Video Streaming and Recording Window
@@ -142,14 +137,10 @@ fi
 # SECTION 5: Additional Components: CLI
 ################################################################################
 
-if [[ "$USE_CONTAINER" == true ]]; then
-  CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run pwm_cli pwm_cli_node'; bash")
-else
-  CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run pwm_cli pwm_cli_node; bash")
-fi
+JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "$(ros2_cmd simple_joystick_controller Simple_Joystick_Controller)")
 
 # Starting a simple HTTP server to serve the joystick webpage
-tmux split-window -v -t $JOYSTICK_PANE "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8000; bash"
+tmux split-window -v -t $JOYSTICK_PANE "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8080; bash"
 
 ################################################################################
 # Attach to Session
