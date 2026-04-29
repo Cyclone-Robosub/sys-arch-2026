@@ -141,7 +141,7 @@
 					{#each Object.entries(ctrl) as [key, val]}
 						<tr>
 							<td class="key">{key}</td>
-							<td class="val" class:active={Math.abs(val) > 0.05}>{val.toFixed(2)}</td>
+							<td class="val" class:active={typeof val === 'number' && Math.abs(val) > 0.05}>{typeof val === 'number' ? val.toFixed(2) : String(val)}</td>
 						</tr>
 					{/each}
 				</tbody>
