@@ -56,7 +56,12 @@ EOF
 done
 
 if [[ "$USE_CONTAINER" == true ]]; then
-	echo "Running components inside container..."
+	docker compose up --detach
+	echo "Waiting for $BRAIN_CONTAINER to be ready..."
+	until docker compose exec "$BRAIN_CONTAINER" test -f install/setup.sh 2>/dev/null; do
+		sleep 1
+	done
+	echo "$BRAIN_CONTAINER is ready."
 else
     source install/setup.sh
 fi
@@ -129,7 +134,7 @@ tmux split-window -v -t $SENSOR_PANE "$(ros2_cmd dvl dvl)"
 # SECTION 5: Additional Components: CLI
 ################################################################################
 
-tmux new-window -t $SESSION "$(ros2_cmd pwm_cli pwm_cli_node)"
+# tmux new-window -t $SESSION "$(ros2_cmd pwm_cli pwm_cli_node)"
 
 ################################################################################
 # SECTION 6: Remote Control Webpage
