@@ -4,9 +4,16 @@ Tests input parsing for the Command Line Interface
 import builtins
 import pytest
 import time
+import sys
+import warnings
 
 from pwm_cli.cli_console import main
 from pwm_cli.cli_publisher import *
+
+# Generally you will only want to use this for running one test, otherwise output will get way to clogged up.
+GIVE_ME_FULL_OUTPUT = False
+if (GIVE_ME_FULL_OUTPUT):
+	warnings.warn("Full output is turned on. This should be turned off unless you are actively using it.")
 
 '''
 Pass by parameter for any tests that need to override input()
@@ -26,7 +33,11 @@ Stores default print() function to reset when test is finished running
 def catch_output():
 	store_print = print
 	print_outputs = []
-	builtins.print = lambda output: print_outputs.append(output)
+	def custom_output(output, file = sys.stdout):
+		print_outputs.append(output)
+		if GIVE_ME_FULL_OUTPUT:
+			sys.stdout.write(str(output))
+	builtins.print = custom_output
 	yield print_outputs
 	builtins.print = store_print
 
@@ -36,12 +47,20 @@ If called with "wait {num}" it will wait for that many seconds
 Used to override input() function for testing the main loop of cli_console
 '''
 def input_iterator(outputs: list[str]):
+	global GIVE_ME_FULL_OUTPUT
 	iterator = iter(outputs)
 	def my_input(input = None):
+		if GIVE_ME_FULL_OUTPUT and input is not None:
+			sys.stdout.write(str(input))
 		next_input = next(iterator)
-		if "wait " in next_input:
-			time.sleep(float(next_input[5:]))
-			return next(iterator)
+		while "wait " in next_input:
+			duration = float(next_input[5:])
+			if GIVE_ME_FULL_OUTPUT:
+				sys.stdout.write("Waiting: " + str(duration) + " seconds\n")
+			time.sleep(duration)
+			next_input = next(iterator)
+		if GIVE_ME_FULL_OUTPUT:
+			sys.stdout.write('Inputting "' + next_input + '"\n')
 		return next_input
 	return my_input
 
@@ -414,6 +433,8 @@ def test_robot_commands(simulate_input, catch_output):
 		"roll right", "yes", "current command",
 		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100]", "yes", "current command",
 		"run thruster 0", "yes", "current command",
+		"prev", "yes", "current command",
+		"history",
 		"end session"
 	])
 	main()
@@ -435,8 +456,30 @@ def test_robot_commands(simulate_input, catch_output):
 		"Current Command: Roll Right at 70% power\n",
 		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100']\n",
 		"Current Command: Run Thruster 0 at 1780\n",
+		"Command to Run: Run Thruster 0 at 1780 with result: 0 at 1780\n",
+		"Current Command: Run Thruster 0 at 1780\n",
+		"Note: this only shows *correctly input and accepted* robot commands, *not* user commands.\n",
+		"Command History:\n",
+		"forwards\n",
+		"backwards\n",
+		"strafe left\n",
+		"strafe right\n",
+		"rise\n",
+		"sink\n",
+		"yaw counter clockwise\n",
+		"yaw ccw\n",
+		"yaw clockwise\n",
+		"yaw cw\n",
+		"pitch up\n",
+		"pitch down\n",
+		"roll left\n",
+		"roll right\n",
+		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100]\n",
+		"run thruster 0\n",
+		"prev AKA run thruster 0\n"
 	]
 	for i in range(0,len(expected_outputs)):
+		sys.stdout.write("Checking line "+str(i)+f"/{len(expected_outputs)-1}\n")
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
 
 
@@ -447,7 +490,8 @@ def test_custom_pwms(simulate_input, catch_output):
 		"custom [1500, 1200, 1500, 1200, 1500, 1200, 1500, 1200]", "yes", "current command",
 		"custom [1500, 1400, 1300, 1200, 1100, 1250, 1550, 1900] t: 5", "yes", "current command",
 		"custom t: 5 [1500, 1400, 1300, 1200, 1100, 1250, 1550, 1900]", "yes", "current command",
-		"end session"])
+		"end session"
+	])
 	main()
 	output_list = catch_output
 	pwms = ['1500', '1400', '1300', '1200', '1100', '1250', '1550', '1900']
@@ -492,7 +536,8 @@ def test_timed_commands(simulate_input, catch_output):
 		"current command",
 		"wait 1",
 		"current command",
-		"end session"])
+		"end session"
+	])
 	main()
 	output_list = catch_output
 	excepted_outputs = [
@@ -519,116 +564,142 @@ def test_timed_commands(simulate_input, catch_output):
 		assert output_list[INFO_OFFSET + i] == excepted_outputs[i]
 
 
-# Check that the last command behaves properly
-def test_last_command(simulate_input, catch_output):
+# Check that the prev command behaves properly
+def test_prev_command(simulate_input, catch_output):
 	builtins.input = input_iterator([
 		# -- 1: No command --
-		"last", "current command"
+		"prev", "current command",
 		# -- 2: Forwards --
 		"forwards t:0.5", "yes", "current command",
-		"wait 1", "current command",
-		"last", "current command",
-		"wait 1", "current command",
+		"wait 0.5625", "current command",
+		"previous", "yes", "current command",
+		"wait 0.5625", "current command",
 		# -- 3: Custom PWM --
 		"custom [1200 1700 1100 1600 1500 1330 1193 1342] t:1.5", "yes", "current command",
-		"wait 2", "current command",
-		"last", "current command",
-		"wait 2", "current command",
+		"wait 1.5625", "current command",
+		"prev", "yes", "current command",
+		"wait 1.5625", "current command",
 		# -- 4: Forwards, count --
 		"forwards", "yes", "current command",
 		"stop", "current command",
-		"last", "current command",
-		"last 3", "current command",
+		"prev", "current command",
+		"prev 3", "yes", "current command",
 		# -- 5: Pitch Up --
 		"pitch up t:0.5", "yes", "current command",
-		"wait 1", "current command",
-		"last", "current command",
-		"wait 1", "current command",
+		"wait 0.5625", "current command",
+		"prev", "yes", "current command",
+		"wait 0.5625", "current command",
 		# -- 6: Roll left, count --
 		"roll left", "yes", "current command",
 		"stop", "current command",
-		"last", "current command",
-		"last 3", "current command",
+		"prev", "current command",
+		"prev 3", "yes", "current command",
 		# -- 7: Roll left, count cont. --
 		"roll left", "yes", "current command",
 		"stop", "current command",
-		"last 2", "current command",
+		"prev 2", "yes", "current command",
 		# -- 8: Run thruster, count --
 		"run thruster 1", "yes", "run thruster 3", "yes", "current command",
 		"stop thruster 3", "current command",
-		"last 2", "current command",
-		"last 2", "current command",
-		"stop thruster 1", "current command",
-		# -- 9: Run thruster timed --
-		"run thruster 1 t:0.5", "yes", "current command",
-		"wait 1", "current command",
-		"last", "current command",
-		"wait 1", "current command",
-		# -- 10: Recursive --
+		"prev 2", "yes", "current command",
+		"prev 2", "current command",
+		"prev 4", "yes", "current command",
+		"stop thruster 1", "stop thruster 3", "current command",
+		# -- 9: Recursive --
 		"forwards t:0.1", "yes", "current command",
 		"wait 0.125", "current command",
-		"last", "current command",
+		"prev", "yes", "current command",
 		"wait 0.125", "current command",
-		"last", "current command",
+		"prev", "yes", "current command",
 		"wait 0.125", "current command",
-		"last", "current command",
+		"prev", "yes", "current command",
+		# -- 10: Too large a number --
+		"prev 9999999999999999999999999999999999999999",
+		"prev 32",
+		# -- 11: No to command --
+		"backwards", "yes", "current command",
+		"forwards t:0.1", "yes", "wait 0.125",
+		"prev", "no", "current command",
+		"prev 2", "yes", "current command",
 		# -- - --
 		"end session"
 	])
 	main()
 	output_list = catch_output
-	excepted_outputs = [
+	expected_outputs = [
 		# -- 1 --
-		"There is no currently active command",
+		"No previous command to run.\n",
+		"There is no currently active command\n",
 		# -- 2 --
 		"Current Command: Move Forwards at 70% power for 0.5 seconds\n",
-		"There is no currently active command",
+		"There is no currently active command\n",
+		"Command to Run: Move Forwards at 70% power for 0.5 seconds\n",
 		"Current Command: Move Forwards at 70% power for 0.5 seconds\n",
-		"There is no currently active command",
+		"There is no currently active command\n",
 		# -- 3 --
-		"Current Command: Custom pwm ['1200', 1700', '1100', '1600', '1500', '1330', '1193', '1342] for 1.5 seconds\n",
-		"There is no currently active command",
-		"Current Command: Custom pwm ['1200', '1100', '1100', '1100', '1100', '1100', '1100', '1100'] for 1.5 seconds\n",
-		"There is no currently active command",
+		"Current Command: Custom pwm ['1200', '1700', '1100', '1600', '1500', '1330', '1193', '1342'] for 1.5 seconds\n",
+		"There is no currently active command\n",
+		"Command to Run: Custom pwm ['1200', '1700', '1100', '1600', '1500', '1330', '1193', '1342'] for 1.5 seconds\n",
+		"Current Command: Custom pwm ['1200', '1700', '1100', '1600', '1500', '1330', '1193', '1342'] for 1.5 seconds\n",
+		"There is no currently active command\n",
 		# -- 4 --
 		"Current Command: Move Forwards at 70% power\n",
-		"There is no currently active command",
-		"There is no currently active command",
+		"There is no currently active command\n",
+		"Command to Run: Stop\n",
+		"There is no currently active command\n",
+		"Command to Run: Move Forwards at 70% power\n",
 		"Current Command: Move Forwards at 70% power\n",
 		# -- 5 --
 		"Current Command: Pitch Up at 70% power for 0.5 seconds\n",
-		"There is no currently active command",
+		"There is no currently active command\n",
+		"Command to Run: Pitch Up at 70% power for 0.5 seconds\n",
 		"Current Command: Pitch Up at 70% power for 0.5 seconds\n",
-		"There is no currently active command",
+		"There is no currently active command\n",
 		# -- 6 --
 		"Current Command: Roll Left at 70% power\n",
-		"There is no currently active command",
-		"There is no currently active command",
+		"There is no currently active command\n",
+		"Command to Run: Stop\n",
+		"There is no currently active command\n",
+		"Command to Run: Roll Left at 70% power\n",
 		"Current Command: Roll Left at 70% power\n",
 		# -- 7 --
 		"Current Command: Roll Left at 70% power\n",
-		"There is no currently active command",
+		"There is no currently active command\n",
+		"Command to Run: Roll Left at 70% power\n",
 		"Current Command: Roll Left at 70% power\n",
 		# -- 8 --
 		"Current Command: Run Thrusters 1 at 1780, 3 at 1780\n",
 		"Current Command: Run Thruster 1 at 1780\n",
+		"Command to Run: Run Thruster 3 at 1780 with result: 1 at 1780, 3 at 1780\n",
 		"Current Command: Run Thrusters 1 at 1780, 3 at 1780\n",
+		"Command to Run: Stop Thruster 3 with result: 1 at 1780\n",
 		"Current Command: Run Thruster 1 at 1780\n",
-		"There is no currently active command",
+		"Command to Run: Run Thruster 3 at 1780 with result: 1 at 1780, 3 at 1780\n",
+		"Current Command: Run Thrusters 1 at 1780, 3 at 1780\n",
+		"There is no currently active command\n",
 		# -- 9 --
-		"Current Command: Run Thruster 1 at 1780\n",
-		"There is no currently active command",
-		"Current Command: Run Thruster 1 at 1780\n",
-		"There is no currently active command",
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
+		"There is no currently active command\n",
+		"Command to Run: Move Forwards at 70% power for 0.1 seconds\n",
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
+		"There is no currently active command\n",
+		"Command to Run: Move Forwards at 70% power for 0.1 seconds\n",
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
+		"There is no currently active command\n",
+		"Command to Run: Move Forwards at 70% power for 0.1 seconds\n",
+		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
 		# -- 10 --
-		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
-		"There is no currently active command",
-		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
-		"There is no currently active command",
-		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
-		"There is no currently active command",
-		"Current Command: Move Forwards at 70% power for 0.1 seconds\n",
-	]
-
-	for i in range(0, len(excepted_outputs)):
-		assert output_list[INFO_OFFSET + i] == excepted_outputs[i]
+		"Invalid index inputted, max 29\n",
+		"Invalid index inputted, max 29\n",
+		# -- 11 --
+		"Current Command: Move Backwards at 70% power\n",
+		"Command to Run: Move Forwards at 70% power for 0.1 seconds\n",
+		"There is no currently active command\n",
+		"Command to Run: Move Backwards at 70% power\n",
+		"Current Command: Move Backwards at 70% power\n"
+	] # FIXME test and decide the correct functionality for set powers
+	
+	for i in range(0, len(expected_outputs)):
+		# Leaving this here in case it is needed later
+		#sys.stdout.write("Checking line "+str(i)+f"/{len(expected_outputs)-1}\n")
+		assert output_list[INFO_OFFSET + i] == expected_outputs[i]

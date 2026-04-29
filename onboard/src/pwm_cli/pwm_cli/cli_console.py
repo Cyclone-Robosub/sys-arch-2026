@@ -5,6 +5,7 @@ Takes user input from the command line and publishes a pwm_cli
 import time
 import threading
 import math
+import copy
 
 from .cli_publisher import *
 
@@ -13,6 +14,7 @@ cli = None
 default_power = 70
 timer_running = False
 current_command = None
+previous_commands = []
 timed_command_thread = None
 
 # pwm constants
@@ -23,16 +25,18 @@ EMERGENCY_BRAKES = [PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, PWM_ZERO, 
 def main():
 	global current_command
 	global default_power
+	global cli
+	global timed_command_thread
+	global timer_running
+	global previous_commands
+
 	default_power = 70
 	current_command = RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
+	previous_commands = []
 
 	rclpy.init(args=None)
 
-	global cli
 	cli = CLIPublisher()
-
-	global timed_command_thread
-	global timer_running
 
 	# Create a seperate thread to spin the heartbeat
 	heartbeat_thread = threading.Thread(name="heartbeat_thread", target=spin_heartbeat)
@@ -72,6 +76,7 @@ def main():
 		elif "Stop" in command.name:
 			cli.publish_pwm(command.pwm)
 			current_command = command
+			previous_commands.append(current_command)
 		
 		# A robot command should be processed after the user confirms it was intended
 		elif command.confirm_command():
@@ -84,6 +89,7 @@ def main():
 				timer_running = True
 				timed_command_thread.start()
 			current_command = command
+			previous_commands.append(current_command)
 	# End of while loop
 
 	reading_input = False
@@ -111,6 +117,13 @@ def translate_command(command):
 	if "info" in command or "help" in command:
 		info()
 		return ""
+	
+	if "history" in command:
+		print("Note: this only shows *correctly input and accepted* robot commands, *not* user commands.\n")
+		print("Command History:\n")
+		for cmd in previous_commands:
+			print(f"{cmd.user_input}\n")
+		return ""
 
 	global default_power
 	
@@ -127,6 +140,7 @@ def translate_command(command):
 
 
 	cmd = RobotCommand(power = default_power)
+	cmd.user_input = command
 
 	# Changing settings for a given robot command
 	if "power:" in command:
@@ -179,9 +193,13 @@ def translate_command(command):
 			print("Note: Custom times are ignored for thruster commands.\n")
 			cmd.time = -1
 		
+		# Indicate which thruster was changed (and to what) for the prev command
+		cmd.thruster = thruster_num
+		cmd.thruster_pwm = cmd.pwm[thruster_num]
+		
 		return cmd
 	if "stop" in command:
-		return RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES)
+		return RobotCommand("Stop", default_power, -1, EMERGENCY_BRAKES, command)
 	if "forwards" in command:
 		cmd.name = "Move Forwards"
 		cmd.pwm = cmd.command_dictionary()[f"{cmd.name}"]
@@ -269,8 +287,9 @@ def translate_command(command):
 		else:
 			cmd.pwm[thruster_num] = math.floor(PWM_ZERO + 400 * (int(cmd.power) / 100))
 
-		# Indicate which thruster was changed for the confirmation
+		# Indicate which thruster was changed (and to what) for the confirmation and for the prev command
 		cmd.thruster = thruster_num
+		cmd.thruster_pwm = cmd.pwm[thruster_num]
 
 		return cmd
 
@@ -306,6 +325,35 @@ def translate_command(command):
 				   if (not len(cmd.pwm) == 8)
 				   else "\n")
 
+	if "prev" in command:
+		if len(previous_commands) == 0:
+			return "No previous command to run.\n"
+		num_back = find_num_in_string(command)
+		if num_back is None or int(num_back) < 1:
+			num_back = 1
+		num_back = int(num_back)
+		i = len(previous_commands)-num_back
+		if i < 0:
+			return f"Invalid index inputted, max {len(previous_commands)}\n"
+		original_user_input = cmd.user_input
+		cmd = copy.deepcopy(previous_commands[i])
+		# Dealing with run thruster and prev
+		if "Thruster" in cmd.name:
+			# Simplified/modified version of the run thruster command
+			if current_command is None or "Thruster" not in current_command.name:
+				cmd.pwm = cmd.command_dictionary()["Stop"]
+			else:
+				cmd.pwm = current_command.pwm
+			cmd.pwm[cmd.thruster] = cmd.thruster_pwm
+			print(f"Command to Run: {cmd.name} {cmd.thruster}{" at " + str(cmd.thruster_pwm) if "Stop" not in cmd.name else ""} with result: {get_running_thruster_list(cmd)[0]}\n")
+		
+		else:
+			print(get_robot_command(cmd, "Command to Run: "))
+		
+		cmd.user_input = f"{original_user_input} AKA {cmd.user_input}"
+		
+		return cmd
+
 	return None
 
 '''
@@ -328,7 +376,7 @@ def info():
 	print("\tyaw counter clockwise (yaw ccw) | yaw clockwise (yaw cw) | pitch up | pitch down | roll left | roll right")
 	print("\tcustom [{pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}]")
 	print("\trun thruster {number} <pwm: {pwm} (optional)> | stop thruster {number}")
-	print("\tlast <amount (optional)>")
+	print("\tprevious (prev) <amount (optional)> | history")
 	print("\n")
 	print("All robot commands have optional power and time fields")
 	print("\t'power: {num}' or 'p: {num}' for a custom power (as a percentage)")
@@ -350,17 +398,31 @@ def get_current_command():
 	if current_command.name == "Stop":
 		return "There is no currently active command\n"
 	
+	return get_robot_command(current_command, "Current Command: ")
+
+'''
+Gets the string for a given command. Abstracted from get_current_command to allow printing when running the "prev" command.
+'''
+def get_robot_command(cmd, prefix):
+	# Note that although this is different from the stop string to print for get current command,
+	# that specific case is handled in get_current_command before this function is called.
+	# This is to ensure that a power value is not printed alongside a stop command, as that would
+	# not make sense.
+	if cmd.name == "Stop":
+		return f"{prefix}Stop\n"
+
 	# Current command string start is dependent on whether the command is a custom pwm
-	str_start = f"Current Command: Custom pwm {current_command.pwm}" \
-				if current_command.name == "Custom pwm" \
-				else (get_thruster_command_text(current_command) \
-				if "Thruster" in current_command.name \
-				else f"Current Command: {current_command.name} at {current_command.power}% power")
+	str_start = f"{prefix}Custom pwm {cmd.pwm}" \
+				if cmd.name == "Custom pwm" \
+				else (get_thruster_command_text(cmd, prefix) \
+				if "Thruster" in cmd.name \
+				else f"{prefix}{cmd.name} at {cmd.power}% power")
 	
 	# Current command string end is dependent on whether the command is timed
-	str_end = "\n" if current_command.time == -1 else f" for {current_command.time} seconds\n"
+	str_end = "\n" if cmd.time == -1 else f" for {cmd.time} seconds\n"
 
 	return str_start + str_end
+
 
 '''
 Due to the complexity of the current command text for the run thruster command,
@@ -368,7 +430,11 @@ I have broken it out into a seperate function to not clutter get_current_command
 
 Returns the thruster command text.
 '''
-def get_thruster_command_text(cmd):
+def get_thruster_command_text(cmd, prefix):
+	(thrusters_string, num_thrusters) = get_running_thruster_list(cmd)
+	return f"{prefix}Run Thruster" + ("s " if num_thrusters > 1 else " ") + thrusters_string
+
+def get_running_thruster_list(cmd):
 	num_thrusters = 0
 	thrusters_string = ""
 	# For each nonzero thruster, add its number and value to the string
@@ -379,8 +445,7 @@ def get_thruster_command_text(cmd):
 			if num_thrusters != 1:
 				thrusters_string += (", ")
 			thrusters_string += f"{i} at {cur_pwm}"
-	# Assemble and return the string
-	return f"Current Command: Run Thruster" + ("s " if num_thrusters > 1 else " ") + thrusters_string
+	return (thrusters_string, num_thrusters)
 
 '''
 Looks through a string for the first number in it
@@ -455,11 +520,12 @@ time is the amount of the time the command should run for, or -1 if it is untime
 pwm is the set of 8 pwms to be sent to the thrusters
 '''
 class RobotCommand():
-	def __init__(self, name = "Stop", power = default_power, time = -1, pwm = EMERGENCY_BRAKES):
+	def __init__(self, name = "Stop", power = default_power, time = -1, pwm = EMERGENCY_BRAKES, user_input = "USER INPUT MISSING"):
 		self.name = name
 		self.power = power
 		self.time = time
 		self.pwm = pwm
+		self.user_input = user_input
 	
 	'''
 	Calculates the pwm sets for all commands using the RobotCommand's power
