@@ -110,40 +110,32 @@ else
 fi
 
 ################################################################################
-# SECTION 3: (Optional)  IMU
+# SECTION 3: (Optional) Sensors - IMU + DVL
 ################################################################################
 
 # --- IMU Node ---
-if [[ "$USE_CONTAINER" == true ]]; then
-	SENSOR_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run inertial_sense_ros2 inertial_sense_ros2_node'")
-else
-	SENSOR_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash")
-fi
+SENSOR_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "$(ros2_cmd inertial_sense_ros2 inertial_sense_ros2_node)")
+
 # --- DVL Node ---
-if [[ "$USE_CONTAINER" == true ]]; then
-  tmux split-window -v -t $SENSOR_PANE "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run dvl dvl'; bash"
-else
-  tmux split-window -v -t $SENSOR_PANE "ros2 run dvl dvl; bash"
-fi
+tmux split-window -v -t $SENSOR_PANE "$(ros2_cmd dvl dvl)"
 
 ################################################################################
 # SECTION 4: (Optional) Joystick controller
 ################################################################################
 
-# if [[ "$USE_CONTAINER" == true ]]; then
-# 	JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "docker compose exec $BRAIN_CONTAINER bash -ic 'ros2 run simple_joystick_controller Simple_Joystick_Controller'; bash")
-# else
-# 	JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run simple_joystick_controller Simple_Joystick_Controller; bash")
-# fi
+# JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "$(ros2_cmd simple_joystick_controller Simple_Joystick_Controller)")
 
 ################################################################################
 # SECTION 5: Additional Components: CLI
 ################################################################################
 
-JOYSTICK_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "$(ros2_cmd simple_joystick_controller Simple_Joystick_Controller)")
+tmux new-window -t $SESSION "$(ros2_cmd pwm_cli pwm_cli_node)"
 
-# Starting a simple HTTP server to serve the joystick webpage
-tmux split-window -v -t $JOYSTICK_PANE "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8080; bash"
+################################################################################
+# SECTION 6: Remote Control Webpage
+################################################################################
+
+tmux new-window -t $SESSION "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8080; bash"
 
 ################################################################################
 # Attach to Session
