@@ -15,4 +15,20 @@ Readme [here](../onboard/src/vision/README.md)
     - [x] update the (web page)[../remote_control_webpage] to show stereo camera feeds
 - [x] Use a custom message type for keypoint results instead of a string
 - [ ] Switch to use `.engine` instead of `.torchscript` for *speed*
-    - [ ] fix up docker for jetson 
+- [x] fix up docker for jetson 
+
+## Diagram
+
+```mermaid
+graph LR
+    C1[Camera 1] --> N1[Camera Node 1]
+    C2[Camera 2] --> N2[Camera Node 2]
+
+    N1 --> ROS[Filter Node]
+    N2 --> ROS
+
+    N1 --> MTX[MediaMTX]
+    N2 --> MTX
+
+    MTX --> WEB[Web Page]
+```
