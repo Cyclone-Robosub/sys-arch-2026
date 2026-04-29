@@ -204,7 +204,7 @@ From there, type `./start_tmux_session.sh`. This will launch a new `tmux` sessio
 That's all that you need to do on the robot side! You still have to run the joystick processes, but these should be done on the local machine rather than the Pi 5.
 
 #### Using container on Jetson Nano Orin
-After connecting to the Jetson Nano Orin, instead of running `./start_tmux_session.sh`, run `docker compose up` to start the container and it runs `rosbridge`. Then you run `./start_tmux_session.sh --container` with the flag so it starts the processes inside the container. 
+After connecting to the Jetson Nano Orin, instead of running `./start_tmux_session.sh`, run `./start_tmux_session.sh --container` with the flag so it starts the processes inside the container. 
 
 To stop the container, run `docker compose down` from the `sys-arch-2026` directory.
 
