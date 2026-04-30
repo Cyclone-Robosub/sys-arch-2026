@@ -1,5 +1,7 @@
-#include <behaviortree_ros2/bt_action_node.hpp>
-#include <chrono>
+#include "behaviortree_ros2/bt_action_node.hpp"
+#include "custom_interfaces/action/distance_trick.hpp"
+#include "custom_interfaces/msg/pose6_d.hpp"
+#include <string>
 
 using namespace BT;
 class ObjectWaypt: public RosActionNode<ObjectWaypt> {

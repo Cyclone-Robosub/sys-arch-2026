@@ -1,13 +1,14 @@
-#include <behaviortree_ros2/bt_action_node.hpp>
-#include <chrono>
+#include "behaviortree_ros2/bt_action_node.hpp"
+#include "custom_interfaces/action/waypoint.hpp"
+#include "custom_interfaces/msg/pose6_d.hpp"
+#include "custom_interfaces/msg/waypoint_mask.hpp"
+#include <string>
 using namespace BT;
 class WayptAbs : public RosActionNode<WayptAbs> {
     public:
         WayptAbs(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-        NodeStatus tick() override;
-        bool setGoal(RosActionNode::Goal& goal) override;
         static PortsList providedPorts();
-        NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback);
+        bool setGoal(RosActionNode::Goal& goal) override;
     private:
         std::chrono::steady_clock::time_point startTime;
         double timeout_sec;
