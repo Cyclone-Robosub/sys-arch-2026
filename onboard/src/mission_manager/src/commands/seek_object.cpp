@@ -1,4 +1,4 @@
-#include "include/commands/waypt_seek_client.hpp"
+#include "include/commands/seek_object.hpp"
 
 using namespace BT;
 

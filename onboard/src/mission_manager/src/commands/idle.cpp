@@ -1,3 +1,4 @@
+#pragma once
 #include "commands/idle.hpp"
 
 using idle = custom_interfaces::action::idle; // idk what this does but this was here before

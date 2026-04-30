@@ -1,3 +1,5 @@
+#pragma once
+
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "custom_interfaces/action/waypoint.hpp"
 #include "custom_interfaces/msg/pose6_d.hpp"

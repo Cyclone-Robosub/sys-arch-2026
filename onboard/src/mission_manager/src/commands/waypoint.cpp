@@ -1,4 +1,4 @@
-#include "include/commands/waypt_abs.hpp"
+#include "include/commands/waypoint.hpp"
 
 using namespace BT;
 
