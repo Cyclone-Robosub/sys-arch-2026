@@ -1,15 +1,11 @@
 # Goal
 string trick                        
-float64 duration
-bool[6] waypoint_mask               # [1,1,1,1,1,1] = Default to ROS param if unspecified
-float64 hold_time
-
-# Tolerance is set from the blackboard
-# float64[6] tolerance
+uint64 duration
+custom_interfaces/WaypointMask waypoint_mask               # [1,1,1,1,1,1] = Default to ROS param if unspecified
+custom_interfaces/Pose6D tolerance
+uint64 hold_time
 ---
 # Result
 bool success
 ---
 # Feedback
-float64 remaining_duration
-float64 time_in_tolerance

@@ -1,14 +1,17 @@
 # Goal
-float64[] world_waypoint
-bool[] waypoint_mask
+custom_interfaces/Pose6D waypoint
+custom_interfaces/WaypointMask waypoint_mask
 string object
+custom_interfaces/Pose6D tolerance
+float64 confidence
+uint64 hold_time
 
 # Tolerance is set from the blackboard
 # float64[6] tolerance
 ---
 # Result
-string result
+bool success
+string found_object
+bool reached_waypoint_without_detection
 ---
 # Feedback
-float64[] delta 
-# delta is defined as goal - current position

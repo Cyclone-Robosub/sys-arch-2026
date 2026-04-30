@@ -1,15 +1,13 @@
 # Goal
-float64[6] waypoint
-bool[6] waypoint_mask
-float64 hold_time
+custom_interfaces/Pose6D waypoint
+custom_interfaces/WaypointMask waypoint_mask
+custom_interfaces/Pose6D tolerance
+uint64 hold_time
 
 # Tolerance is set from the blackboard
 # float64[6] tolerance
 ---
 # Result
-string result
+bool success
 ---
 # Feedback
-# delta is defined as goal - current position
-float64[6] delta
-float64 time_in_tolerance
