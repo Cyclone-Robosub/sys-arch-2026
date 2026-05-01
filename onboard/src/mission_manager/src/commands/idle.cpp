@@ -1,4 +1,3 @@
-#pragma once
 #include "commands/idle.hpp"
 
 namespace CycloneCommands {
