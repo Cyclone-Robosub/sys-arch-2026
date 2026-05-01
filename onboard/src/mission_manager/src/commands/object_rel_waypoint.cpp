@@ -1,33 +1,30 @@
+#include "commands/command_alias.hpp"
 #include "commands/object_rel_waypoint.hpp"
 
-using namespace BT;
-using Pose6D = custom_interfaces::msg::Pose6D;
-using WaypointMask = custom_interfaces::msg::WaypointMask;
-
 namespace CycloneCommands {
-    ObjectWaypt::ObjectWaypt( const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<ObjectWaypt>(name, conf, params) {    
+    ObjRelWaypointCmd::ObjRelWaypointCmd( const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<ObjectRelWaypoint>(name, conf, params) {
     }
 
-    static BT::PortsList providedPorts() {
+    PortsList ObjRelWaypointCmd::providedPorts() {
         return providedBasicPorts({
             InputPort<Pose6D>("tracking_position"),
             InputPort<WaypointMask>("waypoint_mask"),
             InputPort<std::string>("object"),
-            InputPort<Pose6D>("tolerence"),
+            InputPort<Pose6D>("tolerance"),
             InputPort<uint64_t>("hold_time")
         });
     }
 
-    bool ObjectWaypt::setGoal(RosActionNode::Goal& goal) {
+    bool ObjRelWaypointCmd::setGoal(Goal& goal) {
         getInput("tracking_position", goal.tracking_position);
         getInput("waypoint_mask", goal.waypoint_mask);
         getInput("object", goal.object);
-        getInput("tolerence", goal.tolerence);
+        getInput("tolerance", goal.tolerance);
         getInput("hold_time", goal.hold_time);
         return true;
     }
 
-    NodeStatus ObjectWaypt::onResultReceived (const WrappedResult& result) override {
+    NodeStatus ObjRelWaypointCmd::onResultReceived (const WrappedResult& result) {
         return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
 

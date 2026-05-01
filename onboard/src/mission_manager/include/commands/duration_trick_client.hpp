@@ -1,15 +1,17 @@
 #pragma once
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "custom_interfaces/action/duration_trick.hpp"
+#include "command_alias.hpp"
 #include <string>
-using namespace BT;
 
 namespace CycloneCommands {
-    class DurationTrick : public RosActionNode<custom_interfaces::action::DurationTrick> {
-        public:
-            DurationTrick(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-            NodeStatus tick() override;
-            bool setGoal(RosActionNode::Goal& goal) override;
-            static PortsList providedPorts();
+    using DurationTrick = custom_interfaces::action::DurationTrick;
+
+    class DurationTrickCmd : public RosActionNode<DurationTrick> {
+    public:
+        DurationTrickCmd(const std::string &name, const NodeConfig &conf, const BT::RosNodeParams &params);
+        bool setGoal(Goal &goal) override;
+        static PortsList providedPorts();
+        NodeStatus onResultReceived(const WrappedResult &result) override;
     };
 }

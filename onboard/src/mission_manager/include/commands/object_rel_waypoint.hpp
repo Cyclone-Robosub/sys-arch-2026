@@ -1,27 +1,16 @@
 #pragma once
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "custom_interfaces/action/object_relative_waypoint.hpp"
-#include "custom_interfaces/msg/pose6_d.hpp"
+#include "command_alias.hpp"
 #include <string>
 
-using namespace BT;
-
 namespace CycloneCommands {
-    class ObjectWaypt: public RosActionNode<custom_interfaces::action::ObjectRelativeWaypoint> {
+    using ObjectRelWaypoint = custom_interfaces::action::ObjectRelativeWaypoint;
+    class ObjRelWaypointCmd: public RosActionNode<ObjectRelWaypoint> {
         public:
-            ObjectWaypt(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-            // NodeStatus tick() override;
-            bool setGoal(RosActionNode::Goal& goal) override;
+            ObjRelWaypointCmd(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
+            bool setGoal(Goal& goal) override;
             NodeStatus onResultReceived(const WrappedResult& wr) override;
             static PortsList providedPorts();
-            NodeStatus onFailure(ActionNodeErrorCode error) override;
-            NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override;
-            NodeStatus tick() override;
-
-        
-        private:
-            std::chrono::steady_clock::time_point start_time;
-            double timeout_sec;
-            // std::string objectID;
     };
 }

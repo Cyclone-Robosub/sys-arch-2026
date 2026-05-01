@@ -1,15 +1,12 @@
+#include "commands/command_alias.hpp"
 #include "commands/seek_object.hpp"
-
-using namespace BT;
-using Pose6D = custom_interfaces::msg::Pose6D;
-using WaypointMask = custom_interfaces::msg::WaypointMask;
-using SeekObject = custom_interfaces::action::SeekObject;
+#include "rclcpp/logging.hpp"
 
 namespace CycloneCommands {
-    SeekObj::SeekObj(const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
-     : RosActionNode<SeekObject>(name, conf, params) {}
+    SeekObjCmd::SeekObjCmd(const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
+     : RosActionNode(name, conf, params) {}
 
-    static BT::PortsList providedPorts(){
+    PortsList SeekObjCmd::providedPorts(){
         return providedBasicPorts({
             InputPort<Pose6D>("waypoint"),
             InputPort<WaypointMask>("waypoint_mask"),
@@ -22,19 +19,19 @@ namespace CycloneCommands {
         });
     }
 
-    bool SeekObj::setGoal(RosActionNode::Goal& goal) {
+    bool SeekObjCmd::setGoal(Goal& goal) {
         // get parameters from the Input port
         getInput("waypoint", goal.waypoint);
         getInput("waypoint_mask", goal.waypoint_mask);
         getInput("object", goal.object);
         getInput("tolerance", goal.tolerance);
-        getInput("confidance", goal.confidence);
+        getInput("confidence", goal.confidence);
         getInput("hold_time", goal.hold_time);
         // return true, if we were able to set the goal correctly.
         return true;
     }
 
-    BT::NodeStatus onResultReceived(const WrappedResult& result) {
+    NodeStatus SeekObjCmd::onResultReceived(const WrappedResult& result) {
         if(result.result->success) {
             setOutput("found_object", result.result->found_object);
             return NodeStatus::SUCCESS;

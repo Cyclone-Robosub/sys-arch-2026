@@ -1,14 +1,15 @@
 #pragma once
-#include "behaviortree_ros2/bt_action_node.hpp"
+#include "command_alias.hpp"
 #include "custom_interfaces/action/seek_object.hpp"
-#include "custom_interfaces/msg/pose6_d.hpp"
 #include <string>
 
 namespace CycloneCommands {
-    class SeekObj : public BT::RosActionNode<custom_interfaces::action::SeekObject> {
+    using SeekObject = custom_interfaces::action::SeekObject;
+    class SeekObjCmd : public RosActionNode<SeekObject> {
         public:
-            explicit SeekObj(const std::string& name, const BT::NodeConfig& conf, const BT::RosNodeParams& params);
-            static BT::PortsList providedPorts();
-            bool setGoal(BT::RosActionNode::Goal& goal) override;
+            SeekObjCmd(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
+            static PortsList providedPorts();
+            bool setGoal(Goal& goal) override;
+            NodeStatus onResultReceived(const WrappedResult& result) override;
     };
 }
