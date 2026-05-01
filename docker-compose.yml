@@ -13,7 +13,6 @@ x-common: &common
     - /home/nano/Documents/jetson-containers/data:/data 
     - /run/user/1000/pulse:/run/user/1000/pulse
     - /run/jtop.sock:/run/jtop.sock
-    - /home/nano/sys-arch-2026:/root/sys-arch-2026
   devices:
     - /dev/snd
     - /dev/bus/usb
@@ -35,7 +34,6 @@ services:
       context: .
       dockerfile: Dockerfile.jazzy
     devices:
-      # - /dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_027d485dbf80bb5f-if00:/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_60fdf513bf90cb73-if00
       - /dev/video0
       - /dev/video1
       - /dev/video2
