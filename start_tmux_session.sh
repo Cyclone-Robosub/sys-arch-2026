@@ -127,7 +127,7 @@ CLI_PANE=$(tmux new-window -t "$SESSION" -P -F "#{pane_id}" "ros2 run pwm_cli pw
 ROSBRIDGE_PANE=$(tmux new-window -t "$SESSION" -P -F "#{pane_id}" "ros2 launch rosbridge_server rosbridge_websocket_launch.xml; bash")
 
 # --- Remote Control Webpage Server ---
-tmux split-window -v -t "$ROSBRIDGE_PANE" "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8080; bash"
+tmux split-window -v -t "$ROSBRIDGE_PANE" "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8080 --bind :: ; bash"
 
 ################################################################################
 # Attach to Session
