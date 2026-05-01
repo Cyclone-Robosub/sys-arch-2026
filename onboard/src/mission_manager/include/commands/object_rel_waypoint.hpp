@@ -6,7 +6,7 @@
 
 using namespace BT;
 
-class ObjectWaypt: public RosActionNode<custom_interfaces::action::ObjectRelativeWaypoint {
+class ObjectWaypt: public RosActionNode<custom_interfaces::action::ObjectRelativeWaypoint> {
     public:
         ObjectWaypt(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
         // NodeStatus tick() override;

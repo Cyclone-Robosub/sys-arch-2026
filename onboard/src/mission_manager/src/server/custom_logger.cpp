@@ -4,7 +4,7 @@ using namespace BT;
 
 void CustomLogger::callback (Duration timestamp, const TreeNode& node, NodeStatus prev_status, NodeStatus status) {
     // check if Node is a new subtree
-    if (((node.name() == "Gate Task") || (node.name() == "Bins") || (node.name() == "Slalom") || (node.name() == "Octagon") || (node.name() == "Return to Gate"))) && (status == BT::NodeStatus::RUNNING) {
+    if ((((node.name() == "Gate Task") || (node.name() == "Bins") || (node.name() == "Slalom") || (node.name() == "Octagon") || (node.name() == "Return to Gate"))) && (status == BT::NodeStatus::RUNNING)) {
         current_mission.subtree = node.name();
         current_mission.status = status;
         progress_dirty_ = true;
