@@ -49,20 +49,22 @@ EOF
 	esac
 done
 
-if [[ "$VISION" == true ]]; then
-	docker compose up --detach
-	echo "Waiting for $BRAIN_CONTAINER to be ready..."
-	until docker compose exec "$BRAIN_CONTAINER" test -f install/setup.sh 2>/dev/null; do
-		sleep 1
-	done
-	echo "$BRAIN_CONTAINER is ready."
-fi
-
 if [[ ! -f /opt/ros/jazzy/setup.bash ]]; then
 	echo "ROS not found. Attempting to re-run in distrobox container..."
+	echo "$@"
+	echo "$1"
 	distrobox enter ubuntu-ros -- $0 "$@" # Run this script, now in container
 	distrobox enter ubuntu-ros # After finished, stay in the container
 	exit # Don't run the script again after we're done
+fi
+
+if [[ "$VISION" == true ]]; then
+	distrobox-host-exec docker compose up --detach
+	echo "Waiting for $BRAIN_CONTAINER to be ready..."
+	until distrobox-host-exec docker compose exec "$BRAIN_CONTAINER" test -f install/setup.sh 2>/dev/null; do
+		sleep 1
+	done
+	echo "$BRAIN_CONTAINER is ready."
 fi
 
 source install/setup.sh
@@ -90,7 +92,7 @@ tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run mux_controller mux_cont
 # SECTION 2: Video Streaming and Recording Window
 ################################################################################
 
-if [[ "$VISION" == true ]]; then
+if [[ "$VISION" = true ]]; then
 
 	# --- mediaMTX ---
 	MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX && ./mediamtx; bash")
