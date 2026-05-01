@@ -8,15 +8,26 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(custom_interfaces REQUIRED)
+find_package(behaviortree_ros2 REQUIRED)
 
-add_executable(mission_manager_node src/mission_manager_node.cpp)
+add_executable(mission_manager_node 
+  src/mission_manager_node.cpp
+  src/server/mission_tree_server.cpp
+  src/server/custom_logger.cpp
+  src/commands/waypoint.cpp
+  src/commands/idle.cpp
+  src/commands/dis_trick_client.cpp
+  src/commands/duration_trick_client.cpp
+  src/commands/seek_object.cpp
+  src/commands/object_rel_waypoint.cpp
+)
 target_include_directories(mission_manager_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
 target_compile_features(mission_manager_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-ament_target_dependencies(
-  mission_manager_node
-  "custom_interfaces"
+ament_target_dependencies(mission_manager_node
+  custom_interfaces
+  behaviortree_ros2
 )
 
 install(TARGETS mission_manager_node
