@@ -1,6 +1,8 @@
 #include "commands/object_rel_waypoint.hpp"
 
 using namespace BT;
+using Pose6D = custom_interfaces::msg::Pose6D;
+using WaypointMask = custom_interfaces::msg::WaypointMask;
 
 namespace CycloneCommands {
     ObjectWaypt::ObjectWaypt( const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<ObjectWaypt>(name, conf, params) {    

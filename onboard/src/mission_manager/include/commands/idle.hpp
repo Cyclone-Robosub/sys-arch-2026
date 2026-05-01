@@ -4,11 +4,13 @@
 
 using namespace BT;
 
-class Idle : public RosActionNode<custom_interfaces::action::Idle> {
-    public:
-        Idle(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-        static PortsList providedPorts();
-        bool setGoal(Goal& goal) override;
-        NodeStatus onResultReceived(const WrappedResult& wr) override;
-        void onhalt();
-};
+namespace CycloneCommands {
+    class Idle : public RosActionNode<custom_interfaces::action::Idle> {
+        public:
+            Idle(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
+            static PortsList providedPorts();
+            bool setGoal(Goal& goal) override;
+            NodeStatus onResultReceived(const WrappedResult& wr) override;
+            void onhalt();
+    };
+}

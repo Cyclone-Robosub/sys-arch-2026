@@ -3,11 +3,12 @@
 #include "custom_interfaces/action/seek_object.hpp"
 #include "custom_interfaces/msg/pose6_d.hpp"
 #include <string>
-using namespace BT;
 
-class WayptSeek : public RosActionNode<custom_interfaces::action::SeekObject> {
-    public:
-        WayptSeek(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-        static PortsList providedPorts();
-        bool setGoal(RosActionNode::Goal& goal) override;
-};
+namespace CycloneCommands {
+    class SeekObj : public BT::RosActionNode<custom_interfaces::action::SeekObject> {
+        public:
+            explicit SeekObj(const std::string& name, const BT::NodeConfig& conf, const BT::RosNodeParams& params);
+            static BT::PortsList providedPorts();
+            bool setGoal(BT::RosActionNode::Goal& goal) override;
+    };
+}

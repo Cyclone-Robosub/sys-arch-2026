@@ -1,35 +1,32 @@
 #include "commands/waypoint.hpp"
 
 using namespace BT;
+using Pose6D = custom_interfaces::msg::Pose6D;
+using WaypointMask = custom_interfaces::msg::WaypointMask;
 
-namespace CycloneCommands {
-    WayptAbs::WayptAbs(const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<WayptAbs>(name, conf, params) {
-        // startTime = std::chrono::steady_clock::now();
-        // feedback_.delta = {0, 0, 0, 0, 0, 0};
-        // feedback_.time_in_tolerance = 0;
-    }
+namespace CycloneCommands
+{
+    Waypoint::Waypoint(const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
+    : RosActionNode<custom_interfaces::action::Waypoint>(name, conf, params) {}
 
-    static PortsList providedPorts() {
-        return providedBasicPorts({
-            InputPort<Pose6D>("waypoint"),
-            InputPort<WaypointMask>("waypoint_mask"),
-            InputPort<Pose6D>("tolerance"),
-            InputPort<double>("hold_time")
-        });
-    }
-
-    bool WayptAbs::setGoal(RosActionNode::Goal& goal) override {
-        // get parameters from the Input port
-        getInput("waypoint", goal.waypoint);
-        getInput("waypoint_mask", goal.waypoint_mask);
-        getInput("tolerance", goal.tolerance);
-        getInput("hold_time", goal.hold_time);
-        return true;
-    }
-
-    BT::NodeStatus onResultReceived(const WrappedResult& result)
+    PortsList Waypoint::providedPorts()
     {
-        return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
+    return providedBasicPorts({ InputPort<Pose6D>("waypoint"), InputPort<WaypointMask>("waypoint_mask"),
+                                InputPort<Pose6D>("tolerance"), InputPort<double>("hold_time") });
     }
 
-}
+    bool Waypoint::setGoal(RosActionNode::Goal& goal)
+    {
+    // get parameters from the Input port
+    getInput("waypoint", goal.waypoint);
+    getInput("waypoint_mask", goal.waypoint_mask);
+    getInput("tolerance", goal.tolerance);
+    getInput("hold_time", goal.hold_time);
+    return true;
+    }
+
+    BT::NodeStatus Waypoint::onResultReceived(const WrappedResult& result)
+    {
+    return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
+    }
+}  // namespace CycloneCommands

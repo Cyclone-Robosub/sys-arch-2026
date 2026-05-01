@@ -6,20 +6,22 @@
 
 using namespace BT;
 
-class ObjectWaypt: public RosActionNode<custom_interfaces::action::ObjectRelativeWaypoint> {
-    public:
-        ObjectWaypt(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-        // NodeStatus tick() override;
-        bool setGoal(RosActionNode::Goal& goal) override;
-        NodeStatus onResultReceived(const WrappedResult& wr) override;
-        static PortsList providedPorts();
-        NodeStatus onFailure(ActionNodeErrorCode error) override;
-        NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override;
-        NodeStatus tick() override;
+namespace CycloneCommands {
+    class ObjectWaypt: public RosActionNode<custom_interfaces::action::ObjectRelativeWaypoint> {
+        public:
+            ObjectWaypt(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
+            // NodeStatus tick() override;
+            bool setGoal(RosActionNode::Goal& goal) override;
+            NodeStatus onResultReceived(const WrappedResult& wr) override;
+            static PortsList providedPorts();
+            NodeStatus onFailure(ActionNodeErrorCode error) override;
+            NodeStatus onFeedback(const std::shared_ptr<const Feedback> feedback) override;
+            NodeStatus tick() override;
 
-    
-    private:
-        std::chrono::steady_clock::time_point start_time;
-        double timeout_sec;
-        // std::string objectID;
-};
+        
+        private:
+            std::chrono::steady_clock::time_point start_time;
+            double timeout_sec;
+            // std::string objectID;
+    };
+}

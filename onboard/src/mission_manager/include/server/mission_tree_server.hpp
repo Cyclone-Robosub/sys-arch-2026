@@ -6,6 +6,9 @@ using namespace BT;
 class MissionTreeServer : public TreeExecutionServer {
     public:
         explicit MissionTreeServer(const rclcpp::NodeOptions& options);
+        void onTreeCreated(BT::Tree& tree);
+        std::optional<BT::NodeStatus> onLoopAfterTick(BT::NodeStatus status);
+        void registerNodesIntoFactory (BT::BehaviorTreeFactory& factory);
     private:
         
         std::shared_ptr<CustomLogger> logger_cout_;

@@ -5,14 +5,16 @@
 #include "custom_interfaces/msg/pose6_d.hpp"
 #include "custom_interfaces/msg/waypoint_mask.hpp"
 #include <string>
-using namespace BT;
 
-class WayptAbs : public RosActionNode<custom_interfaces::action::Waypoint> {
-    public:
-        WayptAbs(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
-        static PortsList providedPorts();
-        bool setGoal(RosActionNode::Goal& goal) override;
-    private:
-        std::chrono::steady_clock::time_point startTime;
-        double timeout_sec;
-};
+namespace CycloneCommands {
+    class Waypoint : public BT::RosActionNode<custom_interfaces::action::Waypoint> {
+        public:
+            Waypoint(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
+            static BT::PortsList providedPorts();
+            bool setGoal(RosActionNode::Goal& goal) override;
+            BT::NodeStatus Waypoint::onResultReceived(const WrappedResult& result) override;
+        private:
+            std::chrono::steady_clock::time_point startTime;
+            double timeout_sec;
+    };
+}
