@@ -119,8 +119,8 @@ def translate_command(command):
 		return ""
 	
 	if "history" in command:
-		print("Note: this only shows *correctly input and accepted* robot commands, *not* user commands.\n")
 		print("Command History:\n")
+		print("Note: this only shows *correctly input and accepted* robot commands, *not* user commands.\n")
 		for cmd in previous_commands:
 			print(f"{cmd.user_input}\n")
 		return ""
@@ -140,6 +140,7 @@ def translate_command(command):
 
 
 	cmd = RobotCommand(power = default_power)
+	# Setting user input to list in the `history` command
 	cmd.user_input = command
 
 	# Changing settings for a given robot command
@@ -328,6 +329,8 @@ def translate_command(command):
 	if "prev" in command:
 		if len(previous_commands) == 0:
 			return "No previous command to run.\n"
+		
+		# Calculate index of the command to run
 		num_back = find_num_in_string(command)
 		if num_back is None or int(num_back) < 1:
 			num_back = 1
@@ -335,9 +338,11 @@ def translate_command(command):
 		i = len(previous_commands)-num_back
 		if i < 0:
 			return f"Invalid index inputted, max {len(previous_commands)}\n"
+		
 		original_user_input = cmd.user_input
+		# Need to deep copy the command, so the command is not modified within the history array
 		cmd = copy.deepcopy(previous_commands[i])
-		# Dealing with run thruster and prev
+		# Dealing with run thruster
 		if "Thruster" in cmd.name:
 			# Simplified/modified version of the run thruster command
 			if current_command is None or "Thruster" not in current_command.name:
@@ -369,18 +374,24 @@ def info():
 	print("\t'set power {num}'\t\t changes default power for robot commands (as a percentage)")
 	print("\t'current command'\t\t prints out the currently active command")
 	print("\t'info' or 'help'\t\t resends this message")
+	print("\t'history'\t\t displays all previously executed robot commands")
 	print("\t'end session'\t\t\t ends program excecution")
 	print("\n")
 	print("Valid Robot Commands:")
 	print("\tstop | forwards | backwards | strafe left | strafe right | rise | sink |")
 	print("\tyaw counter clockwise (yaw ccw) | yaw clockwise (yaw cw) | pitch up | pitch down | roll left | roll right")
 	print("\tcustom [{pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}, {pwm}]")
-	print("\trun thruster {number} <pwm: {pwm} (optional)> | stop thruster {number}")
-	print("\tprevious (prev) <amount (optional)> | history")
+	print("\trun thruster {number} | stop thruster {number} | previous (prev)")
 	print("\n")
-	print("All robot commands have optional power and time fields")
+	print("All robot commands have optional power and time fields:")
 	print("\t'power: {num}' or 'p: {num}' for a custom power (as a percentage)")
 	print("\t'time: {num}' or 't: {num}' for a timed command (in seconds)")
+	print("")
+	print("Run thruster has an optional pwm field:")
+	print("\t'run thruster pwm: {pwm}")
+	print("")
+	print("Previous has an optional field for the amount to go back in the history:")
+	print("\t'previous 5' or 'prev 5'")
 	print("\n")
 	print("Examples:")
 	print("\tForwards p:50 t: 10\t\tForwards at 50% power for 10 seconds")

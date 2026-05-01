@@ -65,7 +65,7 @@ def input_iterator(outputs: list[str]):
 	return my_input
 
 # Used to denote the first important value of catch_output, as the info() command prints 26 times on program start
-INFO_OFFSET = 26
+INFO_OFFSET = 32
 
 
 # --- BEGIN TESTS ---
@@ -224,6 +224,41 @@ def test_set_power(simulate_input, catch_output):
 	]
 	for i in range(0,len(expected_outputs)):
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
+	
+def test_history(simulate_input, catch_output):
+	builtins.input = input_iterator([
+		"info",
+		"forwards", "yes",
+		"set power 100",
+		"backwards", "yes",
+		"strafe left", "yes",
+		"run thruster 0", "yes",
+		"run thruster 3", "yes",
+		"forwards", "no",
+		"backwards", "yes",
+		"strafe left", "yes",
+		"prev", "yes",
+		"history",
+		"end session"
+		])
+	main()
+	output_list = catch_output
+	expected_outputs = [
+		"Set default power to 100%\n",
+		"Command to Run: Strafe Left at 100% power\n",
+		"Command History:\n",
+		"Note: this only shows *correctly input and accepted* robot commands, *not* user commands.\n",
+		"forwards\n",
+		"backwards\n",
+		"strafe left\n",
+		"run thruster 0\n",
+		"run thruster 3\n",
+		"backwards\n",
+		"strafe left\n",
+		"prev AKA strafe left\n",
+	]
+	for i in range(0,len(expected_outputs)):
+		assert output_list[INFO_OFFSET*2+1+i] == expected_outputs[i]
 
 
 # Check that get_current_command() works as expected
@@ -434,7 +469,6 @@ def test_robot_commands(simulate_input, catch_output):
 		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100]", "yes", "current command",
 		"run thruster 0", "yes", "current command",
 		"prev", "yes", "current command",
-		"history",
 		"end session"
 	])
 	main()
@@ -458,28 +492,9 @@ def test_robot_commands(simulate_input, catch_output):
 		"Current Command: Run Thruster 0 at 1780\n",
 		"Command to Run: Run Thruster 0 at 1780 with result: 0 at 1780\n",
 		"Current Command: Run Thruster 0 at 1780\n",
-		"Note: this only shows *correctly input and accepted* robot commands, *not* user commands.\n",
-		"Command History:\n",
-		"forwards\n",
-		"backwards\n",
-		"strafe left\n",
-		"strafe right\n",
-		"rise\n",
-		"sink\n",
-		"yaw counter clockwise\n",
-		"yaw ccw\n",
-		"yaw clockwise\n",
-		"yaw cw\n",
-		"pitch up\n",
-		"pitch down\n",
-		"roll left\n",
-		"roll right\n",
-		"custom [1200, 1100, 1100, 1100, 1100, 1100, 1100, 1100]\n",
-		"run thruster 0\n",
-		"prev AKA run thruster 0\n"
 	]
 	for i in range(0,len(expected_outputs)):
-		sys.stdout.write("Checking line "+str(i)+f"/{len(expected_outputs)-1}\n")
+		#sys.stdout.write("Checking line "+str(i)+f"/{len(expected_outputs)-1}\n")
 		assert output_list[INFO_OFFSET+i] == expected_outputs[i]
 
 
@@ -697,7 +712,7 @@ def test_prev_command(simulate_input, catch_output):
 		"There is no currently active command\n",
 		"Command to Run: Move Backwards at 70% power\n",
 		"Current Command: Move Backwards at 70% power\n"
-	] # FIXME test and decide the correct functionality for set powers
+	]
 	
 	for i in range(0, len(expected_outputs)):
 		# Leaving this here in case it is needed later
