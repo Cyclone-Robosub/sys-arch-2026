@@ -16,7 +16,7 @@
 #     └─────────────────┴─────────────────┘
 ################################################################################
 
-VISION=false
+VISION="${VISION:-false}"
 BRAIN_CONTAINER="manny_brain"
 
 # Parse command-line flags until no arguments remain.
@@ -51,10 +51,7 @@ done
 
 if [[ ! -f /opt/ros/jazzy/setup.bash ]]; then
 	echo "ROS not found. Attempting to re-run in distrobox container..."
-	echo $0
-	echo $@
-	echo $1
-	distrobox enter ubuntu-ros -- $0 $@ # Run this script, now in container
+	VISION="$VISION" distrobox enter ubuntu-ros -- $0 "$@" # Run this script, now in container
 	distrobox enter ubuntu-ros # After finished, stay in the container
 	exit # Don't run the script again after we're done
 fi
