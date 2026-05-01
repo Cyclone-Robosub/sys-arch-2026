@@ -14,6 +14,7 @@ void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
 }
 
 std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus status) {
+    (void) status;
     if (logger_cout_ && logger_cout_->isProgressDirty()) {
         // publish message with current subtree, command, and status
         logger_cout_->clearProgressDirty();
@@ -23,9 +24,9 @@ std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus 
 
 void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& factory) {
     factory.registerNodeType<CycloneCommands::IdleCmd>("Idle",  BT::RosNodeParams(node(), "/idle"));
-    factory.registerNodeType<CycloneCommands::Waypoint>("DriveToWorldWaypoint", BT::RosNodeParams(node(), "/waypt_abs"));
+    factory.registerNodeType<CycloneCommands::WaypointCmd>("DriveToWorldWaypoint", BT::RosNodeParams(node(), "/waypt_abs"));
     factory.registerNodeType<CycloneCommands::SeekObjCmd>("DriveToWorldWaypointSeeking", BT::RosNodeParams(node(), "/waypt_seek"));
     factory.registerNodeType<CycloneCommands::ObjRelWaypointCmd>("TrackObjectWaypoint", BT::RosNodeParams(node(), "/waypt_fix"));
-    factory.registerNodeType<CycloneCommands::DisTrick>("DistanceTrick", BT::RosNodeParams(node(), "/trick_dis"));                
-    factory.registerNodeType<CycloneCommands::DurationTrick>("DurationTrick", BT::RosNodeParams(node(), "/trick_timed"));
+    factory.registerNodeType<CycloneCommands::DistanceTrickCmd>("DistanceTrick", BT::RosNodeParams(node(), "/trick_dis"));                
+    factory.registerNodeType<CycloneCommands::DurationTrickCmd>("DurationTrick", BT::RosNodeParams(node(), "/trick_timed"));
 }

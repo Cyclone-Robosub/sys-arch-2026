@@ -1,8 +1,8 @@
 #include "commands/command_alias.hpp"
 #include "commands/waypoint.hpp"
 
-namespace CycloneCommands
-{
+using namespace CycloneCommands;
+
     WaypointCmd::WaypointCmd(const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
     : RosActionNode(name, conf, params) {}
 
@@ -30,4 +30,4 @@ namespace CycloneCommands
     {
     return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
-}  // namespace CycloneCommands
+ // namespace CycloneCommands

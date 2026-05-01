@@ -1,6 +1,6 @@
 #include "commands/duration_trick_client.hpp"
 
-namespace CycloneCommands {
+using namespace CycloneCommands;
     DurationTrickCmd::DurationTrickCmd(const std::string &name, const NodeConfig &conf,
                                        const RosNodeParams &params) : RosActionNode(name, conf, params) {}
 
@@ -26,4 +26,4 @@ namespace CycloneCommands {
     NodeStatus DurationTrickCmd::onResultReceived(const WrappedResult &result) {
         return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
-}
+

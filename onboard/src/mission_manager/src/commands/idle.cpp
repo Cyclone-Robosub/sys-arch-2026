@@ -1,7 +1,7 @@
 #include "commands/command_alias.hpp"
 #include "commands/idle.hpp"
 
-namespace CycloneCommands {
+using namespace CycloneCommands;
     IdleCmd::IdleCmd(const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
         : RosActionNode(name, conf, params){}
     
@@ -20,4 +20,3 @@ namespace CycloneCommands {
     void IdleCmd::onHalt() {
         RCLCPP_INFO(logger(), "Idle interrupted buy new command");
     }
-}

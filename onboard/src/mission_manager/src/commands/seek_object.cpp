@@ -2,7 +2,7 @@
 #include "commands/seek_object.hpp"
 #include "rclcpp/logging.hpp"
 
-namespace CycloneCommands {
+using namespace CycloneCommands;
     SeekObjCmd::SeekObjCmd(const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
      : RosActionNode(name, conf, params) {}
 
@@ -38,8 +38,7 @@ namespace CycloneCommands {
         }
         if(result.result->reached_waypoint_without_detection) {
             RCLCPP_WARN(logger(), "Reached seek waypoint but did not find object: %s",
-                        goal_object_id_.c_str());
+                        "object");
         }
         return NodeStatus::FAILURE;
     }
-}

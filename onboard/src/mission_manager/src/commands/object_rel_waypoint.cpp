@@ -1,7 +1,7 @@
 #include "commands/command_alias.hpp"
 #include "commands/object_rel_waypoint.hpp"
 
-namespace CycloneCommands {
+using namespace CycloneCommands;
     ObjRelWaypointCmd::ObjRelWaypointCmd( const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<ObjectRelWaypoint>(name, conf, params) {
     }
 
@@ -28,4 +28,3 @@ namespace CycloneCommands {
         return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
 
-}

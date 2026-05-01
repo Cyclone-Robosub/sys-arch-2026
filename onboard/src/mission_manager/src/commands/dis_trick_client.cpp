@@ -1,6 +1,7 @@
 #include "commands/dis_trick_client.hpp"
 
-namespace CycloneCommands {
+using namespace CycloneCommands;
+
     DistanceTrickCmd::DistanceTrickCmd (const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
      : RosActionNode<DistanceTrick> (name, conf, params) {}
 
@@ -26,4 +27,3 @@ namespace CycloneCommands {
     NodeStatus DistanceTrickCmd::onResultReceived (const WrappedResult& result) {
         return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
-};
