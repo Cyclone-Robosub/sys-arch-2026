@@ -1,4 +1,4 @@
-#include "include/commands/waypoint.hpp"
+#include "commands/waypoint.hpp"
 
 using namespace BT;
 
@@ -14,7 +14,7 @@ namespace CycloneCommands {
             InputPort<Pose6D>("waypoint"),
             InputPort<WaypointMask>("waypoint_mask"),
             InputPort<Pose6D>("tolerance"),
-            InputPort<Double("hold_time")
+            InputPort<double>("hold_time")
         });
     }
 

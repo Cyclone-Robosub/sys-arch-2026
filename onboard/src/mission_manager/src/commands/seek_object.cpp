@@ -1,4 +1,4 @@
-#include "include/commands/seek_object.hpp"
+#include "commands/seek_object.hpp"
 
 using namespace BT;
 

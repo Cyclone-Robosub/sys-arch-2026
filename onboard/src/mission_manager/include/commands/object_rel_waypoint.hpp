@@ -1,11 +1,12 @@
 #pragma once
 #include "behaviortree_ros2/bt_action_node.hpp"
-#include "custom_interfaces/action/distance_trick.hpp"
+#include "custom_interfaces/action/object_relative_waypoint.hpp"
 #include "custom_interfaces/msg/pose6_d.hpp"
 #include <string>
 
 using namespace BT;
-class ObjectWaypt: public RosActionNode<ObjectWaypt> {
+
+class ObjectWaypt: public RosActionNode<custom_interfaces::action::ObjectRelativeWaypoint {
     public:
         ObjectWaypt(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
         // NodeStatus tick() override;
@@ -21,6 +22,4 @@ class ObjectWaypt: public RosActionNode<ObjectWaypt> {
         std::chrono::steady_clock::time_point start_time;
         double timeout_sec;
         // std::string objectID;
-        
-
-}
+};

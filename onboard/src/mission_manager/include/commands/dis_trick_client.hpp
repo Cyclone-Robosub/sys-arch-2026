@@ -5,7 +5,8 @@
 #include <string>
 
 using namespace BT;
-class DisTrick : public RosActionNode<DisTrick> {
+
+class DisTrick : public RosActionNode<custom_interfaces::action::DistanceTrick> {
     public:
         DisTrick(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
         NodeStatus tick() override;
@@ -15,4 +16,4 @@ class DisTrick : public RosActionNode<DisTrick> {
     private:
         std::chrono::steady_clock::time_point startTime;
         double timeout_sec;
-}
+};

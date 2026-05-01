@@ -1,4 +1,4 @@
-#include "include/commands/duration_trick_client.hpp"
+#include "commands/duration_trick_client.hpp"
 
 using namespace BT;
 
@@ -9,7 +9,7 @@ namespace CycloneCommands {
     static PortsList providedPorts() {
         return providedBasicPorts({
             InputPort<std::string>("trick"),
-            InputPort<uint64_t>("duration")
+            InputPort<uint64_t>("duration"),
             InputPort<WaypointMask>("waypoint_mask"),
             InputPort<Pose6D>("tolerence"),
             InputPort<uint64_t>("hold_time")
@@ -31,7 +31,7 @@ namespace CycloneCommands {
         return NodeStatus::RUNNING;
     }
 
-    NodeStatus DisTrick::onResultReceived (const WrappedResult& result) override {
+    NodeStatus DurationTrick::onResultReceived (const WrappedResult& result) override {
         return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
 

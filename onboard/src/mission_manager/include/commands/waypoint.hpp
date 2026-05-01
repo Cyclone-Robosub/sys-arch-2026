@@ -6,7 +6,8 @@
 #include "custom_interfaces/msg/waypoint_mask.hpp"
 #include <string>
 using namespace BT;
-class WayptAbs : public RosActionNode<WayptAbs> {
+
+class WayptAbs : public RosActionNode<custom_interfaces::action::Waypoint> {
     public:
         WayptAbs(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
         static PortsList providedPorts();
@@ -14,4 +15,4 @@ class WayptAbs : public RosActionNode<WayptAbs> {
     private:
         std::chrono::steady_clock::time_point startTime;
         double timeout_sec;
-}
+};

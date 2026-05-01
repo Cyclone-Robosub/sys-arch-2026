@@ -1,4 +1,5 @@
 #include <behaviortree_ros2/tree_execution_server.hpp>
+#include "server/mission_tree_server.hpp"
 /*
     Creates MissionTreeServer object and spins
 */

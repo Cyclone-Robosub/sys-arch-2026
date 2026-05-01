@@ -1,4 +1,4 @@
-#include "include/commands/object_rel_waypoint.hpp"
+#include "commands/object_rel_waypoint.hpp"
 
 using namespace BT;
 
@@ -25,7 +25,7 @@ namespace CycloneCommands {
         return true;
     }
 
-    NodeStatus DisTrick::onResultReceived (const WrappedResult& result) override {
+    NodeStatus ObjectWaypt::onResultReceived (const WrappedResult& result) override {
         return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
 
