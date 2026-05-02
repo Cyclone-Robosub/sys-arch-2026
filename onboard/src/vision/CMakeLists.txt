@@ -1,3 +1,5 @@
+if(VISION)
+
 cmake_minimum_required(VERSION 3.8)
 project(vision)
 
@@ -130,3 +132,7 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
+
+else()
+  message(WARNING "See onboard/src/vision/README.md for instructions on building the vision node.")
+endif()
