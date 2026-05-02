@@ -2,28 +2,44 @@
 
 using namespace CycloneCommands;
 
-    DistanceTrickCmd::DistanceTrickCmd (const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
-     : RosActionNode<DistanceTrick> (name, conf, params) {}
+DistanceTrickCmd::DistanceTrickCmd (const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
+ : RosActionNode (name, conf, params) {
+}
 
-    PortsList DistanceTrickCmd::providedPorts() {
-        return providedBasicPorts({
-            InputPort<std::string>("trick"),
-            InputPort<Pose6D>("end_waypoint_body"),
-            InputPort<WaypointMask>("waypoint_mask"),
-            InputPort<Pose6D>("tolerence"),
-            InputPort<uint64_t>("hold_time")
-        });
+PortsList DistanceTrickCmd::providedPorts() {
+    return providedBasicPorts({
+        InputPort<std::string>("trick"),
+        InputPort<Pose6D>("end_waypoint_body"),
+        InputPort<WaypointMask>("waypoint_mask"),
+        InputPort<Pose6D>("tolerence"),
+        InputPort<uint64_t>("hold_time")
+    });
+}
+
+bool DistanceTrickCmd::setGoal(Goal& goal) {
+    getInput("trick", goal.trick);
+    getInput("end_waypoint_body", goal.end_waypoint_body);
+    getInput("waypoint_mask", goal.waypoint_mask);
+    getInput("tolerance", goal.tolerance);
+    getInput("hold_time", goal.hold_time);
+    start_time = std::chrono::steady_clock::now();
+    timeout_sec = goal.hold_time + std::chrono::milliseconds(10).count(); 
+    return true;
+}
+
+NodeStatus DistanceTrickCmd::tick() {
+    NodeStatus status = RosActionNode::tick();
+
+    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+    double elapsed = std::chrono::duration<double>(now - start_time).count();
+    if (elapsed > timeout_sec) {
+        RCLCPP_ERROR(logger(), "Error: timeout");
+        return NodeStatus::FAILURE;
     }
     
-    bool DistanceTrickCmd::setGoal(Goal& goal) {
-        getInput("trick", goal.trick);
-        getInput("end_waypoint_body", goal.end_waypoint_body);
-        getInput("waypoint_mask", goal.waypoint_mask);
-        getInput("tolerance", goal.tolerance);
-        getInput("hold_time", goal.hold_time);
-        return true;
-    }
+    return status;
+}
 
-    NodeStatus DistanceTrickCmd::onResultReceived (const WrappedResult& result) {
-        return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
-    }
+NodeStatus DistanceTrickCmd::onResultReceived (const WrappedResult& result) {
+    return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
+}

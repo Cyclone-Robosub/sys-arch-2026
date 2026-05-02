@@ -19,8 +19,22 @@ using namespace CycloneCommands;
         getInput("duration", goal.duration);
         getInput("waypoint_mask", goal.waypoint_mask);
         getInput("hold_time", goal.hold_time);
-        // return true, if we were able to set the goal correctly.
+        
+        start_time = std::chrono::steady_clock::now();
+        timeout_sec = goal.hold_time + std::chrono::milliseconds(10).count(); 
         return true;
+    }
+
+    NodeStatus DurationTrickCmd::tick() {
+        NodeStatus status = RosActionNode::tick();
+
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+        double elapsed = std::chrono::duration<double>(now - start_time).count();
+        if (elapsed > timeout_sec) {
+            RCLCPP_ERROR(logger(), "Error: timeout");
+            return NodeStatus::FAILURE;
+        }       
+        return status;
     }
 
     NodeStatus DurationTrickCmd::onResultReceived(const WrappedResult &result) {

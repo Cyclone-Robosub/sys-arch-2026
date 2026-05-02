@@ -23,10 +23,10 @@ std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus 
 }
 
 void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& factory) {
-    factory.registerNodeType<CycloneCommands::IdleCmd>("Idle",  BT::RosNodeParams(node(), "/idle"));
-    factory.registerNodeType<CycloneCommands::WaypointCmd>("DriveToWorldWaypoint", BT::RosNodeParams(node(), "/waypt_abs"));
-    factory.registerNodeType<CycloneCommands::SeekObjCmd>("DriveToWorldWaypointSeeking", BT::RosNodeParams(node(), "/waypt_seek"));
-    factory.registerNodeType<CycloneCommands::ObjRelWaypointCmd>("TrackObjectWaypoint", BT::RosNodeParams(node(), "/waypt_fix"));
-    factory.registerNodeType<CycloneCommands::DistanceTrickCmd>("DistanceTrick", BT::RosNodeParams(node(), "/trick_dis"));                
-    factory.registerNodeType<CycloneCommands::DurationTrickCmd>("DurationTrick", BT::RosNodeParams(node(), "/trick_timed"));
+    factory.registerNodeType<CycloneCommands::IdleCmd>("Idle",  RosNodeParams(node(), "/idle"));
+    factory.registerNodeType<CycloneCommands::WaypointCmd>("DriveToWorldWaypoint", RosNodeParams(node(), "/waypt_abs"));
+    factory.registerNodeType<CycloneCommands::SeekObjCmd>("DriveToWorldWaypointSeeking", RosNodeParams(node(), "/waypt_seek"));
+    factory.registerNodeType<CycloneCommands::ObjRelWaypointCmd>("TrackObjectWaypoint", RosNodeParams(node(), "/waypt_fix"));
+    factory.registerNodeType<CycloneCommands::DistanceTrickCmd>("DistanceTrick", RosNodeParams(node(), "/trick_dis"));                
+    factory.registerNodeType<CycloneCommands::DurationTrickCmd>("DurationTrick", RosNodeParams(node(), "/trick_timed"));
 }

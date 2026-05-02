@@ -10,8 +10,12 @@ namespace CycloneCommands {
     class WaypointCmd : public RosActionNode<Waypoint> {
         public:
             WaypointCmd(const std::string& name, const NodeConfig& conf, const RosNodeParams& params);
+            NodeStatus tick() override;
             static PortsList providedPorts();
             bool setGoal(Goal& goal) override;
             NodeStatus onResultReceived(const WrappedResult& result) override;
+        private:
+            std::chrono::steady_clock::time_point start_time;
+            double timeout_sec;
     };
 }

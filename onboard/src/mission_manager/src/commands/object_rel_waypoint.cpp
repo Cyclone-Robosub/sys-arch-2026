@@ -2,8 +2,8 @@
 #include "commands/object_rel_waypoint.hpp"
 
 using namespace CycloneCommands;
-    ObjRelWaypointCmd::ObjRelWaypointCmd( const std::string& name, const NodeConfig& conf, const RosNodeParams& params) : RosActionNode<ObjectRelWaypoint>(name, conf, params) {
-    }
+    ObjRelWaypointCmd::ObjRelWaypointCmd( const std::string& name, const NodeConfig& conf, const RosNodeParams& params)
+     : RosActionNode (name, conf, params) {}
 
     PortsList ObjRelWaypointCmd::providedPorts() {
         return providedBasicPorts({
@@ -21,7 +21,22 @@ using namespace CycloneCommands;
         getInput("object", goal.object);
         getInput("tolerance", goal.tolerance);
         getInput("hold_time", goal.hold_time);
+
+        start_time = std::chrono::steady_clock::now();
+        timeout_sec = goal.hold_time + std::chrono::milliseconds(10).count(); 
         return true;
+    }
+
+    NodeStatus ObjRelWaypointCmd::tick() {
+        NodeStatus status = RosActionNode::tick();
+
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+        double elapsed = std::chrono::duration<double>(now - start_time).count();
+        if (elapsed > timeout_sec) {
+            RCLCPP_ERROR(logger(), "Error: timeout");
+            return NodeStatus::FAILURE;
+        }       
+        return status;
     }
 
     NodeStatus ObjRelWaypointCmd::onResultReceived (const WrappedResult& result) {

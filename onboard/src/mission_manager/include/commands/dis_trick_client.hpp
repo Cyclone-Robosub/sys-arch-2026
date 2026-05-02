@@ -10,11 +10,12 @@ namespace CycloneCommands {
     class DistanceTrickCmd : public BT::RosActionNode<DistanceTrick> {
         public:
             DistanceTrickCmd(const std::string& name, const NodeConfig& conf, const BT::RosNodeParams& params);
+            NodeStatus tick() override;
             bool setGoal(Goal& goal) override;
             static PortsList providedPorts();
             NodeStatus onResultReceived (const WrappedResult& result) override;
         private:
-            std::chrono::steady_clock::time_point startTime;
+            std::chrono::steady_clock::time_point start_time;
             double timeout_sec;
     };
 }
