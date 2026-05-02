@@ -43,7 +43,6 @@ source /opt/ros/jazzy/setup.bash
 colcon build --packages-select vision \
   --cmake-args \
     -DTorch_DIR=/opt/libtorch/share/cmake/Torch
-    -DVISION=true
 ```
 
 In container on Jetson Nano:

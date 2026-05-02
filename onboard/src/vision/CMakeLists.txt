@@ -1,4 +1,4 @@
-if(VISION)
+if(EXISTS "/usr/include/NvInfer.h")
 
 cmake_minimum_required(VERSION 3.8)
 project(vision)
@@ -133,6 +133,4 @@ endif()
 
 ament_package()
 
-else()
-  message(WARNING "See onboard/src/vision/README.md for instructions on building the vision node.")
-endif()
+endif() # vision exists
