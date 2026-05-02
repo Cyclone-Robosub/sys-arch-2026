@@ -5,7 +5,7 @@ ROS 2 package containing vision nodes for the robot.
 | Node | Description |
 |---|---|
 | `camera_feed_node` | Ingests a raw H264 camera stream, forwards it to mediaMTX via RTSP, and publishes decoded frames as a ROS image topic |
-| `keypoint_node` | Runs a TensorRT keypoint-detection engine on an image source and publishes detections |
+| `keypoint_node` | Subscribes to two synchronized camera topics, runs a keypoint-detection model on each frame, and publishes detections and (annotated) images as a `VisionResult` |
 
 ## Dependencies
 
@@ -85,31 +85,41 @@ ros2 topic hz /camera/image_raw  # adjust to match your topic parameter
 
 ## keypoint_node
 
-Runs a TensorRT keypoint-detection engine on a video file and publishes detections.
+Subscribes to two synchronized camera topics, runs a TorchScript keypoint-detection model on each frame, and publishes the results as a single `VisionResult` message.
 
-**Published topics:**
+**Subscribed topics:**
 
 | Topic | Type | Description |
 |---|---|---|
-| `/keypoint_detections` | `custom_interfaces/msg/VisionObservations` | Bounding boxes and keypoints |
-| `/keypoint_image` | `sensor_msgs/msg/Image` | Annotated frame |
+| `<image_topic_left>` | `sensor_msgs/msg/Image` | Left camera feed (configurable) |
+| `<image_topic_right>` | `sensor_msgs/msg/Image` | Right camera feed (configurable) |
+
+The two topics are synchronized using `message_filters::ApproximateTime`.
+
+**Published topic:**
+
+| Topic | Type | Description |
+|---|---|---|
+| `keypoint_result` | `custom_interfaces/msg/VisionResult` | Detections and frames for both cameras |
 
 **Parameters:**
 
 | Parameter | Default | Description |
 |---|---|---|
 | `model_path` | `model.engine` | Path to serialized TensorRT engine |
-| `video_path` | `video.mp4` | Path to input video file |
-| `num_keypoints` | `17` | Keypoints per detection |
+| `num_keypoints` | `4` | Keypoints per detection |
 | `conf_threshold` | `0.5` | Minimum detection confidence |
-| `fps` | `30.0` | Processing rate |
+| `image_topic_left` | `/camera/left/image_raw` | Left camera image topic |
+| `image_topic_right` | `/camera/right/image_raw` | Right camera image topic |
+| `annotate_images` | `false` | Draw bounding boxes and keypoints on published images |
 
 **Launch:**
 ```bash
 source install/setup.bash
 ros2 launch vision keypoint_node.launch.py \
   model_path:=/path/to/model.engine \
-  video_path:=/path/to/video.mp4
+  image_topic_left:=/camera/left/image_raw \
+  image_topic_right:=/camera/right/image_raw
 ```
 
 **Monitor:**
