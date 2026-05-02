@@ -9,6 +9,7 @@ struct MissionFileReport {
 
 class CustomLogger : public BT::RosLogger {
     public:
+        CustomLogger(const BT::Tree& tree, std::shared_ptr<rclcpp::Node> node);
         bool isProgressDirty() const { return progress_dirty_; }
         void clearProgressDirty() { progress_dirty_ = false;}
         MissionFileReport getCurrentMission() {return current_mission_;}

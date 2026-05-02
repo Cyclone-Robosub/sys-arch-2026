@@ -2,6 +2,10 @@
 
 using namespace BT;
 
+CustomLogger::CustomLogger(const Tree& tree, std::shared_ptr<rclcpp::Node> node)
+  : RosLogger(tree, node)
+{}
+
 void CustomLogger::callback(Duration timestamp, const TreeNode& node, NodeStatus prev_status, NodeStatus status)
 {
   (void) timestamp;

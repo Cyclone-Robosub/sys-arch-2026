@@ -10,7 +10,7 @@
 MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeExecutionServer(options) {}
 
 void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
-    logger_cout_ = std::make_shared<CustomLogger>(tree);
+    logger_cout_ = std::make_shared<CustomLogger>(tree, node());
 }
 
 std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus status) {
