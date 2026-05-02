@@ -58,12 +58,14 @@ public:
     this->declare_parameter<double>("conf_threshold", 0.5);
     this->declare_parameter<std::string>("image_topic_left",  "/camera/left/image_raw");
     this->declare_parameter<std::string>("image_topic_right", "/camera/right/image_raw");
+    this->declare_parameter<bool>("draw_detections", false);
 
     const std::string model_path      = this->get_parameter("model_path").as_string();
     const int         num_keypoints   = this->get_parameter("num_keypoints").as_int();
     const float       conf_threshold  = static_cast<float>(this->get_parameter("conf_threshold").as_double());
     const std::string topic_left      = this->get_parameter("image_topic_left").as_string();
     const std::string topic_right     = this->get_parameter("image_topic_right").as_string();
+    draw_detections_                  = this->get_parameter("draw_detections").as_bool();
 
     detector_ = std::make_unique<vision::KeypointDetector>(
       model_path, num_keypoints, conf_threshold);
@@ -100,15 +102,17 @@ private:
     for (const auto & det : dets_left)  result.obs_left.observations.push_back(det.to_ros_msg());
     for (const auto & det : dets_right) result.obs_right.observations.push_back(det.to_ros_msg());
 
-    draw_detections(frame_left, dets_left);
+    if (draw_detections_) {
+      draw_detections(frame_left,  dets_left);
+      draw_detections(frame_right, dets_right);
+    }
     result.image_left  = *cv_bridge::CvImage(left_msg->header,  "bgr8", frame_left).toImageMsg();
-
-    draw_detections(frame_right, dets_right);
     result.image_right = *cv_bridge::CvImage(right_msg->header, "bgr8", frame_right).toImageMsg();
 
     result_pub_->publish(result);
   }
 
+  bool draw_detections_{false};
   std::unique_ptr<vision::KeypointDetector> detector_;
 
   message_filters::Subscriber<ImageMsg> sub_left_;
