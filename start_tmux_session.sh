@@ -52,6 +52,7 @@ done
 if [[ ! -f /opt/ros/jazzy/setup.bash ]]; then
 	echo "ROS not found. Attempting to re-run in distrobox container..."
 	distrobox enter ubuntu-ros -- "$0" "${ORIG_ARGS[@]}"
+	distrobox enter ubuntu-ros # Stay in container after exiting from tmux
 	# Exit distrobox with tmux
 	exit 0
 fi
@@ -70,6 +71,7 @@ if [[ -f install/setup.sh ]]; then
 	source install/setup.sh
 else
 	echo "Warning: install/setup.sh not found. Make sure you are in the workspace root."
+	exit 0
 fi
 
 ################################################################################
@@ -127,7 +129,7 @@ CLI_PANE=$(tmux new-window -t "$SESSION" -P -F "#{pane_id}" "ros2 run pwm_cli pw
 ROSBRIDGE_PANE=$(tmux new-window -t "$SESSION" -P -F "#{pane_id}" "ros2 launch rosbridge_server rosbridge_websocket_launch.xml; bash")
 
 # --- Remote Control Webpage Server ---
-tmux split-window -v -t "$ROSBRIDGE_PANE" "cd ~/sys-arch-2026/remote_control_webpage/build && python3 -m http.server 8080 --bind :: ; bash"
+tmux split-window -v -t "$ROSBRIDGE_PANE" "cd remote_control_webpage/build && python3 -m http.server 8080 --bind :: ; bash"
 
 ################################################################################
 # Attach to Session
