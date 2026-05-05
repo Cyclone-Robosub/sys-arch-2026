@@ -9,9 +9,9 @@ SoftMux::SoftMux() : rclcpp::Node("SoftMux"), control_mode(Disabled), no_ctrl_he
     pwm_ctrl_subscriber = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_ctrl", 10, std::bind(&SoftMux::pwm_ctrl_callback, this, std::placeholders::_1));
     pwm_cli_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_cli", 10, std::bind(&SoftMux::pwm_cli_callback, this, std::placeholders::_1));
     pwm_echo_subscriber =  this->create_subscription<custom_interfaces::msg::Pwms>("pwm_echo", 10, std::bind(&SoftMux::pwm_echo_callback, this, std::placeholders::_1));
-    ctrl_heartbeat_subscriber = this->create_subscription<std_msgs::msg::Bool>("ctrl_heartbeat", 10, std::bind(&SoftMux::ctrl_heartbeat_callback, this, std::placeholders::_1));
-    cli_heartbeat_subscriber= this->create_subscription<std_msgs::msg::Bool>("cli_heartbeat",10, std::bind(&SoftMux::cli_heartbeat_callback, this, std::placeholders::_1));
-    echo_heartbeat_subscriber= this->create_subscription<std_msgs::msg::Bool>("echo_heartbeat",10, std::bind(&SoftMux::echo_heartbeat_callback, this, std::placeholders::_1));
+    ctrl_heartbeat_subscriber = this->create_subscription<std_msgs::msg::Empty>("ctrl_heartbeat", 10, std::bind(&SoftMux::ctrl_heartbeat_callback, this, std::placeholders::_1));
+    cli_heartbeat_subscriber= this->create_subscription<std_msgs::msg::Empty>("cli_heartbeat",10, std::bind(&SoftMux::cli_heartbeat_callback, this, std::placeholders::_1));
+    echo_heartbeat_subscriber= this->create_subscription<std_msgs::msg::Empty>("echo_heartbeat",10, std::bind(&SoftMux::echo_heartbeat_callback, this, std::placeholders::_1));
 
 
     //Heartbeat Timers
@@ -25,7 +25,7 @@ SoftMux::SoftMux() : rclcpp::Node("SoftMux"), control_mode(Disabled), no_ctrl_he
     //Outputs
     pwm_cmd_publisher = this->create_publisher<custom_interfaces::msg::Pwms>("pwm_cmd", 10);
     current_control_mode_publisher = this->create_publisher<std_msgs::msg::UInt8>("current_mode", 10);
-    mux_heartbeat_publisher = this->create_publisher<std_msgs::msg::Bool>("mux_heartbeat", 10);
+    mux_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mux_heartbeat", 10);
 }
 
 
@@ -86,7 +86,7 @@ void SoftMux::pwm_cmd_publish(custom_interfaces::msg::Pwms::UniquePtr pwm) {
 }
 
 
-void SoftMux::ctrl_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat) {
+void SoftMux::ctrl_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat) {
     recent_ctrl_heartbeat = std::chrono::steady_clock::now();
     if (no_ctrl_heartbeat) {
         no_ctrl_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
@@ -116,7 +116,7 @@ void SoftMux::ctrl_heartbeat_check() {
     }
 }
 
-void SoftMux::cli_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat){
+void SoftMux::cli_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat){
     recent_cli_heartbeat = std::chrono::steady_clock::now();
     if (no_cli_heartbeat) {
         no_cli_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
@@ -138,7 +138,7 @@ void SoftMux::echo_heartbeat_check() {
     }
 }
 
-void SoftMux::echo_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat){
+void SoftMux::echo_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat){
     recent_echo_heartbeat = std::chrono::steady_clock::now();
     if (no_echo_heartbeat) {
         no_echo_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
@@ -169,7 +169,7 @@ void SoftMux::publish_stop_if_disabled() {
 
 
 void SoftMux::mux_heartbeat_send() {
-    std_msgs::msg::Bool msg;
+    std_msgs::msg::Empty msg;
     this->mux_heartbeat_publisher->publish(msg);
 }
 
