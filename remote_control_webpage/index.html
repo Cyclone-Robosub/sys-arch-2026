@@ -53,8 +53,15 @@
       // ROS 2 message type notation includes '/msg/'
       messageType: 'custom_interfaces/msg/Gamepad'
     });
+    
+    const heartbeatPub = new ROSLIB.Topic({
+      ros: rosNode,
+      name: '/joystick_heartbeat',
+      messageType: 'std_msgs/msg/Empty'
+    })
 
     controllerPub.advertise();
+    heartbeatPub.advertise();
 
     function publishControllerData(x = 0.0, y = 0.0, rise = 0.0, sink = 0.0, yaw = 0.0, pitch = 0.0,
                                    cross_button=false, square_button=false, triangle_button=false, circle_button=false,
@@ -85,6 +92,11 @@
 
       });
       controllerPub.publish(msg);
+    }
+
+    function publishHeartbeat() {
+      const msg = new ROSLIB.Message({});
+      heartbeatPub.publish(msg);
     }
 
   </script>
@@ -151,6 +163,8 @@
         joystick_press_left = gp.buttons[10].pressed,
         joystick_press_right = gp.buttons[11].pressed
       );
+
+      publishHeartbeat();
     }
 
     // When controller is connected
