@@ -2,6 +2,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <custom_interfaces/msg/pwms.hpp>
 #include "soft_mux.hpp"
+#include "std_msgs/msg/bool.hpp"
 
 
 using namespace std::chrono_literals;
@@ -62,13 +63,13 @@ class TestSoftMuxInterface : public::testing::Test {
         *   Helper function to subscribe to mux_heartbeat topic and get the heartbeats from mux
         */
         void subscribe_mux_heartbeat() {
-            rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr mux_heartbeat_subscriber = mux->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, std::bind(&TestSoftMuxInterface::mux_heartbeat_callback, this, std::placeholders::_1));
+            rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr mux_heartbeat_subscriber = mux->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, std::bind(&TestSoftMuxInterface::mux_heartbeat_callback, this, std::placeholders::_1));
         }
         
         /*
         *   Helper function for the callback for mux heartbeat
         */
-        void mux_heartbeat_callback(std_msgs::msg::Bool msg) {
+        void mux_heartbeat_callback(std_msgs::msg::Empty msg) {
             most_recent_mux_hb.data = true;
             (void) msg;
         }
@@ -303,7 +304,7 @@ TEST_F(TestSoftMuxInterface, MuxTestInputHB) {
     createMux();
    
     mux->control_mode = CTRL;
-    std_msgs::msg::Bool::UniquePtr test_heartbeat = std::make_unique<std_msgs::msg::Bool>();
+    std_msgs::msg::Empty::UniquePtr test_heartbeat = std::make_unique<std_msgs::msg::Empty>();
     mux->ctrl_heartbeat_callback(std::move(test_heartbeat));
    
     subscribe();
@@ -432,7 +433,7 @@ TEST_F(TestSoftMuxInterface, NoCtrlHeartbeatonCli) {
     createMux();
     mux->control_mode = CLI;
    
-    std_msgs::msg::Bool::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Bool>();
+    std_msgs::msg::Empty::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Empty>();
     mux->cli_heartbeat_callback(std::move(test_heartbeat));
 
     subscribe();
@@ -466,7 +467,7 @@ TEST_F(TestSoftMuxInterface, NoCliHeartbeatonCtrl) {
     createMux();
     mux->control_mode = CTRL;
    
-    std_msgs::msg::Bool::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Bool>();
+    std_msgs::msg::Empty::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Empty>();
     mux->ctrl_heartbeat_callback(std::move(test_heartbeat));
 
     subscribe();

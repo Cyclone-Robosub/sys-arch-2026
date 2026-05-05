@@ -5,7 +5,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "custom_interfaces/msg/pwms.hpp"
-#include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/empty.hpp"
 #include "fd_interface.hpp"
 #include "tui_interface.hpp"
 
@@ -41,7 +41,7 @@ private:
 
     Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_received_subscription;
     Publisher<custom_interfaces::msg::Pwms>::SharedPtr pwm_publisher;
-    Publisher<std_msgs::msg::Bool>::SharedPtr heartbeat_publisher;
+    Publisher<std_msgs::msg::Empty>::SharedPtr heartbeat_publisher;
     rclcpp::TimerBase::SharedPtr heartbeat_timer;
 
     void pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg);
