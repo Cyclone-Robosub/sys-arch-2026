@@ -102,6 +102,7 @@ def main():
 	# Stop robot before shutting down cli
 	cli.publish_pwm(EMERGENCY_BRAKES)
 
+	time.sleep(0.1)
 	rclpy.shutdown()
 
 	print("Goodbye!")
@@ -503,7 +504,7 @@ Spins the HeartbeatPublisher
 Used as a threading target, as thread(rclpy.spin) crashes program
 '''
 def spin_heartbeat():
-	while (not rclpy.ok):
+	while (not rclpy.ok()):
 		pass
 	rclpy.spin(HeartbeatPublisher())
 	
