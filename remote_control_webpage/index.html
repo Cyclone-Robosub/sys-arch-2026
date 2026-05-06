@@ -95,8 +95,10 @@
     }
 
     function publishHeartbeat() {
-      const msg = new ROSLIB.Message({});
-      heartbeatPub.publish(msg);
+      if (navigator.getGamepads()[0]) { // only publish if controller is connected
+        const msg = new ROSLIB.Message({});
+        heartbeatPub.publish(msg);
+      }
     }
 
   </script>
@@ -112,6 +114,7 @@
         requestAnimationFrame(updateGamepad);
         return;
       }
+      setTimeout(publishHeartbeat, 5000); // publish every 0.5 seconds
 
       // Axes (sticks)
       const leftStickX = gp.axes[0];
@@ -163,8 +166,6 @@
         joystick_press_left = gp.buttons[10].pressed,
         joystick_press_right = gp.buttons[11].pressed
       );
-
-      publishHeartbeat();
     }
 
     // When controller is connected
