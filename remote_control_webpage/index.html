@@ -15,7 +15,7 @@
     }
   </style>
 </head>
-<body>
+<body onload="setTimeout(publishHeartbeat, 5000)">
   <h1>PS5 Controller Test</h1>
   <pre id="output">Connect your controller…</pre>
 
@@ -114,7 +114,6 @@
         requestAnimationFrame(updateGamepad);
         return;
       }
-      setTimeout(publishHeartbeat, 5000); // publish every 0.5 seconds
 
       // Axes (sticks)
       const leftStickX = gp.axes[0];
