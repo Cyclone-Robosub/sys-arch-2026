@@ -22,9 +22,10 @@ class SimpleBMS{
         const int BMS_ADDRESS = 0x48;
         
         rclcpp::TimerBase::SharedPtr battery_timer;
+        rclcpp::Publisher<custom_interfaces::msg::Battery>::SharedPtr bms_publisher;
 
-        void bms_callback();
-
+        void bms_callback(); // might put this in public, not sure where it belongs
+        void publish_bms();
 };
 
 #define SIMPLE_BMS_HPP
