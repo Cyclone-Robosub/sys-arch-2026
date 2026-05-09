@@ -20,7 +20,7 @@ Echo::Echo(std::unique_ptr<FD_Interface> fd, std::unique_ptr<TUI_Interface> tui)
     
     pwm_publisher = this->create_publisher<custom_interfaces::msg::Pwms>("pwm_echo", 10);
 
-    heartbeat_publisher = this->create_publisher<std_msgs::msg::Bool>("echo_heartbeat", 10);
+    heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("echo_heartbeat", 10);
     heartbeat_timer = this->create_wall_timer(500ms, 
             std::bind(&Echo::heartbeat_callback, this));
         
@@ -74,7 +74,7 @@ void Echo::echo_pwms() { // TODO: Do error checking (currently assumes perfectly
 }
 
 void Echo::heartbeat_callback() {
-    std_msgs::msg::Bool msg;
+    std_msgs::msg::Empty msg;
     if (publish_active && !finished_reading) { // Only publish heartbeat if we're actively writing PWMs
         heartbeat_publisher->publish(msg);
     }
