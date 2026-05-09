@@ -7,12 +7,11 @@ using namespace rclcpp;
 // TODO: Add IMU logging in the future
 
 Data_Logger::Data_Logger(std::unique_ptr<FD_Interface> drr_fd, 
-                         std::unique_ptr<FD_Interface> vr_fd, 
-                         std::unique_ptr<FD_Interface> imu_fd) : 
+                         std::unique_ptr<FD_Interface> vr_fd) : 
     Node("data_logger"),
     drr_fd(std::move(drr_fd)),
-    vr_fd(std::move(vr_fd)),
-    imu_fd(std::move(imu_fd)) 
+    vr_fd(std::move(vr_fd))
+    // imu_fd(std::move(imu_fd)) 
      {
     drr_subscription = this->create_subscription<custom_interfaces::msg::DRR>(
         "dead_reck_report", 10, 
@@ -49,13 +48,17 @@ void Data_Logger::velocity_report_received_callback(custom_interfaces::msg::VR::
     log_data += "," + std::to_string(vr_msg->velocity_data.z);
     log_data += "," + std::to_string(vr_msg->altitude); 
     log_data += "," + std::to_string(vr_msg->fom);
-    log_data += "," + std::to_string(vr_msg->time);
-    for (auto cov_data : vr_msg->covariance.data) {
-        log_data += "," + std::to_string(cov_data);
+    if (vr_msg->covariance.data.size() < 9) {
+        RCLCPP_WARN(this->get_logger(), "Incomplete data for covariance. Look for \"-1\" in the covariance field.");
+        for (int i = 0; i < 9; i++) {
+            log_data += "," + std::to_string(-1);
+        }
     }
-    log_data += "," + std::to_string(vr_msg->time_of_validity);
-    log_data += "," + std::to_string(vr_msg->time_of_transmission);
-    log_data += "," + std::to_string(vr_msg->status);
+    else {
+        for (auto cov_data : vr_msg->covariance.data) {
+            log_data += "," + std::to_string(cov_data);
+        }
+    }
     log_data += "\n";
     write(this->vr_fd->get_write_fd(), log_data.c_str(), log_data.length());
 }
@@ -91,10 +94,10 @@ int main(int argc, char* argv[]) {
     filepath += Data_Logger::get_current_time();
     std::unique_ptr<FD_Interface> drr_fd = std::make_unique<Data_FD>(filepath + "-dvl-drr.csv");
     std::unique_ptr<FD_Interface> vr_fd = std::make_unique<Data_FD>(filepath + "-dvl-vr.csv");
-    std::unique_ptr<FD_Interface> imu_fd = std::make_unique<Data_FD>(filepath + "-imu.csv");
+    // std::unique_ptr<FD_Interface> imu_fd = std::make_unique<Data_FD>(filepath + "-imu.csv");
 
     rclcpp::init(argc, argv);
-    auto data_logger = std::make_shared<Data_Logger>(std::move(drr_fd), std::move(vr_fd), std::move(imu_fd));
+    auto data_logger = std::make_shared<Data_Logger>(std::move(drr_fd), std::move(vr_fd));
     rclcpp::spin(data_logger);
     
     rclcpp::shutdown();
