@@ -22,10 +22,14 @@ public:
 
 class Data_Logger : public rclcpp::Node {
 public:
-    Data_Logger();
+    Data_Logger(std::unique_ptr<FD_Interface> drr_fd, std::unique_ptr<FD_Interface> vr_fd, std::unique_ptr<FD_Interface> imu_fd);
     static std::string get_current_time();
 
 private:
+    std::unique_ptr<FD_Interface> drr_fd;
+    std::unique_ptr<FD_Interface> vr_fd;
+    std::unique_ptr<FD_Interface> imu_fd;
+
     rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr drr_subscription;
     rclcpp::Subscription<custom_interfaces::msg::VR>::SharedPtr vr_subscription;
 
