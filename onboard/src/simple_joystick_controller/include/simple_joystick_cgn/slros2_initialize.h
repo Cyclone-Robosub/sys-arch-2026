@@ -1,8 +1,8 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 19-Feb-2026 19:35:43
+// Generated 09-May-2026 13:12:40
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
-#include "Simple_Joystick_Controller_types.h"
+#include "Simple_Joystick_CGN_types.h"
 // Generic pub-sub header
 #include "slros2_generic_pubsub.h"
 #ifndef SET_QOS_VALUES
@@ -37,10 +37,12 @@ inline rclcpp::QoS getQOSSettingsFromRMW(const rmw_qos_profile_t& qosProfile) {
     }
     return qos;
 }
-// Simple_Joystick_Controller/Subsystem Reference/Publish2
-extern SimulinkPublisher<std_msgs::msg::Bool,SL_Bus_std_msgs_Bool> Pub_Simple_Joystick_HIL_32_150;
-// Simple_Joystick_Controller/pwm_publisher/Publish
-extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pub_Simple_Joystick_Controller_30_2;
-// Simple_Joystick_Controller/Subsystem/Subscribe
-extern SimulinkSubscriber<custom_interfaces::msg::Gamepad,SL_Bus_custom_interfaces_Gamepad> Sub_Simple_Joystick_Controller_25;
+// Simple_Joystick_CGN/pwm_heartbeat_publisher/Publish2
+extern SimulinkPublisher<std_msgs::msg::Empty,SL_Bus_std_msgs_Empty> Pub_Simple_Joystick_CGN_85_150;
+// Simple_Joystick_CGN/pwm_publisher/Publish
+extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pub_Simple_Joystick_CGN_86_2;
+// Simple_Joystick_CGN/joystick_heartbeat/Subscribe
+extern SimulinkSubscriber<std_msgs::msg::Empty,SL_Bus_std_msgs_Empty> Sub_Simple_Joystick_CGN_73;
+// Simple_Joystick_CGN/joystick_output/Subscribe
+extern SimulinkSubscriber<custom_interfaces::msg::Gamepad,SL_Bus_custom_interfaces_Gamepad> Sub_Simple_Joystick_CGN_77;
 #endif

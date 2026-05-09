@@ -24,7 +24,6 @@
 #include <functional>
 #include <memory>
 #include <vector>
-#include <unistd.h>
 
 #include "rcpputils/scope_exit.hpp"
 
@@ -102,7 +101,6 @@ SLMultiThreadedExecutor::run(size_t this_thread_number)
 {
   (void)this_thread_number;
   while (rclcpp::ok(this->context_) && spinning.load()) {
-    usleep(100);
     rclcpp::AnyExecutable any_exec;
     {
       std::lock_guard wait_lock{wait_mutex_};
