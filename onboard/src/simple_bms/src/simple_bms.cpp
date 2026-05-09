@@ -49,6 +49,7 @@ BatteryStatus SimpleBMS::readBMS(const std::string& I2C_FD) {
     if (read(file, output, 2) != 2) {
         std::cout << "error: could not read from conversion register" << std::endl;
     }
+    close(file);
     // reconstruct voltage from output
     status.voltage = (output[0] << 8) | output[1];
     // todo get current
@@ -61,3 +62,12 @@ void SimpleBMS::publish_bms(BatteryStatus status) {
     bms.current = status.current
     this->bms_publisher->publish(std::make_unique<custom_interfaces::msg::Battery>(bms))
 }
+
+#ifndef ENABLE_TESTING
+    int main(int argc, char* argv[]) {
+        rclcpp::init(argc, argv);
+        rclcpp::spin(std::make_shared<SimpleBMS>());
+        rclcpp::shutdown();
+        return 0;
+    }
+#endif
