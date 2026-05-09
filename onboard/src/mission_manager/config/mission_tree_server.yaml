@@ -1,6 +1,7 @@
-bt_action_server:
+mission_manager_node:
   ros__parameters:
-    action_name: "" # Optional (defaults to `bt_action_server`)
+    bt_server_name: "mission_manager_node"
+    action_name: "mission_tree_action" # Optional (defaults to `bt_action_server`)
     tick_frequency: 100 # Optional (defaults to 100 Hz)
     groot2_port: 1667 # Optional (defaults to 1667)
     ros_plugins_timeout: 1000  # Optional (defaults 1000 ms)

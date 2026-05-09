@@ -1,5 +1,7 @@
 #include <behaviortree_ros2/tree_execution_server.hpp>
 #include "custom_logger.hpp"
+#include "rclcpp/rclcpp.hpp"
+#include "custom_interfaces/msg/command.hpp"
 
 using namespace BT;
 
@@ -11,4 +13,5 @@ class MissionTreeServer : public TreeExecutionServer {
         void registerNodesIntoFactory (BT::BehaviorTreeFactory& factory);
     private:
         std::shared_ptr<CustomLogger> logger_cout_;
+        rclcpp::Publisher<custom_interfaces::msg::Command>::SharedPtr current_command_publisher;
 };

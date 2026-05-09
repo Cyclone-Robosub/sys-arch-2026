@@ -7,7 +7,9 @@
 #include "commands/dis_trick_client.hpp"
 #include "commands/duration_trick_client.hpp"
 
-MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeExecutionServer(options) {}
+MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeExecutionServer(options) {
+    current_command_publisher = node()->create_publisher<custom_interfaces::msg::Command>("current_command", 10);
+}
 
 void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
     logger_cout_ = std::make_shared<CustomLogger>(tree, node());
@@ -17,6 +19,8 @@ std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus 
     (void) status;
     if (logger_cout_ && logger_cout_->isProgressDirty()) {
         // publish message with current subtree, command, and status
+        
+        // resets logger
         logger_cout_->clearProgressDirty();
     }
     return std::nullopt;

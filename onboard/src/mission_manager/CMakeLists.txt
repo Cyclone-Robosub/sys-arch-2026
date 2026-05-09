@@ -10,8 +10,14 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(DIRECTORY 
+  config
+  DESTINATION share/${PROJECT_NAME}
+)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
 
@@ -25,6 +31,9 @@ add_executable(mission_manager_node
   src/commands/duration_trick_client.cpp
   src/commands/seek_object.cpp
   src/commands/object_rel_waypoint.cpp
+)
+include_directories(
+  ${PROJECT_SOURCE_DIR}/include
 )
 target_include_directories(mission_manager_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
