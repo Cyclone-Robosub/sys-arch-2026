@@ -61,14 +61,17 @@ tmux split-window -h -t $MEDIAMTX_PANE "cd ~/mediaMTX && \
     -c:v copy -f rtsp rtsp://localhost:8554/cam; bash" 
 
 ################################################################################
-# SECTION 3: Additional Components: IMU
+# SECTION 3: Additional Components: Sensors
 ################################################################################
 
 # --- IMU Node ---
 SENSOR_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash")
 
 # --- DVL Node ---
-tmux split-window -v -t $SENSOR_PANE "ros2 run dvl dvl; bash"
+DVL_PANE=$(tmux split-window -v -t $SENSOR_PANE -P -F "#{pane_id}" "ros2 run dvl dvl; bash")
+
+# --- Data Logger ---
+tmux split-window -h -t $DVL_PANE "ros2 run data_logger data_logger; bash"
 
 ################################################################################
 # SECTION 4: Additional Components: CLI
