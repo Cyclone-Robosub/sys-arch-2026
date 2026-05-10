@@ -406,7 +406,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  */
  TEST_F(TestDVLInterface, DVLResetDRRSuccess){
     create_node();
-    auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
+    auto client = node->create_client<std_srvs::srv::Trigger>("reset_drr");
     ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
 
     rclcpp::executors::SingleThreadedExecutor executor;
@@ -432,7 +432,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  */
  TEST_F(TestDVLInterface, DVLResetGyroSuccess){
     create_node();
-    auto client = node->create_client<std_srvs::srv::Trigger>("set_gyro");
+    auto client = node->create_client<std_srvs::srv::Trigger>("reset_gyro");
     ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
 
     rclcpp::executors::SingleThreadedExecutor executor;
@@ -458,7 +458,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  */
  TEST_F(TestDVLInterface, DVLResetDRRFail){
     create_reset_fail_node();
-    auto client = node->create_client<std_srvs::srv::Trigger>("set_drr");
+    auto client = node->create_client<std_srvs::srv::Trigger>("reset_drr");
     ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
 
     rclcpp::executors::SingleThreadedExecutor executor;
@@ -482,7 +482,7 @@ TEST_F(TestDVLInterface, DVLConstruction) {
  */
  TEST_F(TestDVLInterface, DVLResetGyroFail){
     create_reset_fail_node();
-    auto client = node->create_client<std_srvs::srv::Trigger>("set_gyro");
+    auto client = node->create_client<std_srvs::srv::Trigger>("reset_gyro");
     ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
 
     rclcpp::executors::SingleThreadedExecutor executor;
