@@ -34,8 +34,10 @@ private:
     void evaluate_mux_heartbeat_freshness();
     void send_heartbeat_to_pico();
     void heartbeat_callback();
+    void send_heartbeat();
     rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_received_subscription;
     rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr heartbeat_subscription;
+    rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr heartbeat_publisher;
     rclcpp::TimerBase::SharedPtr heartbeat_timer;
     std::vector<int> thrusters;
     std::unique_ptr<FD_Interface> pico_fd;
@@ -43,6 +45,7 @@ private:
     int max_pwm;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_heartbeat;
     bool no_heartbeat;
+    bool no_pico;
 
     std::mutex serial_mutex;
 };
