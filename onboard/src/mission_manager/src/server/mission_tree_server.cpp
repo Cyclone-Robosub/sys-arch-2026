@@ -19,7 +19,17 @@ std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus 
     (void) status;
     if (logger_cout_ && logger_cout_->isProgressDirty()) {
         // publish message with current subtree, command, and status
-        
+        auto report = custom_interfaces::msg::Command();
+        auto current_mission_ = logger_cout_->getCurrentMission();
+        report.current_subtree = current_mission_.subtree;
+        report.current_command = current_mission_.command;
+        report.status = "FAILURE";
+        if (current_mission_.status == BT::NodeStatus::RUNNING) {
+            report.status = "RUNNING";
+        } else if (current_mission_.status == BT::NodeStatus::SUCCESS) {
+            report.status = "SUCCESS";
+        }
+        current_command_publisher->publish(report);
         // resets logger
         logger_cout_->clearProgressDirty();
     }
@@ -34,3 +44,30 @@ void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& facto
     factory.registerNodeType<CycloneCommands::DistanceTrickCmd>("DistanceTrick", RosNodeParams(node(), "/trick_dis"));                
     factory.registerNodeType<CycloneCommands::DurationTrickCmd>("DurationTrick", RosNodeParams(node(), "/trick_timed"));
 }
+
+
+// sam
+void MissionTreeServer::ctrl_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat) {}
+
+void MissionTreeServer::heartbeat_callback() {
+    mux_heartbeat_send();
+    ctrl_heartbeat_check();
+    cli_heartbeat_check();
+    echo_heartbeat_check();
+    publish_stop_if_disabled();
+}
+
+void MissionTreeServer::heartbeat_callback() {}
+
+void MissionTreeServer::ctrl_heartbeat_check() {}
+
+void MissionTreeServer::cli_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat){}
+
+void MissionTreeServer::echo_heartbeat_check() {}
+
+void MissionTreeServer::echo_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat){}
+
+void MissionTreeServer::cli_heartbeat_check() {}
+
+void MissionTreeServer::mux_heartbeat_send() {}
+
