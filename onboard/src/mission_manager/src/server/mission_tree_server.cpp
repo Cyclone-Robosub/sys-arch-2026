@@ -9,6 +9,7 @@
 
 MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeExecutionServer(options) {
     current_command_publisher = node()->create_publisher<custom_interfaces::msg::Command>("current_command", 10);
+
 }
 
 void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
@@ -46,28 +47,6 @@ void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& facto
 }
 
 
-// sam
-void MissionTreeServer::ctrl_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat) {}
 
-void MissionTreeServer::heartbeat_callback() {
-    mux_heartbeat_send();
-    ctrl_heartbeat_check();
-    cli_heartbeat_check();
-    echo_heartbeat_check();
-    publish_stop_if_disabled();
-}
 
-void MissionTreeServer::heartbeat_callback() {}
-
-void MissionTreeServer::ctrl_heartbeat_check() {}
-
-void MissionTreeServer::cli_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat){}
-
-void MissionTreeServer::echo_heartbeat_check() {}
-
-void MissionTreeServer::echo_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat){}
-
-void MissionTreeServer::cli_heartbeat_check() {}
-
-void MissionTreeServer::mux_heartbeat_send() {}
 
