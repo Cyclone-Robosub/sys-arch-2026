@@ -2,7 +2,7 @@
 FROM dustynv/ros:jazzy-desktop-r36.4.0-cu128-24.04
 
 # fix the apt-get update error by adding the ROS repository
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | gpg --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | gpg --batch --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
 
 RUN apt-get update && apt-get install -y \
     libgstreamer1.0-dev \
