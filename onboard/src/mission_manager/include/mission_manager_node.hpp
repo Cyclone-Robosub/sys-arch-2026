@@ -28,6 +28,7 @@ class MissionManagerNode : public rclcpp::Node {
 
         bool go_signal_requested = false;
         bool mission_started = false;
+        rclcpp::TimerBase::SharedPtr go_retry_timer;
         
         void heartbeat_callback();
         void mission_manager_heartbeat_send();
