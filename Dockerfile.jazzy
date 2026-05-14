@@ -21,7 +21,8 @@ COPY . /root/sys-arch-2026
 
 WORKDIR /root/sys-arch-2026
 
-RUN source /opt/ros/jazzy/install/setup.bash && colcon build --packages-up-to vision
+RUN source /opt/ros/jazzy/install/setup.bash && colcon build --packages-up-to vision \
+    && echo "source /root/sys-arch-2026/install/setup.bash" >> ~/.bashrc
 
 # RUN colcon build
 # RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
