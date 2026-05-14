@@ -31,6 +31,6 @@ See [`machine_learning`](./machine_learning) dir
         - [ ] Make the keypoint detector node read from a camera feed topic instead of a video file
     - [x] update the (web page)[../remote_control_webpage] to show stereo camera feeds
 - [x] Use a custom message type for keypoint results instead of a string
-- [ ] Switch to use `.engine` instead of `.torchscript` for *speed*
+- [x] Switch to use `.engine` instead of `.torchscript` for *speed*
 - [x] fix up docker for jetson 
 
