@@ -15,13 +15,13 @@ RUN apt-get update && apt-get install -y \
     gstreamer1.0-libav \
     gstreamer1.0-rtsp \
     && rm -rf /var/lib/apt/lists/* \
-    && echo 'source /opt/ros/jazzy/setup.bash' >> ~/.bashrc
+    && echo 'source /opt/ros/jazzy/install/setup.bash' >> ~/.bashrc
 
 COPY . /root/sys-arch-2026
 
 WORKDIR /root/sys-arch-2026
 
-RUN source /opt/ros/jazzy/setup.bash && colcon build --packages-up-to vision
+RUN source /opt/ros/jazzy/install/setup.bash && colcon build --packages-up-to vision
 
 # RUN colcon build
 # RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
