@@ -1,7 +1,7 @@
 #include "mission_manager_node.hpp"
 using namespace std::chrono_literals;
 
-MissionManagerNode::MissionManagerNode() : rclcpp::Node("MissionManager") {
+MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   prime_service =  this->create_service<std_srvs::srv::Trigger>("prime_signal_service", std::bind(&MissionManagerNode::trigger_prime_signal, this, std::placeholders::_1, std::placeholders::_2));
   go_client = this->create_client<std_srvs::srv::Trigger>("go_signal_service");
   execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "mission_manager_node");
