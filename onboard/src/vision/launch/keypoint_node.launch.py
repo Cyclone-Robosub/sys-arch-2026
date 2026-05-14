@@ -9,7 +9,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'model_path',
-            description='Path to the TorchScript keypoint model'
+            description='Path to the serialized TensorRT engine (.engine)'
         ),
         DeclareLaunchArgument(
             'video_path',

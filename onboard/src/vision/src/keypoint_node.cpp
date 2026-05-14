@@ -46,7 +46,7 @@ public:
   : Node("keypoint_node")
   {
         // Parameters
-    this->declare_parameter<std::string>("model_path", "model.pt");
+    this->declare_parameter<std::string>("model_path", "model.engine");
     this->declare_parameter<std::string>("video_path", "video.mp4");
     this->declare_parameter<int>("num_keypoints", 17);
     this->declare_parameter<double>("conf_threshold", 0.5);

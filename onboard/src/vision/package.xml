@@ -3,7 +3,7 @@
 <package format="3">
   <name>vision</name>
   <version>0.0.0</version>
-  <description>Keypoint detection node using a PyTorch traced model.</description>
+  <description>Keypoint detection node using a TensorRT engine.</description>
   <maintainer email="ziqzhu@ucdavis.edu">root</maintainer>
   <license>Apache-2.0</license>
 
