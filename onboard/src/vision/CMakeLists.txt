@@ -1,4 +1,4 @@
-if(EXISTS "/usr/include/NvInfer.h")
+if(EXISTS "/usr/include/aarch64-linux-gnu/NvInfer.h")
 
 cmake_minimum_required(VERSION 3.8)
 project(vision)
@@ -27,7 +27,7 @@ pkg_check_modules(GST REQUIRED gstreamer-1.0 gstreamer-app-1.0)
 
 # ── TensorRT ──────────────────────────────────────────────────────────────────
 find_path(TENSORRT_INCLUDE_DIR NvInfer.h
-  PATHS /usr/include /usr/local/include
+  PATHS /usr/include/aarch64-linux-gnu /usr/include /usr/local/include
   REQUIRED
 )
 find_library(NVINFER_LIB nvinfer
