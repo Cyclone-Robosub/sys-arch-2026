@@ -5,13 +5,13 @@ ROS 2 package containing vision nodes for the robot.
 | Node | Description |
 |---|---|
 | `camera_feed_node` | Ingests a raw H264 camera stream, forwards it to mediaMTX via RTSP, and publishes decoded frames as a ROS image topic |
-| `keypoint_node` | Runs a TorchScript keypoint-detection model on an image source and publishes detections |
+| `keypoint_node` | Runs a TensorRT keypoint-detection engine on an image source and publishes detections |
 
 ## Dependencies
 
 - ROS 2 Jazzy
 - GStreamer 1.0 + gstreamer-app (camera_feed_node)
-- LibTorch C++ API (keypoint_node)
+- TensorRT 10 + CUDA (keypoint_node)
 - OpenCV, cv_bridge
 
 Install system dependencies:
@@ -28,54 +28,12 @@ sudo apt install \
   gstreamer1.0-rtsp
 ```
 
-Download LibTorch from [pytorch.org](https://pytorch.org/get-started/locally/) (select LibTorch, C++, Linux) and extract it:
-
-```bash
-unzip libtorch-*.zip -d /opt/
-```
-
 ## Building
-
-Source ROS and build the package:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-colcon build --packages-select vision \
-  --cmake-args \
-    -DTorch_DIR=/opt/libtorch/share/cmake/Torch
-```
-
-In container on Jetson Nano:
-
-```bash
-colcon build --packages-select vision --cmake-args -DCMAKE_PREFIX_PATH='/opt/venv/lib/python3.12/site-packages/torch/share/cmake/Torch'
-```
-
-**Side Note:** use `colcon.meta` to avoid repeating the `--cmake-args` every time.
-```
-cat > ~/sys-arch-2026/colcon.meta << 'EOF'
-{
-  "names": {
-    "vision": {
-      "cmake-args": ["-DTorch_DIR=/opt/libtorch/share/cmake/Torch"]
-    }
-  }
-}
-EOF
-```
-Then you can just run `colcon build --packages-select vision` without the extra arguments.
-
----
-
-Set the library path so the linker can find LibTorch at runtime:
-
-```bash
-export LD_LIBRARY_PATH=/opt/libtorch/lib:$LD_LIBRARY_PATH
-```
-
-For container on Jetson Nano:
-```bash
-export LD_LIBRARY_PATH=/opt/venv/lib/python3.12/site-packages/torch/lib:$LD_LIBRARY_PATH
+colcon build --packages-up-to vision
+source install/setup.bash
 ```
 
 ---
@@ -127,7 +85,7 @@ ros2 topic hz /camera/image_raw  # adjust to match your topic parameter
 
 ## keypoint_node
 
-Runs a TorchScript keypoint-detection model on a video file and publishes detections.
+Runs a TensorRT keypoint-detection engine on a video file and publishes detections.
 
 **Published topics:**
 
@@ -140,7 +98,7 @@ Runs a TorchScript keypoint-detection model on a video file and publishes detect
 
 | Parameter | Default | Description |
 |---|---|---|
-| `model_path` | `model.pt` | Path to TorchScript model |
+| `model_path` | `model.engine` | Path to serialized TensorRT engine |
 | `video_path` | `video.mp4` | Path to input video file |
 | `num_keypoints` | `17` | Keypoints per detection |
 | `conf_threshold` | `0.5` | Minimum detection confidence |
@@ -150,15 +108,15 @@ Runs a TorchScript keypoint-detection model on a video file and publishes detect
 ```bash
 source install/setup.bash
 ros2 launch vision keypoint_node.launch.py \
-  model_path:=/path/to/model.torchscript \
+  model_path:=/path/to/model.engine \
   video_path:=/path/to/video.mp4
 ```
 
 **Monitor:**
 ```bash
-ros2 topic echo /keypoint_detections
-ros2 topic hz /keypoint_detections
+rviz2
 ```
+click "Add" > "By topic" > select `/keypoint_detections` -> Image
 
 ---
 
@@ -167,16 +125,13 @@ ros2 topic hz /keypoint_detections
 Build with tests enabled:
 
 ```bash
-colcon build --packages-select vision \
-  --cmake-args \
-    -DBUILD_TESTING=ON \
-    -DTorch_DIR=/opt/libtorch/share/cmake/Torch
+colcon build --packages-select vision --cmake-args -DBUILD_TESTING=ON
 ```
 
-The tests require a TorchScript model and a test image. Set these environment variables before running:
+The tests require a TensorRT engine and a test image. Set these environment variables before running:
 
 ```bash
-export VISION_KEYPOINT_MODEL_PATH=/path/to/model.torchscript
+export VISION_KEYPOINT_MODEL_PATH=/path/to/model.engine
 export VISION_KEYPOINT_IMAGE_PATH=/path/to/image.jpg
 ```
 
