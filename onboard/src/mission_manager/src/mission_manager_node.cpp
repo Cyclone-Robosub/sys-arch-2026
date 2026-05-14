@@ -1,38 +1,61 @@
-#include "include/mission_manager_node.hpp"
-/*
-    Creates MissionTreeServer object and spins
-*/
+#include "mission_manager_node.hpp"
+using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("MissionManager") {
-  prime_service =  this->create_service<std_srvs::srv::Trigger>("prime_signal_service", std::bind(&MissionManagerNode::trigger_prime_signal, this, std::placeholders::_1));
+  prime_service =  this->create_service<std_srvs::srv::Trigger>("prime_signal_service", std::bind(&MissionManagerNode::trigger_prime_signal, this, std::placeholders::_1, std::placeholders::_2));
   go_client = this->create_client<std_srvs::srv::Trigger>("go_signal_service");
-  //go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
-
+  execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "mission_manager_node");
   heartbeat_timer = this->create_wall_timer(500ms, std::bind(&MissionManagerNode::heartbeat_callback, this));
 
   mission_manager_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mission_manager_heartbeat", 10);
 }
 
+/*  asks for the current go switch state from the go_signal_service
+    only done once at startup of the node
+*/
 void MissionManagerNode::retrieve_go_signal() {
     auto go_signal_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-    auto result = go_client->async_send_request(go_signal_request);
-    if (rclcpp::spin_until_future_complete(this, result) == rclcpp::FutureReturnCode::SUCCESS) {
-       if (result.success) {
-          go_signal_callback();
-       }
-    } else {
-      RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to call service");
-    }
+    auto future = go_client->async_send_request(go_signal_request);
 }
-void MissionManagerNode::trigger_prime_signal(const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+
+/*
+    get trigger from website (prime signal)
+*/
+void MissionManagerNode::trigger_prime_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+    (void) request;
     prime_signal = true;
     response->success = true;
+    if (!go_signal_requested) {
+        go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
+        retrieve_go_signal();
+        go_signal_requested = true;
+    }
 }
 
-void MissionManagerNode::go_signal_callback(std_msgs::msg::Bool signal) {
-     go_signal = signal.data;
+/*
+    listens to the go_signal topic and gets go switch state
+*/
+void MissionManagerNode::go_signal_callback(std_msgs::msg::Bool::SharedPtr signal) {
+     go_signal = signal->data;
+     try_start_mission();
 }
 
+/*
+    if we are primed (ready) and get go signal (go switch has been triggered), start run by sending the goal (the mission file) to MissionTreeServer
+*/
+void MissionManagerNode::try_start_mission() {
+   if (!prime_signal || !go_signal || mission_started) {
+        return;
+   }
+   ExecuteTree::Goal goal;
+   goal.target_tree = "Mission File";
+   mission_started = true;
+   execute_tree_client->async_send_goal(goal);
+}
+
+/*
+    Heartbeat functions
+*/
 void MissionManagerNode::heartbeat_callback() {
     mission_manager_heartbeat_send();
 }
@@ -42,11 +65,11 @@ void MissionManagerNode::mission_manager_heartbeat_send() {
     this->mission_manager_heartbeat_publisher->publish(msg);
 }
 
-void MissionManagerNode::try_start_mission() {
-  if (prime_signal & go_signal) {
-    
-  }
-}
+
+/*
+    Creates MissionManagerNode to oversee the Server and start on conditions
+    Creates MissionTreeServer object and spins
+*/
 
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);

@@ -20,6 +20,9 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(custom_interfaces REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+
 
 add_executable(mission_manager_node 
   src/mission_manager_node.cpp
@@ -42,6 +45,9 @@ target_compile_features(mission_manager_node PUBLIC c_std_99 cxx_std_17)  # Requ
 ament_target_dependencies(mission_manager_node
   custom_interfaces
   behaviortree_ros2
+  std_msgs
+  std_srvs
+  rclcpp
 )
 
 install(TARGETS mission_manager_node
