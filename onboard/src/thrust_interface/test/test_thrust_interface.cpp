@@ -159,7 +159,6 @@ protected:
     *   Helper function for the callback for mux heartbeat
     */
     void thrust_interface_heartbeat_callback(std_msgs::msg::Empty msg) {
-        std::cerr << "Callback called\n";
         active_heartbeat = true;
         (void) msg;
     }
@@ -436,7 +435,6 @@ TEST_F(TestThrustInterface, ActiveThrustInterfaceHeartbeat) {
         exec.spin_some();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         if (std::chrono::steady_clock::now() >= start + std::chrono::seconds(1)) {
-            std::cerr << "Check heartbeat\n";
             EXPECT_TRUE(active_heartbeat);
             return;
         }
@@ -459,7 +457,6 @@ TEST_F(TestThrustInterface, InactiveThrustInterfaceHeartbeat) {
         exec.spin_some();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         if (std::chrono::steady_clock::now() >= start + std::chrono::seconds(1)) {
-            std::cerr << "Check heartbeat\n";
             EXPECT_FALSE(active_heartbeat);
             return;
         }
