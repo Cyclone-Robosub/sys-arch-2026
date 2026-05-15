@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
+
 #include <custom_interfaces/msg/pwms.hpp>
 #include "thrust_interface.hpp"
 #include <fcntl.h>
@@ -16,8 +17,10 @@
 class TestThrustInterface : public ::testing::Test {
 protected:
     std::shared_ptr<Thrust_Interface> node;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr thrust_interface_heartbeat_subscriber;
     int pipe_fds[2];  // [0] = read end, [1] = write end
     std::vector<int> test_thrusters;
+    bool active_heartbeat;
     
     /**
      * @brief Set up test environment before each test
@@ -38,6 +41,7 @@ protected:
         
         // Set up test thruster configuration
         test_thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
+        active_heartbeat = false;
     }
     
     /**
@@ -99,6 +103,16 @@ protected:
             max_pwm
         );
     }
+
+    void create_node_with_bad_pico_connection() {
+        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(-1, -1);
+        node = std::make_shared<Thrust_Interface>(
+            test_thrusters,
+            std::move(pipe_fd),  // Write end of pipe
+            1100, 
+            1900
+        );
+    }
     
     /**
      * @brief Helper to publish PWM message and process it
@@ -132,6 +146,22 @@ protected:
 
         rclcpp::spin_some(node);
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+
+    /*
+    *   Helper function to subscribe to mux_heartbeat topic and get the heartbeats from mux
+    */
+    void subscribe_thrust_interface_heartbeat() {
+        thrust_interface_heartbeat_subscriber = node->create_subscription<std_msgs::msg::Empty>("thrust_interface_heartbeat", 10, std::bind(&TestThrustInterface::thrust_interface_heartbeat_callback, this, std::placeholders::_1));
+    }
+    
+    /*
+    *   Helper function for the callback for mux heartbeat
+    */
+    void thrust_interface_heartbeat_callback(std_msgs::msg::Empty msg) {
+        std::cerr << "Callback called\n";
+        active_heartbeat = true;
+        (void) msg;
     }
 };
 
@@ -387,6 +417,52 @@ TEST_F(TestThrustInterface, NoHeartbeat) {
         std::string not_expected = "Set " + std::to_string(test_thrusters[i]) + " PWM 1800";
         EXPECT_EQ(output.find(not_expected), std::string::npos)
             << "Expected to not send our original command " << test_thrusters[i];
+    }
+}
+
+/**
+ * @brief Test heartbeat published when connection to Pico exists
+ */
+TEST_F(TestThrustInterface, ActiveThrustInterfaceHeartbeat) {
+    create_node_with_params(1200, 1800);
+    subscribe_thrust_interface_heartbeat();
+
+    rclcpp::executors::SingleThreadedExecutor exec;
+    exec.add_node(node);
+
+    auto start = std::chrono::steady_clock::now();
+    auto deadline = start + std::chrono::seconds(2);
+    while (std::chrono::steady_clock::now() < deadline) {
+        exec.spin_some();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if (std::chrono::steady_clock::now() >= start + std::chrono::seconds(1)) {
+            std::cerr << "Check heartbeat\n";
+            EXPECT_TRUE(active_heartbeat);
+            return;
+        }
+    }
+}
+
+/**
+ * @brief Test heartbeat not published when no connection to Pico exists
+ */
+TEST_F(TestThrustInterface, InactiveThrustInterfaceHeartbeat) {
+    create_node_with_bad_pico_connection();
+    subscribe_thrust_interface_heartbeat();
+
+    rclcpp::executors::SingleThreadedExecutor exec;
+    exec.add_node(node);
+
+    auto start = std::chrono::steady_clock::now();
+    auto deadline = start + std::chrono::seconds(2);
+    while (std::chrono::steady_clock::now() < deadline) {
+        exec.spin_some();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        if (std::chrono::steady_clock::now() >= start + std::chrono::seconds(1)) {
+            std::cerr << "Check heartbeat\n";
+            EXPECT_FALSE(active_heartbeat);
+            return;
+        }
     }
 }
 

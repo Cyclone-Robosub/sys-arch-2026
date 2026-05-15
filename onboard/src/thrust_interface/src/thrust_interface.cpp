@@ -1,5 +1,6 @@
 #include "thrust_interface.hpp"
 #include <vector>
+#include <iostream>
 
 using namespace std::chrono_literals;
 using namespace rclcpp;
@@ -86,12 +87,14 @@ void Thrust_Interface::send_heartbeat_to_pico() {
 }
 
 void Thrust_Interface::heartbeat_callback() {
+    std::cerr << "thrust_interface heartbeat callback\n";
     send_heartbeat_to_pico();
     evaluate_mux_heartbeat_freshness();
     send_heartbeat();
 }
 
 void Thrust_Interface::send_heartbeat() {
+    std::cerr << "thrust interface send heartbeat\n";
     if (!no_pico) {
         std_msgs::msg::Empty msg;
         this->heartbeat_publisher->publish(msg);
