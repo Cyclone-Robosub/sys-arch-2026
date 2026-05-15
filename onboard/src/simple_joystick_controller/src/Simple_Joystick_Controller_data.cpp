@@ -3,7 +3,7 @@
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
 //
-// File: Simple_Joystick_Controller_private.h
+// File: Simple_Joystick_Controller_data.cpp
 //
 // Code generated for Simulink model 'Simple_Joystick_Controller'.
 //
@@ -16,11 +16,17 @@
 // Code generation objectives: Unspecified
 // Validation result: Not run
 //
-#ifndef Simple_Joystick_Controller_private_h_
-#define Simple_Joystick_Controller_private_h_
-#include "rtwtypes.h"
-#include "Simple_Joystick_Controller_types.h"
-#endif                                 // Simple_Joystick_Controller_private_h_
+#include "Simple_Joystick_Controller.h"
+
+// Constant parameters (default storage)
+const ConstP_Simple_Joystick_Contro_T Simple_Joystick_Controll_ConstP{
+  // Computed Parameter: Constant_Value
+  //  Referenced by: '<S10>/Constant'
+
+  {
+    false                              // SL_DummyData
+  }
+};
 
 //
 // File trailer for generated code.

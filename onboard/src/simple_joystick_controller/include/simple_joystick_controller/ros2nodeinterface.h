@@ -4,9 +4,9 @@
 //
 // Code generated for Simulink model 'Simple_Joystick_Controller'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.16
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:43 2026
+// C/C++ source code generated on : Thu May 14 23:42:47 2026
 //
 #ifndef _ROS2_MATLAB_NODEINTERFACE_
 #define _ROS2_MATLAB_NODEINTERFACE_
@@ -36,7 +36,7 @@ class Simple_Joystick_Controller;
 #include "rtwtypes.h"
 #include "custom_interfaces/msg/gamepad.hpp"
 #include "custom_interfaces/msg/pwms.hpp"
-#include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/empty.hpp"
 namespace ros2 {
 namespace matlab {
   //Semaphore using std::CV and std::mutex
