@@ -4,14 +4,13 @@ using namespace std::chrono_literals;
 using namespace rclcpp;
 #include <iostream>
 
-// TODO: Add IMU logging in the future
-
 Data_Logger::Data_Logger(std::unique_ptr<FD_Interface> drr_fd, 
-                         std::unique_ptr<FD_Interface> vr_fd) : 
+                         std::unique_ptr<FD_Interface> vr_fd,
+                         std::unique_ptr<FD_Interface> imu_fd) :
     Node("data_logger"),
     drr_fd(std::move(drr_fd)),
-    vr_fd(std::move(vr_fd))
-    // imu_fd(std::move(imu_fd)) 
+    vr_fd(std::move(vr_fd)),
+    imu_fd(std::move(imu_fd)) 
      {
     drr_subscription = this->create_subscription<custom_interfaces::msg::DRR>(
         "dead_reck_report", 10, 
@@ -19,13 +18,16 @@ Data_Logger::Data_Logger(std::unique_ptr<FD_Interface> drr_fd,
     vr_subscription = this->create_subscription<custom_interfaces::msg::VR>(
         "velocity_report", 10, 
         std::bind(&Data_Logger::velocity_report_received_callback, this, std::placeholders::_1));
+    imu_subscription = this->create_subscription<custom_interfaces::msg::Imu>(
+        "imu_custom", 10, 
+        std::bind(&Data_Logger::imu_received_callback, this, std::placeholders::_1));
     
     std::string drr_header = "time,position_x,position_y,position_z,angle_x,angle_y,angle_z,pos_std\n";
     std::string vr_header = "time,velocity_x,velocity_y,velocity_z,altitude,fom,covariance_1_1,covariance_1_2,covariance_1_3,covariance_2_1,covariance_2_2,covariance_2_3,covariance_3_1,covariance_3_2,covariance_3_3\n";
-    // std::string imu_header = "TODO\n";
+    std::string imu_header = "time,TODO\n";
     write(this->drr_fd->get_write_fd(), drr_header.c_str(), drr_header.length());
     write(this->vr_fd->get_write_fd(), vr_header.c_str(), vr_header.length());
-    // write(this->imu_fd->get_write_fd(), imu_header.c_str(), imu_header.length());
+    write(this->imu_fd->get_write_fd(), imu_header.c_str(), imu_header.length());
 }
 
 void Data_Logger::dead_reck_report_received_callback(custom_interfaces::msg::DRR::UniquePtr drr_msg) {
@@ -63,6 +65,13 @@ void Data_Logger::velocity_report_received_callback(custom_interfaces::msg::VR::
     write(this->vr_fd->get_write_fd(), log_data.c_str(), log_data.length());
 }
 
+void Data_Logger::imu_received_callback(custom_interfaces::msg::Imu::UniquePtr imu_msg) {
+    std::string log_data = Data_Logger::get_current_time();    
+    log_data += "\n";
+    write(this->vr_fd->get_write_fd(), log_data.c_str(), log_data.length());
+
+}
+
 std::string Data_Logger::get_current_time() {
     char buffer [80];
 
@@ -94,10 +103,10 @@ int main(int argc, char* argv[]) {
     filepath += Data_Logger::get_current_time();
     std::unique_ptr<FD_Interface> drr_fd = std::make_unique<Data_FD>(filepath + "-dvl-drr.csv");
     std::unique_ptr<FD_Interface> vr_fd = std::make_unique<Data_FD>(filepath + "-dvl-vr.csv");
-    // std::unique_ptr<FD_Interface> imu_fd = std::make_unique<Data_FD>(filepath + "-imu.csv");
+    std::unique_ptr<FD_Interface> imu_fd = std::make_unique<Data_FD>(filepath + "-imu.csv");
 
     rclcpp::init(argc, argv);
-    auto data_logger = std::make_shared<Data_Logger>(std::move(drr_fd), std::move(vr_fd));
+    auto data_logger = std::make_shared<Data_Logger>(std::move(drr_fd), std::move(vr_fd), std::move(imu_fd));
     rclcpp::spin(data_logger);
     
     rclcpp::shutdown();
