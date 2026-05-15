@@ -56,16 +56,16 @@ MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX &&
 
 # --- ffmpeg ---
 FFMPEG_PANE=$(tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
--fflags +genpts \
--i /dev/video2 \
--c:v copy -f rtsp rtsp://localhost:8554/cam \
--c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S)_buttom.mp4; bash") 
+	-fflags +genpts \
+	-i /dev/video2 \
+	-c:v copy -f rtsp rtsp://localhost:8554/cam \
+	-c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S)_buttom.mp4; bash") 
 
-tmux split-window -h -t $FFMPEG_PANE "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
--fflags +genpts \
--i /dev/video6 \
--c:v copy -f rtsp rtsp://localhost:8554/cam \
--c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S)_front.mp4; bash"
+tmux split-window -v -t $FFMPEG_PANE "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
+	-fflags +genpts \
+	-i /dev/video6 \
+	-c:v copy -f rtsp rtsp://localhost:8554/front \
+	-c:v copy -avoid_negative_ts make_zero -f mp4 ~/recordings/output_$(date +%Y%m%d_%H%M%S)_front.mp4; bash"
 
 ################################################################################
 # SECTION 3: Additional Components: Sensors
