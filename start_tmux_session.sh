@@ -55,7 +55,7 @@ mkdir -p ~/Robosub/recordings
 MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX && ./mediamtx; bash")
 
 # --- ffmpeg ---
-FFMPEG_PANE=$(tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
+FFMPEG_PANE=$(tmux split-window -h -t $MEDIAMTX_PANE -P -F "#{pane_id}" "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
 	-fflags +genpts \
 	-i /dev/video2 \
 	-c:v copy -f rtsp rtsp://localhost:8554/cam \
