@@ -2,11 +2,11 @@
 //
 // File ros2nodeinterface.h
 //
-// Code generated for Simulink model 'Simple_Joystick_Controller'.
+// Code generated for Simulink model 'Simple_Joystick_CGN'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.14
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:43 2026
+// C/C++ source code generated on : Sat May 09 13:12:40 2026
 //
 #ifndef _ROS2_MATLAB_NODEINTERFACE_
 #define _ROS2_MATLAB_NODEINTERFACE_
@@ -31,12 +31,12 @@ namespace executors{
 class SLMultiThreadedExecutor;
 }
 }
-class Simple_Joystick_Controller;
-#include "Simple_Joystick_Controller_types.h"
+class Simple_Joystick_CGN;
+#include "Simple_Joystick_CGN_types.h"
 #include "rtwtypes.h"
 #include "custom_interfaces/msg/gamepad.hpp"
 #include "custom_interfaces/msg/pwms.hpp"
-#include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/empty.hpp"
 namespace ros2 {
 namespace matlab {
   //Semaphore using std::CV and std::mutex
@@ -71,7 +71,7 @@ namespace matlab {
     NodeInterface& operator=(const NodeInterface& );
     //
     rclcpp::Node::SharedPtr mNode;
-    std::shared_ptr<Simple_Joystick_Controller> mModel;
+    std::shared_ptr<Simple_Joystick_CGN> mModel;
     std::shared_ptr<rclcpp::executors::SLMultiThreadedExecutor> mExec;
     //
     Semaphore mBaseRateSem;
@@ -99,7 +99,7 @@ namespace matlab {
       return mNode;
     }
     //
-    std::shared_ptr<Simple_Joystick_Controller> getModel() {
+    std::shared_ptr<Simple_Joystick_CGN> getModel() {
       return mModel;
     }
   }; //class NodeInterface

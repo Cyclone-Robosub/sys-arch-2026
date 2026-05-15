@@ -45,6 +45,9 @@ tmux split-window -v -t $SOFT_MUX_PANE "btop; bash"
 # --- Mux Controller ---
 tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run mux_controller mux_controller; bash"
 
+# --- Simple Joystick Controller
+tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run simple_joystick_cgn Simple_Joystick_CGN; bash"
+
 ################################################################################
 # SECTION 2: Video Streaming and Recording Window
 ################################################################################

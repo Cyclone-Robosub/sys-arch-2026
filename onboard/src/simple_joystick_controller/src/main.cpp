@@ -2,11 +2,11 @@
 //
 // File main.cpp
 //
-// Code generated for Simulink model 'Simple_Joystick_Controller'.
+// Code generated for Simulink model 'Simple_Joystick_CGN'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.14
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:43 2026
+// C/C++ source code generated on : Sat May 09 13:12:40 2026
 //
 #include "ros2nodeinterface.h"
 rclcpp::Node::SharedPtr SLROSNodePtr;

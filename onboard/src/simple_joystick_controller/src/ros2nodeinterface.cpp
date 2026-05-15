@@ -2,11 +2,11 @@
 //
 // File ros2nodeinterface.cpp
 //
-// Code generated for Simulink model 'Simple_Joystick_Controller'.
+// Code generated for Simulink model 'Simple_Joystick_CGN'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.14
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:43 2026
+// C/C++ source code generated on : Sat May 09 13:12:40 2026
 //
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -26,7 +26,7 @@
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif //_MSC_VER
 #include "rclcpp/rclcpp.hpp"
-#include "Simple_Joystick_Controller.h"
+#include "Simple_Joystick_CGN.h"
 #include "ros2nodeinterface.h"
 #include <thread>
 #include <chrono>
@@ -64,13 +64,13 @@ void NodeInterface::initialize(int argc, char * const argv[]) {
         std::vector<char *> args(argv, argv + argc);
         rclcpp::init(static_cast<int>(args.size()), args.data());
         //create the Node specified in Model
-        std::string NodeName("Simple_Joystick_Controller");
+        std::string NodeName("Simple_Joystick_CGN");
         SLROSNodePtr = std::make_shared<rclcpp::Node>(NodeName);
-        RCLCPP_INFO(SLROSNodePtr->get_logger(),"** Starting the model \"Simple_Joystick_Controller\" **\n");
+        RCLCPP_INFO(SLROSNodePtr->get_logger(),"** Starting the model \"Simple_Joystick_CGN\" **\n");
         mExec = std::make_shared<rclcpp::executors::SLMultiThreadedExecutor>();
         mExec->add_node(SLROSNodePtr);
         //initialize the model which will initialize the publishers and subscribers
-        mModel = std::make_shared<Simple_Joystick_Controller>(
+        mModel = std::make_shared<Simple_Joystick_CGN>(
         );
         ROS_SET_RTM_ERROR_STATUS(NULL);
         mModel->initialize();
@@ -79,7 +79,7 @@ void NodeInterface::initialize(int argc, char * const argv[]) {
         // Create "MutuallyExclusive" callback group for callback associated with mSchedulerTimer to prevent
         // it from being executed in parallel.
 		mSchedulerGroup = SLROSNodePtr->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-		mSchedulerTimer = SLROSNodePtr->create_wall_timer(std::chrono::nanoseconds(10000000),std::bind(&NodeInterface::schedulerThreadCallback,this),mSchedulerGroup);
+		mSchedulerTimer = SLROSNodePtr->create_wall_timer(std::chrono::nanoseconds(16666667),std::bind(&NodeInterface::schedulerThreadCallback,this),mSchedulerGroup);
 		for(size_t ctr = 0; ctr<SLROSSubscribers.size();ctr++){
            mExec->stopSubscriberCallback(SLROSSubscribers[ctr]);
        }

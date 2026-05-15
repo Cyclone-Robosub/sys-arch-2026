@@ -3,29 +3,29 @@
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
 //
-// File: Simple_Joystick_Controller_types.h
+// File: Simple_Joystick_CGN_types.h
 //
-// Code generated for Simulink model 'Simple_Joystick_Controller'.
+// Code generated for Simulink model 'Simple_Joystick_CGN'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.14
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:40 2026
+// C/C++ source code generated on : Sat May  9 13:12:35 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
 // Code generation objectives: Unspecified
 // Validation result: Not run
 //
-#ifndef Simple_Joystick_Controller_types_h_
-#define Simple_Joystick_Controller_types_h_
+#ifndef Simple_Joystick_CGN_types_h_
+#define Simple_Joystick_CGN_types_h_
 #include "rtwtypes.h"
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
 
-// MsgType=custom_interfaces/Pwms
-struct SL_Bus_custom_interfaces_Pwms
+// MsgType=std_msgs/Empty
+struct SL_Bus_std_msgs_Empty
 {
-  int32_T pwms[8];
+  boolean_T SL_DummyData;
 };
 
 #endif
@@ -42,22 +42,36 @@ struct SL_Bus_custom_interfaces_Gamepad
   real32_T sink;
   real32_T yaw;
   real32_T pitch;
+  boolean_T cross_button;
+  boolean_T square_button;
+  boolean_T triangle_button;
+  boolean_T circle_button;
+  boolean_T dpad_down;
+  boolean_T dpad_left;
+  boolean_T dpad_up;
+  boolean_T dpad_right;
+  boolean_T bumper_left;
+  boolean_T bumper_right;
+  boolean_T start;
+  boolean_T select;
+  boolean_T joystick_press_left;
+  boolean_T joystick_press_right;
 };
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Bool_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Bool_
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
 
-// MsgType=std_msgs/Bool
-struct SL_Bus_std_msgs_Bool
+// MsgType=custom_interfaces/Pwms
+struct SL_Bus_custom_interfaces_Pwms
 {
-  boolean_T data;
+  int32_T pwms[8];
 };
 
 #endif
 
-// Custom Type definition for MATLABSystem: '<S9>/SinkBlock'
+// Custom Type definition for MATLABSystem: '<S16>/SinkBlock'
 #include "rmw/qos_profiles.h"
 #ifndef struct_sJ4ih70VmKcvCeguWN0mNVF
 #define struct_sJ4ih70VmKcvCeguWN0mNVF
@@ -97,9 +111,9 @@ struct ros_slros2_internal_block_Pub_T
 #endif                                // struct_ros_slros2_internal_block_Pub_T
 
 // Forward declaration for rtModel
-typedef struct tag_RTM_Simple_Joystick_Contr_T RT_MODEL_Simple_Joystick_Cont_T;
+typedef struct tag_RTM_Simple_Joystick_CGN_T RT_MODEL_Simple_Joystick_CGN_T;
 
-#endif                                 // Simple_Joystick_Controller_types_h_
+#endif                                 // Simple_Joystick_CGN_types_h_
 
 //
 // File trailer for generated code.

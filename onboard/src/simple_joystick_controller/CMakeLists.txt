@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(simple_joystick_controller)
+project(simple_joystick_cgn)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 # Set CMAKE_BUILD_TYPE
 set(CMAKE_BUILD_TYPE Release)
@@ -36,29 +36,30 @@ find_package( custom_interfaces REQUIRED)
 find_package( rclcpp REQUIRED)
 find_package( std_msgs REQUIRED)
 # Add package include directories
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/simple_joystick_controller")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/simple_joystick_cgn")
 set (CMAKE_SKIP_BUILD_RPATH false)
 set (CMAKE_BUILD_WITH_INSTALL_RPATH true)
 set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-set (CMAKE_INSTALL_RPATH_USEK_PATH TRUE)
+set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # Node
-add_executable(Simple_Joystick_Controller 
-src/Simple_Joystick_Controller.cpp
+add_executable(Simple_Joystick_CGN 
+src/Simple_Joystick_CGN.cpp
+src/Simple_Joystick_CGN_data.cpp
 src/main.cpp
 src/ros2nodeinterface.cpp
 src/slros2_initialize.cpp
 src/slros2_multi_threaded_executor.cpp
 )
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-target_compile_options(Simple_Joystick_Controller PUBLIC 
+target_compile_options(Simple_Joystick_CGN PUBLIC 
   $<$<OR:$<COMPILE_LANGUAGE:CXX>,$<COMPILE_LANGUAGE:C>>:
   -Wall -Wextra -Wpedantic
   >)
 endif()
-target_compile_options(Simple_Joystick_Controller PRIVATE
+target_compile_options(Simple_Joystick_CGN PRIVATE
   $<$<OR:$<COMPILE_LANGUAGE:CXX>,$<COMPILE_LANGUAGE:C>>:
-  -DMODEL=Simple_Joystick_Controller
-  -DNUMST=1
+  -DMODEL=Simple_Joystick_CGN
+  -DNUMST=2
   -DNCSTATES=0
   -DHAVESTDIO
   -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0
@@ -78,15 +79,15 @@ target_compile_options(Simple_Joystick_Controller PRIVATE
   -fpermissive  >
   )
 ament_target_dependencies(
-  Simple_Joystick_Controller
+  Simple_Joystick_CGN
   "custom_interfaces"
   "rclcpp"
   "std_msgs"
 )
-target_include_directories(Simple_Joystick_Controller PUBLIC
+target_include_directories(Simple_Joystick_CGN PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-install(TARGETS Simple_Joystick_Controller
+install(TARGETS Simple_Joystick_CGN
   EXPORT export_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME})
 ament_export_include_directories(
@@ -94,17 +95,17 @@ ament_export_include_directories(
 )
 foreach(file_i ${CUDA_BINS})
 add_custom_command(
-                   TARGET Simple_Joystick_Controller
+                   TARGET Simple_Joystick_CGN
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND}
-                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/Simple_Joystick_Controller_ert_rtw/${file_i}
+                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/Simple_Joystick_CGN_ert_rtw/${file_i}
 				   )
 add_custom_command(
-                   TARGET Simple_Joystick_Controller
+                   TARGET Simple_Joystick_CGN
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND}
-                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/codegen/exe/Simple_Joystick_Controller/${file_i}
+                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/codegen/exe/Simple_Joystick_CGN/${file_i}
 				   )				   
 endforeach(file_i)
 ament_package()
-# Generated on Thu Feb 19 19:35:44 2026
+# Generated on Sat May 09 13:12:43 2026
