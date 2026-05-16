@@ -41,7 +41,7 @@ cyclone@jetson:~/Robosub/sys-arch-2026$ docker build -f Dockerfile.jazzy -t sys-
 ```
 2. Go into the container and compile the vision package:
 ```bash
-cyclone@jetson:~/Robosub/sys-arch-2026$  jetson-containers run -v $(pwd):/root/sys-arch-2026  --name sys-arch-build sys-arch:latest
+cyclone@jetson:~/Robosub/sys-arch-2026$  jetson-containers run --name sys-arch-build sys-arch:latest
 ```
 ```
 root@jetson:~/sys-arch-2026# colcon build --packages-up-to vision
