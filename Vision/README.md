@@ -34,3 +34,20 @@ See [`machine_learning`](./machine_learning) dir
 - [x] Switch to use `.engine` instead of `.torchscript` for *speed*
 - [x] fix up docker for jetson 
 
+## Docker
+1. Build the docker image:
+```bash
+cyclone@jetson:~/Robosub/sys-arch-2026$ docker build -f Dockerfile.jazzy -t sys-arch .
+```
+2. Go into the container and compile the vision package:
+```bash
+cyclone@jetson:~/Robosub/sys-arch-2026$  jetson-containers run -v $(pwd):/root/sys-arch-2026  --name sys-arch-build sys-arch:latest
+```
+```
+root@jetson:~/sys-arch-2026# colcon build --packages-up-to vision
+```
+3. Save the compiled image:
+```bash
+cyclone@jetson:~/Robosub/sys-arch-2026$ docker commit sys-arch-build sys-arch:compiled
+```
+Not doing everything in a `RUN` command in the Dockerfile because nvidia libraries are not mounted at creation time, so `colcon build` needs to compile at runtime. fxxk nvidia.

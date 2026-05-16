@@ -30,9 +30,7 @@ x-common: &common
 services:
   manny_brain:
     <<: *common
-    build:
-      context: .
-      dockerfile: Dockerfile.jazzy
+    image: sys-arch:compiled
     devices:
       - /dev/video0
       - /dev/video1
