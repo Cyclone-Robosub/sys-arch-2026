@@ -2,6 +2,8 @@
 #include <string>
 #include <atomic>
 #include <thread>
+#include <algorithm>
+#include <chrono>
 
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
@@ -38,16 +40,27 @@ public:
     auto topic = this->get_parameter("topic").as_string();
     image_pub_ = this->create_publisher<sensor_msgs::msg::Image>(topic, 10);
 
-    if (!init_pipeline()) {
-      throw std::runtime_error("Failed to initialise GStreamer pipeline");
+    is_video_file_ = is_video_file(device_);
+
+    if (is_video_file_) {
+      if (!init_video_capture()) {
+        throw std::runtime_error("Failed to open video file: " + device_);
+      }
+      running_ = true;
+      pipeline_thread_ = std::thread(&CameraFeedNode::run_video, this);
+      RCLCPP_INFO(this->get_logger(),
+        "CameraFeedNode started — video file: %s  topic: %s",
+        device_.c_str(), topic.c_str());
+    } else {
+      if (!init_pipeline()) {
+        throw std::runtime_error("Failed to initialise GStreamer pipeline");
+      }
+      running_ = true;
+      pipeline_thread_ = std::thread(&CameraFeedNode::run_pipeline, this);
+      RCLCPP_INFO(this->get_logger(),
+        "CameraFeedNode started — device: %s  rtsp: %s  %dx%d @ %dfps",
+        device_.c_str(), rtsp_url_.c_str(), width_, height_, fps_);
     }
-
-    running_ = true;
-    pipeline_thread_ = std::thread(&CameraFeedNode::run_pipeline, this);
-
-    RCLCPP_INFO(this->get_logger(),
-      "CameraFeedNode started — device: %s  rtsp: %s  %dx%d @ %dfps",
-      device_.c_str(), rtsp_url_.c_str(), width_, height_, fps_);
   }
 
   ~CameraFeedNode()
@@ -62,6 +75,9 @@ public:
     if (pipeline_) {
       gst_object_unref(pipeline_);
       pipeline_ = nullptr;
+    }
+    if (cap_.isOpened()) {
+      cap_.release();
     }
   }
 
@@ -190,6 +206,63 @@ private:
     gst_object_unref(bus);
   }
 
+  static bool is_video_file(const std::string & path)
+  {
+    static const std::vector<std::string> exts = {
+      ".mp4", ".avi", ".mkv", ".mov", ".webm", ".m4v", ".flv", ".wmv"
+    };
+    std::string lower = path;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+    for (const auto & ext : exts) {
+      if (lower.size() >= ext.size() &&
+          lower.compare(lower.size() - ext.size(), ext.size(), ext) == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool init_video_capture()
+  {
+    cap_.open(device_);
+    if (!cap_.isOpened()) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to open video file: %s", device_.c_str());
+      return false;
+    }
+    double native_fps = cap_.get(cv::CAP_PROP_FPS);
+    frame_delay_ms_ = static_cast<int>(1000.0 / (native_fps > 0 ? native_fps : fps_));
+    RCLCPP_INFO(this->get_logger(), "Opened video file: %s  (%.1f fps, %d ms/frame)",
+      device_.c_str(), native_fps, frame_delay_ms_);
+    return true;
+  }
+
+  void run_video()
+  {
+    cv::Mat frame;
+    while (running_ && rclcpp::ok()) {
+      auto t0 = std::chrono::steady_clock::now();
+
+      if (!cap_.read(frame) || frame.empty()) {
+        RCLCPP_INFO(this->get_logger(), "Video file ended");
+        running_ = false;
+        break;
+      }
+
+      auto img_msg = cv_bridge::CvImage(
+        std_msgs::msg::Header(), "bgr8", frame).toImageMsg();
+      img_msg->header.stamp = this->now();
+      img_msg->header.frame_id = "camera";
+      image_pub_->publish(*img_msg);
+
+      auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - t0).count();
+      auto sleep_ms = frame_delay_ms_ - static_cast<int>(elapsed);
+      if (sleep_ms > 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
+      }
+    }
+  }
+
   // Parameters
   std::string device_;
   std::string rtsp_url_;
@@ -198,6 +271,10 @@ private:
   // GStreamer
   GstElement * pipeline_ = nullptr;
   GstElement * appsink_  = nullptr;
+
+  // Video file
+  bool is_video_file_ = false;
+  cv::VideoCapture cap_;
 
   // Threading
   std::atomic<bool> running_;

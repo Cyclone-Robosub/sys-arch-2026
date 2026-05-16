@@ -9,7 +9,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'device',
             default_value='/dev/video2',
-            description='V4L2 camera device path'
+            description='V4L2 camera device path, or path to a video file (.mp4 .avi .mkv .mov .webm .m4v .flv .wmv)'
         ),
         DeclareLaunchArgument(
             'rtsp_url',
