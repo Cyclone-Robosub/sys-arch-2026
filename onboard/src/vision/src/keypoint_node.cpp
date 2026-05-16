@@ -53,7 +53,7 @@ public:
     // Parameters
     this->declare_parameter<std::string>("model_path", "model.engine");
     this->declare_parameter<std::string>("video_path", "video.mp4");
-    this->declare_parameter<int>("num_keypoints", 17);
+    this->declare_parameter<int>("num_keypoints", 4);
     this->declare_parameter<double>("conf_threshold", 0.5);
     this->declare_parameter<std::string>("image_topic_left",  "/camera/left/image_raw");
     this->declare_parameter<std::string>("image_topic_right", "/camera/right/image_raw");
