@@ -274,6 +274,7 @@ private:
 
   // Video file
   bool is_video_file_ = false;
+  int frame_delay_ms_;
   cv::VideoCapture cap_;
 
   // Threading
