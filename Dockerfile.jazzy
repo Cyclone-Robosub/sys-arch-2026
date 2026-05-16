@@ -21,8 +21,5 @@ COPY . /root/sys-arch-2026
 
 WORKDIR /root/sys-arch-2026
 
-RUN source /opt/ros/jazzy/install/setup.bash && colcon build --packages-up-to vision \
-    && echo "source /root/sys-arch-2026/install/setup.bash" >> ~/.bashrc
-
-# RUN colcon build
-# RUN echo "source /opt/ros/jazzy/setup.bash" >> ~/.bashrc
+# colcon build must be run inside a live container (needs nvidia runtime for tegra libs)
+# after building, snapshot with: docker commit <container> sys-arch:compiled
