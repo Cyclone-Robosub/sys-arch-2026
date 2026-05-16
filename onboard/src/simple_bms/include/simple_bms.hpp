@@ -1,31 +1,40 @@
 #ifndef SIMPLE_BMS_HPP
 #define SIMPLE_BMS_HPP
 
+#include <custom_interfaces/msg/battery.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <chrono>
+#include <iostream>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/i2c-dev.h>
+#include <unistd.h>
 
 using namespace rclcpp;
 
-class SimpleBMS{
+class SimpleBMS : public rclcpp::Node {
 
     public:
-        struct BatteryStatus = {
+        struct BatteryStatus {
             float voltage;
             float current;
         };
 
         SimpleBMS();
-        BatteryStatus readBMS(const std::string& I2C_FD = "/dev/i2c-1");
+        ~SimpleBMS();
 
     private:
-        const std::string I2C_FD = "/dev/i2c-1";
+        const char* I2C_FD = "/dev/i2c-1";
         const int BMS_ADDRESS = 0x48;
+        int i2c_fd = -1;
         
         rclcpp::TimerBase::SharedPtr battery_timer;
         rclcpp::Publisher<custom_interfaces::msg::Battery>::SharedPtr bms_publisher;
 
-        void bms_callback(); // might put this in public, not sure where it belongs
-        void publish_bms();
+        bool init_i2c();
+        void bms_callback();
+        BatteryStatus readBMS();
+        void publish_bms(BatteryStatus status);
 };
 
-#define SIMPLE_BMS_HPP
+#endif
