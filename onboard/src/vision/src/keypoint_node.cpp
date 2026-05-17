@@ -69,8 +69,8 @@ public:
       model_path, num_keypoints, conf_threshold);
 
     RCLCPP_INFO(this->get_logger(),
-      "Loaded model: %s  kp: %d  left: %s  right: %s",
-      model_path.c_str(), num_keypoints, topic_left.c_str(), topic_right.c_str());
+      "Loaded model: %s  kp: %d  left: %s  right: %s  annotate: %s",
+      model_path.c_str(), num_keypoints, topic_left.c_str(), topic_right.c_str(), annotate_images_ ? "true" : "false");
 
     // Publishers
     result_pub_      = this->create_publisher<custom_interfaces::msg::VisionResult>(
@@ -115,7 +115,7 @@ private:
     image_pub_right_->publish(result.image_right);
   }
 
-  bool annotate_images_{false};
+  bool annotate_images_;
   std::unique_ptr<vision::KeypointDetector> detector_;
 
   message_filters::Subscriber<ImageMsg> sub_left_;
