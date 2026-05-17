@@ -112,11 +112,13 @@ Subscribes to two synchronized camera topics, runs a TorchScript keypoint-detect
 
 The two topics are synchronized using `message_filters::ApproximateTime`.
 
-**Published topic:**
+**Published topics:**
 
 | Topic | Type | Description |
 |---|---|---|
 | `keypoint_result` | `custom_interfaces/msg/VisionResult` | Detections and frames for both cameras |
+| `keypoint_image_left` | `sensor_msgs/msg/Image` | Left camera frame (annotated if `annotate_images` is true) |
+| `keypoint_image_right` | `sensor_msgs/msg/Image` | Right camera frame (annotated if `annotate_images` is true) |
 
 **Parameters:**
 
@@ -138,11 +140,11 @@ ros2 launch vision keypoint_node.launch.py \
   image_topic_right:=/camera/right/image_raw
 ```
 
-**Monitor:**
+**Visualize in RViz:**
 ```bash
 rviz2
 ```
-click "Add" > "By topic" > select `/keypoint_detections` -> Image
+Click "Add" > "By topic" > select `keypoint_image_left` or `keypoint_image_right` > Image.
 
 ---
 

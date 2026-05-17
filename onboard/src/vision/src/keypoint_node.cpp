@@ -73,8 +73,10 @@ public:
       model_path.c_str(), num_keypoints, topic_left.c_str(), topic_right.c_str());
 
     // Publishers
-    result_pub_ = this->create_publisher<custom_interfaces::msg::VisionResult>(
+    result_pub_      = this->create_publisher<custom_interfaces::msg::VisionResult>(
       "keypoint_result", 10);
+    image_pub_left_  = this->create_publisher<ImageMsg>("keypoint_image_left",  10);
+    image_pub_right_ = this->create_publisher<ImageMsg>("keypoint_image_right", 10);
 
     // Subscribers + synchronizer
     sub_left_.subscribe(this, topic_left);
@@ -108,6 +110,9 @@ private:
     result.image_right = *cv_bridge::CvImage(right_msg->header, "bgr8", frame_right).toImageMsg();
 
     result_pub_->publish(result);
+
+    image_pub_left_->publish(result.image_left);
+    image_pub_right_->publish(result.image_right);
   }
 
   bool annotate_images_{false};
@@ -118,6 +123,8 @@ private:
   std::shared_ptr<Sync> sync_;
 
   rclcpp::Publisher<custom_interfaces::msg::VisionResult>::SharedPtr result_pub_;
+  rclcpp::Publisher<ImageMsg>::SharedPtr image_pub_left_;
+  rclcpp::Publisher<ImageMsg>::SharedPtr image_pub_right_;
 };
 
 // ---------------------------------------------------------------------------
