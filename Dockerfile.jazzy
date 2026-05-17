@@ -1,0 +1,25 @@
+# Use the base image that has ros and pytorch pre-installed
+FROM dustynv/ros:jazzy-desktop-r36.4.0-cu128-24.04
+
+# fix the apt-get update error by adding the ROS repository
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | gpg --batch --dearmor | tee /usr/share/keyrings/ros-archive-keyring.gpg > /dev/null
+
+RUN apt-get update && apt-get install -y \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-tools \
+    gstreamer1.0-libav \
+    gstreamer1.0-rtsp \
+    && rm -rf /var/lib/apt/lists/* \
+    && echo 'source /opt/ros/jazzy/install/setup.bash' >> ~/.bashrc
+
+COPY . /root/sys-arch-2026
+
+WORKDIR /root/sys-arch-2026
+
+# colcon build must be run inside a live container (needs nvidia runtime for tegra libs)
+# after building, snapshot with: docker commit <container> sys-arch:compiled
