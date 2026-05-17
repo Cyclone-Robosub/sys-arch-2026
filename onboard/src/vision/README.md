@@ -7,34 +7,40 @@ ROS 2 package containing vision nodes for the robot.
 | `camera_feed_node` | Ingests a raw H264 camera stream (or a saved video file), forwards live streams to mediaMTX via RTSP, and publishes decoded frames as a ROS image topic |
 | `keypoint_node` | Subscribes to two synchronized camera topics, runs a keypoint-detection model on each frame, and publishes detections and (annotated) images as a `VisionResult` |
 
-## Dependencies
+---
 
-- ROS 2 Jazzy
-- GStreamer 1.0 + gstreamer-app (camera_feed_node)
-- TensorRT 10 + CUDA (keypoint_node)
-- OpenCV, cv_bridge
+## Quick start
 
-Install system dependencies:
+Launch both cameras and the keypoint detector in one command:
 
 ```bash
-# added to the Dockerfile
-sudo apt install \
-  libopencv-dev \
-  ros-jazzy-cv-bridge \
-  libgstreamer1.0-dev \
-  libgstreamer-plugins-base1.0-dev \
-  gstreamer1.0-plugins-good \
-  gstreamer1.0-plugins-bad \
-  gstreamer1.0-rtsp
-```
-
-## Building
-
-```bash
-source /opt/ros/jazzy/setup.bash
-colcon build --packages-up-to vision
 source install/setup.bash
+ros2 launch vision vision.launch.py model_path:=/path/to/model.engine
 ```
+
+All other parameters have defaults. Override as needed:
+
+```bash
+ros2 launch vision vision.launch.py \
+  model_path:=/path/to/model.engine \
+  device_left:=/dev/video6 \
+  device_right:=/dev/video2 \
+  annotate_images:=true
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `model_path` | *(required)* | Path to TensorRT engine |
+| `device_left` | `/dev/video6` | Left camera V4L2 device |
+| `device_right` | `/dev/video2` | Right camera V4L2 device |
+| `rtsp_url_left` | `rtsp://localhost:8554/left` | mediaMTX RTSP push URL for left camera |
+| `rtsp_url_right` | `rtsp://localhost:8554/right` | mediaMTX RTSP push URL for right camera |
+| `width` | `1920` | Frame width (both cameras) |
+| `height` | `1080` | Frame height (both cameras) |
+| `fps` | `30` | Frame rate (both cameras) |
+| `num_keypoints` | `4` | Keypoints per detection |
+| `conf_threshold` | `0.2` | Minimum detection confidence |
+| `annotate_images` | `false` | Draw bounding boxes and keypoints on published images |
 
 ---
 
