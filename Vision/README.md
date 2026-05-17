@@ -6,7 +6,7 @@
 - [x] Add two more camera feed publisher nodes
     - [x] Need a node to filter listen on both topics and filter out of the sync ones. 
         - [x] Make the keypoint detector node read from a camera feed topic instead of a video file
-    - [x] update the (web page)[../remote_control_webpage] to show stereo camera feeds
+    - [x] update the [web page](../remote_control_webpage) to show stereo camera feeds
 - [x] Use a custom message type for keypoint results instead of a string
 - [x] Switch to use `.engine` instead of `.torchscript` for *speed*
 - [x] fix up docker for jetson 
