@@ -12,10 +12,6 @@ def generate_launch_description():
             description='Path to the serialized TensorRT engine (.engine)'
         ),
         DeclareLaunchArgument(
-            'video_path',
-            description='Path to the input video file'
-        ),
-        DeclareLaunchArgument(
             'num_keypoints',
             default_value='4',
             description='Number of keypoints per detection'
@@ -37,7 +33,6 @@ def generate_launch_description():
             name='keypoint_node',
             parameters=[{
                 'model_path':     LaunchConfiguration('model_path'),
-                'video_path':     LaunchConfiguration('video_path'),
                 'num_keypoints':  LaunchConfiguration('num_keypoints'),
                 'conf_threshold': LaunchConfiguration('conf_threshold'),
                 'fps':            LaunchConfiguration('fps'),
