@@ -2,6 +2,11 @@
 
 ROS 2 package containing vision nodes for the robot.
 
+**Sharp bits:**
+
+- The package only works on Jetson nano Orin, inside the `sys-arch:compiled` container. 
+- For development, remove the [`.colconignore`](.colconignore) file in package root and follow [docker](../../../Vision/README.md#docker) section to build. 
+
 | Node | Description |
 |---|---|
 | `camera_feed_node` | Ingests a raw H264 camera stream (or a saved video file), forwards live streams to mediaMTX via RTSP, and publishes decoded frames as a ROS image topic |
