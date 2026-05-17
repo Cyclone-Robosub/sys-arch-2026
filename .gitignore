@@ -142,3 +142,6 @@ Vision/**/*.txt
 *.avi
 *.webm
 runs/
+
+remote_control_webpage/.*
+remote_control_webpage/node_modules/
