@@ -7,7 +7,7 @@
 #include <mutex>
 #include "rclcpp/rclcpp.hpp"
 #include "tui_interface.hpp"
-#include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/empty.hpp"
 #include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 #include "custom_interfaces/msg/pwms.hpp"
@@ -29,10 +29,10 @@ public:
     void work_loop();
 private:
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscriber;
-    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr heartbeat_subscription;
     std::unique_ptr<TUI_Interface> tui;
 
-    void mux_heartbeat_received_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
+    void mux_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
     void heartbeat_check_callback();
     void control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg);
     void refresh_display();

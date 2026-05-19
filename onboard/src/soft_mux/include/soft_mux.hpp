@@ -5,7 +5,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "custom_interfaces/msg/pwms.hpp"
 #include "custom_interfaces/srv/control_mode.hpp"
-#include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/empty.hpp"
 #include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 
@@ -35,11 +35,11 @@ class SoftMux : public rclcpp::Node {
         void pub_mode_srv(const std::shared_ptr<std_srvs::srv::SetBool::Request> request, const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
     private:
         void heartbeat_callback();
-        void ctrl_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
+        void ctrl_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
         void ctrl_heartbeat_check();
-        void cli_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
+        void cli_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
         void cli_heartbeat_check();
-        void echo_heartbeat_callback(std_msgs::msg::Bool::UniquePtr heartbeat);
+        void echo_heartbeat_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
         void echo_heartbeat_check();
         void pwm_cmd_publish(custom_interfaces::msg::Pwms::UniquePtr pwm);
         void publish_stop_command();
@@ -53,12 +53,13 @@ class SoftMux : public rclcpp::Node {
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_ctrl_subscriber;
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cli_subscriber;
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_echo_subscriber;
-        rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr ctrl_heartbeat_subscriber;
-        rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr cli_heartbeat_subscriber;
+        rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr ctrl_heartbeat_subscriber;
+        rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr cli_heartbeat_subscriber;
+        rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr echo_heartbeat_subscriber;
        
         rclcpp::Publisher<custom_interfaces::msg::Pwms>::SharedPtr pwm_cmd_publisher;
         rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr current_control_mode_publisher;
-        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr mux_heartbeat_publisher;
+        rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr mux_heartbeat_publisher;
        
         rclcpp::TimerBase::SharedPtr heartbeat_timer;
 
