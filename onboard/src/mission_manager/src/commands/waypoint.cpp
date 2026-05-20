@@ -40,8 +40,7 @@ using namespace CycloneCommands;
         return status;
     }
 
-    NodeStatus WaypointCmd::onResultReceived(const WrappedResult& result)
-    {
-    return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
+    NodeStatus WaypointCmd::onResultReceived(const WrappedResult& result) {
+        return result.result->success ? NodeStatus::SUCCESS : NodeStatus::FAILURE;
     }
  // namespace CycloneCommands

@@ -12,6 +12,8 @@ class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
 
     public:
+        friend class MissionManagerNodeInterface_TestPrimeSignal_Test;
+        friend class MissionManagerNodeInterface_TestGoSignal_Test;
         MissionManagerNode();
         void trigger_prime_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response);
         void go_signal_callback(std_msgs::msg::Bool::SharedPtr signal);
