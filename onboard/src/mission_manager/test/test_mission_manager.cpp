@@ -47,7 +47,7 @@ TEST_F(MissionManagerNodeInterface, MissionManagerNodeConstruction) {
     ASSERT_NE(node, nullptr);
     EXPECT_EQ(node->get_name(), std::string("mission_manager"));
 }
-TEST_F(MissionManagerNodeInterface, TestPrimeSignal) {
+TEST_F(MissionManagerNodeInterface, TestReadySignal) {
     createMissionManagerNode();
     auto client = node->create_client<std_srvs::srv::Trigger>("prime_signal_service");
     
@@ -62,10 +62,10 @@ TEST_F(MissionManagerNodeInterface, TestPrimeSignal) {
     auto future = client->async_send_request(request);
 
     ASSERT_EQ (future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
-    EXPECT_EQ(node->prime_signal, true);
+    EXPECT_EQ(node->ready_signal, true);
 }
 TEST_F(MissionManagerNodeInterface, TestGoSignal) {
     createMissionManagerNode();
-    node->prime_signal = true;
+    node->ready_signal = true;
 
 }

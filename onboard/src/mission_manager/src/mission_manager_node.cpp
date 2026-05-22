@@ -2,7 +2,7 @@
 using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
-  prime_service =  this->create_service<std_srvs::srv::Trigger>("prime_signal_service", std::bind(&MissionManagerNode::trigger_prime_signal, this, std::placeholders::_1, std::placeholders::_2));
+  ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
   go_client = this->create_client<std_srvs::srv::Trigger>("go_signal_service");
   execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "mission_manager_node");
   heartbeat_timer = this->create_wall_timer(500ms, std::bind(&MissionManagerNode::heartbeat_callback, this));
@@ -11,11 +11,11 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
 }
 
 /*
-    get trigger from website (prime signal)
+    get trigger from website (ready signal)
 */
-void MissionManagerNode::trigger_prime_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+void MissionManagerNode::trigger_ready_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
     (void) request;
-    prime_signal = true;
+    ready_signal = true;
     response->success = true;
     if (!go_signal_requested) {
         go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
@@ -67,7 +67,7 @@ void MissionManagerNode::go_signal_callback(std_msgs::msg::Bool::SharedPtr signa
     if we are primed (ready) and get go signal (go switch has been triggered), start run by sending the goal (the mission file) to MissionTreeServer
 */
 void MissionManagerNode::try_start_mission() {
-   if (!prime_signal || !go_signal || mission_started) {
+   if (!ready_signal || !go_signal || mission_started) {
         return;
    }
    ExecuteTree::Goal goal;

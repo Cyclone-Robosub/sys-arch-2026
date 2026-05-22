@@ -5,9 +5,6 @@ string object
 custom_interfaces/Pose6D tolerance
 float64 confidence
 uint64 hold_time
-
-# Tolerance is set from the blackboard
-# float64[6] tolerance
 ---
 # Result
 bool success

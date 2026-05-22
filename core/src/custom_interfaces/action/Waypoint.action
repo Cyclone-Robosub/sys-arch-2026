@@ -3,9 +3,6 @@ custom_interfaces/Pose6D waypoint
 custom_interfaces/WaypointMask waypoint_mask
 custom_interfaces/Pose6D tolerance
 uint64 hold_time
-
-# Tolerance is set from the blackboard
-# float64[6] tolerance
 ---
 # Result
 bool success

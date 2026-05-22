@@ -1,0 +1,3 @@
+string current_subtree
+string current_command
+string status
