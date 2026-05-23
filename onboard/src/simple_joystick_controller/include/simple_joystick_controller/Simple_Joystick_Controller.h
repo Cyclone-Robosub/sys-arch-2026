@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'Simple_Joystick_Controller'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.16
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:40 2026
+// C/C++ source code generated on : Thu May 14 23:42:13 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -25,9 +25,9 @@
 
 // Block signals (default storage)
 struct B_Simple_Joystick_Controller_T {
-  SL_Bus_custom_interfaces_Pwms BusCreator3;// '<S4>/Bus Creator3'
-  SL_Bus_custom_interfaces_Gamepad In1;// '<S6>/In1'
+  SL_Bus_custom_interfaces_Gamepad In1;// '<S8>/In1'
   SL_Bus_custom_interfaces_Gamepad rtb_SourceBlock_o2_m;
+  SL_Bus_custom_interfaces_Pwms BusCreator3;// '<S5>/Bus Creator3'
   char_T b_zeroDelimTopic[16];
   char_T b_zeroDelimTopic_c[16];
   sJ4ih70VmKcvCeguWN0mNVF deadline;
@@ -37,17 +37,44 @@ struct B_Simple_Joystick_Controller_T {
 
 // Block states (default storage) for system '<Root>'
 struct DW_Simple_Joystick_Controller_T {
-  ros_slros2_internal_block_Sub_T obj; // '<S5>/SourceBlock'
-  ros_slros2_internal_block_Pub_T obj_a;// '<S9>/SinkBlock'
-  ros_slros2_internal_block_Pub_T obj_e;// '<S7>/SinkBlock'
+  ros_slros2_internal_block_Sub_T obj; // '<S7>/SourceBlock'
+  ros_slros2_internal_block_Pub_T obj_c;// '<S12>/SinkBlock'
+  ros_slros2_internal_block_Pub_T obj_g;// '<S11>/SinkBlock'
+  boolean_T joystick_flag;             // '<Root>/mode_manager'
+  boolean_T prior_joystick_flag;       // '<Root>/mode_manager'
+  boolean_T do_mission_file_flag;      // '<Root>/mode_manager'
+  boolean_T prior_do_mission_file_flag;// '<Root>/mode_manager'
+};
+
+// Constant parameters (default storage)
+struct ConstP_Simple_Joystick_Contro_T {
+  // Computed Parameter: Constant_Value
+  //  Referenced by: '<S10>/Constant'
+
+  SL_Bus_std_msgs_Empty Constant_Value;
 };
 
 // Real-time Model Data Structure
 struct tag_RTM_Simple_Joystick_Contr_T {
   const char_T * volatile errorStatus;
+
+  //
+  //  Timing:
+  //  The following substructure contains information regarding
+  //  the timing information for the model.
+
+  struct {
+    struct {
+      uint8_T TID[2];
+    } TaskCounters;
+  } Timing;
+
   const char_T* getErrorStatus() const;
   void setErrorStatus(const char_T* const volatile aErrorStatus);
 };
+
+// Constant parameters (default storage)
+extern const ConstP_Simple_Joystick_Contro_T Simple_Joystick_Controll_ConstP;
 
 // Class declaration for model Simple_Joystick_Controller
 class Simple_Joystick_Controller final
@@ -123,15 +150,18 @@ extern volatile boolean_T runModel;
 //  Here is the system hierarchy for this model
 //
 //  '<Root>' : 'Simple_Joystick_Controller'
-//  '<S1>'   : 'Simple_Joystick_Controller/Subsystem'
-//  '<S2>'   : 'Simple_Joystick_Controller/Subsystem Reference'
-//  '<S3>'   : 'Simple_Joystick_Controller/joystick_to_pwm'
-//  '<S4>'   : 'Simple_Joystick_Controller/pwm_publisher'
-//  '<S5>'   : 'Simple_Joystick_Controller/Subsystem/Subscribe'
-//  '<S6>'   : 'Simple_Joystick_Controller/Subsystem/Subscribe/Enabled Subsystem'
-//  '<S7>'   : 'Simple_Joystick_Controller/Subsystem Reference/Publish2'
-//  '<S8>'   : 'Simple_Joystick_Controller/joystick_to_pwm/joystick_inputs_to_body_forces'
-//  '<S9>'   : 'Simple_Joystick_Controller/pwm_publisher/Publish'
+//  '<S1>'   : 'Simple_Joystick_Controller/joystick_output'
+//  '<S2>'   : 'Simple_Joystick_Controller/joystick_to_pwm'
+//  '<S3>'   : 'Simple_Joystick_Controller/mode_manager'
+//  '<S4>'   : 'Simple_Joystick_Controller/pwm_heartbeat_publisher'
+//  '<S5>'   : 'Simple_Joystick_Controller/pwm_publisher'
+//  '<S6>'   : 'Simple_Joystick_Controller/joystick_output/MATLAB Function'
+//  '<S7>'   : 'Simple_Joystick_Controller/joystick_output/Subscribe'
+//  '<S8>'   : 'Simple_Joystick_Controller/joystick_output/Subscribe/Enabled Subsystem'
+//  '<S9>'   : 'Simple_Joystick_Controller/joystick_to_pwm/joystick_inputs_to_body_forces'
+//  '<S10>'  : 'Simple_Joystick_Controller/pwm_heartbeat_publisher/Blank Message1'
+//  '<S11>'  : 'Simple_Joystick_Controller/pwm_heartbeat_publisher/Publish2'
+//  '<S12>'  : 'Simple_Joystick_Controller/pwm_publisher/Publish'
 
 #endif                                 // Simple_Joystick_Controller_h_
 

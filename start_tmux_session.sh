@@ -49,6 +49,8 @@ tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run mux_controller mux_cont
 # SECTION 2: Video Streaming and Recording Window
 ################################################################################
 
+mkdir -p ~/Robosub/recordings
+
 # --- mediaMTX ---
 # Create new window 
 MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "mediamtx; bash")
