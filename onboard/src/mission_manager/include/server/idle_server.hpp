@@ -2,6 +2,8 @@
 #include <memory>
 #include <thread>
 
+#include "std_msgs/msg/bool.hpp"
+#include "custom_interfaces/msg/goal.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "custom_interfaces/action/idle.hpp"
@@ -12,10 +14,14 @@ public:
   using Idle = custom_interfaces::action::Idle;
   using GoalHandleIdle = rclcpp_action::ServerGoalHandle<Idle>;
   explicit IdleActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions());
-
 private:
-  
   rclcpp_action::Server<Idle>::SharedPtr action_server_;
+  
+  rclcpp::Publisher<custom_interfaces::msg::Goal>::SharedPtr goal_publisher;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr result_subscriber;
+  void result_callback(std_msgs::msg::Bool::SharedPtr msg);
+  bool cur_result;
+
   rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const Idle::Goal> goal);
   rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleIdle> goal_handle);
   void handle_accepted(const std::shared_ptr<GoalHandleIdle> goal_handle);

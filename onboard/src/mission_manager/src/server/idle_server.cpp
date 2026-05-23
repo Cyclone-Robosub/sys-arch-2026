@@ -2,8 +2,10 @@
 
 
 IdleActionServer::IdleActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("idle_action_server", options) {
+    goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
+    result_subscriber = this->create_subscription<std_msgs::msg::Bool>("command_result", 10, std::bind(&IdleActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<Idle>(
-        this, "sleep_service", std::bind(&IdleActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
+        this, "idle_service", std::bind(&IdleActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&IdleActionServer::handle_cancel, this, std::placeholders::_1),
         std::bind(&IdleActionServer::handle_accepted, this, std::placeholders::_1));
 }
@@ -27,8 +29,14 @@ void IdleActionServer::execute(const std::shared_ptr<GoalHandleIdle> goal_handle
     RCLCPP_INFO(this->get_logger(), "Executing goal");
     rclcpp::Rate loop_rate(5);
     const auto goal = goal_handle->get_goal();
+
+    std::string command = "idle____________";
+    auto goal_cmd = custom_interfaces::msg::Goal();
+    goal_cmd.command_id = command;
+    goal_publisher->publish(goal_cmd);
+    
     auto feedback = std::make_shared<Idle::Feedback>();
-    auto result = std::make_shared<Idle::Result>();
+    auto result = std::make_shared<Idle::Result>(); 
 
     if(goal_handle->is_canceling()) {
         result->success = false;
@@ -42,8 +50,11 @@ void IdleActionServer::execute(const std::shared_ptr<GoalHandleIdle> goal_handle
 
     // Check if goal is done
     if (rclcpp::ok()) {
-      result->success = true;
+      result->success = cur_result;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal succeeded");
     }
+}
+void IdleActionServer::result_callback(std_msgs::msg::Bool::SharedPtr msg) {
+    cur_result = msg->data;
 }
