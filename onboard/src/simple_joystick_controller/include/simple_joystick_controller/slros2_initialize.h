@@ -1,5 +1,5 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 19-Feb-2026 19:35:43
+// Generated 14-May-2026 23:42:45
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
 #include "Simple_Joystick_Controller_types.h"
@@ -37,10 +37,10 @@ inline rclcpp::QoS getQOSSettingsFromRMW(const rmw_qos_profile_t& qosProfile) {
     }
     return qos;
 }
-// Simple_Joystick_Controller/Subsystem Reference/Publish2
-extern SimulinkPublisher<std_msgs::msg::Bool,SL_Bus_std_msgs_Bool> Pub_Simple_Joystick_HIL_32_150;
+// Simple_Joystick_Controller/pwm_heartbeat_publisher/Publish2
+extern SimulinkPublisher<std_msgs::msg::Empty,SL_Bus_std_msgs_Empty> Pub_Simple_Joystick_Controller_85_150;
 // Simple_Joystick_Controller/pwm_publisher/Publish
-extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pub_Simple_Joystick_Controller_30_2;
-// Simple_Joystick_Controller/Subsystem/Subscribe
-extern SimulinkSubscriber<custom_interfaces::msg::Gamepad,SL_Bus_custom_interfaces_Gamepad> Sub_Simple_Joystick_Controller_25;
+extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pub_Simple_Joystick_Controller_86_2;
+// Simple_Joystick_Controller/joystick_output/Subscribe
+extern SimulinkSubscriber<custom_interfaces::msg::Gamepad,SL_Bus_custom_interfaces_Gamepad> Sub_Simple_Joystick_Controller_77;
 #endif

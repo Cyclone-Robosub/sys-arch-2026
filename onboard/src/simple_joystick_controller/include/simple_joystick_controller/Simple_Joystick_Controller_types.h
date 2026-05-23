@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'Simple_Joystick_Controller'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.16
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:40 2026
+// C/C++ source code generated on : Thu May 14 23:42:13 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -19,17 +19,6 @@
 #ifndef Simple_Joystick_Controller_types_h_
 #define Simple_Joystick_Controller_types_h_
 #include "rtwtypes.h"
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
-
-// MsgType=custom_interfaces/Pwms
-struct SL_Bus_custom_interfaces_Pwms
-{
-  int32_T pwms[8];
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Gamepad_
 #define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Gamepad_
 
@@ -42,22 +31,47 @@ struct SL_Bus_custom_interfaces_Gamepad
   real32_T sink;
   real32_T yaw;
   real32_T pitch;
+  boolean_T cross_button;
+  boolean_T square_button;
+  boolean_T triangle_button;
+  boolean_T circle_button;
+  boolean_T dpad_down;
+  boolean_T dpad_left;
+  boolean_T dpad_up;
+  boolean_T dpad_right;
+  boolean_T bumper_left;
+  boolean_T bumper_right;
+  boolean_T start;
+  boolean_T select;
+  boolean_T joystick_press_left;
+  boolean_T joystick_press_right;
 };
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Bool_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Bool_
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
 
-// MsgType=std_msgs/Bool
-struct SL_Bus_std_msgs_Bool
+// MsgType=std_msgs/Empty
+struct SL_Bus_std_msgs_Empty
 {
-  boolean_T data;
+  boolean_T SL_DummyData;
 };
 
 #endif
 
-// Custom Type definition for MATLABSystem: '<S9>/SinkBlock'
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pwms_
+
+// MsgType=custom_interfaces/Pwms
+struct SL_Bus_custom_interfaces_Pwms
+{
+  int32_T pwms[8];
+};
+
+#endif
+
+// Custom Type definition for MATLABSystem: '<S12>/SinkBlock'
 #include "rmw/qos_profiles.h"
 #ifndef struct_sJ4ih70VmKcvCeguWN0mNVF
 #define struct_sJ4ih70VmKcvCeguWN0mNVF
