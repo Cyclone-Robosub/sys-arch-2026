@@ -24,7 +24,7 @@ if [[ ! -f /opt/ros/jazzy/setup.bash ]]; then
 fi
 
 source install/setup.sh
-source ~/.$(echo $SHELL | awk -F  '/' '{print $NF}')rc
+export PATH="$PATH:/opt/mediaMTX"
 
 SESSION="manny"
 
