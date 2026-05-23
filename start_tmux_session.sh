@@ -24,6 +24,7 @@ if [[ ! -f /opt/ros/jazzy/setup.bash ]]; then
 fi
 
 source install/setup.sh
+source ~/.$(echo $SHELL | awk -F  '/' '{print $NF}')rc
 
 SESSION="manny"
 
