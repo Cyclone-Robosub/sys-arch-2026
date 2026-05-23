@@ -49,16 +49,24 @@ tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run mux_controller mux_cont
 # SECTION 2: Video Streaming and Recording Window
 ################################################################################
 
+mkdir -p ~/Robosub/recordings
+
 # --- mediaMTX ---
 # Create new window 
 MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "mediamtx; bash")
 
 # --- ffmpeg ---
-tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 \
-    -video_size 1920x1080 -framerate 30 \
-    -fflags +genpts \
-    -i /dev/video2 \
-    -c:v copy -f rtsp rtsp://localhost:8554/cam; bash" 
+FFMPEG_PANE=$(tmux split-window -h -t $MEDIAMTX_PANE -P -F "#{pane_id}" "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
+	-fflags +genpts \
+	-i /dev/video2 \
+	-c:v copy -f rtsp rtsp://localhost:8554/down \
+	-c:v copy -avoid_negative_ts make_zero -f mp4 ~/Robosub/recordings/output_$(date +%Y%m%d_%H%M%S)_bottom.mp4; bash") 
+
+tmux split-window -v -t $FFMPEG_PANE "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
+	-fflags +genpts \
+	-i /dev/video6 \
+	-c:v copy -f rtsp rtsp://localhost:8554/front \
+	-c:v copy -avoid_negative_ts make_zero -f mp4 ~/Robosub/recordings/output_$(date +%Y%m%d_%H%M%S)_front.mp4; bash"
 
 ################################################################################
 # SECTION 3: Additional Components: Sensors
