@@ -50,11 +50,10 @@ tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run mux_controller mux_cont
 
 # --- mediaMTX ---
 # Create new window 
-MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "cd ~/mediaMTX && ./mediamtx; bash")
+MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "mediamtx; bash")
 
 # --- ffmpeg ---
-tmux split-window -h -t $MEDIAMTX_PANE "cd ~/mediaMTX && \
-    ffmpeg -f v4l2 -input_format h264 \
+tmux split-window -h -t $MEDIAMTX_PANE "ffmpeg -f v4l2 -input_format h264 \
     -video_size 1920x1080 -framerate 30 \
     -fflags +genpts \
     -i /dev/video2 \
