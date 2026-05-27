@@ -26,5 +26,4 @@ private:
   rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleIdle> goal_handle);
   void handle_accepted(const std::shared_ptr<GoalHandleIdle> goal_handle);
   void execute(const std::shared_ptr<GoalHandleIdle> goal_handle);
-   
 };  
