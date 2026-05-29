@@ -1,9 +1,9 @@
 #include "server/object_rel_waypoint_server.hpp"
 
 
-ObjRelWaypointActionServer::ObjRelWaypointActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("waypoint_action_server", options) {
+ObjRelWaypointActionServer::ObjRelWaypointActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("obj_rel_waypoint_action_server", options) {
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
-    result_subscriber = this->create_subscription<std_msgs::msg::Bool>("command_result", 10, std::bind(&ObjRelWaypointActionServer::result_callback, this, std::placeholders::_1));
+    result_subscriber = this->create_subscription<std_msgs::msg::Result>("command_result", 10, std::bind(&ObjRelWaypointActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<ObjRelWaypoint>(
         this, "obj_rel_waypoint_service", std::bind(&ObjRelWaypointActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&ObjRelWaypointActionServer::handle_cancel, this, std::placeholders::_1),
@@ -66,6 +66,6 @@ void ObjRelWaypointActionServer::execute(const std::shared_ptr<GoalHandleObjRelW
       RCLCPP_INFO(this->get_logger(), "Goal succeeded");
     }
 }
-void ObjRelWaypointActionServer::result_callback(std_msgs::msg::Bool::SharedPtr msg) {
-    cur_result = msg->data;
+void ObjRelWaypointActionServer::result_callback(std_msgs::msg::Result::SharedPtr msg) {
+    cur_result = msg->success;
 }

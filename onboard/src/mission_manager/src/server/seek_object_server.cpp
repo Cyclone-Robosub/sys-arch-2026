@@ -3,9 +3,9 @@
 
 SeekObjectActionServer::SeekObjectActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("seek_object_action_server", options) {
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
-    result_subscriber = this->create_subscription<std_msgs::msg::Bool>("command_result", 10, std::bind(&SeekObjectActionServer::result_callback, this, std::placeholders::_1));
+    result_subscriber = this->create_subscription<std_msgs::msg::Result>("command_result", 10, std::bind(&SeekObjectActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<SeekObject>(
-        this, "idle_service", std::bind(&SeekObjectActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
+        this, "seek_object_service", std::bind(&SeekObjectActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&SeekObjectActionServer::handle_cancel, this, std::placeholders::_1),
         std::bind(&SeekObjectActionServer::handle_accepted, this, std::placeholders::_1));
 }
@@ -61,10 +61,14 @@ void SeekObjectActionServer::execute(const std::shared_ptr<GoalHandleSeekObject>
     // Check if goal is done
     if (rclcpp::ok()) {
       result->success = cur_result;
+      result->found_object = found_object;
+      result->reached_waypoint_without_detection = reached_waypoint_without_detection;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal succeeded");
     }
 }
-void SeekObjectActionServer::result_callback(std_msgs::msg::Bool::SharedPtr msg) {
-    cur_result = msg->data;
+void SeekObjectActionServer::result_callback(std_msgs::msg::Result::SharedPtr msg) {
+    cur_result = msg->success;
+    found_object = msg->found_object;
+    reached_waypoint_without_detection = msg->reached_waypoint_without_detection;
 }

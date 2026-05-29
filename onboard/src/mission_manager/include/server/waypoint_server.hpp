@@ -3,6 +3,7 @@
 #include <thread>
 
 #include "std_msgs/msg/bool.hpp"
+#include "custom_interfaces/msg/result.hpp"
 #include "custom_interfaces/msg/goal.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
@@ -18,8 +19,8 @@ private:
   rclcpp_action::Server<Waypoint>::SharedPtr action_server_;
   
   rclcpp::Publisher<custom_interfaces::msg::Goal>::SharedPtr goal_publisher;
-  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr result_subscriber;
-  void result_callback(std_msgs::msg::Bool::SharedPtr msg);
+  rclcpp::Subscription<std_msgs::msg::Result>::SharedPtr result_subscriber;
+  void result_callback(std_msgs::msg::Result::SharedPtr msg);
   bool cur_result;
 
   rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const Waypoint::Goal> goal);

@@ -3,9 +3,9 @@
 
 WaypointActionServer::WaypointActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("waypoint_action_server", options) {
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
-    result_subscriber = this->create_subscription<std_msgs::msg::Bool>("command_result", 10, std::bind(&WaypointActionServer::result_callback, this, std::placeholders::_1));
+    result_subscriber = this->create_subscription<std_msgs::msg::Result>("command_result", 10, std::bind(&WaypointActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<Waypoint>(
-        this, "idle_service", std::bind(&WaypointActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
+        this, "waypoint_service", std::bind(&WaypointActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&WaypointActionServer::handle_cancel, this, std::placeholders::_1),
         std::bind(&WaypointActionServer::handle_accepted, this, std::placeholders::_1));
 }
@@ -59,6 +59,6 @@ void WaypointActionServer::execute(const std::shared_ptr<GoalHandleWaypoint> goa
       RCLCPP_INFO(this->get_logger(), "Goal succeeded");
     }
 }
-void WaypointActionServer::result_callback(std_msgs::msg::Bool::SharedPtr msg) {
-    cur_result = msg->data;
+void WaypointActionServer::result_callback(std_msgs::msg::Result::SharedPtr msg) {
+    cur_result = msg->success;
 }
