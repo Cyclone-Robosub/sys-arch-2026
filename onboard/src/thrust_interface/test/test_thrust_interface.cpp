@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
 #include <custom_interfaces/msg/pwms.hpp>
-#include "std_msgs/msg/bool.hpp"
 #include "thrust_interface.hpp"
 #include <fcntl.h>
 #include <unistd.h>
@@ -123,12 +122,11 @@ protected:
      * @brief Helper to publish the heartbeat message
      */
     void publish_heartbeat() {
-        auto publisher = node->create_publisher<std_msgs::msg::Bool>("mux_heartbeat", 10);
+        auto publisher = node->create_publisher<std_msgs::msg::Empty>("mux_heartbeat", 10);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-        auto message = std_msgs::msg::Bool();
-        message.data = true;
+        auto message = std_msgs::msg::Empty();
 
         publisher->publish(message);
 

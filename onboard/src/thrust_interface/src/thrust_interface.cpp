@@ -19,7 +19,7 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters,
         "pwm_cmd", 10, 
         std::bind(&Thrust_Interface::pwm_received_subscription_callback, this, std::placeholders::_1));
 
-    heartbeat_subscription = this->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, 
+    heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, 
             std::bind(&Thrust_Interface::mux_heartbeat_received_callback, this, std::placeholders::_1));
     
     heartbeat_timer = this->create_wall_timer(500ms, 
@@ -41,7 +41,7 @@ void Thrust_Interface::pwm_received_subscription_callback(custom_interfaces::msg
     }
 }
 
-void Thrust_Interface::mux_heartbeat_received_callback(std_msgs::msg::Bool::UniquePtr heartbeat) {
+void Thrust_Interface::mux_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat) {
     most_recent_heartbeat = std::chrono::steady_clock::now();
     if (no_heartbeat) {
         no_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
     std::vector<int> thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
     std::unique_ptr<FD_Interface> fd = std::make_unique<Pico_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
     rclcpp::init(argc, argv);
-    auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, std::move(fd), 1200, 1800);
+    auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, std::move(fd), 1100, 1900);
     rclcpp::spin(thrust_interface);
     
     rclcpp::shutdown();
