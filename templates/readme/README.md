@@ -8,8 +8,8 @@ Provide the necessary instructions to interact with the project from a user (not
 
 Provide launch instructions for each node in the package (i.e. `ros2 run package_name node_name` or a launch file instruction).
 
-## What topics/services does the package use for input?
-This is for topics that the package subscribes to, services that it responds to when called, and actions that it responds to and performs. List them and provide a brief description of what they mean and are used for.
+## What topics/services/actions does the package use for input?
+This is for topics that the package subscribes to, services that it responds to when called, and actions that it responds to and performs as a server. List them and provide a brief description of what they mean and are used for.
 - Topics:
     - `topic_name`: description
     - `topic_name`: description
@@ -20,8 +20,8 @@ This is for topics that the package subscribes to, services that it responds to 
     - `action_name`: description
     - `action_name`: description
 
-## What topics/services does the package use for output?
-This is for topics that the package publishes to, services that it calls, and actions that it requests. List them and provide a brief description of what they meand and are used for.
+## What topics/services/actions does the package use for output?
+This is for topics that the package publishes to, services that it calls, and actions that it requests as a client. List them and provide a brief description of what they meand and are used for.
 - Topics:
     - `topic_name`: description
     - `topic_name`: description
