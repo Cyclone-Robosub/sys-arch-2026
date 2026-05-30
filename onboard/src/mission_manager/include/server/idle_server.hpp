@@ -19,8 +19,9 @@ private:
   rclcpp_action::Server<Idle>::SharedPtr action_server_;
   
   rclcpp::Publisher<custom_interfaces::msg::Goal>::SharedPtr goal_publisher;
-  rclcpp::Subscription<std_msgs::msg::Result>::SharedPtr result_subscriber;
-  void result_callback(std_msgs::msg::Result::SharedPtr msg);
+  rclcpp::Subscription<custom_interfaces::msg::Result>::SharedPtr result_subscriber;
+  bool process_done;
+  void result_callback(custom_interfaces::msg::Result::SharedPtr msg);
   bool cur_result;
 
   rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const Idle::Goal> goal);

@@ -2,8 +2,9 @@
 
 
 WaypointActionServer::WaypointActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("waypoint_action_server", options) {
+    process_done = false;
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
-    result_subscriber = this->create_subscription<std_msgs::msg::Result>("command_result", 10, std::bind(&WaypointActionServer::result_callback, this, std::placeholders::_1));
+    result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&WaypointActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<Waypoint>(
         this, "waypoint_service", std::bind(&WaypointActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&WaypointActionServer::handle_cancel, this, std::placeholders::_1),
@@ -41,16 +42,18 @@ void WaypointActionServer::execute(const std::shared_ptr<GoalHandleWaypoint> goa
     
     auto feedback = std::make_shared<Waypoint::Feedback>();
     auto result = std::make_shared<Waypoint::Result>(); 
+    
+    while (!process_done) {
+        if (goal_handle->is_canceling()) {
+            result->success = false;
+            goal_handle->canceled(result);
+            RCLCPP_INFO(this->get_logger(), "Goal canceled");
+            return;
+        }
 
-    if(goal_handle->is_canceling()) {
-        result->success = false;
-        goal_handle->canceled(result);
-        RCLCPP_INFO(this->get_logger(), "Goal canceled");
-        return;
+        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        loop_rate.sleep();
     }
-
-    RCLCPP_INFO(this->get_logger(), "No feedback to publish");
-    loop_rate.sleep();
 
     // Check if goal is done
     if (rclcpp::ok()) {
@@ -59,6 +62,7 @@ void WaypointActionServer::execute(const std::shared_ptr<GoalHandleWaypoint> goa
       RCLCPP_INFO(this->get_logger(), "Goal succeeded");
     }
 }
-void WaypointActionServer::result_callback(std_msgs::msg::Result::SharedPtr msg) {
+void WaypointActionServer::result_callback(custom_interfaces::msg::Result::SharedPtr msg) {
     cur_result = msg->success;
+    process_done = true;
 }

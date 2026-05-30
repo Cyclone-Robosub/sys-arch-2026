@@ -2,8 +2,9 @@
 
 
 DurationTrickActionServer::DurationTrickActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("duration_trick_action_server", options) {
+    process_done = false;
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
-    result_subscriber = this->create_subscription<std_msgs::msg::Result>("command_result", 10, std::bind(&DurationTrickActionServer::result_callback, this, std::placeholders::_1));
+    result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&DurationTrickActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<DurationTrick>(
         this, "duration_trick_service", std::bind(&DurationTrickActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&DurationTrickActionServer::handle_cancel, this, std::placeholders::_1),
@@ -53,16 +54,16 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
     auto feedback = std::make_shared<DurationTrick::Feedback>();
     auto result = std::make_shared<DurationTrick::Result>(); 
 
-    if(goal_handle->is_canceling()) {
-        result->success = false;
-        goal_handle->canceled(result);
-        RCLCPP_INFO(this->get_logger(), "Goal canceled");
-        return;
+    while (!process_done) {
+        if (goal_handle->is_canceling()) {
+            result->success = false;
+            goal_handle->canceled(result);
+            RCLCPP_INFO(this->get_logger(), "Goal canceled");
+            return;
+        }   
+        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        loop_rate.sleep();
     }
-
-    RCLCPP_INFO(this->get_logger(), "No feedback to publish");
-    loop_rate.sleep();
-
     // Check if goal is done
     if (rclcpp::ok()) {
       result->success = cur_result;
@@ -70,6 +71,7 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
       RCLCPP_INFO(this->get_logger(), "Goal succeeded");
     }
 }
-void DurationTrickActionServer::result_callback(std_msgs::msg::Result::SharedPtr msg) {
+void DurationTrickActionServer::result_callback(custom_interfaces::msg::Result::SharedPtr msg) {
     cur_result = msg->success;
+    process_done = true;
 }

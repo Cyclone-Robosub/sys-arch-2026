@@ -14,23 +14,19 @@ class MissionManagerNode : public rclcpp::Node {
     public:
         friend class MissionManagerNodeInterface_TestReadySignal_Test;
         friend class MissionManagerNodeInterface_TestGoSignal_Test;
+        friend class MissionManagerNodeInterface_TestMissionStart_Test;
         MissionManagerNode();
         void trigger_ready_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response);
         void go_signal_callback(std_msgs::msg::Bool::SharedPtr signal);
         void try_start_mission();
     private:
         rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_service;
-        rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr go_client;
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr go_signal_subscriber;
         rclcpp_action::Client<ExecuteTree>::SharedPtr execute_tree_client;
 
-        void retrieve_go_signal();
         bool ready_signal = false;
         bool go_signal = false;
-
-        bool go_signal_requested = false;
         bool mission_started = false;
-        rclcpp::TimerBase::SharedPtr go_retry_timer;
         
         void heartbeat_callback();
         void mission_manager_heartbeat_send();

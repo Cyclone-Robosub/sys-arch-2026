@@ -19,11 +19,12 @@ private:
   rclcpp_action::Server<SeekObject>::SharedPtr action_server_;
   
   rclcpp::Publisher<custom_interfaces::msg::Goal>::SharedPtr goal_publisher;
-  rclcpp::Subscription<std_msgs::msg::Result>::SharedPtr result_subscriber;
-  void result_callback(std_msgs::msg::Result::SharedPtr msg);
+  rclcpp::Subscription<custom_interfaces::msg::Result>::SharedPtr result_subscriber;
+  bool process_done;
+  void result_callback(custom_interfaces::msg::Result::SharedPtr msg);
   bool cur_result;
   std::string found_object;
-  bool reached_waypoint_without_detection
+  bool reached_waypoint_without_detection;
   
   rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const SeekObject::Goal> goal);
   rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleSeekObject> goal_handle);

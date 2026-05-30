@@ -3,10 +3,9 @@ using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
-  go_client = this->create_client<std_srvs::srv::Trigger>("go_signal_service");
   execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "mission_manager_node");
+  go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
   heartbeat_timer = this->create_wall_timer(500ms, std::bind(&MissionManagerNode::heartbeat_callback, this));
-
   mission_manager_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mission_manager_heartbeat", 10);
 }
 
@@ -15,44 +14,8 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
 */
 void MissionManagerNode::trigger_ready_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
     (void) request;
-    ready_signal = true;
+    ready_signal = !ready_signal;
     response->success = true;
-    if (!go_signal_requested) {
-        go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
-        retrieve_go_signal();
-        go_signal_requested = true;
-    }
-}
-
-/*  asks for the current go switch state from the go_signal_service
-    only done once at startup of the node
-*/
-void MissionManagerNode::retrieve_go_signal() {
-    // if service is down, try again in 2 sec
-    if (!go_client->wait_for_service(std::chrono::seconds(1))) {
-        RCLCPP_WARN(this->get_logger(), "Go signal service not available, retrying in 2 seconds");
-        if (!go_retry_timer) {
-            go_retry_timer = this->create_wall_timer(std::chrono::seconds(2), std::bind(&MissionManagerNode::retrieve_go_signal, this));
-        }
-        return;
-    }
-    if (go_retry_timer) {
-        go_retry_timer->cancel();
-        go_retry_timer->reset();
-    }
-    auto go_signal_request = std::make_shared<std_srvs::srv::Trigger::Request>();
-    auto future = go_client->async_send_request(go_signal_request);
-    auto result = rclcpp::spin_until_future_complete(this->get_node_base_interface(), future);
-    if (result != rclcpp::FutureReturnCode::SUCCESS) {
-        RCLCPP_WARN(this->get_logger(), "Can't call go signal service");
-        return;
-    }
-    auto response = future.get();
-    if (!response->success) {
-        RCLCPP_WARN(this->get_logger(), "Go signal trigger failed: %s", response->message.c_str());
-        return;
-    }
-    try_start_mission();
 }
 
 /*

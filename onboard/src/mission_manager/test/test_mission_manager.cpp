@@ -7,7 +7,6 @@ using namespace std::chrono_literals;
 class MissionManagerNodeInterface : public::testing::Test {
     protected:
         std::shared_ptr<MissionManagerNode> node;
-        rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr go_service;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr go_signal_publisher;
 
         void SetUp() override {
@@ -23,20 +22,12 @@ class MissionManagerNodeInterface : public::testing::Test {
         void createMissionManagerNode() {
             node = std::make_shared<MissionManagerNode>();
         }
-
+        void setUpGoPublisher() {
+            go_signal_publisher = node->create_publisher<std_msgs::msg::Bool>("go_signal", 10);
+        }
         /*
         *   
         */
-        void setUpGoService() {
-            go_service = node->create_service<std_srvs::srv::Trigger>("go_signal_service", std::bind(&MissionManagerNodeInterface::go_signal_callback, this, std::placeholders::_1));
-        }
-        void go_signal_callback(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
-            (void) request;
-            response->success = true;
-            std_msgs::msg::Bool msg;
-            msg.data = true;
-            go_signal_publisher->publish(msg);
-        }
         
 };
 
@@ -66,6 +57,22 @@ TEST_F(MissionManagerNodeInterface, TestReadySignal) {
 }
 TEST_F(MissionManagerNodeInterface, TestGoSignal) {
     createMissionManagerNode();
-    node->ready_signal = true;
-
+    std_msgs::msg::Bool msg;
+    msg.data = false;
+    go_signal_publisher->publish(msg);
+    EXPECT_EQ(node->go_signal, false);
+    msg.data = true;
+    go_signal_publisher->publish(msg);
+    EXPECT_EQ(node->go_signal, true);
 }
+TEST_F(MissionManagerNodeInterface, TestMissionStart) {
+    node->ready_signal = true;
+    node->go_signal = true;
+    EXPECT_EQ(node->mission_started, true);
+}
+#ifdef ENABLE_TESTING
+    int main(int argc, char** argv) {
+        ::testing::InitGoogleTest(&argc, argv);
+        return RUN_ALL_TESTS();
+    }
+#endif
