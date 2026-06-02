@@ -3,7 +3,7 @@
 #include "std_srvs/srv/trigger.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/empty.hpp"
-#include <behaviortree_ros2/tree_execution_server.hpp>
+#include "tree_execution_server.hpp"
 #include "server/mission_tree_server.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "btcpp_ros2_interfaces/action/execute_tree.hpp"
