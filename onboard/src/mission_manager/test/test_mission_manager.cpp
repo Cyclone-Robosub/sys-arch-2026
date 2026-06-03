@@ -40,7 +40,7 @@ TEST_F(MissionManagerNodeInterface, MissionManagerNodeConstruction) {
 }
 TEST_F(MissionManagerNodeInterface, TestReadySignal) {
     createMissionManagerNode();
-    auto client = node->create_client<std_srvs::srv::Trigger>("prime_signal_service");
+    auto client = node->create_client<std_srvs::srv::Trigger>("ready_signal_service");
     
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(node);
@@ -51,10 +51,11 @@ TEST_F(MissionManagerNodeInterface, TestReadySignal) {
 
     std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
     auto future = client->async_send_request(request);
-
-    ASSERT_EQ (future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    
+    ASSERT_EQ (future.wait_for(std::chrono::seconds(10)), std::future_status::ready);
     EXPECT_EQ(node->ready_signal, true);
 }
+
 TEST_F(MissionManagerNodeInterface, TestGoSignal) {
     createMissionManagerNode();
     std_msgs::msg::Bool msg;

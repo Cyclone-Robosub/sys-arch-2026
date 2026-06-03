@@ -56,7 +56,7 @@ void MissionManagerNode::mission_manager_heartbeat_send() {
     Creates MissionManagerNode to oversee the Server and start on conditions
     Creates MissionTreeServer object and spins
 */
-
+#ifndef ENABLE_TESTING
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
    
@@ -76,3 +76,4 @@ int main(int argc, char** argv) {
     rclcpp::shutdown();
     return 0;
 }
+#endif

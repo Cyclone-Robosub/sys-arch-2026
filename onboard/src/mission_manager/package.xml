@@ -12,6 +12,7 @@
   <depend>custom_interfaces</depend>
   <depend>behaviortree_cpp</depend>
   <depend>behaviortree_ros2</depend>
+  <depend>btcpp_ros2_interfaces</depend>
   <depend>std_srvs</depend>
   <depend>std_msgs</depend>
   <depend>rclcpp</depend>

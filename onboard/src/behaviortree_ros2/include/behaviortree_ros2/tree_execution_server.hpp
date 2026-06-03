@@ -87,7 +87,7 @@ protected:
    * @brief Callback invoked when a goal is received and before the tree is created.
    * If it returns false, the goal will be rejected.
   */
-  virtual bool onGoalReceived(const std::string& tree_name, const std::string& payload)
+  virtual bool onGoalReceived(const std::string& tree_name [[maybe_unused]], const std::string& payload [[maybe_unused]])
   {
     return true;
   }
@@ -98,7 +98,7 @@ protected:
    *
    * @param tree The tree that was created
   */
-  virtual void onTreeCreated(BT::Tree& tree)
+  virtual void onTreeCreated(BT::Tree& tree [[maybe_unused]])
   {}
 
   /**
@@ -108,7 +108,7 @@ protected:
    *
    * @param factory The factory to use to register nodes
   */
-  virtual void registerNodesIntoFactory(BT::BehaviorTreeFactory& factory)
+  virtual void registerNodesIntoFactory(BT::BehaviorTreeFactory& factory [[maybe_unused]])
   {}
 
   /**
@@ -118,7 +118,7 @@ protected:
    *
    * @param status The status of the tree after the last tick
   */
-  virtual std::optional<BT::NodeStatus> onLoopAfterTick(BT::NodeStatus status)
+  virtual std::optional<BT::NodeStatus> onLoopAfterTick(BT::NodeStatus status [[maybe_unused]])
   {
     return std::nullopt;
   }
@@ -132,8 +132,8 @@ protected:
    *
    * @return if not std::nullopt, the string will be sent as [return_message] to the Action Client.
   */
-  virtual std::optional<std::string> onTreeExecutionCompleted(BT::NodeStatus status,
-                                                              bool was_cancelled)
+  virtual std::optional<std::string> onTreeExecutionCompleted(BT::NodeStatus status [[maybe_unused]],
+                                                              bool was_cancelled [[maybe_unused]])
   {
     return std::nullopt;
   }
