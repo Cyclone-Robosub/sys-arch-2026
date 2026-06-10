@@ -97,7 +97,7 @@ namespace dvl {
     }
 
     config_report DVL::readConfig(){
-        bool success = endCommand(CMD_GET_SETTINGS); 
+        bool success = sendCommand(CMD_GET_SETTINGS); 
         if (success){
             return config;
         } else {
