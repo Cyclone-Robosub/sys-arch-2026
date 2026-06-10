@@ -11,7 +11,10 @@
 #include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 #include "custom_interfaces/msg/pwms.hpp"
+#include "custom_interfaces/msg/vr.hpp"
+#include "custom_interfaces/msg/drr.hpp"
 #include "custom_interfaces/srv/control_mode.hpp"
+
 
 using namespace rclcpp;
 
@@ -27,8 +30,24 @@ public:
     void get_mux_mode_now();
     void work_loop();
 private:
-    rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscriber;
-    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr heartbeat_subscription;
+    // Heartbeats
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr thrust_interface_heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr mux_heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr ctrl_heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr cli_heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr echo_heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr dvl_heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr joystick_heartbeat_subscription;
+    
+    // Data
+    rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cmd_subscription;
+    rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_ctrl_subscription;
+    rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cli_subscription;
+    rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_echo_subscription;
+    rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr dvl_drr_subscription;
+    rclcpp::Subscription<custom_interfaces::msg::VR>::SharedPtr dvl_vr_subscription;
+    rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscription;
+    
     std::unique_ptr<TUI_Interface> tui;
 
     void mux_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);

@@ -22,5 +22,5 @@
 - Connection status
     - most recent ping rtt
     - most recent successful ping
-        - blink red if more than 0.5 seconds ago
+        - blink red if more than 1 second ago
 

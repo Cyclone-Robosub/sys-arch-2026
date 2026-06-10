@@ -1,15 +1,43 @@
 #include "tui.hpp"
+#include <sys/wait.h>
 
 using namespace std::chrono_literals;
 
 Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std::move(tui)) {
-    current_control_mode_subscriber = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
-        std::bind(&Dashboard::control_mode_callback, this, std::placeholders::_1));
-    heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, 
+    // Heartbeats
+    thrust_interface_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("thrust_interface_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    mux_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    ctrl_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("ctrl_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    cli_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("cli_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    echo_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("echo_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    dvl_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("dvl_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    joystick_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("joystick_heartbeat", 10, 
         std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
     
+    // Data
+    pwm_cmd_subscription = this->create_subscription<std_msgs::msg::Empty>("thrust_interface_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    pwm_ctrl_subscription = this->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    pwm_cli_subscription = this->create_subscription<std_msgs::msg::Empty>("ctrl_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    pwm_echo_subscription = this->create_subscription<std_msgs::msg::Empty>("cli_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    dvl_drr_subscription = this->create_subscription<std_msgs::msg::Empty>("dvl_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    dvl_vr_subscription = this->create_subscription<std_msgs::msg::Empty>("dvl_heartbeat", 10, 
+        std::bind(&Dashboard::mux_heartbeat_received_callback, this, std::placeholders::_1));
+    current_control_mode_subscription = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
+        std::bind(&Dashboard::control_mode_callback, this, std::placeholders::_1));
+
     heartbeat_timer = this->create_wall_timer(500ms, 
-            std::bind(&Dashboard::heartbeat_check_callback, this)); // heartbeat timer    
+            std::bind(&Dashboard::heartbeat_check_callback, this));
 
     client = this->create_client<custom_interfaces::srv::ControlMode>("control_mode");
     force_pub = this->create_client<std_srvs::srv::SetBool>("force_pub");
@@ -190,12 +218,48 @@ void display_all_pwms(int* pwms_cmd, int* pwms_cli, int* pwms_ctrl, int* pwms_ec
     fill_right_col(sub_col_3 + 11);
 }
 
-void display_drr() {
-
+void display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, int col_number) {
+    jump_to_column(col_number);
+    if (!connection_ok) {
+        write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
+        write(STDOUT_FILENO, "\x1B[31;107m", 9); // set red foreground, white background
+        printf("== No robot connection! Check ethernet cable. ==\n");
+        write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
+    }
+    else {
+        printf("Most recent ping: rtt %.3lfms | %.3lf seconds since last ping.\n", ping_rtt, seconds_since_ping);
+    }
 }
 
-void display_vr() {
+void display_drr(int col_number) {
+    jump_to_column(col_number);
+    printf("TODO DRR\n");
+}
 
+void display_vr(int col_number) {
+    jump_to_column(col_number);
+    printf("TODO VR\n");
+}
+
+// TODO: run in seperate thread
+std::string get_ping() {
+    int pipe_fds[2];
+    pipe(pipe_fds); // [0] = read end, [1] = write end
+    int pid = fork();
+    if (pid > 0) { // Parent
+        char buf[512] = {0};
+        int status;
+        waitpid(pid, &status, 0);
+        if (status != 0) {
+            return "error";
+        }
+        read(pipe_fds[0], buf, 512);
+        return buf;
+    } else { // Child
+        dup2(pipe_fds[1], STDOUT_FILENO);
+        execlp("ping", "ping", "-c 1", "localhost", NULL);
+        return "error"; // should never get here
+    }
 }
 
 void Dashboard_TUI::display_tui(va_list args) {
@@ -207,10 +271,14 @@ void Dashboard_TUI::display_tui(va_list args) {
     bool cli_heartbeat = false;
     bool echo_heartbeat = false;
     bool dvl_heartbeat = false;
+    bool joystick_heartbeat = false;
     int pwms_cmd[] = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
     int pwms_cli[] = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
     int pwms_ctrl[] = {1500, 1500, 1500, 1500, 1500, 1500, 1500, 1500};
     int pwms_echo[] = {0, 0, 0, 0, 0, 0, 0, 0};
+    bool ping_ok = true;
+    double ping_rtt = 0.244;
+    double seconds_since_ping = 0.1;
 
     int first_col = 0;
     int second_col = 35;
@@ -235,17 +303,27 @@ void Dashboard_TUI::display_tui(va_list args) {
     display_escalatable_status(current_mux_mode, 3, echo_heartbeat, first_col);
     printf("\n");
 
+    write_header("dvl", first_col);
+    display_critical_status(dvl_heartbeat, first_col);
+    display_vr(first_col);
+    display_drr(first_col);
+    printf("\n");
+
+    write_header("Robot Connection Status", first_col);
+    display_connection_info(ping_ok, ping_rtt, seconds_since_ping, first_col);
+    
     reset_cursor_pos();
 
     write_header("pwms", second_col);
     display_all_pwms(pwms_cmd, pwms_cli, pwms_ctrl, pwms_echo, second_col, 45, 55, 66);
     printf("\n");
 
-    write_header("dvl", second_col);
-    display_critical_status(dvl_heartbeat, second_col);
-    display_vr();
-    display_drr();
     printf("\n");
+    write_header("Joystick", second_col);
+    display_escalatable_status(current_mux_mode, 1, joystick_heartbeat, second_col);
+    printf("\n");
+
+    
 
     // bool no_heartbeat = (bool)va_arg(args, int);
     // int current_control_mode = va_arg(args, int);
