@@ -1,0 +1,26 @@
+- thrust interface
+    - heartbeat
+- mux
+    - heartbeat
+    - current mode
+- matlab
+    - heartbeat
+- cli
+    - heartbeat
+- echo
+    - heartbeat
+> Blink "no heartbeat" in red, except for last three: blink in red if current mux mode matches; else blink in white
+- PWMS (most recent 8)
+    - CMD
+    - CLI
+    - CTRL
+    - ECHO
+- DVL (most recent)
+    - heartbeat
+    - DRR
+    - VRR
+- Connection status
+    - most recent ping rtt
+    - most recent successful ping
+        - blink red if more than 0.5 seconds ago
+
