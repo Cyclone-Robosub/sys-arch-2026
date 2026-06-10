@@ -97,7 +97,7 @@ namespace dvl {
     }
 
     config_report DVL::readConfig(){
-        bool success = sendCommand(CMD_GET_SETTINGS); 
+        bool success = endCommand(CMD_GET_SETTINGS); 
         if (success){
             return config;
         } else {
@@ -408,7 +408,6 @@ namespace dvl {
 
     void DVL::workLoop() {
         if(!sendCommand(CMD_RESET_DR)) RCLCPP_WARN(this->get_logger(), "Error with DR reset");
-        if(!sendCommand(CMD_CALIBRATE_GYRO)) RCLCPP_WARN(this->get_logger(), "Error with GYRO rest");
        
         while (rclcpp::ok()) {
             dvl_mutex.lock();
