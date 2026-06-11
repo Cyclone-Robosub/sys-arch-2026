@@ -235,7 +235,7 @@ void Dashboard_TUI::write_header(std::string header, int col_number) {
     jump_to_column(col_number);
 }
 
-void Dashboard_TUI::write_selectable_header(std::string header, int current_mode, int active_mode, int col_number) {
+void Dashboard_TUI::write_selectable_header(std::string header, int current_mode, int active_mode, const int col_number) {
     if (active_mode == current_mode) {
         write_header("= " + header + " =", col_number);
     }
@@ -244,7 +244,7 @@ void Dashboard_TUI::write_selectable_header(std::string header, int current_mode
     }
 }
 
-void Dashboard_TUI::display_critical_status(bool heartbeat, int col_number) {
+void Dashboard_TUI::display_critical_status(bool heartbeat, const int col_number) {
     jump_to_column(col_number);
     if (!heartbeat) {
         write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
@@ -257,7 +257,7 @@ void Dashboard_TUI::display_critical_status(bool heartbeat, int col_number) {
     jump_to_column(col_number);
 }
 
-void Dashboard_TUI::display_noncritical_status(bool heartbeat, int col_number) {
+void Dashboard_TUI::display_noncritical_status(bool heartbeat, const int col_number) {
     jump_to_column(col_number);
     if (!heartbeat) {
         write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
@@ -270,7 +270,7 @@ void Dashboard_TUI::display_noncritical_status(bool heartbeat, int col_number) {
     jump_to_column(col_number);
 }
 
-void Dashboard_TUI::display_escalatable_status(int current_mode, int critical_mode, bool heartbeat, int col_number) {
+void Dashboard_TUI::display_escalatable_status(int current_mode, int critical_mode, bool heartbeat, const int col_number) {
     if (current_mode == critical_mode) {
         display_critical_status(heartbeat, col_number);
     }
@@ -280,7 +280,7 @@ void Dashboard_TUI::display_escalatable_status(int current_mode, int critical_mo
 }
 
 /* Note: this function returns cursor to its original position so sub-columns can be next to each other */
-void Dashboard_TUI::display_pwms(std::array<int,8> pwms, int col_number, bool fresh) {
+void Dashboard_TUI::display_pwms(std::array<int,8> pwms, const int col_number, bool fresh) {
     write(STDOUT_FILENO, "\x1B[s", 3); // Save cursor position
     printf("\n");
     if (pwms[0] == 0) { // no pwms to display
@@ -306,30 +306,30 @@ void Dashboard_TUI::display_pwms(std::array<int,8> pwms, int col_number, bool fr
     write(STDOUT_FILENO, "\x1B[u", 3); // Restore cursor position
 }
 
-void Dashboard_TUI::fill_right_col(int col_number) {
+void Dashboard_TUI::fill_right_col(const int col_number) {
     for (int i = 0; i < 9; i++) {
         jump_to_column(col_number);
         printf("|\n");
     }
 }
 
-void Dashboard_TUI::display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3) {
+void Dashboard_TUI::display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo) {
     
     printf("| - CMD - ");
-    display_pwms(pwms_cmd.pwms, main_col, std::chrono::steady_clock::now() - pwms_cmd.timestamp < 0.5s);
-    jump_to_column(sub_col_1);
+    display_pwms(pwms_cmd.pwms, col_2, std::chrono::steady_clock::now() - pwms_cmd.timestamp < 0.5s);
+    jump_to_column(col_2_1);
     printf("| - CLI - ");
-    display_pwms(pwms_cli.pwms, sub_col_1, std::chrono::steady_clock::now() - pwms_cli.timestamp < 0.5s);
-    jump_to_column(sub_col_2);
+    display_pwms(pwms_cli.pwms, col_2_1, std::chrono::steady_clock::now() - pwms_cli.timestamp < 0.5s);
+    jump_to_column(col_2_2);
     printf("| - CTRL - ");
-    display_pwms(pwms_ctrl.pwms, sub_col_2, std::chrono::steady_clock::now() - pwms_ctrl.timestamp < 0.5s);
-    jump_to_column(sub_col_3);
+    display_pwms(pwms_ctrl.pwms, col_2_2, std::chrono::steady_clock::now() - pwms_ctrl.timestamp < 0.5s);
+    jump_to_column(col_2_3);
     printf("| - ECHO - |");
-    display_pwms(pwms_echo.pwms, sub_col_3, std::chrono::steady_clock::now() - pwms_echo.timestamp < 0.5s);
-    fill_right_col(sub_col_3 + 11);
+    display_pwms(pwms_echo.pwms, col_2_3, std::chrono::steady_clock::now() - pwms_echo.timestamp < 0.5s);
+    fill_right_col(col_2_4);
 }
 
-void Dashboard_TUI::display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, int col_number) {
+void Dashboard_TUI::display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, const int col_number) {
     jump_to_column(col_number);
     if (!connection_ok) {
         write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
@@ -342,25 +342,34 @@ void Dashboard_TUI::display_connection_info(bool connection_ok, double seconds_s
     }
 }
 
-void Dashboard_TUI::display_vr(int col_number, DVL_Data velocity) {
+void Dashboard_TUI::display_vr(const int col_number, DVL_Data velocity) {
     jump_to_column(col_number);
     std::string fresh = dvl_fresh(velocity);
     std::string clear = "\x1B[39;22m";
-    printf("Velocity:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", fresh.c_str(), velocity.x, clear.c_str(), fresh.c_str(), velocity.y, clear.c_str(), fresh.c_str(), velocity.z, clear.c_str());
+    printf("Velocity:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", 
+        fresh.c_str(), velocity.x, clear.c_str(), 
+        fresh.c_str(), velocity.y, clear.c_str(), 
+        fresh.c_str(), velocity.z, clear.c_str());
 }
 
-void Dashboard_TUI::display_drr(int col_number, DVL_Data position, DVL_Data orientation) {
+void Dashboard_TUI::display_drr(const int col_number, DVL_Data position, DVL_Data orientation) {
     jump_to_column(col_number);
     std::string position_fresh = dvl_fresh(position);
     std::string orientation_fresh = dvl_fresh(orientation);
     std::string clear = "\x1B[39;22m";
-    printf("Position:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", position_fresh.c_str(), position.x, clear.c_str(), position_fresh.c_str(), position.y, clear.c_str(), position_fresh.c_str(), position.z, clear.c_str());
+    printf("Position:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", 
+        position_fresh.c_str(), position.x, clear.c_str(), 
+        position_fresh.c_str(), position.y, clear.c_str(), 
+        position_fresh.c_str(), position.z, clear.c_str());
     jump_to_column(col_number);
-    printf("Orientation: | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", orientation_fresh.c_str(), orientation.x, clear.c_str(), orientation_fresh.c_str(), orientation.y, clear.c_str(), orientation_fresh.c_str(), orientation.z, clear.c_str());
+    printf("Orientation: | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", 
+        orientation_fresh.c_str(), orientation.x, clear.c_str(), 
+        orientation_fresh.c_str(), orientation.y, clear.c_str(), 
+        orientation_fresh.c_str(), orientation.z, clear.c_str());
 }
 
 std::string Dashboard_TUI::dvl_fresh(DVL_Data dvl_data) {
-    if (std::chrono::steady_clock::now() - dvl_data.timestamp < 0.5s) {
+    if (fresh_evaluation_time - dvl_data.timestamp < 0.5s) {
         return "\x1B[1;94m"; // bold, blue
     }
     else {
@@ -369,7 +378,7 @@ std::string Dashboard_TUI::dvl_fresh(DVL_Data dvl_data) {
 }
 
 std::string Dashboard_TUI::pwm_fresh(PWM_Data pwm_data) {
-    if (std::chrono::steady_clock::now() - pwm_data.timestamp < 0.5s) {
+    if (fresh_evaluation_time - pwm_data.timestamp < 0.5s) {
         return "\x1B[1;94m"; // bold, blue
     }
     else {
@@ -403,11 +412,6 @@ std::string Dashboard::get_ping() {
         return "error"; // should never get here
     }
 }
-    // bool fresh_cmd = (now - pwms_cmd.timestamp < 0.5s);
-    // bool fresh_cli = (now - pwms_cli.timestamp < 0.5s);
-    // bool fresh_ctrl = (now - pwms_ctrl.timestamp < 0.5s);
-    // bool fresh_echo = (now - pwms_echo.timestamp < 0.5s);
-
 
 void Dashboard_TUI::display_tui(va_list args) {
     int current_mux_mode = va_arg(args, int);
@@ -432,6 +436,8 @@ void Dashboard_TUI::display_tui(va_list args) {
 
     int first_col = 0;
     int second_col = 35;
+    
+    fresh_evaluation_time = std::chrono::steady_clock::now();
 
     reset_cursor_pos();
 
@@ -472,7 +478,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     reset_cursor_pos();
 
     write_header("pwms", second_col);
-    display_all_pwms(pwms_cmd, pwms_cli, pwms_ctrl, pwms_echo, second_col, 45, 55, 66);
+    display_all_pwms(pwms_cmd, pwms_cli, pwms_ctrl, pwms_echo);
     printf("\n");
 
     printf("\n");
@@ -486,7 +492,6 @@ void Dashboard_TUI::display_tui(va_list args) {
 }
 
 // TODO: Add voltage, ability to reset dvl drr and gyro, mission manager heartbeat
-// TODO: clean up excessively long argument lists (make structs/classes for related objects)
 
 int main(int argc, char* argv[]) {    
     rclcpp::init(argc, argv);

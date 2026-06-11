@@ -43,12 +43,19 @@ class Dashboard_TUI : public TUI_Interface {
         void display_escalatable_status(int current_mode, int critical_mode, bool heartbeat, int col_number);
         void display_pwms(std::array<int,8> pwms, int col_number, bool fresh);
         void fill_right_col(int col_number);
-        void display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3);
+        void display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo);
         void display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, int col_number);
         void display_drr(int col_number, DVL_Data position, DVL_Data orientation);
         void display_vr(int col_number, DVL_Data velocity);
         std::string dvl_fresh(DVL_Data dvl_data);
         std::string pwm_fresh(PWM_Data pwm_data);
+        std::chrono::time_point<std::chrono::steady_clock> fresh_evaluation_time;
+        const int col_1 = 0;
+        const int col_2 = 35;
+        const int col_2_1 = 45;
+        const int col_2_2 = 55;
+        const int col_2_3 = 66;
+        const int col_2_4 = 77;
 };
 
 class Dashboard : public rclcpp::Node {
