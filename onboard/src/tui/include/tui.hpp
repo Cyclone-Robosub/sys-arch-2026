@@ -29,9 +29,9 @@ class Dashboard_TUI : public TUI_Interface {
         void display_critical_status(bool heartbeat, int col_number);
         void display_noncritical_status(bool heartbeat, int col_number);
         void display_escalatable_status(int current_mode, int critical_mode, bool heartbeat, int col_number);
-        void display_pwms(int* pwms, int col_number);
+        void display_pwms(int* pwms, int col_number, bool fresh);
         void fill_right_col(int col_number);
-        void display_all_pwms(int* pwms_cmd, int* pwms_cli, int* pwms_ctrl, int* pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3);
+        void display_all_pwms(int* pwms_cmd, int* pwms_cli, int* pwms_ctrl, int* pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3, bool cmd_fresh, bool cli_fresh, bool ctrl_fresh, bool echo_fresh);
         void display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, int col_number);
         void display_drr(int col_number, double x, double y, double z, double roll, double pitch, double yaw);
         void display_vr(int col_number, double vx, double vy, double vz);
@@ -128,6 +128,10 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> most_recent_joystick_heartbeat;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_ping;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_ping_attempt;
+    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_cmd;
+    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_cli;
+    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_ctrl;
+    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_echo;
 
 };
 
