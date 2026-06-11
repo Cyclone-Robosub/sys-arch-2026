@@ -1,5 +1,4 @@
 #include "tui.hpp"
-#include <sys/wait.h>
 
 using namespace std::chrono_literals;
 
@@ -62,8 +61,7 @@ void Dashboard::heartbeat_check_callback() {
     ctrl_heartbeat = no_heartbeat(current_time, most_recent_ctrl_heartbeat);
     echo_heartbeat = no_heartbeat(current_time, most_recent_echo_heartbeat);
     dvl_heartbeat = no_heartbeat(current_time, most_recent_dvl_heartbeat);
-    joystick_heartbeat = no_heartbeat(current_time, most_recent_joystick_heartbeat);
-    // TODO: update ping information
+    joystick_heartbeat = no_heartbeat(current_time, most_recent_joystick_heartbeat);  
     refresh_display();
 }
 
@@ -173,12 +171,14 @@ void Dashboard::work_loop() {
             continue;
         }
 
-        most_recent_ping = most_recent_ping_attempt;
-
-        ping_ok = true;
         auto rtt_location = ping_output.find("rtt"); // Location of the string "rtt", not the value of rtt
+        if (rtt_location == std::string::npos || (rtt_location + 28 > ping_output.length())) { // bad message
+            continue;
+        }
         auto rtt_string = ping_output.substr(rtt_location + 23, 5); // extract value of rtt
         rtt = stod(rtt_string);
+        most_recent_ping = most_recent_ping_attempt;
+        ping_ok = true;
     }
 
     tui->restore_terminal();

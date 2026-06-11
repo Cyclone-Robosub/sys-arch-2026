@@ -3,8 +3,7 @@
 
 #include <chrono>
 #include <unistd.h>
-#include <termios.h>
-#include <mutex>
+#include <sys/wait.h>
 #include "rclcpp/rclcpp.hpp"
 #include "tui_interface.hpp"
 #include "std_msgs/msg/empty.hpp"
