@@ -451,12 +451,14 @@ void Dashboard_TUI::display_tui(va_list args) {
     fflush(stdout);
 }
 
+// TODO: Add voltage, ability to reset dvl drr and gyro, mission manager heartbeat
+
 int main(int argc, char* argv[]) {    
     rclcpp::init(argc, argv);
     std::unique_ptr<TUI_Interface> tui = std::make_unique<Dashboard_TUI>();
     auto dashboard = std::make_shared<Dashboard>(std::move(tui));
     
-    std::thread ros_thread([&]() { // Needs to be seperate thread so that input loop can run
+    std::thread ros_thread([&]() { // Needs to be seperate thread so that work loop can run
         rclcpp::spin(dashboard);
     });
 
