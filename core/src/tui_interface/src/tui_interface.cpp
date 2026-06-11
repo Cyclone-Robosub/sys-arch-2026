@@ -14,7 +14,6 @@ void TUI_Interface::refresh_display(int numArgs, ...) {
     current_input = "";
     cursor_pos = 0;
     num_read = 0;
-    clear_display();
     display_tui(args);
     display_mutex.unlock();
 }
