@@ -17,6 +17,18 @@
 
 using namespace rclcpp;
 
+typedef struct pwm_data {
+    std::array<int,8> pwms = {0};
+    std::chrono::time_point<std::chrono::steady_clock> timestamp;
+} PWM_Data;
+
+typedef struct dvl_data {
+    double x = 0;
+    double y = 0;
+    double z = 0;
+    std::chrono::time_point<std::chrono::steady_clock> timestamp;
+} DVL_Data;
+
 class Dashboard_TUI : public TUI_Interface {
     public:
         explicit Dashboard_TUI() {};
@@ -29,12 +41,14 @@ class Dashboard_TUI : public TUI_Interface {
         void display_critical_status(bool heartbeat, int col_number);
         void display_noncritical_status(bool heartbeat, int col_number);
         void display_escalatable_status(int current_mode, int critical_mode, bool heartbeat, int col_number);
-        void display_pwms(int* pwms, int col_number, bool fresh);
+        void display_pwms(std::array<int,8> pwms, int col_number, bool fresh);
         void fill_right_col(int col_number);
-        void display_all_pwms(int* pwms_cmd, int* pwms_cli, int* pwms_ctrl, int* pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3, bool cmd_fresh, bool cli_fresh, bool ctrl_fresh, bool echo_fresh);
+        void display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3);
         void display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, int col_number);
-        void display_drr(int col_number, double x, double y, double z, double roll, double pitch, double yaw);
-        void display_vr(int col_number, double vx, double vy, double vz);
+        void display_drr(int col_number, DVL_Data position, DVL_Data orientation);
+        void display_vr(int col_number, DVL_Data velocity);
+        std::string dvl_fresh(DVL_Data dvl_data);
+        std::string pwm_fresh(PWM_Data pwm_data);
 };
 
 class Dashboard : public rclcpp::Node {
@@ -99,19 +113,13 @@ private:
     int current_control_mode = 0; // 0 = Disabled, 1 = CLI, 2 = CTRL, 3 = Echo
     double seconds_since_ping = -1;
     double rtt = -1;
-    std::array<int,8> pwms_cmd = {0};
-    std::array<int,8> pwms_cli = {0};
-    std::array<int,8> pwms_ctrl = {0};
-    std::array<int,8> pwms_echo = {0};
-    double vx = 0;
-    double vy = 0;
-    double vz = 0;
-    double x = 0;
-    double y = 0;
-    double z = 0;
-    double roll = 0;
-    double pitch = 0;
-    double yaw = 0;
+    PWM_Data pwms_cmd;
+    PWM_Data pwms_cli;
+    PWM_Data pwms_ctrl;
+    PWM_Data pwms_echo;
+    DVL_Data velocity;
+    DVL_Data position;
+    DVL_Data orientation;
 
     rclcpp::Client<custom_interfaces::srv::ControlMode>::SharedPtr client;
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub;
@@ -128,11 +136,6 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> most_recent_joystick_heartbeat;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_ping;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_ping_attempt;
-    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_cmd;
-    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_cli;
-    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_ctrl;
-    std::chrono::time_point<std::chrono::steady_clock> most_recent_pwm_echo;
-
 };
 
 

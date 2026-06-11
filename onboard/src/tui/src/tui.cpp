@@ -117,40 +117,43 @@ void Dashboard::joystick_heartbeat_received_callback(std_msgs::msg::Empty::Uniqu
 }
 
 void Dashboard::pwm_cmd_callback(custom_interfaces::msg::Pwms::UniquePtr pwms) {
-    pwms_cmd = pwms->pwms;
-    most_recent_pwm_cmd = std::chrono::steady_clock::now();
+    pwms_cmd.pwms = pwms->pwms;
+    pwms_cmd.timestamp = std::chrono::steady_clock::now();
 }
 
 void Dashboard::pwm_cli_callback(custom_interfaces::msg::Pwms::UniquePtr pwms) {
-    pwms_cli = pwms->pwms;
-    most_recent_pwm_cli = std::chrono::steady_clock::now();
+    pwms_cli.pwms = pwms->pwms;
+    pwms_cli.timestamp = std::chrono::steady_clock::now();
 }
 
 void Dashboard::pwm_ctrl_callback(custom_interfaces::msg::Pwms::UniquePtr pwms) {
-    pwms_ctrl = pwms->pwms;
-    most_recent_pwm_ctrl = std::chrono::steady_clock::now();
+    pwms_ctrl.pwms = pwms->pwms;
+    pwms_ctrl.timestamp = std::chrono::steady_clock::now();
 }
 
 
 void Dashboard::pwm_echo_callback(custom_interfaces::msg::Pwms::UniquePtr pwms) {
-    pwms_echo = pwms->pwms;
-    most_recent_pwm_echo = std::chrono::steady_clock::now();
+    pwms_echo.pwms = pwms->pwms;
+    pwms_ctrl.timestamp = std::chrono::steady_clock::now();
 }
 
 
 void Dashboard::dvl_vr_callback(custom_interfaces::msg::VR::UniquePtr vr) {
-    vx = vr->velocity_data.x;
-    vy = vr->velocity_data.y;
-    vz = vr->velocity_data.z;
+    velocity.x = vr->velocity_data.x;
+    velocity.y = vr->velocity_data.y;
+    velocity.z = vr->velocity_data.z;
+    velocity.timestamp = std::chrono::steady_clock::now();
 }
 
 void Dashboard::dvl_drr_callback(custom_interfaces::msg::DRR::UniquePtr drr) {
-    x = drr->position.x;
-    y = drr->position.y;
-    z = drr->position.z;
-    roll = drr->angle.x;
-    pitch = drr->angle.y;
-    yaw = drr->angle.z;
+    position.x = drr->position.x;
+    position.y = drr->position.y;
+    position.z = drr->position.z;
+    position.timestamp = std::chrono::steady_clock::now();
+    orientation.x = drr->angle.x; // roll
+    orientation.y = drr->angle.y; // pitch
+    orientation.z = drr->angle.z; // roll
+    orientation.timestamp = std::chrono::steady_clock::now();
 }
 
 void Dashboard::control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg) {
@@ -192,11 +195,7 @@ void Dashboard::work_loop() {
 void Dashboard::refresh_display() {
     auto now = std::chrono::steady_clock::now();
     seconds_since_ping = (double)((now - most_recent_ping) / 1ms) / (double)1000;
-    bool fresh_cmd = (now - most_recent_pwm_cmd < 0.5s);
-    bool fresh_cli = (now - most_recent_pwm_cli < 0.5s);
-    bool fresh_ctrl = (now - most_recent_pwm_ctrl < 0.5s);
-    bool fresh_echo = (now - most_recent_pwm_echo < 0.5s);
-    tui->refresh_display(27, current_control_mode,
+    tui->refresh_display(18, current_control_mode,
                              thrust_interface_heartbeat,
                              mux_heartbeat,
                              cli_heartbeat,
@@ -204,23 +203,13 @@ void Dashboard::refresh_display() {
                              echo_heartbeat,
                              dvl_heartbeat,
                              joystick_heartbeat,
-                             pwms_cmd.data(),
-                             pwms_cli.data(),
-                             pwms_ctrl.data(),
-                             pwms_echo.data(),
-                             fresh_cmd,
-                             fresh_cli,
-                             fresh_ctrl,
-                             fresh_echo,
-                             vx,
-                             vy,
-                             vz,
-                             x,
-                             y,
-                             z,
-                             roll,
-                             pitch,
-                             yaw,
+                             pwms_cmd,
+                             pwms_cli,
+                             pwms_ctrl,
+                             pwms_echo,
+                             velocity,
+                             position,
+                             orientation,
                              ping_ok,
                              rtt,
                              seconds_since_ping);
@@ -291,8 +280,7 @@ void Dashboard_TUI::display_escalatable_status(int current_mode, int critical_mo
 }
 
 /* Note: this function returns cursor to its original position so sub-columns can be next to each other */
-// TODO: check with Alex and co. about whether they prefer bolded or inverted
-void Dashboard_TUI::display_pwms(int* pwms, int col_number, bool fresh) {
+void Dashboard_TUI::display_pwms(std::array<int,8> pwms, int col_number, bool fresh) {
     write(STDOUT_FILENO, "\x1B[s", 3); // Save cursor position
     printf("\n");
     if (pwms[0] == 0) { // no pwms to display
@@ -308,13 +296,11 @@ void Dashboard_TUI::display_pwms(int* pwms, int col_number, bool fresh) {
         printf("| ");
         fflush(stdout);
         if (fresh) {
-            // write(STDOUT_FILENO, "\x1B[30;107m", 9); // set white background
-            write(STDOUT_FILENO, "\x1B[1m", 4); // set bold
+            write(STDOUT_FILENO, "\x1B[1;94m", 7); // set bold, blue
         }
         printf("%d\n", pwms[i]);
         if (fresh) {
-            // write(STDOUT_FILENO, "\x1B[39;49m", 8); // unset white background
-            write(STDOUT_FILENO, "\x1B[22m", 5); // unset bold
+            write(STDOUT_FILENO, "\x1B[39;22m", 8); // unset bold, blue
         }
     }
     write(STDOUT_FILENO, "\x1B[u", 3); // Restore cursor position
@@ -327,18 +313,19 @@ void Dashboard_TUI::fill_right_col(int col_number) {
     }
 }
 
-void Dashboard_TUI::display_all_pwms(int* pwms_cmd, int* pwms_cli, int* pwms_ctrl, int* pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3, bool cmd_fresh, bool cli_fresh, bool ctrl_fresh, bool echo_fresh) {
+void Dashboard_TUI::display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo, int main_col, int sub_col_1, int sub_col_2, int sub_col_3) {
+    
     printf("| - CMD - ");
-    display_pwms(pwms_cmd, main_col, cmd_fresh);
+    display_pwms(pwms_cmd.pwms, main_col, std::chrono::steady_clock::now() - pwms_cmd.timestamp < 0.5s);
     jump_to_column(sub_col_1);
     printf("| - CLI - ");
-    display_pwms(pwms_cli, sub_col_1, cli_fresh);
+    display_pwms(pwms_cli.pwms, sub_col_1, std::chrono::steady_clock::now() - pwms_cli.timestamp < 0.5s);
     jump_to_column(sub_col_2);
     printf("| - CTRL - ");
-    display_pwms(pwms_ctrl, sub_col_2, ctrl_fresh);
+    display_pwms(pwms_ctrl.pwms, sub_col_2, std::chrono::steady_clock::now() - pwms_ctrl.timestamp < 0.5s);
     jump_to_column(sub_col_3);
     printf("| - ECHO - |");
-    display_pwms(pwms_echo, sub_col_3, echo_fresh);
+    display_pwms(pwms_echo.pwms, sub_col_3, std::chrono::steady_clock::now() - pwms_echo.timestamp < 0.5s);
     fill_right_col(sub_col_3 + 11);
 }
 
@@ -355,17 +342,41 @@ void Dashboard_TUI::display_connection_info(bool connection_ok, double seconds_s
     }
 }
 
-void Dashboard_TUI::display_vr(int col_number, double vx, double vy, double vz) {
+void Dashboard_TUI::display_vr(int col_number, DVL_Data velocity) {
     jump_to_column(col_number);
-    printf("Velocity:    | x: %.5f | y: %.5f | z: %.5f |\n", vx, vy, vz);
+    std::string fresh = dvl_fresh(velocity);
+    std::string clear = "\x1B[39;22m";
+    printf("Velocity:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", fresh.c_str(), velocity.x, clear.c_str(), fresh.c_str(), velocity.y, clear.c_str(), fresh.c_str(), velocity.z, clear.c_str());
 }
 
-void Dashboard_TUI::display_drr(int col_number, double x, double y, double z, double roll, double pitch, double yaw) {
+void Dashboard_TUI::display_drr(int col_number, DVL_Data position, DVL_Data orientation) {
     jump_to_column(col_number);
-    printf("Position:    | x: %.5f | y: %.5f | z: %.5f |\n", x, y, z);
+    std::string position_fresh = dvl_fresh(position);
+    std::string orientation_fresh = dvl_fresh(orientation);
+    std::string clear = "\x1B[39;22m";
+    printf("Position:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", position_fresh.c_str(), position.x, clear.c_str(), position_fresh.c_str(), position.y, clear.c_str(), position_fresh.c_str(), position.z, clear.c_str());
     jump_to_column(col_number);
-    printf("Orientation: | x: %.5f | y: %.5f | z: %.5f |\n", roll, pitch, yaw);
+    printf("Orientation: | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", orientation_fresh.c_str(), orientation.x, clear.c_str(), orientation_fresh.c_str(), orientation.y, clear.c_str(), orientation_fresh.c_str(), orientation.z, clear.c_str());
 }
+
+std::string Dashboard_TUI::dvl_fresh(DVL_Data dvl_data) {
+    if (std::chrono::steady_clock::now() - dvl_data.timestamp < 0.5s) {
+        return "\x1B[1;94m"; // bold, blue
+    }
+    else {
+        return "";
+    }
+}
+
+std::string Dashboard_TUI::pwm_fresh(PWM_Data pwm_data) {
+    if (std::chrono::steady_clock::now() - pwm_data.timestamp < 0.5s) {
+        return "\x1B[1;94m"; // bold, blue
+    }
+    else {
+        return "";
+    }
+}
+
 
 
 std::string Dashboard::get_ping() {
@@ -392,6 +403,11 @@ std::string Dashboard::get_ping() {
         return "error"; // should never get here
     }
 }
+    // bool fresh_cmd = (now - pwms_cmd.timestamp < 0.5s);
+    // bool fresh_cli = (now - pwms_cli.timestamp < 0.5s);
+    // bool fresh_ctrl = (now - pwms_ctrl.timestamp < 0.5s);
+    // bool fresh_echo = (now - pwms_echo.timestamp < 0.5s);
+
 
 void Dashboard_TUI::display_tui(va_list args) {
     int current_mux_mode = va_arg(args, int);
@@ -402,23 +418,13 @@ void Dashboard_TUI::display_tui(va_list args) {
     bool echo_heartbeat = (bool)va_arg(args, int);
     bool dvl_heartbeat = (bool)va_arg(args, int);
     bool joystick_heartbeat = (bool)va_arg(args, int);
-    int* pwms_cmd = va_arg(args, int*);
-    int* pwms_cli = va_arg(args, int*);
-    int* pwms_ctrl = va_arg(args, int*);
-    int* pwms_echo = va_arg(args, int*);
-    bool cmd_fresh = (bool)va_arg(args, int);
-    bool cli_fresh = (bool)va_arg(args, int);
-    bool ctrl_fresh = (bool)va_arg(args, int);
-    bool echo_fresh = (bool)va_arg(args, int);
-    double vx = va_arg(args, double);
-    double vy = va_arg(args, double);
-    double vz = va_arg(args, double);
-    double x = va_arg(args, double);
-    double y = va_arg(args, double);
-    double z = va_arg(args, double);
-    double roll = va_arg(args, double);
-    double pitch = va_arg(args, double);
-    double yaw = va_arg(args, double);
+    PWM_Data pwms_cmd = va_arg(args, PWM_Data);
+    PWM_Data pwms_cli = va_arg(args, PWM_Data);
+    PWM_Data pwms_ctrl = va_arg(args, PWM_Data);
+    PWM_Data pwms_echo = va_arg(args, PWM_Data);
+    DVL_Data velocity = va_arg(args, DVL_Data);
+    DVL_Data position = va_arg(args, DVL_Data);
+    DVL_Data orientation = va_arg(args, DVL_Data);
     bool ping_ok = (bool)va_arg(args, int);
     double ping_rtt = va_arg(args, double);
     double seconds_since_ping = va_arg(args, double);
@@ -451,8 +457,8 @@ void Dashboard_TUI::display_tui(va_list args) {
 
     write_header("dvl", first_col);
     display_critical_status(dvl_heartbeat, first_col);
-    display_vr(first_col, vx, vy, vz);
-    display_drr(first_col, x, y, z, roll, pitch, yaw);
+    display_vr(first_col, velocity);
+    display_drr(first_col, position, orientation);
     printf("\n");
 
     write_header("Robot Connection Status", first_col);
@@ -466,7 +472,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     reset_cursor_pos();
 
     write_header("pwms", second_col);
-    display_all_pwms(pwms_cmd, pwms_cli, pwms_ctrl, pwms_echo, second_col, 45, 55, 66, cmd_fresh, cli_fresh, ctrl_fresh, echo_fresh);
+    display_all_pwms(pwms_cmd, pwms_cli, pwms_ctrl, pwms_echo, second_col, 45, 55, 66);
     printf("\n");
 
     printf("\n");
