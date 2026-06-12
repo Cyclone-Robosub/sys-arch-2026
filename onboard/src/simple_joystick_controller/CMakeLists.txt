@@ -40,10 +40,11 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/simple_joystick_control
 set (CMAKE_SKIP_BUILD_RPATH false)
 set (CMAKE_BUILD_WITH_INSTALL_RPATH true)
 set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-set (CMAKE_INSTALL_RPATH_USEK_PATH TRUE)
+set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # Node
 add_executable(Simple_Joystick_Controller 
 src/Simple_Joystick_Controller.cpp
+src/Simple_Joystick_Controller_data.cpp
 src/main.cpp
 src/ros2nodeinterface.cpp
 src/slros2_initialize.cpp
@@ -58,7 +59,7 @@ endif()
 target_compile_options(Simple_Joystick_Controller PRIVATE
   $<$<OR:$<COMPILE_LANGUAGE:CXX>,$<COMPILE_LANGUAGE:C>>:
   -DMODEL=Simple_Joystick_Controller
-  -DNUMST=1
+  -DNUMST=2
   -DNCSTATES=0
   -DHAVESTDIO
   -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=0
@@ -107,4 +108,4 @@ add_custom_command(
 				   )				   
 endforeach(file_i)
 ament_package()
-# Generated on Thu Feb 19 19:35:44 2026
+# Generated on Thu May 14 23:43:01 2026
