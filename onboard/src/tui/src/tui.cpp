@@ -639,7 +639,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     
     reset_cursor_pos();
 
-    write_header("pwms", col_2);
+    write_header("PWMs", col_2);
     display_all_pwms(pwms_cmd, pwms_cli, pwms_ctrl, pwms_echo);
     printf("\n");
 
