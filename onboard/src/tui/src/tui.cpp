@@ -361,6 +361,19 @@ void Dashboard_TUI::write_selectable_header(std::string header, int current_mode
     }
 }
 
+void Dashboard_TUI::display_warning_status(bool heartbeat, const int col_number) {
+    jump_to_column(col_number);
+    if (!heartbeat) {
+        write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
+        write(STDOUT_FILENO, "\x1B[38;5;166;107m", 15); // set orange foreground, white background
+        printf("== No heartbeat detected! ==\n");
+        write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
+    } else {
+        printf("============ OK ============\n");
+    }
+    jump_to_column(col_number);
+}
+
 void Dashboard_TUI::display_critical_status(bool heartbeat, const int col_number) {
     jump_to_column(col_number);
     if (!heartbeat) {
@@ -387,7 +400,7 @@ void Dashboard_TUI::display_noncritical_status(bool heartbeat, const int col_num
     jump_to_column(col_number);
 }
 
-void Dashboard_TUI::display_escalatable_status(int current_mode, int critical_mode, bool heartbeat, const int col_number) {
+void Dashboard_TUI::display_escalatable_critical_status(int current_mode, int critical_mode, bool heartbeat, const int col_number) {
     if (current_mode == critical_mode) {
         display_critical_status(heartbeat, col_number);
     }
@@ -395,6 +408,16 @@ void Dashboard_TUI::display_escalatable_status(int current_mode, int critical_mo
         display_noncritical_status(heartbeat, col_number);
     }
 }
+
+void Dashboard_TUI::display_escalatable_warning_status(int current_mode, int warning_mode, bool heartbeat, const int col_number) {
+    if (current_mode == warning_mode) {
+        display_warning_status(heartbeat, col_number);
+    }
+    else {
+        display_noncritical_status(heartbeat, col_number);
+    }
+}
+
 
 /* Note: this function returns cursor to its original position so sub-columns can be next to each other */
 void Dashboard_TUI::display_pwms(std::array<int,8> pwms, const int col_number, bool fresh) {
@@ -585,15 +608,15 @@ void Dashboard_TUI::display_tui(va_list args) {
     printf("\n");
 
     write_selectable_header("cli", current_mux_mode, 1, col_1);
-    display_escalatable_status(current_mux_mode, 1, cli_heartbeat, col_1);
+    display_escalatable_critical_status(current_mux_mode, 1, cli_heartbeat, col_1);
     printf("\n");
 
     write_selectable_header("ctrl", current_mux_mode, 2, col_1);
-    display_escalatable_status(current_mux_mode, 2, ctrl_heartbeat, col_1);
+    display_escalatable_critical_status(current_mux_mode, 2, ctrl_heartbeat, col_1);
     printf("\n");
 
     write_selectable_header("echo", current_mux_mode, 3, col_1);
-    display_escalatable_status(current_mux_mode, 3, echo_heartbeat, col_1);
+    display_escalatable_critical_status(current_mux_mode, 3, echo_heartbeat, col_1);
     printf("\n");
 
     write_header("dvl", col_1);
@@ -606,7 +629,8 @@ void Dashboard_TUI::display_tui(va_list args) {
     display_connection_info(ping_ok, seconds_since_ping, ping_rtt, col_1);
 
     printf("\n");
-    printf("Systems in flashing red are critical and and should be fixed immediately.\n");
+    printf("Systems in flashing red are critical and should be fixed immediately.\n");
+    printf("Systems in flashing orange might be critical and should be fixed if needed.\n");
     printf("Systems in flashing white are not connected, but are noncritical and can probably be ignored.\n");
     printf("The current control mode is indicated by whether the mode is highlighted by = [mode] =.\n");
     printf("Fresh PWM and DVL data is shown bolded in blue. After 0.5s it becomes stale and returns to normal.\n ");
@@ -620,13 +644,13 @@ void Dashboard_TUI::display_tui(va_list args) {
     printf("\n");
 
     write_header("Joystick", col_2);
-    display_escalatable_status(current_mux_mode, 2, joystick_heartbeat, col_2);
+    display_escalatable_critical_status(current_mux_mode, 2, joystick_heartbeat, col_2);
     printf("\n");
 
     write_header("mission_manager", col_2);
-    display_escalatable_status(current_mux_mode, 2, mission_manager_heartbeat, col_2);
+    display_escalatable_warning_status(current_mux_mode, 2, mission_manager_heartbeat, col_2);
 
-    write(STDOUT_FILENO, "\x1B[37;29H", 8); // jumpt to prompt (line/column)
+    write(STDOUT_FILENO, "\x1B[38;29H", 8); // jumpt to prompt (line/column)
     write(STDOUT_FILENO, "\x1B[?25h", 6); // visible cursor
     printf("%s", current_input.c_str());
     write(STDOUT_FILENO, "\x1B[0K", 4); // erase until end of line (removes backspaced characters)
