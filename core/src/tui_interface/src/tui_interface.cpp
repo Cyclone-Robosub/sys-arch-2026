@@ -161,4 +161,5 @@ std::string TUI_Interface::get_current_input() {
 
 void TUI_Interface::clear_input() {
     current_input.clear();
+    cursor_pos = 0;
 }
