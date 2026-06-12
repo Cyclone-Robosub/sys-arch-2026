@@ -553,7 +553,7 @@ void Dashboard_TUI::display_commands() {
     printf("[C]: Toggle Ready\n");
 }
 
-std::string Dashboard::get_ping() {
+std::string Dashboard::get_ping() { // TODO: when robot looses connection ping hangs for ~10 seconds. Break into seperate thread
     int pipe_fds[2];
     pipe(pipe_fds); // [0] = read end, [1] = write end
     int pid = fork();
