@@ -9,11 +9,11 @@
 #include "std_msgs/msg/empty.hpp"
 #include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
+#include "std_srvs/srv/trigger.hpp"
 #include "custom_interfaces/msg/pwms.hpp"
 #include "custom_interfaces/msg/vr.hpp"
 #include "custom_interfaces/msg/drr.hpp"
 #include "custom_interfaces/srv/control_mode.hpp"
-
 
 using namespace rclcpp;
 
@@ -110,6 +110,11 @@ private:
     void heartbeat_check_callback();
     bool no_heartbeat(std::chrono::time_point<std::chrono::steady_clock> now, std::chrono::time_point<std::chrono::steady_clock> heartbeat_time);
     void control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg);
+
+    void set_mux_mode(int mode);
+    void reset_drr();
+    void reset_gyro();
+    void toggle_ready();
     
     void refresh_display();
     void clear_display();
@@ -136,7 +141,10 @@ private:
     DVL_Data position;
     DVL_Data orientation;
 
-    rclcpp::Client<custom_interfaces::srv::ControlMode>::SharedPtr client;
+    rclcpp::Client<custom_interfaces::srv::ControlMode>::SharedPtr mux_client;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_drr_client;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_gyro_client;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr mission_manager_client;
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub;
 
     rclcpp::TimerBase::SharedPtr heartbeat_timer;

@@ -43,7 +43,10 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
     clear_display_timer = this->create_wall_timer(5s,
             std::bind(&Dashboard::clear_display, this)); // Screen resizing, etc. will get taken care of every 5 seconds
 
-    client = this->create_client<custom_interfaces::srv::ControlMode>("control_mode");
+    mux_client = this->create_client<custom_interfaces::srv::ControlMode>("control_mode");
+    reset_drr_client = this->create_client<std_srvs::srv::Trigger>("reset_drr");
+    reset_gyro_client = this->create_client<std_srvs::srv::Trigger>("reset_gyro");
+    mission_manager_client = this->create_client<std_srvs::srv::Trigger>("ready_signal_service");
     force_pub = this->create_client<std_srvs::srv::SetBool>("force_pub");
     
     refresh_display();
@@ -170,6 +173,40 @@ void Dashboard::control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg) {
     refresh_display();
 }
 
+void Dashboard::set_mux_mode(int mode) {
+    if (mode == current_control_mode || !mux_heartbeat) {
+        return;
+    }
+    std::shared_ptr<custom_interfaces::srv::ControlMode::Request> request = std::make_shared<custom_interfaces::srv::ControlMode::Request>();
+    request->mode = mode;
+    mux_client->async_send_request(request);
+}
+
+void Dashboard::reset_drr() {
+    if (!dvl_heartbeat) {
+        return;
+    }
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    reset_drr_client->async_send_request(request);
+}
+
+void Dashboard::reset_gyro() {
+    if (!dvl_heartbeat) {
+        return;
+    }
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    reset_gyro_client->async_send_request(request);
+}
+
+void Dashboard::toggle_ready() {
+    if (!mission_manager_heartbeat) {
+        return;
+    }
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    mission_manager_client->async_send_request(request);
+}
+
+
 void Dashboard::ping_loop() {
     while (rclcpp::ok()) {
         usleep(10);
@@ -210,16 +247,19 @@ void Dashboard::work_loop() {
             char input_char = tolower(input[0]);
             switch (input_char) {
                 case '0':
-                    break;
                 case '1':
-                    break;
                 case '2':
-                    break;
                 case '3':
+                    set_mux_mode((int)(input_char - '0'));
                     break;
                 case 'a':
+                    reset_drr();
                     break;
                 case 'b':
+                    reset_gyro();
+                    break;
+                case 'c':
+                    toggle_ready();
                     break;
                 case 'q':
                 case 'e':
