@@ -210,12 +210,17 @@ void Dashboard::toggle_ready() {
 void Dashboard::ping_loop() {
     while (rclcpp::ok()) {
         usleep(10);
-        if ((std::chrono::steady_clock::now() - most_recent_ping_attempt) < 1s) {
+        auto now = std::chrono::steady_clock::now();
+        if ((now - most_recent_ping_attempt) < 1s) { // Only ping a 1hz
             continue;
         }
         
+        if ((now - most_recent_ping_attempt) > 5s) { // Shouldn't need this because ping generally returns an error if disconnected, but this is here as a backup
+            ping_ok = false;
+        }
+
         std::string ping_output = get_ping();
-        most_recent_ping_attempt = std::chrono::steady_clock::now();
+        most_recent_ping_attempt = std::chrono::steady_clock::now(); // Don't re-use from a few lines up because pinging takes time
         if (ping_output == "error") {
             ping_ok = false;
             continue;
@@ -227,7 +232,7 @@ void Dashboard::ping_loop() {
         }
         auto rtt_string = ping_output.substr(rtt_location + 23, 5); // extract value of rtt
         rtt = stod(rtt_string);
-        most_recent_ping = most_recent_ping_attempt;
+        most_recent_ping = most_recent_ping_attempt; // If we got here, it's a successful ping
         ping_ok = true;
     }
 }
