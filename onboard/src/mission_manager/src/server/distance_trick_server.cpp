@@ -1,7 +1,7 @@
 #include "server/distance_trick_server.hpp"
 
 
-DistanceTrickActionServer::DistanceTrickActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("distance_trick_action_server", options) {
+DistanceTrickActionServer::DistanceTrickActionServer(const rclcpp::NodeOptions& options) : Node("distance_trick_action_server", options) {
     process_done = false;
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
     result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&DistanceTrickActionServer::result_callback, this, std::placeholders::_1));

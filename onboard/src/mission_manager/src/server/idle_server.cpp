@@ -1,7 +1,7 @@
 #include "server/idle_server.hpp"
 
 
-IdleActionServer::IdleActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("idle_action_server", options) {
+IdleActionServer::IdleActionServer(const rclcpp::NodeOptions& options) : Node("idle_action_server", options) {
     process_done = false;
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
     result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&IdleActionServer::result_callback, this, std::placeholders::_1));

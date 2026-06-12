@@ -3,11 +3,19 @@ using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
-  execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "mission_manager_node");
+  execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "bt_action_server");
   go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
   heartbeat_timer = this->create_wall_timer(500ms, std::bind(&MissionManagerNode::heartbeat_callback, this));
   mission_manager_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mission_manager_heartbeat", 10);
+
+  std::shared_ptr<DistanceTrickActionServer> distance_trick_action_server = std::make_shared<DistanceTrickActionServer>();
+  std::shared_ptr<DurationTrickActionServer> duration_trick_action_server = std::make_shared<DurationTrickActionServer>();
+  std::shared_ptr<IdleActionServer> idle_action_server = std::make_shared<IdleActionServer>();
+  std::shared_ptr<ObjRelWaypointActionServer> obj_rel_waypoint_action_server = std::make_shared<ObjRelWaypointActionServer>();
+  std::shared_ptr<SeekObjectActionServer> seek_object_action_server = std::make_shared<SeekObjectActionServer>();
+  std::shared_ptr<WaypointActionServer> waypoint_action_server = std::make_shared<WaypointActionServer>();
 }
+
 
 /*
     get trigger from website (ready signal)
@@ -34,9 +42,11 @@ void MissionManagerNode::try_start_mission() {
         return;
    }
    ExecuteTree::Goal goal;
-   goal.target_tree = "Mission File";
+   goal.target_tree = "MainTree";
    mission_started = true;
+   printf("GO\n");
    execute_tree_client->async_send_goal(goal);
+   printf("WENT\n");
 }
 
 /*

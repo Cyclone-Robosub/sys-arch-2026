@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4"
-      main_tree_to_execute="Main Tree">
+      main_tree_to_execute="MainTree">
   <BehaviorTree ID="Bins">
     <Sequence>
       <DriveToWorldWaypointSeeking world_waypoint=""
@@ -33,7 +33,7 @@
     </Sequence>
   </BehaviorTree>
 
-  <BehaviorTree ID="Gate Task">
+  <BehaviorTree ID="GateTask">
     <Sequence>
       <DriveToWorldWaypoint world_waypoint=""
                             waypoint_mask=""
@@ -66,13 +66,13 @@
     </Sequence>
   </BehaviorTree>
 
-  <BehaviorTree ID="Main Tree">
+  <BehaviorTree ID="MainTree">
     <Sequence>
-      <SubTree ID="Gate Task"/>
+      <SubTree ID="GateTask"/>
       <SubTree ID="Slalom"/>
       <SubTree ID="Bins"/>
       <SubTree ID="Octagon"/>
-      <SubTree ID="Return to Gate"/>
+      <SubTree ID="ReturnToGate"/>
     </Sequence>
   </BehaviorTree>
 
@@ -108,7 +108,7 @@
     </Repeat>
   </BehaviorTree>
 
-  <BehaviorTree ID="Return to Gate">
+  <BehaviorTree ID="ReturnToGate">
     <Sequence>
       <DriveToWorldWaypointSeeking world_waypoint=""
                                    waypoint_mask=""

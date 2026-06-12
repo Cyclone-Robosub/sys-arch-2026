@@ -7,6 +7,12 @@
 #include "server/mission_tree_server.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "btcpp_ros2_interfaces/action/execute_tree.hpp"
+#include "server/distance_trick_server.hpp"
+#include "server/duration_trick_server.hpp"
+#include "server/idle_server.hpp"
+#include "server/object_rel_waypoint_server.hpp"
+#include "server/seek_object_server.hpp"
+#include "server/waypoint_server.hpp"
 
 class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
@@ -32,4 +38,12 @@ class MissionManagerNode : public rclcpp::Node {
         void mission_manager_heartbeat_send();
         rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr mission_manager_heartbeat_publisher;
         rclcpp::TimerBase::SharedPtr heartbeat_timer;
+
+        std::shared_ptr<DistanceTrickActionServer> distance_trick_action_server;
+        std::shared_ptr<DurationTrickActionServer> duration_trick_action_server;
+        std::shared_ptr<IdleActionServer> idle_action_server;
+        std::shared_ptr<ObjRelWaypointActionServer> obj_rel_waypoint_action_server;
+        std::shared_ptr<SeekObjectActionServer> seek_object_action_server;
+        std::shared_ptr<WaypointActionServer> waypoint_action_server;
+
 };

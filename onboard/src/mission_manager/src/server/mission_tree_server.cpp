@@ -38,6 +38,7 @@ std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus 
 }
 
 void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& factory) {
+   /*
     factory.registerSimpleAction("IdleDummyAction", [](BT::TreeNode& self){
         std::cout << "IdleDummyAction substituting: "<< self.name() << std::endl;
         return BT::NodeStatus::SUCCESS;
@@ -69,15 +70,16 @@ void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& facto
     factory.addSubstitutionRule("TrackObjectWaypoint", "ObjRelDummyAction");
     factory.addSubstitutionRule("DistanceTrick", "DistanceDummyAction");
     factory.addSubstitutionRule("DurationTrick", "DurationDummyAction");
-
-    /*
+    */ 
+    printf("Register nodes\n");
+    
     factory.registerNodeType<CycloneCommands::IdleCmd>("Idle",  RosNodeParams(node(), "/idle"));
     factory.registerNodeType<CycloneCommands::WaypointCmd>("DriveToWorldWaypoint", RosNodeParams(node(), "/waypt_abs"));
     factory.registerNodeType<CycloneCommands::SeekObjCmd>("DriveToWorldWaypointSeeking", RosNodeParams(node(), "/waypt_seek"));
     factory.registerNodeType<CycloneCommands::ObjRelWaypointCmd>("TrackObjectWaypoint", RosNodeParams(node(), "/waypt_fix"));
     factory.registerNodeType<CycloneCommands::DistanceTrickCmd>("DistanceTrick", RosNodeParams(node(), "/trick_dis"));                
     factory.registerNodeType<CycloneCommands::DurationTrickCmd>("DurationTrick", RosNodeParams(node(), "/trick_timed"));
-    */
+
 }
 
 

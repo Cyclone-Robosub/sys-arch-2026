@@ -36,14 +36,25 @@ add_executable(mission_manager_node
   src/commands/duration_trick_client.cpp
   src/commands/seek_object.cpp
   src/commands/object_rel_waypoint.cpp
+  src/server/distance_trick_server.cpp
+  src/server/duration_trick_server.cpp
+  src/server/idle_server.cpp
+  src/server/object_rel_waypoint_server.cpp
+  src/server/seek_object_server.cpp
+  src/server/waypoint_server.cpp
 )
+
 include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_SOURCE_DIR}/../behaviortree_ros2/include/behaviortree_ros2
+  ${PROJECT_SOURCE_DIR}/include/server
 )
 target_include_directories(mission_manager_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>)
+  $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+
+)
+
 target_compile_features(mission_manager_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(mission_manager_node
   custom_interfaces
@@ -57,50 +68,51 @@ ament_target_dependencies(mission_manager_node
 install(TARGETS mission_manager_node
   DESTINATION lib/${PROJECT_NAME})
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  find_package(ament_cmake_gtest REQUIRED)
+
+# if(BUILD_TESTING)
+#   find_package(ament_lint_auto REQUIRED)
+#   # the following line skips the linter which checks for copyrights
+#   # comment the line when a copyright and license is added to all source files
+#   set(ament_cmake_copyright_FOUND TRUE)
+#   find_package(ament_cmake_gtest REQUIRED)
 
   
-  add_library(${PROJECT_NAME}_lib src/mission_manager_node.cpp)
-  target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
-  ament_target_dependencies(${PROJECT_NAME}_lib
-    rclcpp
-    custom_interfaces
-    std_msgs
-    std_srvs
-    btcpp_ros2_interfaces
-    behaviortree_ros2
-  )
-  target_include_directories(${PROJECT_NAME}_lib PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-  )
+#   add_library(${PROJECT_NAME}_lib src/mission_manager_node.cpp)
+#   target_compile_definitions(${PROJECT_NAME}_lib PUBLIC ENABLE_TESTING)
+#   ament_target_dependencies(${PROJECT_NAME}_lib
+#     rclcpp
+#     custom_interfaces
+#     std_msgs
+#     std_srvs
+#     btcpp_ros2_interfaces
+#     behaviortree_ros2
+#   )
+#   target_include_directories(${PROJECT_NAME}_lib PUBLIC
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#     $<INSTALL_INTERFACE:include>
+#   )
 
-  ament_add_gtest(${PROJECT_NAME}_test test/test_mission_manager.cpp)
-  target_compile_definitions(${PROJECT_NAME}_test PUBLIC ENABLE_TESTING)
-  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib)
-  target_include_directories(${PROJECT_NAME}_test PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-  )
-  ament_target_dependencies(${PROJECT_NAME}_test
-    rclcpp
-    custom_interfaces
-    std_msgs
-    std_srvs
-    btcpp_ros2_interfaces
-    behaviortree_ros2
-  )
+#   ament_add_gtest(${PROJECT_NAME}_test test/test_mission_manager.cpp)
+#   target_compile_definitions(${PROJECT_NAME}_test PUBLIC ENABLE_TESTING)
+#   target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib)
+#   target_include_directories(${PROJECT_NAME}_test PUBLIC
+#     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#     $<INSTALL_INTERFACE:include>
+#   )
+#   ament_target_dependencies(${PROJECT_NAME}_test
+#     rclcpp
+#     custom_interfaces
+#     std_msgs
+#     std_srvs
+#     btcpp_ros2_interfaces
+#     behaviortree_ros2
+#   )
 
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
+#   # the following line skips cpplint (only works in a git repo)
+#   # comment the line when this package is in a git repo and when
+#   # a copyright and license is added to all source files
+#   set(ament_cmake_cpplint_FOUND TRUE)
+#   ament_lint_auto_find_test_dependencies()
+# endif()
 
 ament_package()

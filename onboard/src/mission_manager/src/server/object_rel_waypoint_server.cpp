@@ -1,7 +1,7 @@
 #include "server/object_rel_waypoint_server.hpp"
 
 
-ObjRelWaypointActionServer::ObjRelWaypointActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("obj_rel_waypoint_action_server", options) {
+ObjRelWaypointActionServer::ObjRelWaypointActionServer(const rclcpp::NodeOptions& options) : Node("obj_rel_waypoint_action_server", options) {
     process_done = false;
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
     result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&ObjRelWaypointActionServer::result_callback, this, std::placeholders::_1));

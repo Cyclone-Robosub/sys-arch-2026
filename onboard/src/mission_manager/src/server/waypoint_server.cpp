@@ -1,7 +1,7 @@
 #include "server/waypoint_server.hpp"
 
 
-WaypointActionServer::WaypointActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("waypoint_action_server", options) {
+WaypointActionServer::WaypointActionServer(const rclcpp::NodeOptions& options) : Node("waypoint_action_server", options) {
     process_done = false;
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
     result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&WaypointActionServer::result_callback, this, std::placeholders::_1));
