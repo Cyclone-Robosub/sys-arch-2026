@@ -246,8 +246,9 @@ void Dashboard::work_loop() {
         tui->process_input();
         std::string input = tui->get_current_input();
         if (input.find("\n") != std::string::npos) { // user pressed enter
-            if (input.length() > 2) {
+            if (input.length() != 2) { // all valid input will be of form [char]\n
                 tui->clear_input();
+                continue;
             }
             char input_char = tolower(input[0]);
             switch (input_char) {
