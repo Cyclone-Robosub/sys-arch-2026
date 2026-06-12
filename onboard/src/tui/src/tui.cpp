@@ -626,7 +626,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     write_header("mission_manager", col_2);
     display_escalatable_status(current_mux_mode, 2, mission_manager_heartbeat, col_2);
 
-    write(STDOUT_FILENO, "\x1B[36;29H", 8); // jumpt to prompt
+    write(STDOUT_FILENO, "\x1B[37;29H", 8); // jumpt to prompt (line/column)
     write(STDOUT_FILENO, "\x1B[?25h", 6); // visible cursor
     printf("%s", current_input.c_str());
     write(STDOUT_FILENO, "\x1B[0K", 4); // erase until end of line (removes backspaced characters)
