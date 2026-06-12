@@ -12,7 +12,8 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters,
     pico_fd(std::move(pico_fd)),
     min_pwm(min_pwm), 
     max_pwm(max_pwm),
-    no_heartbeat(true)
+    no_heartbeat(true),
+    no_pico(true)
      {
     
     pwm_received_subscription = this->create_subscription<custom_interfaces::msg::Pwms>(
@@ -21,6 +22,8 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters,
 
     heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, 
             std::bind(&Thrust_Interface::mux_heartbeat_received_callback, this, std::placeholders::_1));
+
+    heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("thrust_interface_heartbeat", 10);
     
     heartbeat_timer = this->create_wall_timer(500ms, 
             std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer
@@ -75,13 +78,24 @@ void Thrust_Interface::send_heartbeat_to_pico() {
                     "Failed to ping Pico (wrote %zd/%d bytes)", 
                     bytes_written, length);
         RCLCPP_WARN(this->get_logger(), "Attempting to reconnect to Pico."); // Just do it here so we only try every 1/2 second
+        no_pico = true;
         pico_fd->attempt_reconnect();
+    } else {
+        no_pico = false;
     }
 }
 
 void Thrust_Interface::heartbeat_callback() {
     send_heartbeat_to_pico();
     evaluate_mux_heartbeat_freshness();
+    send_heartbeat();
+}
+
+void Thrust_Interface::send_heartbeat() {
+    if (!no_pico) {
+        std_msgs::msg::Empty msg;
+        this->heartbeat_publisher->publish(msg);
+    }
 }
 
 void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
@@ -96,6 +110,9 @@ void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
         RCLCPP_WARN(this->get_logger(), 
                     "Failed to write complete message for thruster %d (wrote %zd/%d bytes)", 
                     thruster, bytes_written, length);
+        no_pico = true;
+    } else {
+        no_pico = false;
     }
 }
 
