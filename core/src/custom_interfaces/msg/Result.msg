@@ -1,0 +1,3 @@
+bool success
+string found_object
+bool reached_waypoint_without_detection

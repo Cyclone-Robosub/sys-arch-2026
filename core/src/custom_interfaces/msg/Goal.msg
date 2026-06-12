@@ -1,0 +1,9 @@
+string command_id
+custom_interfaces/Pose6D waypoint
+custom_interfaces/WaypointMask waypoint_mask
+custom_interfaces/Pose6D tolerance
+uint64 hold_time
+string object
+float64 confidence
+string trick                        
+uint64 duration

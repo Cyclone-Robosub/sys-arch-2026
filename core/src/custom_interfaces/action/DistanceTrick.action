@@ -1,0 +1,11 @@
+# Goal
+string trick                        
+custom_interfaces/Pose6D end_waypoint_body
+custom_interfaces/WaypointMask waypoint_mask               # [1,1,1,1,1,1] = Default to ROS param if unspecified
+custom_interfaces/Pose6D tolerance
+uint64 hold_time
+---
+# Result
+bool success
+---
+# Feedback

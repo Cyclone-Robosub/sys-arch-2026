@@ -1,0 +1,11 @@
+# Goal
+custom_interfaces/Pose6D tracking_position
+custom_interfaces/WaypointMask waypoint_mask
+string object
+custom_interfaces/Pose6D tolerance
+uint64 hold_time
+---
+# Result
+bool success
+---
+# Feedback
