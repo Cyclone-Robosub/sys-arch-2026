@@ -609,6 +609,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     printf("Systems in flashing red are critical and and should be fixed immediately.\n");
     printf("Systems in flashing white are not connected, but are noncritical and can probably be ignored.\n");
     printf("The current control mode is indicated by whether the mode is highlighted by = [mode] =.\n");
+    printf("Fresh PWM and DVL data is shown bolded in blue. After 0.5s it becomes stale and returns to normal.\n ");
 
     display_commands();  
     
