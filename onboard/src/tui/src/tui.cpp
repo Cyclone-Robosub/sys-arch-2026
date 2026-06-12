@@ -18,6 +18,8 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
         std::bind(&Dashboard::dvl_heartbeat_received_callback, this, std::placeholders::_1));
     joystick_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("joystick_heartbeat", 10, 
         std::bind(&Dashboard::joystick_heartbeat_received_callback, this, std::placeholders::_1));
+    mission_manager_heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("mission_manager_heartbeat", 10, 
+        std::bind(&Dashboard::mission_manager_heartbeat_received_callback, this, std::placeholders::_1));
     
     // Data
     pwm_cmd_subscription = this->create_subscription<custom_interfaces::msg::Pwms>("pwm_cmd", 10, 
@@ -62,6 +64,7 @@ void Dashboard::heartbeat_check_callback() {
     echo_heartbeat = no_heartbeat(current_time, most_recent_echo_heartbeat);
     dvl_heartbeat = no_heartbeat(current_time, most_recent_dvl_heartbeat);
     joystick_heartbeat = no_heartbeat(current_time, most_recent_joystick_heartbeat);  
+    mission_manager_heartbeat = no_heartbeat(current_time, most_recent_mission_manager_heartbeat); 
     refresh_display();
 }
 
@@ -116,6 +119,12 @@ void Dashboard::joystick_heartbeat_received_callback(std_msgs::msg::Empty::Uniqu
     (void)heartbeat; // stop compiler complaining
 }
 
+void Dashboard::mission_manager_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat) {
+    most_recent_mission_manager_heartbeat = std::chrono::steady_clock::now();
+    mission_manager_heartbeat = true; // If we just received a heartbeat, then we certainly have a heartbeat!
+    (void)heartbeat; // stop compiler complaining
+}
+
 void Dashboard::pwm_cmd_callback(custom_interfaces::msg::Pwms::UniquePtr pwms) {
     pwms_cmd.pwms = pwms->pwms;
     pwms_cmd.timestamp = std::chrono::steady_clock::now();
@@ -161,10 +170,7 @@ void Dashboard::control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg) {
     refresh_display();
 }
 
-void Dashboard::work_loop() {
-    tui->init_terminal();
-    tui->clear_display();
-
+void Dashboard::ping_loop() {
     while (rclcpp::ok()) {
         usleep(10);
         if ((std::chrono::steady_clock::now() - most_recent_ping_attempt) < 1s) {
@@ -187,6 +193,47 @@ void Dashboard::work_loop() {
         most_recent_ping = most_recent_ping_attempt;
         ping_ok = true;
     }
+}
+
+void Dashboard::work_loop() {
+    tui->init_terminal();
+    tui->clear_display();
+    while (rclcpp::ok()) {
+        bool exit = false;
+        usleep(10);
+        tui->process_input();
+        std::string input = tui->get_current_input();
+        if (input.find("\n") != std::string::npos) { // user pressed enter
+            if (input.length() > 2) {
+                tui->clear_input();
+            }
+            char input_char = tolower(input[0]);
+            switch (input_char) {
+                case '0':
+                    break;
+                case '1':
+                    break;
+                case '2':
+                    break;
+                case '3':
+                    break;
+                case 'a':
+                    break;
+                case 'b':
+                    break;
+                case 'q':
+                case 'e':
+                    exit = true;
+                    break;
+                default:
+                    break;
+            }
+            tui->clear_input();
+        }
+        if (exit) {
+            break;
+        }
+    }
 
     tui->restore_terminal();
     tui->clear_display();
@@ -195,7 +242,7 @@ void Dashboard::work_loop() {
 void Dashboard::refresh_display() {
     auto now = std::chrono::steady_clock::now();
     seconds_since_ping = (double)((now - most_recent_ping) / 1ms) / (double)1000;
-    tui->refresh_display(18, current_control_mode,
+    tui->refresh_display(19, current_control_mode,
                              thrust_interface_heartbeat,
                              mux_heartbeat,
                              cli_heartbeat,
@@ -203,6 +250,7 @@ void Dashboard::refresh_display() {
                              echo_heartbeat,
                              dvl_heartbeat,
                              joystick_heartbeat,
+                             mission_manager_heartbeat,
                              pwms_cmd,
                              pwms_cli,
                              pwms_ctrl,
@@ -217,6 +265,35 @@ void Dashboard::refresh_display() {
 void Dashboard::clear_display() {
     tui->clear_display();
 }
+
+void Dashboard_TUI::process_input() {
+    display_mutex.lock();
+    int c = 0;
+    while (read(STDIN_FILENO, &c, 1) != 0) {
+        if ((c >= 32 && c <= 126) || c == '\n') {
+            current_input.push_back(c);
+            cursor_pos += 1;
+        }
+        if (c == 127 && cursor_pos > 0) {
+            current_input.pop_back();
+            cursor_pos -= 1;
+        }
+    }
+    display_mutex.unlock();
+}
+
+void Dashboard_TUI::refresh_display(int numArgs, ...) {
+    display_mutex.lock();
+
+    va_list args;
+    va_start(args, numArgs);
+
+    tcflush(STDIN_FILENO, TCIFLUSH);
+    display_tui(args);
+    display_mutex.unlock();
+}
+
+
 
 void Dashboard_TUI::jump_to_column(int col_number) {
     std::string column_string = "\x1B[" + std::to_string(col_number) + "G";
@@ -314,7 +391,6 @@ void Dashboard_TUI::fill_right_col(const int col_number) {
 }
 
 void Dashboard_TUI::display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo) {
-    
     printf("| - CMD - ");
     display_pwms(pwms_cmd.pwms, col_2, std::chrono::steady_clock::now() - pwms_cmd.timestamp < 0.5s);
     jump_to_column(col_2_1);
@@ -386,7 +462,27 @@ std::string Dashboard_TUI::pwm_fresh(PWM_Data pwm_data) {
     }
 }
 
+void Dashboard_TUI::display_commands() {
+    printf("\n===================== Commands =====================\n");
+    write(STDOUT_FILENO, "\x1B[s", 3); // Save cursor position
+    printf("Mux Control:\n");
+    printf("[0]: Disabled\n");
+    printf("[1]: CLI mode\n");
+    printf("[2]: Matlab mode\n");
+    printf("[3]: Echo mode\n");
+    printf("\nEnter command (Q to quit) > ");
+    fflush(stdout);
 
+    write(STDOUT_FILENO, "\x1B[u", 3); // Restore cursor position
+    jump_to_column(col_2);
+    printf("Robot Control:\n");
+    jump_to_column(col_2);
+    printf("[A]: Reset DRR\n");
+    jump_to_column(col_2);
+    printf("[B]: Reset Gyro\n");
+    jump_to_column(col_2);
+    printf("[C]: Toggle Ready\n");
+}
 
 std::string Dashboard::get_ping() {
     int pipe_fds[2];
@@ -422,6 +518,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     bool echo_heartbeat = (bool)va_arg(args, int);
     bool dvl_heartbeat = (bool)va_arg(args, int);
     bool joystick_heartbeat = (bool)va_arg(args, int);
+    bool mission_manager_heartbeat = (bool)va_arg(args, int);
     PWM_Data pwms_cmd = va_arg(args, PWM_Data);
     PWM_Data pwms_cli = va_arg(args, PWM_Data);
     PWM_Data pwms_ctrl = va_arg(args, PWM_Data);
@@ -433,60 +530,65 @@ void Dashboard_TUI::display_tui(va_list args) {
     double ping_rtt = va_arg(args, double);
     double seconds_since_ping = va_arg(args, double);
     va_end(args);
-
-    int first_col = 0;
-    int second_col = 35;
     
     fresh_evaluation_time = std::chrono::steady_clock::now();
 
+    write(STDOUT_FILENO, "\x1B[?25l", 6); // invisible cursor
     reset_cursor_pos();
 
-    write_header("thrust_interface", first_col);
-    display_critical_status(thrust_interface_heartbeat, first_col);
+    write_header("thrust_interface", col_1);
+    display_critical_status(thrust_interface_heartbeat, col_1);
     printf("\n");
 
-    write_header("soft_mux", first_col);
-    display_critical_status(mux_heartbeat, first_col);
+    write_header("soft_mux", col_1);
+    display_critical_status(mux_heartbeat, col_1);
     printf("\n");
 
-    write_selectable_header("cli", current_mux_mode, 1, first_col);
-    display_escalatable_status(current_mux_mode, 1, cli_heartbeat, first_col);
+    write_selectable_header("cli", current_mux_mode, 1, col_1);
+    display_escalatable_status(current_mux_mode, 1, cli_heartbeat, col_1);
     printf("\n");
 
-    write_selectable_header("ctrl", current_mux_mode, 2, first_col);
-    display_escalatable_status(current_mux_mode, 2, ctrl_heartbeat, first_col);
+    write_selectable_header("ctrl", current_mux_mode, 2, col_1);
+    display_escalatable_status(current_mux_mode, 2, ctrl_heartbeat, col_1);
     printf("\n");
 
-    write_selectable_header("echo", current_mux_mode, 3, first_col);
-    display_escalatable_status(current_mux_mode, 3, echo_heartbeat, first_col);
+    write_selectable_header("echo", current_mux_mode, 3, col_1);
+    display_escalatable_status(current_mux_mode, 3, echo_heartbeat, col_1);
     printf("\n");
 
-    write_header("dvl", first_col);
-    display_critical_status(dvl_heartbeat, first_col);
-    display_vr(first_col, velocity);
-    display_drr(first_col, position, orientation);
+    write_header("dvl", col_1);
+    display_critical_status(dvl_heartbeat, col_1);
+    display_vr(col_1, velocity);
+    display_drr(col_1, position, orientation);
     printf("\n");
 
-    write_header("Robot Connection Status", first_col);
-    display_connection_info(ping_ok, seconds_since_ping, ping_rtt, first_col);
+    write_header("Robot Connection Status", col_1);
+    display_connection_info(ping_ok, seconds_since_ping, ping_rtt, col_1);
 
     printf("\n");
     printf("Systems in flashing red are critical and and should be fixed immediately.\n");
     printf("Systems in flashing white are not connected, but are noncritical and can probably be ignored.\n");
     printf("The current control mode is indicated by whether the mode is highlighted by = [mode] =.\n");
+
+    display_commands();  
     
     reset_cursor_pos();
 
-    write_header("pwms", second_col);
+    write_header("pwms", col_2);
     display_all_pwms(pwms_cmd, pwms_cli, pwms_ctrl, pwms_echo);
     printf("\n");
 
-    printf("\n");
-    write_header("Joystick", second_col);
-    display_escalatable_status(current_mux_mode, 2, joystick_heartbeat, second_col);
+    write_header("Joystick", col_2);
+    display_escalatable_status(current_mux_mode, 2, joystick_heartbeat, col_2);
     printf("\n");
 
-    reset_cursor_pos();
+    write_header("mission_manager", col_2);
+    display_escalatable_status(current_mux_mode, 2, mission_manager_heartbeat, col_2);
+
+    write(STDOUT_FILENO, "\x1B[36;29H", 8); // jumpt to prompt
+    write(STDOUT_FILENO, "\x1B[?25h", 6); // visible cursor
+    printf("%s", current_input.c_str());
+    write(STDOUT_FILENO, "\x1B[0K", 4); // erase until end of line (removes backspaced characters)
 
     fflush(stdout);
 }
@@ -501,11 +603,15 @@ int main(int argc, char* argv[]) {
     std::thread ros_thread([&]() { // Needs to be seperate thread so that work loop can run
         rclcpp::spin(dashboard);
     });
+    std::thread ping_thread([&]() { // Needs to be seperate thread so that ping delays don't freeze program
+        dashboard->ping_loop();
+    });
 
     dashboard->work_loop();
 
     rclcpp::shutdown();
     ros_thread.join();
+    ping_thread.join();
     
     return 0;
 }

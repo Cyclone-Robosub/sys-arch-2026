@@ -33,6 +33,8 @@ class Dashboard_TUI : public TUI_Interface {
     public:
         explicit Dashboard_TUI() {};
         virtual void display_tui(va_list args) override;
+        virtual void process_input() override;
+        virtual void refresh_display(int numArgs, ...) override;
     private:
         void jump_to_column(int col_number);
         void reset_cursor_pos();
@@ -47,6 +49,7 @@ class Dashboard_TUI : public TUI_Interface {
         void display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, int col_number);
         void display_drr(int col_number, DVL_Data position, DVL_Data orientation);
         void display_vr(int col_number, DVL_Data velocity);
+        void display_commands();
         std::string dvl_fresh(DVL_Data dvl_data);
         std::string pwm_fresh(PWM_Data pwm_data);
         std::chrono::time_point<std::chrono::steady_clock> fresh_evaluation_time;
@@ -56,6 +59,7 @@ class Dashboard_TUI : public TUI_Interface {
         const int col_2_2 = 55;
         const int col_2_3 = 66;
         const int col_2_4 = 77;
+        
 };
 
 class Dashboard : public rclcpp::Node {
@@ -63,6 +67,7 @@ public:
     Dashboard(std::unique_ptr<TUI_Interface> tui);
     void get_mux_mode_now();
     void work_loop();
+    void ping_loop();
 private:
     std::unique_ptr<TUI_Interface> tui;
 
@@ -74,6 +79,7 @@ private:
     rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr echo_heartbeat_subscription;
     rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr dvl_heartbeat_subscription;
     rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr joystick_heartbeat_subscription;
+    rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr mission_manager_heartbeat_subscription;
     
     // Data
     rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cmd_subscription;
@@ -92,6 +98,7 @@ private:
     void echo_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
     void dvl_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
     void joystick_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
+    void mission_manager_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
 
     void pwm_cmd_callback(custom_interfaces::msg::Pwms::UniquePtr pwms);
     void pwm_cli_callback(custom_interfaces::msg::Pwms::UniquePtr pwms);
@@ -115,6 +122,7 @@ private:
     bool echo_heartbeat = false;
     bool dvl_heartbeat = false;
     bool joystick_heartbeat = false;
+    bool mission_manager_heartbeat = false;
     bool ping_ok = false;
 
     int current_control_mode = 0; // 0 = Disabled, 1 = CLI, 2 = CTRL, 3 = Echo
@@ -141,6 +149,7 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> most_recent_echo_heartbeat;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_dvl_heartbeat;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_joystick_heartbeat;
+    std::chrono::time_point<std::chrono::steady_clock> most_recent_mission_manager_heartbeat;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_ping;
     std::chrono::time_point<std::chrono::steady_clock> most_recent_ping_attempt;
 };

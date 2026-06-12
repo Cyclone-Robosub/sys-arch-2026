@@ -158,3 +158,7 @@ void TUI_Interface::unfreeze_display() {
 std::string TUI_Interface::get_current_input() {
     return current_input;
 }
+
+void TUI_Interface::clear_input() {
+    current_input.clear();
+}
