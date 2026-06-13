@@ -8,7 +8,8 @@
       <DriveToWorldWaypoint world_waypoint ="10,0,0,0,0,0"
                             waypoint_mask ="0,0,0,0,0,0"
                             tolerance="0.2,0,0,0,0,0"
-                            hold_time="5"
+                            hold_time="0.5"
+                            timeout="10"
                             _description="Forwards 10 metres"/>
     </Sequence>
   </BehaviorTree>
@@ -25,7 +26,8 @@
       <DriveToWorldWaypoint world_waypoint="0,0,0,0,0,0"
                             waypoint_mask="1,0,0,0,0,0"
                             tolerance="0.2,0,0,0,0,0"
-                            hold_time="5"
+                            hold_time="8"
+                            timeout="10"
                             _description="Return to origin"/>
     </Sequence>
   </BehaviorTree>
@@ -42,6 +44,8 @@
                   type="std::vector&lt;float&gt;">[6x1] Allowed error margin for arrival</input_port>
       <input_port name="hold_time"
                   type="float">Time to remain within tolerance before returning SUCCESS</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
     </Action>
   </TreeNodesModel>
 

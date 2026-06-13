@@ -12,7 +12,8 @@ PortsList DistanceTrickCmd::providedPorts() {
         InputPort<Pose6D>("end_waypoint_body"),
         InputPort<WaypointMask>("waypoint_mask"),
         InputPort<Pose6D>("tolerence"),
-        InputPort<uint64_t>("hold_time")
+        InputPort<uint64_t>("hold_time"),
+        InputPort<double>("timeout")
     });
 }
 
@@ -22,8 +23,9 @@ bool DistanceTrickCmd::setGoal(Goal& goal) {
     getInput("waypoint_mask", goal.waypoint_mask);
     getInput("tolerance", goal.tolerance);
     getInput("hold_time", goal.hold_time);
+    getInput("timeout", goal.timeout);
     start_time = std::chrono::steady_clock::now();
-    timeout_sec = goal.hold_time + std::chrono::milliseconds(10).count(); 
+    timeout_sec = goal.timeout;
     return true;
 }
 

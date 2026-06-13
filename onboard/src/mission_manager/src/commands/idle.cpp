@@ -18,5 +18,5 @@ using namespace CycloneCommands;
     }
 
     void IdleCmd::onHalt() {
-        RCLCPP_INFO(logger(), "Idle interrupted buy new command");
+        RCLCPP_INFO(logger(), "Idle interrupted by new command");
     }

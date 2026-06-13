@@ -14,6 +14,7 @@ using namespace CycloneCommands;
             InputPort<Pose6D>("tolerance"),
             InputPort<double>("confidence"),
             InputPort<uint64_t>("hold_time"),
+            InputPort<double>("timeout"),
             OutputPort<std::string>("found_object"),
             OutputPort<bool>("reached_waypoint_without_detection")
         });
@@ -27,9 +28,10 @@ using namespace CycloneCommands;
         getInput("tolerance", goal.tolerance);
         getInput("confidence", goal.confidence);
         getInput("hold_time", goal.hold_time);
+        getInput("timeout", goal.timeout);
         // return true, if we were able to set the goal correctly.
         start_time = std::chrono::steady_clock::now();
-        timeout_sec = goal.hold_time + std::chrono::milliseconds(10).count(); 
+        timeout_sec = goal.timeout;
         return true;
     }
 

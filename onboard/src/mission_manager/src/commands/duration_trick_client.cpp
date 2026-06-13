@@ -10,7 +10,8 @@ using namespace CycloneCommands;
             InputPort<uint64_t>("duration"),
             InputPort<WaypointMask>("waypoint_mask"),
             InputPort<Pose6D>("tolerance"),
-            InputPort<uint64_t>("hold_time")
+            InputPort<uint64_t>("hold_time"),
+            InputPort<double>("timeout")
         });
     }
 
@@ -19,9 +20,10 @@ using namespace CycloneCommands;
         getInput("duration", goal.duration);
         getInput("waypoint_mask", goal.waypoint_mask);
         getInput("hold_time", goal.hold_time);
+        getInput("timeout", goal.timeout);
         
         start_time = std::chrono::steady_clock::now();
-        timeout_sec = goal.hold_time + std::chrono::milliseconds(10).count(); 
+        timeout_sec = goal.timeout;
         return true;
     }
 
