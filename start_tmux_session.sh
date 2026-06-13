@@ -34,7 +34,7 @@ SESSION="manny"
 
 # --- Thrust Interface ---
 # Create new detached tmux session
-THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -P -F "#{pane_id}" "ros2 run thrust_interface thrust_interface; bash" )
+THRUST_INTERFACE_PANE=$(tmux new-session -d -s $SESSION -n 'system' -P -F "#{pane_id}" "ros2 run thrust_interface thrust_interface; bash")
 
 # --- Software Multiplexer ---
 SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}" "ros2 run soft_mux soft_mux; bash" )
@@ -53,7 +53,7 @@ mkdir -p ~/Robosub/recordings
 
 # --- mediaMTX ---
 # Create new window 
-MEDIAMTX_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "mediamtx; bash")
+MEDIAMTX_PANE=$(tmux new-window -t $SESSION -n 'video' -P -F "#{pane_id}" "mediamtx; bash")
 
 # --- ffmpeg ---
 FFMPEG_PANE=$(tmux split-window -h -t $MEDIAMTX_PANE -P -F "#{pane_id}" "ffmpeg -f v4l2 -input_format h264 -video_size 1920x1080 -framerate 30 \
@@ -73,7 +73,7 @@ tmux split-window -v -t $FFMPEG_PANE "ffmpeg -f v4l2 -input_format h264 -video_s
 ################################################################################
 
 # --- IMU Node ---
-SENSOR_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash")
+SENSOR_PANE=$(tmux new-window -t $SESSION -n 'sensors' -P -F "#{pane_id}" "ros2 run inertial_sense_ros2 inertial_sense_ros2_node; bash")
 
 # --- DVL Node ---
 DVL_PANE=$(tmux split-window -v -t $SENSOR_PANE -P -F "#{pane_id}" "ros2 run dvl dvl; bash")
@@ -85,7 +85,13 @@ tmux split-window -h -t $DVL_PANE "ros2 run data_logger data_logger; bash"
 # SECTION 4: Additional Components: CLI
 ################################################################################
 
-CLI_PANE=$(tmux new-window -t $SESSION -P -F "#{pane_id}" "ros2 run pwm_cli pwm_cli_node; bash")
+CLI_PANE=$(tmux new-window -t $SESSION -n 'cli' -P -F "#{pane_id}" "ros2 run pwm_cli pwm_cli_node; bash")
+
+################################################################################
+# SECTION 4: Additional Components: mission_manager
+################################################################################
+
+MISSION_MANAGER_PANE=$(tmux new-window -t $SESSION -n 'mission_manager' -P -F "#{pane_id}" "ros2 launch mission_manager mission_tree_server.launch.xml; bash")
 
 ################################################################################
 # Attach to Session
