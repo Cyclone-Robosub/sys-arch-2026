@@ -3,10 +3,12 @@ using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
+  ready_pub_service =  this->create_service<std_srvs::srv::Trigger>("pub_ready_status", std::bind(&MissionManagerNode::pub_ready_status, this, std::placeholders::_1, std::placeholders::_2));
   execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "bt_action_server");
   go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
   heartbeat_timer = this->create_wall_timer(500ms, std::bind(&MissionManagerNode::heartbeat_callback, this));
   mission_manager_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mission_manager_heartbeat", 10);
+  current_ready_status_publisher = this->create_publisher<std_msgs::msg::Bool>("current_ready_state", 10);
 }
 
 
@@ -16,6 +18,17 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
 void MissionManagerNode::trigger_ready_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
     (void) request;
     ready_signal = !ready_signal;
+    publish_current_ready_status();
+    response->success = true;
+}
+
+/*
+    Publish whether we are currently ready or not. Useful for dashboard monitoring.
+*/
+
+void MissionManagerNode::pub_ready_status(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+    (void)request;
+    publish_current_ready_status();
     response->success = true;
 }
 
@@ -50,6 +63,12 @@ void MissionManagerNode::heartbeat_callback() {
 void MissionManagerNode::mission_manager_heartbeat_send() {
     std_msgs::msg::Empty msg;
     this->mission_manager_heartbeat_publisher->publish(msg);
+}
+
+void MissionManagerNode::publish_current_ready_status() {
+    auto ready = std_msgs::msg::Bool();
+    ready.data = ready_signal;
+    current_ready_status_publisher->publish(ready);
 }
 
 
