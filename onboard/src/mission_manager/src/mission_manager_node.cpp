@@ -13,7 +13,7 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   std::shared_ptr<IdleActionServer> idle_action_server = std::make_shared<IdleActionServer>();
   std::shared_ptr<ObjRelWaypointActionServer> obj_rel_waypoint_action_server = std::make_shared<ObjRelWaypointActionServer>();
   std::shared_ptr<SeekObjectActionServer> seek_object_action_server = std::make_shared<SeekObjectActionServer>();
-  std::shared_ptr<WaypointActionServer> waypoint_action_server = std::make_shared<WaypointActionServer>();
+  
 }
 
 
@@ -72,16 +72,19 @@ int main(int argc, char** argv) {
    
     rclcpp::NodeOptions options;
     auto action_server = std::make_shared<MissionTreeServer>(options);
+    std::shared_ptr<WaypointActionServer> waypoint_action_server = std::make_shared<WaypointActionServer>();
     auto mission_manager = std::make_shared<MissionManagerNode>();
     // TODO: This workaround is for a bug in MultiThreadedExecutor where it can deadlock when spinning without a timeout.
     // Deadlock is caused when Publishers or Subscribers are dynamically removed as the node is spinning.
     rclcpp::executors::MultiThreadedExecutor exec(rclcpp::ExecutorOptions(), 0, false,
                                                 std::chrono::milliseconds(250));
     exec.add_node(action_server->node());
+    exec.add_node(waypoint_action_server);
     exec.add_node(mission_manager);
 
     exec.spin();
     exec.remove_node(action_server->node());
+    exec.remove_node(waypoint_action_server);
     exec.remove_node(mission_manager);
     rclcpp::shutdown();
     return 0;

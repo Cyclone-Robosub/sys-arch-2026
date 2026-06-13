@@ -9,7 +9,7 @@ using namespace CycloneCommands;
     PortsList WaypointCmd::providedPorts()
     {
         return providedBasicPorts({
-            InputPort<Pose6D>("waypoint"),
+            InputPort<Pose6D>("world_waypoint"),
             InputPort<WaypointMask>("waypoint_mask"),
             InputPort<Pose6D>("tolerance"),
             InputPort<double>("hold_time")
@@ -18,7 +18,7 @@ using namespace CycloneCommands;
 
     bool WaypointCmd::setGoal(Goal& goal) {
         // get parameters from the Input port
-        getInput("waypoint", goal.waypoint);
+        getInput("world_waypoint", goal.waypoint);
         getInput("waypoint_mask", goal.waypoint_mask);
         getInput("tolerance", goal.tolerance);
         getInput("hold_time", goal.hold_time);
