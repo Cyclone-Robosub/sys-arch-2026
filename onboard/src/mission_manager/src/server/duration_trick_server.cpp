@@ -27,6 +27,7 @@ void DurationTrickActionServer::handle_accepted(const std::shared_ptr<GoalHandle
 }
 
 void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDurationTrick> goal_handle) {
+    process_done = false;
     RCLCPP_INFO(this->get_logger(), "Executing goal");
     rclcpp::Rate loop_rate(5);
     const auto goal = goal_handle->get_goal();

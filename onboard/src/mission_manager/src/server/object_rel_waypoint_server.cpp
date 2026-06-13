@@ -27,6 +27,7 @@ void ObjRelWaypointActionServer::handle_accepted(const std::shared_ptr<GoalHandl
 }
 
 void ObjRelWaypointActionServer::execute(const std::shared_ptr<GoalHandleObjRelWaypoint> goal_handle) {
+    process_done = false;
     RCLCPP_INFO(this->get_logger(), "Executing goal");
     rclcpp::Rate loop_rate(5);
     const auto goal = goal_handle->get_goal();
