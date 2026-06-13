@@ -40,7 +40,7 @@ using namespace CycloneCommands;
 
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         double elapsed = std::chrono::duration<double>(now - start_time).count();
-        if (elapsed > timeout_sec) {
+        if (timeout_sec > 0 && elapsed > timeout_sec) {
             RCLCPP_ERROR(logger(), "Error: timeout");
             return NodeStatus::FAILURE;
         }       
