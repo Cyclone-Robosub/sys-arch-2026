@@ -511,11 +511,11 @@ void Dashboard_TUI::display_connection_info(bool connection_ok, double seconds_s
     if (!connection_ok) {
         write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
         write(STDOUT_FILENO, "\x1B[31;107m", 9); // set red foreground, white background
-        printf("======== No robot connection! Check ethernet cable. ========\n");
+        printf("========== No robot connection! Check ethernet cable. =========\n");
         write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
     }
     else {
-        printf("Most recent ping: rtt %.3lfms | %.1lf seconds since last ping.\n", ping_rtt, seconds_since_ping);
+        printf("Most recent ping: rtt %07.3lfms | %04.1lf seconds since last ping.\n", ping_rtt, seconds_since_ping);
     }
 }
 
@@ -625,9 +625,9 @@ std::string Dashboard::get_ping() { // TODO: when robot looses connection ping h
         dup2(pipe_fds[1], STDOUT_FILENO);
         dup2(pipe_fds[1], STDERR_FILENO);
         execlp("ping", "ping", "-c 1", "propulsion.local", NULL);
-        close(pipe_fds[0]);
+        close(pipe_fds[0]); // should never get here (or past here, i.e. to the return)
         close(pipe_fds[1]);
-        return "error"; // should never get here
+        return "error";
     }
 }
 
