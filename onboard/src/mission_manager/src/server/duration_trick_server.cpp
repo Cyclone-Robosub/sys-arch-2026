@@ -1,7 +1,7 @@
 #include "server/duration_trick_server.hpp"
 
 
-DurationTrickActionServer::DurationTrickActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("duration_trick_action_server", options) {
+DurationTrickActionServer::DurationTrickActionServer(const rclcpp::NodeOptions& options) : Node("duration_trick_action_server", options) {
     process_done = false;
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
     result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&DurationTrickActionServer::result_callback, this, std::placeholders::_1));

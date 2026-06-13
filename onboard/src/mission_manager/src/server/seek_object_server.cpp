@@ -1,7 +1,7 @@
 #include "server/seek_object_server.hpp"
 
 
-SeekObjectActionServer::SeekObjectActionServer(const rclcpp::NodeOptions& options = rclcpp::NodeOptions()) : Node("seek_object_action_server", options) {
+SeekObjectActionServer::SeekObjectActionServer(const rclcpp::NodeOptions& options) : Node("seek_object_action_server", options) {
     goal_publisher = this->create_publisher<custom_interfaces::msg::Goal>("command_msg", 10);
     result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&SeekObjectActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<SeekObject>(

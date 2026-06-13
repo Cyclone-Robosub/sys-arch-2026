@@ -59,6 +59,11 @@ install(
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION lib/${PROJECT_NAME})
 
+install(DIRECTORY
+    mission_tree_files
+    DESTINATION share/${PROJECT_NAME}/
+)
+
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 
