@@ -7,13 +7,6 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   go_signal_subscriber = this->create_subscription<std_msgs::msg::Bool>("go_signal", 10, std::bind(&MissionManagerNode::go_signal_callback, this, std::placeholders::_1));
   heartbeat_timer = this->create_wall_timer(500ms, std::bind(&MissionManagerNode::heartbeat_callback, this));
   mission_manager_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mission_manager_heartbeat", 10);
-
-  std::shared_ptr<DistanceTrickActionServer> distance_trick_action_server = std::make_shared<DistanceTrickActionServer>();
-  std::shared_ptr<DurationTrickActionServer> duration_trick_action_server = std::make_shared<DurationTrickActionServer>();
-  std::shared_ptr<IdleActionServer> idle_action_server = std::make_shared<IdleActionServer>();
-  std::shared_ptr<ObjRelWaypointActionServer> obj_rel_waypoint_action_server = std::make_shared<ObjRelWaypointActionServer>();
-  std::shared_ptr<SeekObjectActionServer> seek_object_action_server = std::make_shared<SeekObjectActionServer>();
-  
 }
 
 
@@ -44,9 +37,7 @@ void MissionManagerNode::try_start_mission() {
    ExecuteTree::Goal goal;
    goal.target_tree = "TrialTree";
    mission_started = true;
-   printf("GO\n");
    execute_tree_client->async_send_goal(goal);
-   printf("WENT\n");
 }
 
 /*
@@ -72,7 +63,12 @@ int main(int argc, char** argv) {
    
     rclcpp::NodeOptions options;
     auto action_server = std::make_shared<MissionTreeServer>(options);
-    std::shared_ptr<WaypointActionServer> waypoint_action_server = std::make_shared<WaypointActionServer>();
+    auto waypoint_action_server = std::make_shared<WaypointActionServer>();
+    auto distance_trick_action_server = std::make_shared<DistanceTrickActionServer>();
+    auto duration_trick_action_server = std::make_shared<DurationTrickActionServer>();
+    auto idle_action_server = std::make_shared<IdleActionServer>();
+    auto obj_rel_waypoint_action_server = std::make_shared<ObjRelWaypointActionServer>();
+    auto seek_object_action_server = std::make_shared<SeekObjectActionServer>();
     auto mission_manager = std::make_shared<MissionManagerNode>();
     // TODO: This workaround is for a bug in MultiThreadedExecutor where it can deadlock when spinning without a timeout.
     // Deadlock is caused when Publishers or Subscribers are dynamically removed as the node is spinning.
@@ -80,11 +76,21 @@ int main(int argc, char** argv) {
                                                 std::chrono::milliseconds(250));
     exec.add_node(action_server->node());
     exec.add_node(waypoint_action_server);
+    exec.add_node(distance_trick_action_server);
+    exec.add_node(duration_trick_action_server);
+    exec.add_node(idle_action_server);
+    exec.add_node(obj_rel_waypoint_action_server);
+    exec.add_node(seek_object_action_server);
     exec.add_node(mission_manager);
 
     exec.spin();
     exec.remove_node(action_server->node());
     exec.remove_node(waypoint_action_server);
+    exec.remove_node(distance_trick_action_server);
+    exec.remove_node(duration_trick_action_server);
+    exec.remove_node(idle_action_server);
+    exec.remove_node(obj_rel_waypoint_action_server);
+    exec.remove_node(seek_object_action_server);
     exec.remove_node(mission_manager);
     rclcpp::shutdown();
     return 0;
