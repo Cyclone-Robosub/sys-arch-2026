@@ -34,9 +34,12 @@ void WaypointActionServer::execute(const std::shared_ptr<GoalHandleWaypoint> goa
     std::string command = "drv_to_world_wp_";
     auto goal_cmd = custom_interfaces::msg::Goal();
     goal_cmd.command_id = command;
-    goal_cmd.waypoint = goal->waypoint;
-    goal_cmd.waypoint_mask = goal->waypoint_mask;
-    goal_cmd.tolerance = goal->tolerance;
+    goal_cmd.waypoint_position = goal->waypoint_position;
+    goal_cmd.waypoint_orientation = goal->waypoint_orientation;
+    goal_cmd.waypoint_mask_position = goal->waypoint_mask_position;
+    goal_cmd.waypoint_mask_orientation = goal->waypoint_mask_orientation;
+    goal_cmd.tolerance_position = goal->tolerance_position;
+    goal_cmd.tolerance_orientation = goal->tolerance_orientation;
     goal_cmd.hold_time = goal->hold_time;
     goal_publisher->publish(goal_cmd);
     

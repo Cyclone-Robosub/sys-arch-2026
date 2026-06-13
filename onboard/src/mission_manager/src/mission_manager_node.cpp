@@ -42,7 +42,7 @@ void MissionManagerNode::try_start_mission() {
         return;
    }
    ExecuteTree::Goal goal;
-   goal.target_tree = "MainTree";
+   goal.target_tree = "TrialTree";
    mission_started = true;
    printf("GO\n");
    execute_tree_client->async_send_goal(goal);

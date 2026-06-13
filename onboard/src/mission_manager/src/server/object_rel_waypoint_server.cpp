@@ -34,8 +34,8 @@ void ObjRelWaypointActionServer::execute(const std::shared_ptr<GoalHandleObjRelW
     std::string command = "track_obj_wp___";
     auto goal_cmd = custom_interfaces::msg::Goal();
     goal_cmd.command_id = command;
-    goal_cmd.waypoint = goal->tracking_position;
-    goal_cmd.waypoint_mask = goal->waypoint_mask;
+    //goal_cmd.waypoint = goal->tracking_position;
+    //goal_cmd.waypoint_mask = goal->waypoint_mask;
     std::string object_fixed = "";
     auto object_og = goal->object;
     object_fixed = object_og;
@@ -43,8 +43,8 @@ void ObjRelWaypointActionServer::execute(const std::shared_ptr<GoalHandleObjRelW
         object_fixed += "_";
     }
     goal_cmd.object = object_fixed;
-    goal_cmd.tolerance = goal->tolerance;
-    goal_cmd.hold_time = goal->hold_time;
+    //goal_cmd.tolerance = goal->tolerance;
+    //goal_cmd.hold_time = goal->hold_time;
     goal_publisher->publish(goal_cmd);
     
     auto feedback = std::make_shared<ObjRelWaypoint::Feedback>();

@@ -1,7 +1,13 @@
 string command_id
-custom_interfaces/Pose6D waypoint
-custom_interfaces/WaypointMask waypoint_mask
-custom_interfaces/Pose6D tolerance
+#custom_interfaces/Pose6D waypoint
+geometry_msgs/Vector3 waypoint_position
+geometry_msgs/Vector3 waypoint_orientation
+geometry_msgs/Vector3 waypoint_mask_position
+geometry_msgs/Vector3 waypoint_mask_orientation
+#custom_interfaces/WaypointMask waypoint_mask
+geometry_msgs/Vector3 tolerance_position
+geometry_msgs/Vector3 tolerance_orientation
+#custom_interfaces/Pose6D tolerance
 uint64 hold_time
 string object
 float64 confidence
