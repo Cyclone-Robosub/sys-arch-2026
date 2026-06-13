@@ -4,6 +4,7 @@
 #include "command_alias.hpp"
 #include "custom_interfaces/action/waypoint.hpp"
 #include <string>
+#include "command_to_strings.hpp"
 
 namespace CycloneCommands {
     using Waypoint = custom_interfaces::action::Waypoint;

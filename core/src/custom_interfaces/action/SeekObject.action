@@ -4,7 +4,8 @@ custom_interfaces/WaypointMask waypoint_mask
 string object
 custom_interfaces/Pose6D tolerance
 float64 confidence
-uint64 hold_time
+float64 hold_time
+float64 timeout
 ---
 # Result
 bool success

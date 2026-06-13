@@ -27,6 +27,7 @@ void DurationTrickActionServer::handle_accepted(const std::shared_ptr<GoalHandle
 }
 
 void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDurationTrick> goal_handle) {
+    process_done = false;
     RCLCPP_INFO(this->get_logger(), "Executing goal");
     rclcpp::Rate loop_rate(5);
     const auto goal = goal_handle->get_goal();
@@ -64,11 +65,11 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
         RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
-    // Check if goal is done
+    
     if (rclcpp::ok()) {
       result->success = cur_result;
       goal_handle->succeed(result);
-      RCLCPP_INFO(this->get_logger(), "Goal succeeded");
+      RCLCPP_INFO(this->get_logger(), "Goal completed");
     }
 }
 void DurationTrickActionServer::result_callback(custom_interfaces::msg::Result::SharedPtr msg) {

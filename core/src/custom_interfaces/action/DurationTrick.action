@@ -3,7 +3,8 @@ string trick
 uint64 duration
 custom_interfaces/WaypointMask waypoint_mask               # [1,1,1,1,1,1] = Default to ROS param if unspecified
 custom_interfaces/Pose6D tolerance
-uint64 hold_time
+float64 hold_time
+float64 timeout
 ---
 # Result
 bool success
