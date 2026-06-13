@@ -52,8 +52,9 @@ class Dashboard_TUI : public TUI_Interface {
         void fill_right_col(const int col_number);
         void display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo);
         void display_connection_info(bool connection_ok, double seconds_since_ping, double ping_rtt, const int col_number);
-        void display_drr(const int col_number, DVL_Data position, DVL_Data orientation);
+        void printDVLCoordinate(double coordinate);
         void display_vr(const int col_number, DVL_Data velocity);
+        void display_drr(const int col_number, DVL_Data position, DVL_Data orientation);
         void display_commands();
         std::string dvl_fresh(DVL_Data dvl_data);
         std::string pwm_fresh(PWM_Data pwm_data);

@@ -519,30 +519,51 @@ void Dashboard_TUI::display_connection_info(bool connection_ok, double seconds_s
     }
 }
 
+void Dashboard_TUI::printDVLCoordinate(double coordinate) {
+    if (fabs(coordinate) > 999) { // impossibly large number
+        printf(" Overflow ");
+    } else { // standard
+        printf("% 010.5f", coordinate);
+    }
+}
+
 void Dashboard_TUI::display_vr(const int col_number, DVL_Data velocity) {
     jump_to_column(col_number);
     std::string fresh = dvl_fresh(velocity);
     std::string clear = "\x1B[39;22m";
-    printf("Velocity:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", 
-        fresh.c_str(), velocity.x, clear.c_str(), 
-        fresh.c_str(), velocity.y, clear.c_str(), 
-        fresh.c_str(), velocity.z, clear.c_str());
+    printf("Velocity:    | x: %s", fresh.c_str());
+    printDVLCoordinate(velocity.x);
+    printf("%s | y: %s", clear.c_str(), fresh.c_str());
+    printDVLCoordinate(velocity.y);
+    printf("%s | z: %s", clear.c_str(), fresh.c_str());
+    printDVLCoordinate(velocity.z);
+    printf("%s |\n", clear.c_str());
 }
+
 
 void Dashboard_TUI::display_drr(const int col_number, DVL_Data position, DVL_Data orientation) {
     jump_to_column(col_number);
     std::string position_fresh = dvl_fresh(position);
     std::string orientation_fresh = dvl_fresh(orientation);
     std::string clear = "\x1B[39;22m";
-    printf("Position:    | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", 
-        position_fresh.c_str(), position.x, clear.c_str(), 
-        position_fresh.c_str(), position.y, clear.c_str(), 
-        position_fresh.c_str(), position.z, clear.c_str());
+
+    printf("Position:    | x: %s", position_fresh.c_str());
+    printDVLCoordinate(position.x);
+    printf("%s | y: %s", clear.c_str(), position_fresh.c_str());
+    printDVLCoordinate(position.y);
+    printf("%s | z: %s", clear.c_str(), position_fresh.c_str());
+    printDVLCoordinate(position.z);
+    printf("%s |\n", clear.c_str());
+
     jump_to_column(col_number);
-    printf("Orientation: | x: %s%.5f%s | y: %s%.5f%s | z: %s%.5f%s |\n", 
-        orientation_fresh.c_str(), orientation.x, clear.c_str(), 
-        orientation_fresh.c_str(), orientation.y, clear.c_str(), 
-        orientation_fresh.c_str(), orientation.z, clear.c_str());
+    printf("Orientation: | x: %s", orientation_fresh.c_str());
+    printDVLCoordinate(orientation.x);
+    printf("%s | y: %s", clear.c_str(), orientation_fresh.c_str());
+    printDVLCoordinate(orientation.y);
+    printf("%s | z: %s", clear.c_str(), orientation_fresh.c_str());
+    printDVLCoordinate(orientation.z);
+    printf("%s |\n", clear.c_str());
+
 }
 
 std::string Dashboard_TUI::dvl_fresh(DVL_Data dvl_data) {
