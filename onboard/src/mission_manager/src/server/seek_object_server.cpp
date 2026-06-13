@@ -59,13 +59,13 @@ void SeekObjectActionServer::execute(const std::shared_ptr<GoalHandleSeekObject>
         RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
-    // Check if goal is done
+    
     if (rclcpp::ok()) {
       result->success = cur_result;
       result->found_object = found_object;
       result->reached_waypoint_without_detection = reached_waypoint_without_detection;
       goal_handle->succeed(result);
-      RCLCPP_INFO(this->get_logger(), "Goal succeeded");
+      RCLCPP_INFO(this->get_logger(), "Goal completed");
     }
 }
 void SeekObjectActionServer::result_callback(custom_interfaces::msg::Result::SharedPtr msg) {

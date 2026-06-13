@@ -69,11 +69,11 @@ void DistanceTrickActionServer::execute(const std::shared_ptr<GoalHandleDistance
         RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
-    // Check if goal is done
+    
     if (rclcpp::ok()) {
       result->success = cur_result;
       goal_handle->succeed(result);
-      RCLCPP_INFO(this->get_logger(), "Goal succeeded");
+      RCLCPP_INFO(this->get_logger(), "Goal completed");
     }
 }
 void DistanceTrickActionServer::result_callback(custom_interfaces::msg::Result::SharedPtr msg) {
