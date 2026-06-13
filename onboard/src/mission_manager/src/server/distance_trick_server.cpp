@@ -48,10 +48,10 @@ void DistanceTrickActionServer::execute(const std::shared_ptr<GoalHandleDistance
     }
 
     goal_cmd.trick = trick_fixed;
-    //goal_cmd.waypoint = goal->end_waypoint_body;
-    //goal_cmd.waypoint_mask = goal->waypoint_mask;
+    goal_cmd.waypoint = goal->end_waypoint_body;
+    goal_cmd.waypoint_mask = goal->waypoint_mask;
    
-    //goal_cmd.tolerance = goal->tolerance;
+    goal_cmd.tolerance = goal->tolerance;
     goal_cmd.hold_time = goal->hold_time;
     goal_publisher->publish(goal_cmd);
     

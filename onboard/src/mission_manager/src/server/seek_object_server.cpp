@@ -33,8 +33,8 @@ void SeekObjectActionServer::execute(const std::shared_ptr<GoalHandleSeekObject>
     std::string command = "drv_to_wp_seek__";
     auto goal_cmd = custom_interfaces::msg::Goal();
     goal_cmd.command_id = command;
-    //goal_cmd.waypoint = goal->waypoint;
-    //goal_cmd.waypoint_mask = goal->waypoint_mask;
+    goal_cmd.waypoint = goal->waypoint;
+    goal_cmd.waypoint_mask = goal->waypoint_mask;
     std::string object_fixed = "";
     auto object_og = goal->object;
     object_fixed = object_og;

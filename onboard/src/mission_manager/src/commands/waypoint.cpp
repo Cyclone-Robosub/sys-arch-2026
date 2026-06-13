@@ -9,24 +9,18 @@ using namespace CycloneCommands;
     PortsList WaypointCmd::providedPorts()
     {
         return providedBasicPorts({
-            InputPort<Vector3>("world_waypoint_pos"),
-            InputPort<Vector3>("world_waypoint_orient"),
-            InputPort<Vector3>("waypoint_mask_pos"),
-            InputPort<Vector3>("waypoint_mask_orient"),
-            InputPort<Vector3>("tolerance_pos"),
-            InputPort<Vector3>("tolerance_orient"),
+            InputPort<Pose6D>("waypoint"),
+            InputPort<WaypointMask>("waypoint_mask"),
+            InputPort<Pose6D>("tolerance"),
             InputPort<double>("hold_time")
         });
     }
 
     bool WaypointCmd::setGoal(Goal& goal) {
         // get parameters from the Input port
-        getInput("world_waypoint_pos", goal.waypoint_position);
-        getInput("world_waypoint_orient", goal.waypoint_orientation);
-        getInput("waypoint_mask_pos", goal.waypoint_mask_position);
-        getInput("waypoint_mask_orient", goal.waypoint_mask_orientation);
-        getInput("tolerance_pos", goal.tolerance_position);
-        getInput("tolerance_orient", goal.tolerance_orientation);
+        getInput("waypoint", goal.waypoint);
+        getInput("waypoint_mask", goal.waypoint_mask);
+        getInput("tolerance", goal.tolerance);
         getInput("hold_time", goal.hold_time);
 
         start_time = std::chrono::steady_clock::now();

@@ -45,9 +45,9 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
     goal_cmd.trick = trick_fixed;
     goal_cmd.duration = goal->duration;
    
-    //goal_cmd.waypoint_mask = goal->waypoint_mask;
+    goal_cmd.waypoint_mask = goal->waypoint_mask;
    
-    //goal_cmd.tolerance = goal->tolerance;
+    goal_cmd.tolerance = goal->tolerance;
     goal_cmd.hold_time = goal->hold_time;
     goal_publisher->publish(goal_cmd);
     

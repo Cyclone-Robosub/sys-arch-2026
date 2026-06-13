@@ -3,7 +3,6 @@
 #include "custom_interfaces/action/waypoint.hpp"
 #include "custom_interfaces/msg/pose6_d.hpp"
 #include "custom_interfaces/msg/waypoint_mask.hpp"
-#include "geometry_msgs/msg/vector3.hpp"
 #include <string>
 
 namespace CycloneCommands {
@@ -18,5 +17,4 @@ namespace CycloneCommands {
 
     using Pose6D = custom_interfaces::msg::Pose6D;
     using WaypointMask = custom_interfaces::msg::WaypointMask;
-    using Vector3 = geometry_msgs::msg::Vector3;
 }
