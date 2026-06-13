@@ -36,6 +36,8 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
         std::bind(&Dashboard::dvl_drr_callback, this, std::placeholders::_1));
     current_control_mode_subscription = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
         std::bind(&Dashboard::control_mode_callback, this, std::placeholders::_1));
+    ready_status_subscription = this->create_subscription<std_msgs::msg::Bool>("current_ready_state", 10, 
+        std::bind(&Dashboard::ready_status_callback, this, std::placeholders::_1));
 
     heartbeat_timer = this->create_wall_timer(17ms,
             std::bind(&Dashboard::heartbeat_check_callback, this)); // 60 hz
@@ -47,7 +49,8 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
     reset_drr_client = this->create_client<std_srvs::srv::Trigger>("reset_drr");
     reset_gyro_client = this->create_client<std_srvs::srv::Trigger>("reset_gyro");
     mission_manager_client = this->create_client<std_srvs::srv::Trigger>("ready_signal_service");
-    force_pub = this->create_client<std_srvs::srv::SetBool>("force_pub");
+    force_pub_mux = this->create_client<std_srvs::srv::SetBool>("force_pub");
+    force_pub_mission_manager = this->create_client<std_srvs::srv::Trigger>("pub_ready_status");
     
     refresh_display();
 }
@@ -55,7 +58,12 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
 void Dashboard::get_mux_mode_now() {
     std::shared_ptr<std_srvs::srv::SetBool::Request> request = std::make_shared<std_srvs::srv::SetBool::Request>();
     request->data = true;
-    force_pub->async_send_request(request);
+    force_pub_mux->async_send_request(request);
+}
+
+void Dashboard::get_ready_status_now() {
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    force_pub_mission_manager->async_send_request(request);
 }
 
 void Dashboard::heartbeat_check_callback() {
@@ -124,7 +132,10 @@ void Dashboard::joystick_heartbeat_received_callback(std_msgs::msg::Empty::Uniqu
 
 void Dashboard::mission_manager_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat) {
     most_recent_mission_manager_heartbeat = std::chrono::steady_clock::now();
-    mission_manager_heartbeat = true; // If we just received a heartbeat, then we certainly have a heartbeat!
+    if (!mission_manager_heartbeat) {
+        mission_manager_heartbeat = true; // If we just received a heartbeat, then we certainly have a heartbeat!
+        get_ready_status_now();
+    }
     (void)heartbeat; // stop compiler complaining
 }
 
@@ -170,6 +181,11 @@ void Dashboard::dvl_drr_callback(custom_interfaces::msg::DRR::UniquePtr drr) {
 
 void Dashboard::control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg) {
     current_control_mode = msg->data;
+    refresh_display();
+}
+
+void Dashboard::ready_status_callback(std_msgs::msg::Bool::UniquePtr msg) {
+    mission_manager_ready = msg->data;
     refresh_display();
 }
 
@@ -288,7 +304,7 @@ void Dashboard::work_loop() {
 void Dashboard::refresh_display() {
     auto now = std::chrono::steady_clock::now();
     seconds_since_ping = (double)((now - most_recent_ping) / 1ms) / (double)1000;
-    tui->refresh_display(19, current_control_mode,
+    tui->refresh_display(20, current_control_mode,
                              thrust_interface_heartbeat,
                              mux_heartbeat,
                              cli_heartbeat,
@@ -306,7 +322,8 @@ void Dashboard::refresh_display() {
                              orientation,
                              ping_ok,
                              rtt,
-                             seconds_since_ping);
+                             seconds_since_ping,
+                             mission_manager_ready);
 }
 void Dashboard::clear_display() {
     tui->clear_display();
@@ -422,6 +439,21 @@ void Dashboard_TUI::display_escalatable_warning_status(int current_mode, int war
     else {
         display_noncritical_status(heartbeat, col_number);
     }
+}
+
+void Dashboard_TUI::display_mission_manager(int current_mux_mode, int warning_mode, bool heartbeat, bool ready, const int col_number) {
+    if (!heartbeat || !ready) {
+        display_escalatable_warning_status(current_mux_mode, warning_mode, heartbeat, col_number);
+    } else {
+        display_ready(col_number);
+    }
+}
+
+void Dashboard_TUI::display_ready(const int col_number) {
+    jump_to_column(col_number);
+    write(STDOUT_FILENO, "\x1B[48;5;34;97m", 13); // set green background, white foreground
+    printf("=========== Ready ==========\n");
+    write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
 }
 
 
@@ -598,6 +630,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     bool ping_ok = (bool)va_arg(args, int);
     double ping_rtt = va_arg(args, double);
     double seconds_since_ping = va_arg(args, double);
+    bool ready = (bool)va_arg(args, int);
     va_end(args);
     
     fresh_evaluation_time = std::chrono::steady_clock::now();
@@ -654,7 +687,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     printf("\n");
 
     write_header("mission_manager", col_2);
-    display_escalatable_warning_status(current_mux_mode, 2, mission_manager_heartbeat, col_2);
+    display_mission_manager(current_mux_mode, 2, mission_manager_heartbeat, ready, col_2);
 
     write(STDOUT_FILENO, "\x1B[38;29H", 8); // jumpt to prompt (line/column)
     write(STDOUT_FILENO, "\x1B[?25h", 6); // visible cursor

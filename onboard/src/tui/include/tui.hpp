@@ -7,6 +7,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "tui_interface.hpp"
 #include "std_msgs/msg/empty.hpp"
+#include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 #include "std_srvs/srv/trigger.hpp"
@@ -45,6 +46,8 @@ class Dashboard_TUI : public TUI_Interface {
         void display_noncritical_status(bool heartbeat, const int col_number);
         void display_escalatable_critical_status(int current_mode, int critical_mode, bool heartbeat, const int col_number);
         void display_escalatable_warning_status(int current_mode, int warning_mode, bool heartbeat, const int col_number);
+        void display_mission_manager(int current_mux_mode, int warning_mode, bool heartbeat, bool ready, const int col_number);
+        void display_ready(const int col_number);
         void display_pwms(std::array<int,8> pwms, const int col_number, bool fresh);
         void fill_right_col(const int col_number);
         void display_all_pwms(PWM_Data pwms_cmd, PWM_Data pwms_cli, PWM_Data pwms_ctrl, PWM_Data pwms_echo);
@@ -67,7 +70,6 @@ class Dashboard_TUI : public TUI_Interface {
 class Dashboard : public rclcpp::Node {
 public:
     Dashboard(std::unique_ptr<TUI_Interface> tui);
-    void get_mux_mode_now();
     void work_loop();
     void ping_loop();
 private:
@@ -91,6 +93,7 @@ private:
     rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr dvl_drr_subscription;
     rclcpp::Subscription<custom_interfaces::msg::VR>::SharedPtr dvl_vr_subscription;
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscription;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr ready_status_subscription;
     
 
     void thrust_interface_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
@@ -112,7 +115,10 @@ private:
     void heartbeat_check_callback();
     bool no_heartbeat(std::chrono::time_point<std::chrono::steady_clock> now, std::chrono::time_point<std::chrono::steady_clock> heartbeat_time);
     void control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg);
+    void ready_status_callback(std_msgs::msg::Bool::UniquePtr msg);
 
+    void get_mux_mode_now();
+    void get_ready_status_now();
     void set_mux_mode(int mode);
     void reset_drr();
     void reset_gyro();
@@ -131,6 +137,7 @@ private:
     bool joystick_heartbeat = false;
     bool mission_manager_heartbeat = false;
     bool ping_ok = false;
+    bool mission_manager_ready = false;
 
     int current_control_mode = 0; // 0 = Disabled, 1 = CLI, 2 = CTRL, 3 = Echo
     double seconds_since_ping = -1;
@@ -147,7 +154,8 @@ private:
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_drr_client;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_gyro_client;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr mission_manager_client;
-    rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub;
+    rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub_mux;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr force_pub_mission_manager;
 
     rclcpp::TimerBase::SharedPtr heartbeat_timer;
     rclcpp::TimerBase::SharedPtr clear_display_timer;
