@@ -1,1 +1,0 @@
-uint64 dropper_id # 1 or 2

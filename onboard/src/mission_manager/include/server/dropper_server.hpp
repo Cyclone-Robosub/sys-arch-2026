@@ -3,7 +3,7 @@
 #include <thread>
 
 #include "std_msgs/msg/bool.hpp"
-#include "custom_interfaces/msg/dropper.hpp"
+#include "std_msgs/msg/u_int8.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
 #include "custom_interfaces/action/dropper.hpp"
@@ -18,7 +18,7 @@ public:
 private:
   rclcpp_action::Server<Dropper>::SharedPtr action_server_;
   
-  rclcpp::Publisher<custom_interfaces::msg::Dropper>::SharedPtr goal_publisher;
+  rclcpp::Publisher<std_msgs::msg::UInt8>::SharedPtr goal_publisher;
   rclcpp::Subscription<custom_interfaces::msg::Result>::SharedPtr result_subscriber;
   bool process_done;
   void result_callback(custom_interfaces::msg::Result::SharedPtr msg);

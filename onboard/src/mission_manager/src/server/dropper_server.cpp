@@ -3,7 +3,7 @@
 
 DropperActionServer::DropperActionServer(const rclcpp::NodeOptions& options) : Node("dropper_action_server", options) {
     process_done = false;
-    goal_publisher = this->create_publisher<custom_interfaces::msg::Dropper>("manipulator_cmd", 10);
+    goal_publisher = this->create_publisher<std_msgs::msg::UInt8>("manipulator_cmd", 10);
     result_subscriber = this->create_subscription<custom_interfaces::msg::Result>("command_result", 10, std::bind(&DropperActionServer::result_callback, this, std::placeholders::_1));
     this->action_server_ = rclcpp_action::create_server<Dropper>(
         this, "dropper_service", std::bind(&DropperActionServer::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
@@ -32,8 +32,8 @@ void DropperActionServer::execute(const std::shared_ptr<GoalHandleDropper> goal_
     rclcpp::Rate loop_rate(5);
     const auto goal = goal_handle->get_goal();
 
-    auto goal_cmd = custom_interfaces::msg::Dropper();
-    goal_cmd.dropper_id = goal->dropper_id;
+    auto goal_cmd = std_msgs::msg::UInt8();
+    goal_cmd.data = goal->dropper_id;
     goal_publisher->publish(goal_cmd);
     
     auto feedback = std::make_shared<Dropper::Feedback>();

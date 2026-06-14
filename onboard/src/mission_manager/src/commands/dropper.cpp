@@ -6,7 +6,7 @@ using namespace CycloneCommands;
 
     PortsList DropperCmd::providedPorts() {
         return providedBasicPorts({
-            InputPort<uint64_t>("dropper_id"),
+            InputPort<uint8_t>("dropper_id"),
             InputPort<double>("timeout")
         });
     }
