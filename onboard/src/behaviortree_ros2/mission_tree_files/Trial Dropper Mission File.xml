@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4"
-      main_tree_to_execute="TrialTree">
+      main_tree_to_execute="TrialDropperTree">
 
 
   <BehaviorTree ID="GateTask">
@@ -9,14 +9,24 @@
                             waypoint_mask ="0,0,0,0,0,0"
                             tolerance="0.2,0,0,0,0,0"
                             hold_time="0.5"
-                            timeout="1"
+                            timeout="8"
                             _description="Forwards 10 metres"/>
     </Sequence>
   </BehaviorTree>
 
-  <BehaviorTree ID="TrialTree">
+   <BehaviorTree ID="DropperTask">
+    <Sequence>
+      <Dropper              dropper_id ="1"
+                            timeout="1"
+                            _description="Release dropper 1"/>
+    </Sequence>
+  </BehaviorTree>
+
+
+  <BehaviorTree ID="TrialDropperTree">
     <Sequence>
       <SubTree ID="GateTask"/>
+      <SubTree ID="DropperTask"/>
       <SubTree ID="ReturnToGateTask"/>
     </Sequence>
   </BehaviorTree>
@@ -27,7 +37,7 @@
                             waypoint_mask="1,0,0,0,0,0"
                             tolerance="0.2,0,0,0,0,0"
                             hold_time="8"
-                            timeout="1"
+                            timeout="8"
                             _description="Return to origin"/>
     </Sequence>
   </BehaviorTree>
@@ -44,6 +54,12 @@
                   type="std::vector&lt;float&gt;">[6x1] Allowed error margin for arrival</input_port>
       <input_port name="hold_time"
                   type="float">Time to remain within tolerance before returning SUCCESS</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
+    </Action>
+     <Action ID="Dropper">
+      <input_port name="dropper_id"
+                  type="int"> Which dropper to release </input_port>
       <input_port name="timeout"
                   type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
     </Action>

@@ -13,6 +13,7 @@
 #include "server/object_rel_waypoint_server.hpp"
 #include "server/seek_object_server.hpp"
 #include "server/waypoint_server.hpp"
+#include "server/dropper_server.hpp"
 
 class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
@@ -49,5 +50,6 @@ class MissionManagerNode : public rclcpp::Node {
         std::shared_ptr<ObjRelWaypointActionServer> obj_rel_waypoint_action_server;
         std::shared_ptr<SeekObjectActionServer> seek_object_action_server;
         std::shared_ptr<WaypointActionServer> waypoint_action_server;
+        std::shared_ptr<DropperActionServer> dropper_action_server;
 
 };

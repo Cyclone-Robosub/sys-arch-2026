@@ -52,7 +52,7 @@ void WaypointActionServer::execute(const std::shared_ptr<GoalHandleWaypoint> goa
             return;
         }
 
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        //RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
 

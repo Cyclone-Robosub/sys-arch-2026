@@ -48,7 +48,7 @@ void MissionManagerNode::try_start_mission() {
         return;
    }
    ExecuteTree::Goal goal;
-   goal.target_tree = "TrialTree";
+   goal.target_tree = "TrialDropperTree";
    mission_started = true;
    execute_tree_client->async_send_goal(goal);
 }
@@ -88,6 +88,7 @@ int main(int argc, char** argv) {
     auto idle_action_server = std::make_shared<IdleActionServer>();
     auto obj_rel_waypoint_action_server = std::make_shared<ObjRelWaypointActionServer>();
     auto seek_object_action_server = std::make_shared<SeekObjectActionServer>();
+    auto dropper_action_server = std::make_shared<DropperActionServer>();
     auto mission_manager = std::make_shared<MissionManagerNode>();
     // TODO: This workaround is for a bug in MultiThreadedExecutor where it can deadlock when spinning without a timeout.
     // Deadlock is caused when Publishers or Subscribers are dynamically removed as the node is spinning.
@@ -100,6 +101,7 @@ int main(int argc, char** argv) {
     exec.add_node(idle_action_server);
     exec.add_node(obj_rel_waypoint_action_server);
     exec.add_node(seek_object_action_server);
+    exec.add_node(dropper_action_server);
     exec.add_node(mission_manager);
 
     exec.spin();
@@ -110,6 +112,7 @@ int main(int argc, char** argv) {
     exec.remove_node(idle_action_server);
     exec.remove_node(obj_rel_waypoint_action_server);
     exec.remove_node(seek_object_action_server);
+    exec.remove_node(dropper_action_server);
     exec.remove_node(mission_manager);
     rclcpp::shutdown();
     return 0;
