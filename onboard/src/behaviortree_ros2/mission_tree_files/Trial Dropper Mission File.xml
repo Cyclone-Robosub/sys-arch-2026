@@ -9,7 +9,7 @@
                             waypoint_mask ="0,0,0,0,0,0"
                             tolerance="0.2,0,0,0,0,0"
                             hold_time="0.5"
-                            timeout="8"
+                            timeout="10"
                             _description="Forwards 10 metres"/>
     </Sequence>
   </BehaviorTree>
@@ -17,7 +17,7 @@
    <BehaviorTree ID="DropperTask">
     <Sequence>
       <Dropper              dropper_id ="1"
-                            timeout="1"
+                            timeout="10"
                             _description="Release dropper 1"/>
     </Sequence>
   </BehaviorTree>

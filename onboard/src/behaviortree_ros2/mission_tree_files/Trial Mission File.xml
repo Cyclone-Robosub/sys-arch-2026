@@ -9,7 +9,7 @@
                             waypoint_mask ="0,0,0,0,0,0"
                             tolerance="0.2,0,0,0,0,0"
                             hold_time="0.5"
-                            timeout="1"
+                            timeout="10"
                             _description="Forwards 10 metres"/>
     </Sequence>
   </BehaviorTree>

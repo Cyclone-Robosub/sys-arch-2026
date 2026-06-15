@@ -48,7 +48,7 @@ void MissionManagerNode::try_start_mission() {
         return;
    }
    ExecuteTree::Goal goal;
-   goal.target_tree = "TrialDropperTree";
+   goal.target_tree = "TrialTree";
    mission_started = true;
    execute_tree_client->async_send_goal(goal);
 }
