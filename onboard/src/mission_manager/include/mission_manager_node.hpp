@@ -27,6 +27,7 @@ class MissionManagerNode : public rclcpp::Node {
         void pub_ready_status(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response);
         void go_signal_callback(std_msgs::msg::Bool::SharedPtr signal);
         void try_start_mission();
+        void reset_mission();
     private:
         rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_service;
         rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_pub_service;
@@ -40,6 +41,7 @@ class MissionManagerNode : public rclcpp::Node {
         void heartbeat_callback();
         void mission_manager_heartbeat_send();
         void publish_current_ready_status();
+    
         rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr mission_manager_heartbeat_publisher;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr current_ready_status_publisher;
         rclcpp::TimerBase::SharedPtr heartbeat_timer;

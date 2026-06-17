@@ -51,8 +51,14 @@ void MissionManagerNode::try_start_mission() {
    goal.target_tree = "TrialTree";
    mission_started = true;
    execute_tree_client->async_send_goal(goal);
+
 }
 
+void MissionManagerNode::reset_mission() {
+    ready_signal = false;
+    go_signal = false;
+    mission_started = false;
+}
 /*
     Heartbeat functions
 */
