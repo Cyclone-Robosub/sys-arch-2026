@@ -17,7 +17,7 @@
 
 class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
-
+    using GoalHandleExecuteTree = rclcpp_action::ClientGoalHandle<ExecuteTree>;
     public:
         friend class MissionManagerNodeInterface_TestReadySignal_Test;
         friend class MissionManagerNodeInterface_TestGoSignal_Test;
@@ -41,7 +41,9 @@ class MissionManagerNode : public rclcpp::Node {
         void heartbeat_callback();
         void mission_manager_heartbeat_send();
         void publish_current_ready_status();
-    
+        void goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle);
+        void result_callback(const GoalHandleExecuteTree::WrappedResult & result);
+
         rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr mission_manager_heartbeat_publisher;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr current_ready_status_publisher;
         rclcpp::TimerBase::SharedPtr heartbeat_timer;

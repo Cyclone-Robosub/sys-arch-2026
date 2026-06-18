@@ -8,7 +8,7 @@ using namespace CycloneCommands;
 
     PortsList SeekObjCmd::providedPorts(){
         return providedBasicPorts({
-            InputPort<Pose6D>("waypoint"),
+            InputPort<Pose6D>("world_waypoint"),
             InputPort<WaypointMask>("waypoint_mask"),
             InputPort<std::string>("object"),
             InputPort<Pose6D>("tolerance"),

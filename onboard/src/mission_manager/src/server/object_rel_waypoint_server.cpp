@@ -58,7 +58,7 @@ void ObjRelWaypointActionServer::execute(const std::shared_ptr<GoalHandleObjRelW
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+       // RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
     

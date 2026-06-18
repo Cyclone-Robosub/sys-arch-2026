@@ -62,7 +62,7 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }   
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        //RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
     

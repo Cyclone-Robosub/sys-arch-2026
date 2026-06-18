@@ -11,7 +11,7 @@ DistanceTrickActionServer::DistanceTrickActionServer(const rclcpp::NodeOptions& 
         std::bind(&DistanceTrickActionServer::handle_accepted, this, std::placeholders::_1));
 }
 
-rclcpp_action::GoalResponse DistanceTrickActionServer::handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const DistanceTrick::Goal> goal) {
+rclcpp_action::GoalResponse DistanceTrickActionServer::handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const DistanceTrick::Goal> goal [[maybe_unused]]) {
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
@@ -66,7 +66,7 @@ void DistanceTrickActionServer::execute(const std::shared_ptr<GoalHandleDistance
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        //RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
     
