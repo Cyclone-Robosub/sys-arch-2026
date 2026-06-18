@@ -34,7 +34,8 @@ void IdleActionServer::execute(const std::shared_ptr<GoalHandleIdle> goal_handle
 
     std::string command = "idle____________";
     auto goal_cmd = custom_interfaces::msg::Goal();
-    goal_cmd.command_id = command;
+    //goal_cmd.command_id = command;
+    std::copy(command.begin(), command.end(), goal_cmd.command_id.begin());
     goal_publisher->publish(goal_cmd);
     
     auto feedback = std::make_shared<Idle::Feedback>();

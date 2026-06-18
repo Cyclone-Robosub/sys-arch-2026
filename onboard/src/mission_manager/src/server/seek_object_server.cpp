@@ -10,7 +10,7 @@ SeekObjectActionServer::SeekObjectActionServer(const rclcpp::NodeOptions& option
         std::bind(&SeekObjectActionServer::handle_accepted, this, std::placeholders::_1));
 }
 
-rclcpp_action::GoalResponse SeekObjectActionServer::handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const SeekObject::Goal> goal) {
+rclcpp_action::GoalResponse SeekObjectActionServer::handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const SeekObject::Goal>) {
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
@@ -33,7 +33,9 @@ void SeekObjectActionServer::execute(const std::shared_ptr<GoalHandleSeekObject>
 
     std::string command = "drv_to_wp_seek__";
     auto goal_cmd = custom_interfaces::msg::Goal();
-    goal_cmd.command_id = command;
+    //goal_cmd.command_id = command;
+    std::copy(command.begin(), command.end(), goal_cmd.command_id.begin());
+
     goal_cmd.waypoint = goal->waypoint;
     goal_cmd.waypoint_mask = goal->waypoint_mask;
     std::string object_fixed = "";
@@ -42,7 +44,9 @@ void SeekObjectActionServer::execute(const std::shared_ptr<GoalHandleSeekObject>
     while (object_fixed.size() < 16) {
         object_fixed += "_";
     }
-    goal_cmd.object = object_fixed;
+    //goal_cmd.object = object_fixed;
+    std::copy(object_fixed.begin(), object_fixed.end(), goal_cmd.object.begin());
+
     goal_cmd.confidence = goal->confidence;
     goal_publisher->publish(goal_cmd);
     
@@ -70,7 +74,7 @@ void SeekObjectActionServer::execute(const std::shared_ptr<GoalHandleSeekObject>
 }
 void SeekObjectActionServer::result_callback(custom_interfaces::msg::Result::SharedPtr msg) {
     cur_result = msg->success;
-    found_object = msg->found_object;
+    found_object.assign(msg->found_object.begin(), msg->found_object.end());
     reached_waypoint_without_detection = msg->reached_waypoint_without_detection;
     process_done = true;
 }

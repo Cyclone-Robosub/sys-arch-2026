@@ -1,9 +1,9 @@
-string command_id
+char[16] command_id
 custom_interfaces/Pose6D waypoint
 custom_interfaces/WaypointMask waypoint_mask
 custom_interfaces/Pose6D tolerance
 float64 hold_time
-string object
+char[16] object
 float64 confidence
-string trick                        
+char[16] trick                        
 float64 duration
