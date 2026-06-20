@@ -66,7 +66,12 @@ void SeekObjectActionServer::execute(const std::shared_ptr<GoalHandleSeekObject>
     
     if (rclcpp::ok()) {
       result->success = cur_result;
-      result->found_object = found_object;
+      auto fixed_size = found_object.find_first_of("_");
+      if (fixed_size != std::string::npos) {
+        result->found_object = found_object.substr(0, fixed_size);
+      } else {
+        result->found_object = found_object;
+      }
       result->reached_waypoint_without_detection = reached_waypoint_without_detection;
       goal_handle->succeed(result);
       RCLCPP_INFO(this->get_logger(), "Goal completed");
