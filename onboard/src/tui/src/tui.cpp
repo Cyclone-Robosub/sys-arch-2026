@@ -38,6 +38,7 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
         std::bind(&Dashboard::control_mode_callback, this, std::placeholders::_1));
     ready_status_subscription = this->create_subscription<std_msgs::msg::Bool>("current_ready_state", 10, 
         std::bind(&Dashboard::ready_status_callback, this, std::placeholders::_1));
+    go_signal_publisher = this->create_publisher<std_msgs::msg::Bool>("go_signal", 10);
 
     heartbeat_timer = this->create_wall_timer(17ms,
             std::bind(&Dashboard::heartbeat_check_callback, this)); // 60 hz
@@ -222,6 +223,12 @@ void Dashboard::toggle_ready() {
     mission_manager_client->async_send_request(request);
 }
 
+void Dashboard::send_go_signal() {
+    auto msg = std_msgs::msg::Bool();
+    msg.data = true;
+    go_signal_publisher->publish(msg);
+}
+
 
 void Dashboard::ping_loop() {
     while (rclcpp::ok()) {
@@ -282,6 +289,9 @@ void Dashboard::work_loop() {
                     break;
                 case 'c':
                     toggle_ready();
+                    break;
+                case 'd':
+                    send_go_signal();
                     break;
                 case 'q':
                 case 'e':
@@ -604,6 +614,8 @@ void Dashboard_TUI::display_commands() {
     printf("[B]: Reset Gyro\n");
     jump_to_column(col_2);
     printf("[C]: Toggle Ready\n");
+    jump_to_column(col_2);
+    printf("[D]: Send Go Signal\n");
 }
 
 std::string Dashboard::get_ping() { // TODO: when robot looses connection ping hangs for ~10 seconds. Break into seperate thread
