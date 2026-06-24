@@ -48,11 +48,46 @@ void MissionManagerNode::try_start_mission() {
         return;
    }
    ExecuteTree::Goal goal;
-   goal.target_tree = "TrialDropperTree";
+   goal.target_tree = "SeekingTree";
    mission_started = true;
-   execute_tree_client->async_send_goal(goal);
+   auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
+   send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::goal_response_callback, this, std::placeholders::_1);
+   send_goal_options.result_callback = std::bind(&MissionManagerNode::result_callback, this, std::placeholders::_1);
+   execute_tree_client->async_send_goal(goal, send_goal_options);
 }
 
+void MissionManagerNode::reset_mission() {
+    ready_signal = false;
+    go_signal = false;
+    mission_started = false;
+    publish_current_ready_status();
+}
+
+void MissionManagerNode::goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle) {
+    if (!goal_handle) {
+      RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
+      reset_mission();
+    } else {
+      RCLCPP_INFO(this->get_logger(), "Goal accepted by server, waiting for result");
+    }
+}
+
+void MissionManagerNode::result_callback(const GoalHandleExecuteTree::WrappedResult & result) {
+    switch (result.code) {
+        case rclcpp_action::ResultCode::SUCCEEDED:
+            break;
+        case rclcpp_action::ResultCode::ABORTED:
+            RCLCPP_ERROR(this->get_logger(), "Goal was aborted");
+            break;
+        case rclcpp_action::ResultCode::CANCELED:
+            RCLCPP_ERROR(this->get_logger(), "Goal was canceled");
+            break;
+        default:
+            RCLCPP_ERROR(this->get_logger(), "Unknown result code");
+            break;
+    }
+    reset_mission();
+}
 /*
     Heartbeat functions
 */

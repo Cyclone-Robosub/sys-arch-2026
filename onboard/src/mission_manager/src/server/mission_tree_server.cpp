@@ -18,6 +18,12 @@ void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
     logger_cout_ = std::make_shared<CustomLogger>(tree, node());
 }
 
+std::optional<std::string> MissionTreeServer::onTreeExecutionCompleted(BT::NodeStatus status, bool was_cancelled) {
+    
+    return std::nullopt;
+
+}
+
 std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus status) {
     (void) status;
     if (logger_cout_ && logger_cout_->isProgressDirty()) {

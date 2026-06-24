@@ -12,8 +12,7 @@ void CustomLogger::callback(Duration timestamp, const TreeNode& node, NodeStatus
   // check if Node is a new subtree
   if ((((node.name() == "GateTask") || (node.name() == "Bins") || (node.name() == "Slalom") ||
         (node.name() == "Octagon") || (node.name() == "ReturntoGateTask") || (node.name() == "DropperTask"))) &&
-      (status == BT::NodeStatus::RUNNING))
-  {
+      (status == BT::NodeStatus::RUNNING)) {
     current_mission_.subtree = node.name();
     current_mission_.status = status;
     progress_dirty_ = true;

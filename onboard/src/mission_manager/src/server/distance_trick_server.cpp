@@ -11,7 +11,7 @@ DistanceTrickActionServer::DistanceTrickActionServer(const rclcpp::NodeOptions& 
         std::bind(&DistanceTrickActionServer::handle_accepted, this, std::placeholders::_1));
 }
 
-rclcpp_action::GoalResponse DistanceTrickActionServer::handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const DistanceTrick::Goal> goal) {
+rclcpp_action::GoalResponse DistanceTrickActionServer::handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const DistanceTrick::Goal> goal [[maybe_unused]]) {
     return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
@@ -34,8 +34,8 @@ void DistanceTrickActionServer::execute(const std::shared_ptr<GoalHandleDistance
 
     std::string command = "distance_trick__";
     auto goal_cmd = custom_interfaces::msg::Goal();
-    goal_cmd.command_id = command;
-    
+    //goal_cmd.command_id = command;
+    std::copy(command.begin(), command.end(), goal_cmd.command_id.begin());
  
     auto trick_og = goal->trick;
     std::string trick_fixed = "";
@@ -48,7 +48,8 @@ void DistanceTrickActionServer::execute(const std::shared_ptr<GoalHandleDistance
         trick_fixed += "_";
     }
 
-    goal_cmd.trick = trick_fixed;
+    //goal_cmd.trick = trick_fixed;
+    std::copy(trick_fixed.begin(), trick_fixed.end(), goal_cmd.trick.begin());
     goal_cmd.waypoint = goal->end_waypoint_body;
     goal_cmd.waypoint_mask = goal->waypoint_mask;
    
@@ -66,7 +67,7 @@ void DistanceTrickActionServer::execute(const std::shared_ptr<GoalHandleDistance
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        //RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
     

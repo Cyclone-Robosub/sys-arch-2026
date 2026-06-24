@@ -34,7 +34,8 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
 
     std::string command = "duration_trick__";
     auto goal_cmd = custom_interfaces::msg::Goal();
-    goal_cmd.command_id = command;
+    //goal_cmd.command_id = command;
+    std::copy(command.begin(), command.end(), goal_cmd.command_id.begin());
 
     std::string trick_fixed = "";
     auto trick_og = goal->trick;
@@ -43,7 +44,9 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
     while (trick_fixed.size() < 16) {
         trick_fixed += "_";
     }
-    goal_cmd.trick = trick_fixed;
+    //goal_cmd.trick = trick_fixed;
+    std::copy(trick_fixed.begin(), trick_fixed.end(), goal_cmd.trick.begin());
+    
     goal_cmd.duration = goal->duration;
    
     goal_cmd.waypoint_mask = goal->waypoint_mask;
@@ -62,7 +65,7 @@ void DurationTrickActionServer::execute(const std::shared_ptr<GoalHandleDuration
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }   
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        //RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
     

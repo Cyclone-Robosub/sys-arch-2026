@@ -34,16 +34,21 @@ void ObjRelWaypointActionServer::execute(const std::shared_ptr<GoalHandleObjRelW
 
     std::string command = "track_obj_wp___";
     auto goal_cmd = custom_interfaces::msg::Goal();
-    goal_cmd.command_id = command;
+    //goal_cmd.command_id = command;
+    std::copy(command.begin(), command.end(), goal_cmd.command_id.begin());
+
     goal_cmd.waypoint = goal->tracking_position;
     goal_cmd.waypoint_mask = goal->waypoint_mask;
+
     std::string object_fixed = "";
     auto object_og = goal->object;
     object_fixed = object_og;
     while (object_fixed.size() < 16) {
         object_fixed += "_";
     }
-    goal_cmd.object = object_fixed;
+    //goal_cmd.object = object_fixed;
+    std::copy(object_fixed.begin(), object_fixed.end(), goal_cmd.object.begin());
+
     goal_cmd.tolerance = goal->tolerance;
     goal_cmd.hold_time = goal->hold_time;
     goal_publisher->publish(goal_cmd);
@@ -58,7 +63,7 @@ void ObjRelWaypointActionServer::execute(const std::shared_ptr<GoalHandleObjRelW
             RCLCPP_INFO(this->get_logger(), "Goal canceled");
             return;
         }
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+       // RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
     
