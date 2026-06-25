@@ -7,14 +7,14 @@
                                    waypoint_mask="1,0,0,0,0,0"
                                    object="OrangeMarker"
                                    confidence="0.2"
-                                   timeout="1"
+                                   timeout="5"
                                    _description="Find the orange marker pointing to bins task."/>
       <TrackObjectWaypoint tracking_position="20,0,0,0,0,0"
                            waypoint_mask="1,0,0,0,0,0"
                            object="OrangeMarker"
                            tolerance="0.5,0,0,0,0,0"
                            hold_time="2"
-                           timeout="1"
+                           timeout="5"
                            _description="Manny follows the orange marker to the Bins Task."/>
       <Repeat num_cycles="2">
         <Sequence>
@@ -22,16 +22,15 @@
                                        waypoint_mask="1,0,0,0,0,0"
                                        object="Bin"
                                        confidence="0.5"
-                                       timeout="1"
+                                       timeout="5"
                                        _description="Drive and find a bin"/>
           <TrackObjectWaypoint tracking_position="30,0,0,0,0,0"
                                waypoint_mask="1,0,0,0,0,0"
                                object="Bin"
                                tolerance="0.5,0,0,0,0,0"
                                hold_time="2"
-                               timeout="1"
+                               timeout="5"
                                _description="Manny positions itself directly over bin."/>
-          <Idle _description="Send command to drop the marker."/>
         </Sequence>
       </Repeat>
     </Sequence>
@@ -43,34 +42,34 @@
                             waypoint_mask="0,0,1,0,0,0"
                             tolerance="0.2,0.2,0.2,0,0,0"
                             hold_time="2"
-                            timeout="1"
+                            timeout="5"
                             _description="Submerge Manny (go from surface to starting depth)"/>
       <DriveToWorldWaypointSeeking world_waypoint="5,0,-1,0,0,0"
                                    waypoint_mask="1,0,1,0,0,0"
                                    object="Gate"
                                    confidence="0.5"
-                                   timeout="1"
+                                   timeout="5"
                                    _description="Manny drives to the starting position (premeasured beforehand) and locate the gate. Also store the gate coordinates for Return Gate Task."/>
       <TrackObjectWaypoint tracking_position="2,0,0,0,0,0"
                            waypoint_mask="1,0,0,0,0,1"
                            object="Gate"
                            tolerance="0.3,0.3,0.3,0,0,0.2"
                            hold_time="2"
-                           timeout="1"
+                           timeout="5"
                            _description="Manny orients itself to the gate."/>
       <TrackObjectWaypoint tracking_position="2,0,0,0,0,0"
                            waypoint_mask="1,0,0,0,0,1"
                            object="GateSide"
                            tolerance="0.3,0.3,0.3,0,0,0.2"
                            hold_time="2"
-                           timeout="1"
+                           timeout="5"
                            _description="Find the side chosen (Search &amp; Rescue / Survey &amp; Repair) on the gate and orient itself in front of it. Store the side chosen."/>
       <DistanceTrick trick = "BarrelRoll"
                      end_waypoint_body ="3,0,0,0,0,0"
                      waypoint_mask="1,0,0,0,0,0"
                      tolerance="0.3,0.3,0.3,0,0,0"
                      hold_time="2"
-                     timeout="1"
+                     timeout="5"
                      _description="Distance trick for points. Do while driving through the gate. &#10;&#10;If we don&apos;t do a distance trick, replace this node with a TrackObjectWaypoint node to just drive through the gate."/>
     </Sequence>
   </BehaviorTree>
@@ -93,30 +92,28 @@
                                      waypoint_mask="1,0,1,0,0,0"
                                      object="SupplyObject"
                                      confidence="0.5"
-                                     timeout="1"
+                                     timeout="5"
                                      _description="1. Manny locates the object on the supply table while driving to center&#10;2. We will measure to know how to get to the center&#10;    1. premeasured distance"/>
         <TrackObjectWaypoint tracking_position="0,0,1,0,0,0"
                              waypoint_mask="1,1,1,0,0,0"
                              object="SupplyObject"
                              tolerance="0.3,0.3,0.3,0,0,0"
                              hold_time="2"
-                             timeout="1"
+                             timeout="5"
                              _description="Manny moves to be above the object on the supply table"/>
-        <Idle _description="Grab Item"/>
         <DriveToWorldWaypoint world_waypoint="40,0,0,0,0,0"
                               waypoint_mask="1,0,1,0,0,0"
                               tolerance="0.3,0.3,0.3,0,0,0"
                               hold_time="2"
-                              timeout="1"
+                              timeout="5"
                               _description="Manny surfaces with the item"/>
         <TrackObjectWaypoint tracking_position="0,0,1,0,0,0"
                              waypoint_mask="1,1,1,0,0,0"
                              object="Basket"
                              tolerance="0.3,0.3,0.3,0,0,0"
                              hold_time="2"
-                             timeout="1"
+                             timeout="5"
                              _description="Position directly over the center of the basket"/>
-        <Idle _description="Drop item into basket"/>
       </Sequence>
     </Repeat>
   </BehaviorTree>
@@ -127,20 +124,20 @@
                                    waypoint_mask="1,0,1,0,0,0"
                                    object="Gate"
                                    confidence="0.5"
-                                   timeout="1"
+                                   timeout="5"
                                    _description="Manny drives to approximately where the gate is. The coordinates should have been recorded and stored during Gate Task."/>
       <TrackObjectWaypoint tracking_position="2,0,0,0,0,0"
                            waypoint_mask="1,0,0,0,0,1"
                            object="Gate"
                            tolerance="0.3,0.3,0.3,0,0,0.2"
                            hold_time="2"
-                           timeout="1"
+                           timeout="5"
                            _description="Position Manny facing the gate at gate."/>
       <DriveToWorldWaypoint world_waypoint="0,0,-1,0,0,0"
                             waypoint_mask="1,0,1,0,0,0"
                             tolerance="0.3,0.3,0.3,0,0,0"
                             hold_time="2"
-                            timeout="1"
+                            timeout="5"
                             _description="Drive through gate back to start."/>
     </Sequence>
   </BehaviorTree>
@@ -151,14 +148,14 @@
                                    waypoint_mask="1,0,1,0,0,0"
                                    object="OrangeMarker"
                                    confidence="0.5"
-                                   timeout="1"
+                                   timeout="5"
                                    _description="Find the orange path marker pointing to slalom"/>
       <TrackObjectWaypoint tracking_position="5,0,0,0,0,0"
                            waypoint_mask="1,0,0,0,0,1"
                            object="OrangeMarker"
                            tolerance="0.3,0.3,0.3,0,0,0.2"
                            hold_time="2"
-                           timeout="1"
+                           timeout="5"
                            _description="Follow the orange path marker to slalom"/>
       <Repeat num_cycles="3"
               _description="3 sets of pipes">
@@ -167,14 +164,14 @@
                                        waypoint_mask="1,0,1,0,0,0"
                                        object="Pipe"
                                        confidence="0.5"
-                                       timeout="1"
+                                       timeout="5"
                                        _description="Manny drives forward while looking for PVC pipes"/>
           <TrackObjectWaypoint tracking_position="3,0,0,0,0,0"
                                waypoint_mask="1,0,0,0,0,1"
                                object="Pipe"
                                tolerance="0.3,0.3,0.3,0,0,0.2"
                                hold_time="2"
-                               timeout="1"
+                               timeout="5"
                                _description="Manny drives forward X meters from the pipes."/>
         </Sequence>
       </Repeat>

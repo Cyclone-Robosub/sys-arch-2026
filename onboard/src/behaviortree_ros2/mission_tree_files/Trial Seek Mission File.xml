@@ -27,7 +27,7 @@
                             waypoint_mask="1,0,0,0,0,0"
                             tolerance="0.2,0,0,0,0,0"
                             hold_time="8"
-                            timeout="1"
+                            timeout="10"
                             _description="Return to origin"/>
     </Sequence>
   </BehaviorTree>
