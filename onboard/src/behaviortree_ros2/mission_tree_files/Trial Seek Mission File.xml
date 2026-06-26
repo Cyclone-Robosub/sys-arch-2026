@@ -3,7 +3,7 @@
       main_tree_to_execute="SeekingTree">
 
 
-  <BehaviorTree ID="GateTask">
+  <BehaviorTree ID="GateTaskSeek">
     <Sequence>
       <DriveToWorldWaypointSeeking  world_waypoint="20,0,-1,0,0,0"
                                     waypoint_mask="1,0,1,0,0,0"
@@ -16,12 +16,12 @@
 
   <BehaviorTree ID="SeekingTree">
     <Sequence>
-      <SubTree ID="GateTask"/>
-      <SubTree ID="ReturnToGateTask"/>
+      <SubTree ID="GateTaskSeek"/>
+      <SubTree ID="ReturnToGateTaskSeek"/>
     </Sequence>
   </BehaviorTree>
 
-   <BehaviorTree ID="ReturnToGateTask">
+   <BehaviorTree ID="ReturnToGateTaskSeek">
     <Sequence>
       <DriveToWorldWaypoint world_waypoint="0,0,0,0,0,0"
                             waypoint_mask="1,0,0,0,0,0"

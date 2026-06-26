@@ -11,7 +11,7 @@ PortsList DistanceTrickCmd::providedPorts() {
         InputPort<std::string>("trick"),
         InputPort<Pose6D>("end_waypoint_body"),
         InputPort<WaypointMask>("waypoint_mask"),
-        InputPort<Pose6D>("tolerence"),
+        InputPort<Pose6D>("tolerance"),
         InputPort<uint64_t>("hold_time"),
         InputPort<double>("timeout")
     });
