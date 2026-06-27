@@ -48,7 +48,7 @@ void MissionManagerNode::try_start_mission() {
         return;
    }
    ExecuteTree::Goal goal;
-   goal.target_tree = "TrialTree";
+   goal.target_tree = "FallbackTree";
    mission_started = true;
    auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
    send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::goal_response_callback, this, std::placeholders::_1);
