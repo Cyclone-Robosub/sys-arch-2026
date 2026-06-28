@@ -34,7 +34,9 @@ void WaypointActionServer::execute(const std::shared_ptr<GoalHandleWaypoint> goa
 
     std::string command = "drv_to_world_wp_";
     auto goal_cmd = custom_interfaces::msg::Goal();
-    goal_cmd.command_id = command;
+    //goal_cmd.command_id = command;
+    std::copy(command.begin(), command.end(), goal_cmd.command_id.begin());
+    
     goal_cmd.waypoint = goal->waypoint;
     goal_cmd.waypoint_mask = goal->waypoint_mask;
     goal_cmd.tolerance = goal->tolerance;
@@ -52,7 +54,7 @@ void WaypointActionServer::execute(const std::shared_ptr<GoalHandleWaypoint> goa
             return;
         }
 
-        RCLCPP_INFO(this->get_logger(), "No feedback to publish");
+        //RCLCPP_INFO(this->get_logger(), "No feedback to publish");
         loop_rate.sleep();
     }
 

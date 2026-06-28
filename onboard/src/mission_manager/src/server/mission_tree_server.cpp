@@ -6,6 +6,8 @@
 #include "commands/object_rel_waypoint.hpp"
 #include "commands/dis_trick_client.hpp"
 #include "commands/duration_trick_client.hpp"
+#include "commands/dropper.hpp"
+
 
 MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeExecutionServer(options) {
     current_command_publisher = node()->create_publisher<custom_interfaces::msg::CommandTree>("current_command", 10);
@@ -14,6 +16,12 @@ MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeE
 
 void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
     logger_cout_ = std::make_shared<CustomLogger>(tree, node());
+}
+
+std::optional<std::string> MissionTreeServer::onTreeExecutionCompleted(BT::NodeStatus status, bool was_cancelled) {
+    
+    return std::nullopt;
+
 }
 
 std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus status) {
@@ -78,7 +86,7 @@ void MissionTreeServer::registerNodesIntoFactory (BT::BehaviorTreeFactory& facto
     factory.registerNodeType<CycloneCommands::ObjRelWaypointCmd>("TrackObjectWaypoint", RosNodeParams(node(), "/obj_rel_waypoint_service"));
     factory.registerNodeType<CycloneCommands::DistanceTrickCmd>("DistanceTrick", RosNodeParams(node(), "/distance_trick_service"));
     factory.registerNodeType<CycloneCommands::DurationTrickCmd>("DurationTrick", RosNodeParams(node(), "/duration_trick_service"));
-
+    factory.registerNodeType<CycloneCommands::DropperCmd>("Dropper", RosNodeParams(node(), "/dropper_service"));
 }
 
 

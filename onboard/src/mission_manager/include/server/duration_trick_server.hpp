@@ -24,7 +24,7 @@ private:
   void result_callback(custom_interfaces::msg::Result::SharedPtr msg);
   bool cur_result;
 
-  rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const DurationTrick::Goal> goal);
+  rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, [[maybe_unused]] std::shared_ptr<const DurationTrick::Goal> goal);
   rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleDurationTrick> goal_handle);
   void handle_accepted(const std::shared_ptr<GoalHandleDurationTrick> goal_handle);
   void execute(const std::shared_ptr<GoalHandleDurationTrick> goal_handle);

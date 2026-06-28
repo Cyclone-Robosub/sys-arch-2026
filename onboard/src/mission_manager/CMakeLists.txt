@@ -36,12 +36,14 @@ add_executable(mission_manager_node
   src/commands/duration_trick_client.cpp
   src/commands/seek_object.cpp
   src/commands/object_rel_waypoint.cpp
+  src/commands/dropper.cpp
   src/server/distance_trick_server.cpp
   src/server/duration_trick_server.cpp
   src/server/idle_server.cpp
   src/server/object_rel_waypoint_server.cpp
   src/server/seek_object_server.cpp
   src/server/waypoint_server.cpp
+  src/server/dropper_server.cpp
 )
 
 include_directories(

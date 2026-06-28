@@ -48,11 +48,46 @@ void MissionManagerNode::try_start_mission() {
         return;
    }
    ExecuteTree::Goal goal;
-   goal.target_tree = "TrialTree";
+   goal.target_tree = "FallbackTree";
    mission_started = true;
-   execute_tree_client->async_send_goal(goal);
+   auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
+   send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::goal_response_callback, this, std::placeholders::_1);
+   send_goal_options.result_callback = std::bind(&MissionManagerNode::result_callback, this, std::placeholders::_1);
+   execute_tree_client->async_send_goal(goal, send_goal_options);
 }
 
+void MissionManagerNode::reset_mission() {
+    ready_signal = false;
+    go_signal = false;
+    mission_started = false;
+    publish_current_ready_status();
+}
+
+void MissionManagerNode::goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle) {
+    if (!goal_handle) {
+      RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
+      reset_mission();
+    } else {
+      RCLCPP_INFO(this->get_logger(), "Goal accepted by server, waiting for result");
+    }
+}
+
+void MissionManagerNode::result_callback(const GoalHandleExecuteTree::WrappedResult & result) {
+    switch (result.code) {
+        case rclcpp_action::ResultCode::SUCCEEDED:
+            break;
+        case rclcpp_action::ResultCode::ABORTED:
+            RCLCPP_ERROR(this->get_logger(), "Goal was aborted");
+            break;
+        case rclcpp_action::ResultCode::CANCELED:
+            RCLCPP_ERROR(this->get_logger(), "Goal was canceled");
+            break;
+        default:
+            RCLCPP_ERROR(this->get_logger(), "Unknown result code");
+            break;
+    }
+    reset_mission();
+}
 /*
     Heartbeat functions
 */
@@ -88,6 +123,7 @@ int main(int argc, char** argv) {
     auto idle_action_server = std::make_shared<IdleActionServer>();
     auto obj_rel_waypoint_action_server = std::make_shared<ObjRelWaypointActionServer>();
     auto seek_object_action_server = std::make_shared<SeekObjectActionServer>();
+    auto dropper_action_server = std::make_shared<DropperActionServer>();
     auto mission_manager = std::make_shared<MissionManagerNode>();
     // TODO: This workaround is for a bug in MultiThreadedExecutor where it can deadlock when spinning without a timeout.
     // Deadlock is caused when Publishers or Subscribers are dynamically removed as the node is spinning.
@@ -100,6 +136,7 @@ int main(int argc, char** argv) {
     exec.add_node(idle_action_server);
     exec.add_node(obj_rel_waypoint_action_server);
     exec.add_node(seek_object_action_server);
+    exec.add_node(dropper_action_server);
     exec.add_node(mission_manager);
 
     exec.spin();
@@ -110,6 +147,7 @@ int main(int argc, char** argv) {
     exec.remove_node(idle_action_server);
     exec.remove_node(obj_rel_waypoint_action_server);
     exec.remove_node(seek_object_action_server);
+    exec.remove_node(dropper_action_server);
     exec.remove_node(mission_manager);
     rclcpp::shutdown();
     return 0;

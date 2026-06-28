@@ -26,7 +26,7 @@ private:
   std::string found_object;
   bool reached_waypoint_without_detection;
   
-  rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, std::shared_ptr<const SeekObject::Goal> goal);
+  rclcpp_action::GoalResponse handle_goal(const rclcpp_action::GoalUUID&, [[maybe_unused]] std::shared_ptr<const SeekObject::Goal> goal);
   rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleSeekObject> goal_handle);
   void handle_accepted(const std::shared_ptr<GoalHandleSeekObject> goal_handle);
   void execute(const std::shared_ptr<GoalHandleSeekObject> goal_handle);
