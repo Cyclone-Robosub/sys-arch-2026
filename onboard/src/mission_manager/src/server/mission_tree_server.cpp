@@ -11,7 +11,7 @@
 
 MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeExecutionServer(options) {
     current_command_publisher = node()->create_publisher<custom_interfaces::msg::CommandTree>("current_command", 10);
-
+    node()->declare_parameter("mission_path", rclcpp::PARAMETER_STRING);
 }
 
 void MissionTreeServer::onTreeCreated(BT::Tree& tree) {

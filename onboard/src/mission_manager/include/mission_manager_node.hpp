@@ -33,7 +33,7 @@ class MissionManagerNode : public rclcpp::Node {
         rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_pub_service;
         rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr go_signal_subscriber;
         rclcpp_action::Client<ExecuteTree>::SharedPtr execute_tree_client;
-
+        std::string cur_mission;
         bool ready_signal = false;
         bool go_signal = false;
         bool mission_started = false;

@@ -8,6 +8,7 @@ bt_action_server:
     
     # plugins:
     #   - behaviortree_cpp/bt_plugins
-      
+    mission_path: "Trial Mission File.xml"
+    
     behavior_trees:
       - behaviortree_ros2/mission_tree_files

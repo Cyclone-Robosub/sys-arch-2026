@@ -119,7 +119,7 @@ void TreeExecutionServer::executeRegistration()
   RegisterPlugins(p_->params, p_->factory, node_);
   // load trees (XML) from multiple directories
   RegisterBehaviorTrees(p_->params, p_->factory, node_);
-
+  p_->params.mission_path;
   p_->factory_initialized_ = true;
 }
 
