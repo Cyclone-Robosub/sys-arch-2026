@@ -41,11 +41,16 @@ class MissionManagerNode : public rclcpp::Node {
         void heartbeat_callback();
         void mission_manager_heartbeat_send();
         void publish_current_ready_status();
+        void publish_mission_status();
         void goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle);
         void result_callback(const GoalHandleExecuteTree::WrappedResult & result);
+        void idle_goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle);
+        void idle_result_callback(const GoalHandleExecuteTree::WrappedResult & result);
+        GoalHandleExecuteTree::SharedPtr idle_goal_handle_;
 
         rclcpp::Publisher<std_msgs::msg::Empty>::SharedPtr mission_manager_heartbeat_publisher;
         rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr current_ready_status_publisher;
+        rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr current_mission_status_publisher;
         rclcpp::TimerBase::SharedPtr heartbeat_timer;
 
         std::shared_ptr<DistanceTrickActionServer> distance_trick_action_server;

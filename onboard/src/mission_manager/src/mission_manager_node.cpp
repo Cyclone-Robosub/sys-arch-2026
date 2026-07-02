@@ -3,6 +3,8 @@ using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   this->declare_parameter("mission_file", rclcpp::PARAMETER_STRING);
+  ///param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
+
   cur_mission = this->get_parameter("mission_file").as_string();
   ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
   ready_pub_service =  this->create_service<std_srvs::srv::Trigger>("pub_ready_status", std::bind(&MissionManagerNode::pub_ready_status, this, std::placeholders::_1, std::placeholders::_2));
@@ -11,6 +13,7 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   heartbeat_timer = this->create_wall_timer(500ms, std::bind(&MissionManagerNode::heartbeat_callback, this));
   mission_manager_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mission_manager_heartbeat", 10);
   current_ready_status_publisher = this->create_publisher<std_msgs::msg::Bool>("current_ready_state", 10);
+  current_mission_status_publisher = this->create_publisher<std_msgs::msg::Bool>("mission_status", 10);
 }
 
 
@@ -19,6 +22,7 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
 */
 void MissionManagerNode::trigger_ready_signal(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
     (void) request;
+    publish_mission_status();
     ready_signal = !ready_signal;
     publish_current_ready_status();
     response->success = true;
@@ -49,9 +53,15 @@ void MissionManagerNode::try_start_mission() {
    if (!ready_signal || !go_signal || mission_started) {
         return;
    }
+   mission_started = true;
+   publish_mission_status();
+   if (idle_goal_handle_) {
+        execute_tree_client->async_cancel_goal(idle_goal_handle_);
+        idle_goal_handle_.reset();
+        return;
+   }
    ExecuteTree::Goal goal;
    goal.target_tree = cur_mission;
-   mission_started = true;
    auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
    send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::goal_response_callback, this, std::placeholders::_1);
    send_goal_options.result_callback = std::bind(&MissionManagerNode::result_callback, this, std::placeholders::_1);
@@ -62,6 +72,14 @@ void MissionManagerNode::reset_mission() {
     ready_signal = false;
     go_signal = false;
     mission_started = false;
+    publish_mission_status();
+
+    ExecuteTree::Goal goal;
+    goal.target_tree = "IdleAction";
+    auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
+    send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::idle_goal_response_callback, this, std::placeholders::_1);
+    send_goal_options.result_callback = std::bind(&MissionManagerNode::idle_result_callback, this, std::placeholders::_1);
+    execute_tree_client->async_send_goal(goal, send_goal_options);
     publish_current_ready_status();
 }
 
@@ -73,6 +91,15 @@ void MissionManagerNode::goal_response_callback(GoalHandleExecuteTree::SharedPtr
       RCLCPP_INFO(this->get_logger(), "Goal accepted by server, waiting for result");
     }
 }
+
+void MissionManagerNode::idle_goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle) {
+    if (!goal_handle) {
+      idle_goal_handle_.reset();
+    } else {
+      idle_goal_handle_ = goal_handle;
+    }
+}
+
 
 void MissionManagerNode::result_callback(const GoalHandleExecuteTree::WrappedResult & result) {
     switch (result.code) {
@@ -89,6 +116,28 @@ void MissionManagerNode::result_callback(const GoalHandleExecuteTree::WrappedRes
             break;
     }
     reset_mission();
+}
+
+void MissionManagerNode::idle_result_callback(const GoalHandleExecuteTree::WrappedResult & result) {
+    ExecuteTree::Goal goal;
+    goal.target_tree = cur_mission;
+    auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
+    send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::goal_response_callback, this, std::placeholders::_1);
+    send_goal_options.result_callback = std::bind(&MissionManagerNode::result_callback, this, std::placeholders::_1);
+    switch (result.code) {
+        case rclcpp_action::ResultCode::SUCCEEDED:
+            break;
+        case rclcpp_action::ResultCode::ABORTED:
+            RCLCPP_ERROR(this->get_logger(), "Goal was aborted");
+            break;
+        case rclcpp_action::ResultCode::CANCELED:
+            RCLCPP_ERROR(this->get_logger(), "Goal was canceled");
+            execute_tree_client->async_send_goal(goal, send_goal_options);
+            break;
+        default:
+            RCLCPP_ERROR(this->get_logger(), "Unknown result code");
+            break;
+    }
 }
 /*
     Heartbeat functions
@@ -108,6 +157,11 @@ void MissionManagerNode::publish_current_ready_status() {
     current_ready_status_publisher->publish(ready);
 }
 
+void MissionManagerNode::publish_mission_status() {
+    auto mission_status = std_msgs::msg::Bool();
+    mission_status.data = mission_started;
+    current_mission_status_publisher->publish(mission_status);
+}
 
 /*
     Creates MissionManagerNode to oversee the Server and start on conditions
