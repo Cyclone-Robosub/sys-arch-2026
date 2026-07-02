@@ -60,6 +60,7 @@ void MissionManagerNode::try_start_mission() {
         idle_goal_handle_.reset();
         return;
    }
+   std::this_thread::sleep_for(std::chrono::seconds(15));
    ExecuteTree::Goal goal;
    goal.target_tree = cur_mission;
    auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
