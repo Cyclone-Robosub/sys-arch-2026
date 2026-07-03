@@ -3,25 +3,25 @@
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
 //
-// File: Mission_Manager_CGN_data.cpp
+// File: cascaded_controller_data.cpp
 //
-// Code generated for Simulink model 'Mission_Manager_CGN'.
+// Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.131
+// Model version                  : 1.3
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Jun 30 20:17:55 2026
+// C/C++ source code generated on : Thu Jul  2 19:07:07 2026
 //
 // Target selection: ert.tlc
-// Embedded hardware selection: Intel->x86-64 (Linux 64)
+// Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
 // Code generation objectives: Unspecified
 // Validation result: Not run
 //
-#include "Mission_Manager_CGN.h"
+#include "cascaded_controller.h"
 
 // Constant parameters (default storage)
-const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
+const ConstP_cascaded_controller_T cascaded_controller_ConstP{
   // Expression: FF_maneuvers
-  //  Referenced by: '<S18>/trickFTListInjector'
+  //  Referenced by: '<S13>/trickFTListInjector'
 
   {
     { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
@@ -76,14 +76,14 @@ const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
   },
 
   // Computed Parameter: Constant_Value
-  //  Referenced by: '<S206>/Constant'
+  //  Referenced by: '<S201>/Constant'
 
   {
     false                              // SL_DummyData
   },
 
   // Expression: ccw_force
-  //  Referenced by: '<S24>/forceToPWMCalculator'
+  //  Referenced by: '<S19>/forceToPWMCalculator'
 
   { 22.656580205999994, 22.6046666016, 22.5156718512, 22.382179725600004,
     21.803713848, 21.4032374712, 21.225247970399998, 20.913766344,
@@ -374,7 +374,7 @@ const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
     -64.966167792000007, -65.9451100464 },
 
   // Expression: ccw_pwm
-  //  Referenced by: '<S24>/forceToPWMCalculator'
+  //  Referenced by: '<S19>/forceToPWMCalculator'
 
   { 1900.0, 1896.0, 1892.0, 1888.0, 1884.0, 1880.0, 1876.0, 1872.0, 1868.0,
     1864.0, 1860.0, 1856.0, 1852.0, 1848.0, 1844.0, 1840.0, 1836.0, 1832.0,
@@ -401,7 +401,7 @@ const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
     1108.0, 1104.0, 1100.0 },
 
   // Expression: cw_force
-  //  Referenced by: '<S24>/forceToPWMCalculator'
+  //  Referenced by: '<S19>/forceToPWMCalculator'
 
   { -22.656580205999994, -22.6046666016, -22.5156718512, -22.382179725600004,
     -21.803713848, -21.4032374712, -21.225247970399998, -20.913766344,
@@ -691,7 +691,7 @@ const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
     64.966167792000007, 65.9451100464 },
 
   // Expression: cw_pwm
-  //  Referenced by: '<S24>/forceToPWMCalculator'
+  //  Referenced by: '<S19>/forceToPWMCalculator'
 
   { 1100.0, 1104.0, 1108.0, 1112.0, 1116.0, 1120.0, 1124.0, 1128.0, 1132.0,
     1136.0, 1140.0, 1144.0, 1148.0, 1152.0, 1156.0, 1160.0, 1164.0, 1168.0,
@@ -718,12 +718,12 @@ const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
     1892.0, 1896.0, 1900.0 },
 
   // Expression: voltage
-  //  Referenced by: '<S24>/forceToPWMCalculator'
+  //  Referenced by: '<S19>/forceToPWMCalculator'
 
   { 10.0, 12.0, 14.0, 16.0, 18.0, 20.0 },
 
   // Expression: invMT_wrench
-  //  Referenced by: '<S18>/Constant'
+  //  Referenced by: '<S13>/Constant'
 
   { 1.2303149606299215, 1.230314960629922, 1.230314960629922, 1.2303149606299215,
     -5.0638902104277623E-17, 7.3656714309200358E-17, 3.0957821291774887E-17,
@@ -735,7 +735,7 @@ const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
     1.1609195017937319, 1.1609195017937319 },
 
   // Expression: invFT_wrench
-  //  Referenced by: '<S18>/Constant1'
+  //  Referenced by: '<S13>/Constant1'
 
   { -0.085040920905990927, 0.085040920905990844, 0.08504092090599083,
     -0.08504092090599083, 0.35355339059327379, -0.35355339059327379,
@@ -747,24 +747,24 @@ const ConstP_Mission_Manager_CGN_T Mission_Manager_CGN_ConstP{
     1.0328630579528815E-16, -1.0328641589626128E-16, -9.1000587932625081E-17 },
 
   // Expression: qib_PID.Kp
-  //  Referenced by: '<S18>/Gain1'
+  //  Referenced by: '<S13>/Gain1'
 
   { 10.0, 10.0, 5.0, 10.0 },
 
   // Expression: P
-  //  Referenced by: '<S131>/Proportional Gain'
+  //  Referenced by: '<S126>/Proportional Gain'
 
   { 0.5, 0.5, 1.0 },
 
   // Expression: gi
-  //  Referenced by: '<S5>/Constant'
+  //  Referenced by: '<S9>/Constant'
 
   { 0.0, 0.0, -9.806 },
 
   // Expression: Cbimu_meas
-  //  Referenced by: '<S5>/Constant1'
+  //  Referenced by: '<S9>/Constant1'
 
-  { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 }
+  { 1.0, 0.0, 0.0, 0.0, -0.037, 0.9993, 0.0, -0.9993, -0.037 }
 };
 
 //

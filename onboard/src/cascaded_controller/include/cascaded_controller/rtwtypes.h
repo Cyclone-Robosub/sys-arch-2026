@@ -5,14 +5,14 @@
 //
 // File: rtwtypes.h
 //
-// Code generated for Simulink model 'Mission_Manager_CGN'.
+// Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.131
+// Model version                  : 1.3
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Jun 30 20:17:55 2026
+// C/C++ source code generated on : Thu Jul  2 19:07:07 2026
 //
 // Target selection: ert.tlc
-// Embedded hardware selection: Intel->x86-64 (Linux 64)
+// Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
 // Code generation objectives: Unspecified
 // Validation result: Not run
 //
@@ -33,9 +33,9 @@
 
 //=======================================================================*
 //  Target hardware information
-//    Device type: Intel->x86-64 (Linux 64)
+//    Device type: ARM Compatible->ARM Cortex-A (64-bit)
 //    Number of bits:     char:   8    short:   16    int:  32
-//                        long:  64
+//                        long:  64    long long:  64
 //                        native word size:  64
 //    Byte ordering: LittleEndian
 //    Signed integer division rounds to: Zero
@@ -61,7 +61,7 @@ typedef double real64_T;
 
 //===========================================================================*
 //  Generic type definitions: boolean_T, char_T, byte_T, int_T, uint_T,       *
-//                            real_T, time_T, ulong_T.                        *
+//                            real_T, time_T, ulong_T, ulonglong_T.           *
 // ===========================================================================
 typedef double real_T;
 typedef double time_T;
@@ -69,6 +69,7 @@ typedef unsigned char boolean_T;
 typedef int int_T;
 typedef unsigned int uint_T;
 typedef unsigned long ulong_T;
+typedef unsigned long long ulonglong_T;
 typedef char char_T;
 typedef unsigned char uchar_T;
 typedef char_T byte_T;

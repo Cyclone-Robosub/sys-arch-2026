@@ -2,11 +2,11 @@
 //
 // File ros2nodeinterface.h
 //
-// Code generated for Simulink model 'Mission_Manager_CGN'.
+// Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.131
+// Model version                  : 1.3
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Jun 30 20:18:06 2026
+// C/C++ source code generated on : Thu Jul 02 19:07:15 2026
 //
 #ifndef _ROS2_MATLAB_NODEINTERFACE_
 #define _ROS2_MATLAB_NODEINTERFACE_
@@ -31,8 +31,8 @@ namespace executors{
 class SLMultiThreadedExecutor;
 }
 }
-class Mission_Manager_CGN;
-#include "Mission_Manager_CGN_types.h"
+class cascaded_controller;
+#include "cascaded_controller_types.h"
 #include "rtwtypes.h"
 #include "custom_interfaces/msg/drr.hpp"
 #include "custom_interfaces/msg/goal.hpp"
@@ -75,7 +75,7 @@ namespace matlab {
     NodeInterface& operator=(const NodeInterface& );
     //
     rclcpp::Node::SharedPtr mNode;
-    std::shared_ptr<Mission_Manager_CGN> mModel;
+    std::shared_ptr<cascaded_controller> mModel;
     std::shared_ptr<rclcpp::executors::SLMultiThreadedExecutor> mExec;
     //
     Semaphore mBaseRateSem;
@@ -103,7 +103,7 @@ namespace matlab {
       return mNode;
     }
     //
-    std::shared_ptr<Mission_Manager_CGN> getModel() {
+    std::shared_ptr<cascaded_controller> getModel() {
       return mModel;
     }
   }; //class NodeInterface

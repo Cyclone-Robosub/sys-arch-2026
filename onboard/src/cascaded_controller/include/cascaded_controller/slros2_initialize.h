@@ -1,8 +1,8 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 30-Jun-2026 20:18:04
+// Generated 02-Jul-2026 19:07:14
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
-#include "Mission_Manager_CGN_types.h"
+#include "cascaded_controller_types.h"
 // Generic pub-sub header
 #include "slros2_generic_pubsub.h"
 #ifndef SET_QOS_VALUES
@@ -37,18 +37,18 @@ inline rclcpp::QoS getQOSSettingsFromRMW(const rmw_qos_profile_t& qosProfile) {
     }
     return qos;
 }
-// Mission_Manager_CGN/ /Subsystem/Publish
-extern SimulinkPublisher<custom_interfaces::msg::Result,SL_Bus_custom_interfaces_Result> Pub_Mission_Manager_CGN_286_7;
-// Mission_Manager_CGN/pwm_heartbeat_publisher/Publish2
-extern SimulinkPublisher<std_msgs::msg::Empty,SL_Bus_std_msgs_Empty> Pub_Mission_Manager_CGN_322_150;
-// Mission_Manager_CGN/pwm_publisher/Publish
-extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pub_Mission_Manager_CGN_323_2;
-// Mission_Manager_CGN/ /Subscribe
-extern SimulinkSubscriber<custom_interfaces::msg::Goal,SL_Bus_custom_interfaces_Goal> Sub_Mission_Manager_CGN_286_284;
-// Mission_Manager_CGN/DRR
-extern SimulinkSubscriber<custom_interfaces::msg::DRR,SL_Bus_custom_interfaces_DRR> Sub_Mission_Manager_CGN_288;
-// Mission_Manager_CGN/IMU
-extern SimulinkSubscriber<custom_interfaces::msg::Imu,SL_Bus_custom_interfaces_Imu> Sub_Mission_Manager_CGN_293;
-// Mission_Manager_CGN/VR
-extern SimulinkSubscriber<custom_interfaces::msg::VR,SL_Bus_custom_interfaces_VR> Sub_Mission_Manager_CGN_305;
+// cascaded_controller/mission_manager_interface_cgn/Subsystem/Publish
+extern SimulinkPublisher<custom_interfaces::msg::Result,SL_Bus_custom_interfaces_Result> Pub_cascaded_controller_108_8;
+// cascaded_controller/pwm_heartbeat_publisher/Publish2
+extern SimulinkPublisher<std_msgs::msg::Empty,SL_Bus_std_msgs_Empty> Pub_cascaded_controller_37_150;
+// cascaded_controller/pwm_publisher/Publish
+extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pub_cascaded_controller_38_2;
+// cascaded_controller/DRR
+extern SimulinkSubscriber<custom_interfaces::msg::DRR,SL_Bus_custom_interfaces_DRR> Sub_cascaded_controller_3;
+// cascaded_controller/IMU
+extern SimulinkSubscriber<custom_interfaces::msg::Imu,SL_Bus_custom_interfaces_Imu> Sub_cascaded_controller_8;
+// cascaded_controller/VR
+extern SimulinkSubscriber<custom_interfaces::msg::VR,SL_Bus_custom_interfaces_VR> Sub_cascaded_controller_20;
+// cascaded_controller/mission_manager_interface_cgn/Subscribe
+extern SimulinkSubscriber<custom_interfaces::msg::Goal,SL_Bus_custom_interfaces_Goal> Sub_cascaded_controller_108_4;
 #endif

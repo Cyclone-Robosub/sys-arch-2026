@@ -2,11 +2,11 @@
 //
 // File ros2nodeinterface.cpp
 //
-// Code generated for Simulink model 'Mission_Manager_CGN'.
+// Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.131
+// Model version                  : 1.3
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Jun 30 20:18:06 2026
+// C/C++ source code generated on : Thu Jul 02 19:07:15 2026
 //
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -26,7 +26,7 @@
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif //_MSC_VER
 #include "rclcpp/rclcpp.hpp"
-#include "Mission_Manager_CGN.h"
+#include "cascaded_controller.h"
 #include "ros2nodeinterface.h"
 #include <thread>
 #include <chrono>
@@ -64,13 +64,13 @@ void NodeInterface::initialize(int argc, char * const argv[]) {
         std::vector<char *> args(argv, argv + argc);
         rclcpp::init(static_cast<int>(args.size()), args.data());
         //create the Node specified in Model
-        std::string NodeName("Mission_Manager_CGN");
+        std::string NodeName("cascaded_controller");
         SLROSNodePtr = std::make_shared<rclcpp::Node>(NodeName);
-        RCLCPP_INFO(SLROSNodePtr->get_logger(),"** Starting the model \"Mission_Manager_CGN\" **\n");
+        RCLCPP_INFO(SLROSNodePtr->get_logger(),"** Starting the model \"cascaded_controller\" **\n");
         mExec = std::make_shared<rclcpp::executors::SLMultiThreadedExecutor>();
         mExec->add_node(SLROSNodePtr);
         //initialize the model which will initialize the publishers and subscribers
-        mModel = std::make_shared<Mission_Manager_CGN>(
+        mModel = std::make_shared<cascaded_controller>(
         );
         ROS_SET_RTM_ERROR_STATUS(NULL);
         mModel->initialize();

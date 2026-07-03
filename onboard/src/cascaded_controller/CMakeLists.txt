@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(mission_manager_cgn)
+project(cascaded_controller)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 # Set CMAKE_BUILD_TYPE
 set(CMAKE_BUILD_TYPE Release)
@@ -36,15 +36,15 @@ find_package( custom_interfaces REQUIRED)
 find_package( rclcpp REQUIRED)
 find_package( std_msgs REQUIRED)
 # Add package include directories
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/mission_manager_cgn")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/cascaded_controller")
 set (CMAKE_SKIP_BUILD_RPATH false)
 set (CMAKE_BUILD_WITH_INSTALL_RPATH true)
 set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # Node
-add_executable(Mission_Manager_CGN 
-src/Mission_Manager_CGN.cpp
-src/Mission_Manager_CGN_data.cpp
+add_executable(cascaded_controller 
+src/cascaded_controller.cpp
+src/cascaded_controller_data.cpp
 src/main.cpp
 src/ros2nodeinterface.cpp
 src/rtGetNaN.cpp
@@ -53,14 +53,14 @@ src/slros2_initialize.cpp
 src/slros2_multi_threaded_executor.cpp
 )
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-target_compile_options(Mission_Manager_CGN PUBLIC 
+target_compile_options(cascaded_controller PUBLIC 
   $<$<OR:$<COMPILE_LANGUAGE:CXX>,$<COMPILE_LANGUAGE:C>>:
   -Wall -Wextra -Wpedantic
   >)
 endif()
-target_compile_options(Mission_Manager_CGN PRIVATE
+target_compile_options(cascaded_controller PRIVATE
   $<$<OR:$<COMPILE_LANGUAGE:CXX>,$<COMPILE_LANGUAGE:C>>:
-  -DMODEL=Mission_Manager_CGN
+  -DMODEL=cascaded_controller
   -DNUMST=2
   -DNCSTATES=0
   -DHAVESTDIO
@@ -81,16 +81,16 @@ target_compile_options(Mission_Manager_CGN PRIVATE
   -fpermissive  >
   )
 ament_target_dependencies(
-  Mission_Manager_CGN
+  cascaded_controller
   "custom_interfaces"
   "rclcpp"
   "std_msgs"
 )
-target_include_directories(Mission_Manager_CGN PUBLIC
+target_include_directories(cascaded_controller PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 
-install(TARGETS Mission_Manager_CGN
+install(TARGETS cascaded_controller
   EXPORT export_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME})
 ament_export_include_directories(
@@ -98,17 +98,17 @@ ament_export_include_directories(
 )
 foreach(file_i ${CUDA_BINS})
 add_custom_command(
-                   TARGET Mission_Manager_CGN
+                   TARGET cascaded_controller
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND}
-                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/Mission_Manager_CGN_ert_rtw/${file_i}
+                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/cascaded_controller_ert_rtw/${file_i}
 				   )
 add_custom_command(
-                   TARGET Mission_Manager_CGN
+                   TARGET cascaded_controller
                    POST_BUILD
                    COMMAND ${CMAKE_COMMAND}
-                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/codegen/exe/Mission_Manager_CGN/${file_i}
+                   ARGS -E copy ${PROJECT_SOURCE_DIR}/src/${file_i} ${CMAKE_INSTALL_PREFIX}/codegen/exe/cascaded_controller/${file_i}
 				   )				   
 endforeach(file_i)
 ament_package()
-# Generated on Tue Jun 30 20:18:09 2026
+# Generated on Thu Jul 02 19:07:20 2026

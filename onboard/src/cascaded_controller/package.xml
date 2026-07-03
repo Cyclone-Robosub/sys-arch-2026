@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>mission_manager_cgn</name>
+  <name>cascaded_controller</name>
   <version>1.0.0</version>
   <description>TODO</description>
   <maintainer email="crs.aggies@gmail.com">Cyclone Robosub</maintainer>
@@ -16,4 +16,4 @@
     <build_type>ament_cmake</build_type>
   </export>
 </package>
-<!-- Generated on Tue Jun 30 20:18:09 2026 -->
+<!-- Generated on Thu Jul 02 19:07:20 2026 -->

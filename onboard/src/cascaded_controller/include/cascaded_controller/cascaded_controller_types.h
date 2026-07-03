@@ -3,117 +3,22 @@
 // course requirements at degree granting institutions only.  Not for
 // government, commercial, or other organizational use.
 //
-// File: Mission_Manager_CGN_types.h
+// File: cascaded_controller_types.h
 //
-// Code generated for Simulink model 'Mission_Manager_CGN'.
+// Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.131
+// Model version                  : 1.3
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Jun 30 20:17:55 2026
+// C/C++ source code generated on : Thu Jul  2 19:07:07 2026
 //
 // Target selection: ert.tlc
-// Embedded hardware selection: Intel->x86-64 (Linux 64)
+// Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
 // Code generation objectives: Unspecified
 // Validation result: Not run
 //
-#ifndef Mission_Manager_CGN_types_h_
-#define Mission_Manager_CGN_types_h_
+#ifndef cascaded_controller_types_h_
+#define cascaded_controller_types_h_
 #include "rtwtypes.h"
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pose6D_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pose6D_
-
-// MsgType=custom_interfaces/Pose6D
-struct SL_Bus_custom_interfaces_Pose6D
-{
-  real_T x;
-  real_T y;
-  real_T z;
-  real_T roll;
-  real_T pitch;
-  real_T yaw;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_WaypointMask_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_WaypointMask_
-
-// MsgType=custom_interfaces/WaypointMask
-struct SL_Bus_custom_interfaces_WaypointMask
-{
-  boolean_T x;
-  boolean_T y;
-  boolean_T z;
-  boolean_T roll;
-  boolean_T pitch;
-  boolean_T yaw;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Goal_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Goal_
-
-// MsgType=custom_interfaces/Goal
-struct SL_Bus_custom_interfaces_Goal
-{
-  // PrimitiveROSType=char
-  uint8_T command_id[16];
-
-  // MsgType=custom_interfaces/Pose6D
-  SL_Bus_custom_interfaces_Pose6D waypoint;
-
-  // MsgType=custom_interfaces/WaypointMask
-  SL_Bus_custom_interfaces_WaypointMask waypoint_mask;
-
-  // MsgType=custom_interfaces/Pose6D
-  SL_Bus_custom_interfaces_Pose6D tolerance;
-  real_T hold_time;
-
-  // PrimitiveROSType=char
-  uint8_T object[16];
-  real_T confidence;
-
-  // PrimitiveROSType=char
-  uint8_T trick[16];
-  real_T duration;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Result_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Result_
-
-// MsgType=custom_interfaces/Result
-struct SL_Bus_custom_interfaces_Result
-{
-  boolean_T success;
-
-  // PrimitiveROSType=char
-  uint8_T found_object[16];
-  boolean_T reached_waypoint_without_detection;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_cmd_bus_
-#define DEFINED_TYPEDEF_FOR_cmd_bus_
-
-struct cmd_bus
-{
-  int8_T cmd_id[16];
-  real_T wp[6];
-  real_T wp_mask[6];
-  real_T wp_tol[6];
-  real_T hold_time;
-  int8_T obj_id[16];
-  real_T conf;
-  int8_T trick_id[16];
-  real_T exec_timeout;
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_SL_Bus_geometry_msgs_Vector3_
 #define DEFINED_TYPEDEF_FOR_SL_Bus_geometry_msgs_Vector3_
 
@@ -372,71 +277,6 @@ struct SL_Bus_custom_interfaces_Imu
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_X_bus_
-#define DEFINED_TYPEDEF_FOR_X_bus_
-
-struct X_bus
-{
-  real_T Ri[3];
-  real_T Rb[3];
-  real_T Eul[3];
-  real_T qib[4];
-  real_T Cib[9];
-  real_T Cbi[9];
-  real_T dRi[3];
-  real_T dRb[3];
-  real_T wb[3];
-  real_T wi[3];
-  real_T ddRi[3];
-  real_T ddRb[3];
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_RSFF_maneuver_bus_
-#define DEFINED_TYPEDEF_FOR_RSFF_maneuver_bus_
-
-struct RSFF_maneuver_bus
-{
-  real_T rsff_stop[6];
-  real_T rsff_forward[6];
-  real_T rsff_backward[6];
-  real_T rsff_right[6];
-  real_T rsff_left[6];
-  real_T rsff_up[6];
-  real_T rsff_down[6];
-  real_T rsff_rollRight[6];
-  real_T rsff_rollLeft[6];
-  real_T rsff_pitchUp[6];
-  real_T rsff_pitchDown[6];
-  real_T rsff_yawRight[6];
-  real_T rsff_yawLeft[6];
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_FF_maneuvers_bus_
-#define DEFINED_TYPEDEF_FOR_FF_maneuvers_bus_
-
-struct FF_maneuvers_bus
-{
-  real_T manual[8];
-  real_T forward[8];
-  real_T backward[8];
-  real_T up[8];
-  real_T down[8];
-  real_T right[8];
-  real_T left[8];
-  real_T pitchUp[8];
-  real_T pitchDown[8];
-  real_T yawRight[8];
-  real_T yawLeft[8];
-  real_T rollRight[8];
-  real_T rollLeft[8];
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_MultiArrayDimension_
 #define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_MultiArrayDimension_
 
@@ -516,6 +356,166 @@ struct SL_Bus_custom_interfaces_VR
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_cmd_bus_
+#define DEFINED_TYPEDEF_FOR_cmd_bus_
+
+struct cmd_bus
+{
+  int8_T cmd_id[16];
+  real_T wp[6];
+  real_T wp_mask[6];
+  real_T wp_tol[6];
+  real_T hold_time;
+  int8_T obj_id[16];
+  real_T conf;
+  int8_T trick_id[16];
+  real_T exec_timeout;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_X_bus_
+#define DEFINED_TYPEDEF_FOR_X_bus_
+
+struct X_bus
+{
+  real_T Ri[3];
+  real_T Rb[3];
+  real_T Eul[3];
+  real_T qib[4];
+  real_T Cib[9];
+  real_T Cbi[9];
+  real_T dRi[3];
+  real_T dRb[3];
+  real_T wb[3];
+  real_T wi[3];
+  real_T ddRi[3];
+  real_T ddRb[3];
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_RSFF_maneuver_bus_
+#define DEFINED_TYPEDEF_FOR_RSFF_maneuver_bus_
+
+struct RSFF_maneuver_bus
+{
+  real_T rsff_stop[6];
+  real_T rsff_forward[6];
+  real_T rsff_backward[6];
+  real_T rsff_right[6];
+  real_T rsff_left[6];
+  real_T rsff_up[6];
+  real_T rsff_down[6];
+  real_T rsff_rollRight[6];
+  real_T rsff_rollLeft[6];
+  real_T rsff_pitchUp[6];
+  real_T rsff_pitchDown[6];
+  real_T rsff_yawRight[6];
+  real_T rsff_yawLeft[6];
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_FF_maneuvers_bus_
+#define DEFINED_TYPEDEF_FOR_FF_maneuvers_bus_
+
+struct FF_maneuvers_bus
+{
+  real_T manual[8];
+  real_T forward[8];
+  real_T backward[8];
+  real_T up[8];
+  real_T down[8];
+  real_T right[8];
+  real_T left[8];
+  real_T pitchUp[8];
+  real_T pitchDown[8];
+  real_T yawRight[8];
+  real_T yawLeft[8];
+  real_T rollRight[8];
+  real_T rollLeft[8];
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pose6D_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Pose6D_
+
+// MsgType=custom_interfaces/Pose6D
+struct SL_Bus_custom_interfaces_Pose6D
+{
+  real_T x;
+  real_T y;
+  real_T z;
+  real_T roll;
+  real_T pitch;
+  real_T yaw;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_WaypointMask_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_WaypointMask_
+
+// MsgType=custom_interfaces/WaypointMask
+struct SL_Bus_custom_interfaces_WaypointMask
+{
+  boolean_T x;
+  boolean_T y;
+  boolean_T z;
+  boolean_T roll;
+  boolean_T pitch;
+  boolean_T yaw;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Goal_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Goal_
+
+// MsgType=custom_interfaces/Goal
+struct SL_Bus_custom_interfaces_Goal
+{
+  // PrimitiveROSType=char
+  uint8_T command_id[16];
+
+  // MsgType=custom_interfaces/Pose6D
+  SL_Bus_custom_interfaces_Pose6D waypoint;
+
+  // MsgType=custom_interfaces/WaypointMask
+  SL_Bus_custom_interfaces_WaypointMask waypoint_mask;
+
+  // MsgType=custom_interfaces/Pose6D
+  SL_Bus_custom_interfaces_Pose6D tolerance;
+  real_T hold_time;
+
+  // PrimitiveROSType=char
+  uint8_T object[16];
+  real_T confidence;
+
+  // PrimitiveROSType=char
+  uint8_T trick[16];
+  real_T duration;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Result_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Result_
+
+// MsgType=custom_interfaces/Result
+struct SL_Bus_custom_interfaces_Result
+{
+  boolean_T success;
+
+  // PrimitiveROSType=char
+  uint8_T found_object[16];
+  boolean_T reached_waypoint_without_detection;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
 #define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
 
@@ -571,7 +571,7 @@ struct sensor_bus
 
 #endif
 
-// Custom Type definition for MATLABSystem: '<S208>/SinkBlock'
+// Custom Type definition for MATLABSystem: '<S203>/SinkBlock'
 #include "rmw/qos_profiles.h"
 #ifndef struct_sJ4ih70VmKcvCeguWN0mNVF
 #define struct_sJ4ih70VmKcvCeguWN0mNVF
@@ -610,21 +610,21 @@ struct ros_slros2_internal_block_Pub_T
 
 #endif                                // struct_ros_slros2_internal_block_Pub_T
 
-// Custom Type definition for MATLAB Function: '<S19>/commandExecuter'
-#ifndef struct_cell_wrap_1_Mission_Manager_C_T
-#define struct_cell_wrap_1_Mission_Manager_C_T
+// Custom Type definition for MATLAB Function: '<S14>/commandExecuter'
+#ifndef struct_cell_wrap_1_cascaded_controll_T
+#define struct_cell_wrap_1_cascaded_controll_T
 
-struct cell_wrap_1_Mission_Manager_C_T
+struct cell_wrap_1_cascaded_controll_T
 {
   char_T f1[16];
 };
 
-#endif                                // struct_cell_wrap_1_Mission_Manager_C_T
+#endif                                // struct_cell_wrap_1_cascaded_controll_T
 
 // Forward declaration for rtModel
-typedef struct tag_RTM_Mission_Manager_CGN_T RT_MODEL_Mission_Manager_CGN_T;
+typedef struct tag_RTM_cascaded_controller_T RT_MODEL_cascaded_controller_T;
 
-#endif                                 // Mission_Manager_CGN_types_h_
+#endif                                 // cascaded_controller_types_h_
 
 //
 // File trailer for generated code.
