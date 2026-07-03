@@ -629,13 +629,11 @@ void Dashboard_TUI::display_commands() {
 }
 
 void Dashboard_TUI::display_debug(const int col_number, Debug_Message debug) {
-    // std::string message = std::string(debug.message);
-    std::string message = "The quick brown fox jumps over the lazy dog.\nThe quick brown fox jumps over the lazy dog. 012345678901234567890123457\n901234578901234532\n23456543212345789\n87654321234567876543275439857435984375987435943754375981345678894038095809438509843095123456789098765";
+    std::string message = std::string(debug.message);
     jump_to_column(col_number);
     if (fresh_evaluation_time - debug.timestamp < 0.5s) {
         write(STDOUT_FILENO, "\x1B[1;94m", 7); // bold, blue
         fflush(stdout);
-        message = "Hooooie!";
     }
     int message_length = message.length();
     int curr_debug_length = message_length;
