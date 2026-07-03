@@ -162,8 +162,9 @@ void RegisterPlugins(bt_server::Params& params, BT::BehaviorTreeFactory& factory
 void RegisterBehaviorTrees(bt_server::Params& params, BT::BehaviorTreeFactory& factory,
                            rclcpp::Node::SharedPtr node)
 {
-  for(const auto& tree_dir : params.behavior_trees)
-  {
+  
+  //params.mission_path;
+  for(const auto& tree_dir : params.behavior_trees) {
     const auto tree_directory = GetDirectoryPath(tree_dir);
     // skip invalid subtree directories
     if(tree_directory.empty())

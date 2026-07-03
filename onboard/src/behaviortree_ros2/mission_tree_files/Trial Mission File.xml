@@ -3,11 +3,11 @@
       main_tree_to_execute="TrialTree">
   <BehaviorTree ID="GateTask">
     <Sequence>
-      <DriveToWorldWaypoint world_waypoint="10,0,0,0,0,0"
-                            waypoint_mask="0,0,0,0,0,0"
-                            tolerance="0.2,0,0,0,0,0"
-                            hold_time="0.5"
-                            timeout="10"
+      <DriveToWorldWaypoint world_waypoint="2,2,0,0,0,0"
+                            waypoint_mask="1,1,1,1,1,1"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="3"
+                            timeout="30"
                             _description="Forwards 10 metres"/>
     </Sequence>
   </BehaviorTree>
@@ -15,10 +15,10 @@
   <BehaviorTree ID="ReturnToGateTask">
     <Sequence>
       <DriveToWorldWaypoint world_waypoint="0,0,0,0,0,0"
-                            waypoint_mask="1,0,0,0,0,0"
-                            tolerance="0.2,0,0,0,0,0"
-                            hold_time="8"
-                            timeout="1"
+                            waypoint_mask="1,1,1,1,1,1"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="999"
+                            timeout="30"
                             _description="Return to origin"/>
     </Sequence>
   </BehaviorTree>
