@@ -4,6 +4,7 @@
 #include <chrono>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <algorithm> // for std::min()
 #include "rclcpp/rclcpp.hpp"
 #include "tui_interface.hpp"
 #include "std_msgs/msg/empty.hpp"
@@ -14,6 +15,7 @@
 #include "custom_interfaces/msg/pwms.hpp"
 #include "custom_interfaces/msg/vr.hpp"
 #include "custom_interfaces/msg/drr.hpp"
+#include "custom_interfaces/msg/debug.hpp"
 #include "custom_interfaces/srv/control_mode.hpp"
 
 using namespace rclcpp;
@@ -29,6 +31,11 @@ typedef struct dvl_data {
     double z = 0;
     std::chrono::time_point<std::chrono::steady_clock> timestamp;
 } DVL_Data;
+
+typedef struct debug_message {
+    char message[256] = {0};
+    std::chrono::time_point<std::chrono::steady_clock> timestamp;
+} Debug_Message;
 
 class Dashboard_TUI : public TUI_Interface {
     public:
@@ -56,6 +63,7 @@ class Dashboard_TUI : public TUI_Interface {
         void display_vr(const int col_number, DVL_Data velocity);
         void display_drr(const int col_number, DVL_Data position, DVL_Data orientation);
         void display_commands();
+        void display_debug(const int col_number, Debug_Message debug);
         std::string dvl_fresh(DVL_Data dvl_data);
         std::string pwm_fresh(PWM_Data pwm_data);
         std::chrono::time_point<std::chrono::steady_clock> fresh_evaluation_time;
@@ -65,7 +73,8 @@ class Dashboard_TUI : public TUI_Interface {
         const int col_2_2 = 55;
         const int col_2_3 = 66;
         const int col_2_4 = 77;
-        
+        const int col_3 = 88;
+        int prev_debug_length = 256; // don't like this, but need a way to clean up old text...
 };
 
 class Dashboard : public rclcpp::Node {
@@ -91,12 +100,12 @@ private:
     rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cli_subscription;
     rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_ctrl_subscription;
     rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_echo_subscription;
-    rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr dvl_drr_subscription;
     rclcpp::Subscription<custom_interfaces::msg::VR>::SharedPtr dvl_vr_subscription;
+    rclcpp::Subscription<custom_interfaces::msg::DRR>::SharedPtr dvl_drr_subscription;
+    rclcpp::Subscription<custom_interfaces::msg::Debug>::SharedPtr matlab_debug_subscription;
     rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscription;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr ready_status_subscription;
     
-
     void thrust_interface_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
     void mux_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
     void cli_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat);
@@ -112,6 +121,7 @@ private:
     void pwm_echo_callback(custom_interfaces::msg::Pwms::UniquePtr pwms);
     void dvl_vr_callback(custom_interfaces::msg::VR::UniquePtr vr);
     void dvl_drr_callback(custom_interfaces::msg::DRR::UniquePtr drr);
+    void matlab_debug_received_callback(custom_interfaces::msg::Debug::UniquePtr message);
 
     void heartbeat_check_callback();
     bool no_heartbeat(std::chrono::time_point<std::chrono::steady_clock> now, std::chrono::time_point<std::chrono::steady_clock> heartbeat_time);
@@ -151,6 +161,7 @@ private:
     DVL_Data velocity;
     DVL_Data position;
     DVL_Data orientation;
+    Debug_Message debug;
 
     rclcpp::Client<custom_interfaces::srv::ControlMode>::SharedPtr mux_client;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr reset_drr_client;

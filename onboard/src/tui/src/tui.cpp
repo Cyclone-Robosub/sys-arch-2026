@@ -34,6 +34,8 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
         std::bind(&Dashboard::dvl_vr_callback, this, std::placeholders::_1));
     dvl_drr_subscription = this->create_subscription<custom_interfaces::msg::DRR>("dead_reck_report", 10, 
         std::bind(&Dashboard::dvl_drr_callback, this, std::placeholders::_1));
+    matlab_debug_subscription = this->create_subscription<custom_interfaces::msg::Debug>("matlab_debug", 10,
+        std::bind(&Dashboard::matlab_debug_received_callback, this, std::placeholders::_1));
     current_control_mode_subscription = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
         std::bind(&Dashboard::control_mode_callback, this, std::placeholders::_1));
     ready_status_subscription = this->create_subscription<std_msgs::msg::Bool>("current_ready_state", 10, 
@@ -180,6 +182,13 @@ void Dashboard::dvl_drr_callback(custom_interfaces::msg::DRR::UniquePtr drr) {
     orientation.timestamp = std::chrono::steady_clock::now();
 }
 
+void Dashboard::matlab_debug_received_callback(custom_interfaces::msg::Debug::UniquePtr message) {
+    for (int i = 0; i < 256; i ++) { // 256 = message length
+        debug.message[i] = message->message[i];
+    }
+    debug.timestamp = std::chrono::steady_clock::now();
+}
+
 void Dashboard::control_mode_callback(std_msgs::msg::UInt8::UniquePtr msg) {
     current_control_mode = msg->data;
     refresh_display();
@@ -314,7 +323,7 @@ void Dashboard::work_loop() {
 void Dashboard::refresh_display() {
     auto now = std::chrono::steady_clock::now();
     seconds_since_ping = (double)((now - most_recent_ping) / 1ms) / (double)1000;
-    tui->refresh_display(20, current_control_mode,
+    tui->refresh_display(21, current_control_mode,
                              thrust_interface_heartbeat,
                              mux_heartbeat,
                              cli_heartbeat,
@@ -330,6 +339,7 @@ void Dashboard::refresh_display() {
                              velocity,
                              position,
                              orientation,
+                             debug,
                              ping_ok,
                              rtt,
                              seconds_since_ping,
@@ -618,6 +628,45 @@ void Dashboard_TUI::display_commands() {
     printf("[D]: Send Go Signal\n");
 }
 
+void Dashboard_TUI::display_debug(const int col_number, Debug_Message debug) {
+    // std::string message = std::string(debug.message);
+    std::string message = "The quick brown fox jumps over the lazy dog.\nThe quick brown fox jumps over the lazy dog. 012345678901234567890123457\n901234578901234532\n23456543212345789\n87654321234567876543275439857435984375987435943754375981345678894038095809438509843095123456789098765";
+    jump_to_column(col_number);
+    if (fresh_evaluation_time - debug.timestamp < 0.5s) {
+        write(STDOUT_FILENO, "\x1B[1;94m", 7); // bold, blue
+        fflush(stdout);
+        message = "Hooooie!";
+    }
+    int message_length = message.length();
+    int curr_debug_length = message_length;
+    int col_offset = 0;
+    for (int i = 0; i < prev_debug_length; i++) { // this is pretty inefficient: better to write the full 35-char block at once. Seems harder though.
+        col_offset++;
+        if (col_offset > 0 && col_offset % 45 == 0) {
+            printf("\n");
+            jump_to_column(col_number);
+            col_offset = 0;
+        }
+
+        if (i < message_length) {
+            char curr_char = message[i];
+            printf("%c", curr_char);
+            if (curr_char == '\n') {
+                jump_to_column(col_number);
+                curr_debug_length += 45;
+                col_offset = 0;
+            }
+        }
+        else {
+            printf(" ");
+        }
+
+    }
+    prev_debug_length = curr_debug_length;
+    printf("\n");
+    write(STDOUT_FILENO, "\x1B[39;22m\n", 9);
+}
+
 std::string Dashboard::get_ping() { // TODO: when robot looses connection ping hangs for ~10 seconds. Break into seperate thread
     int pipe_fds[2];
     pipe(pipe_fds); // [0] = read end, [1] = write end
@@ -660,6 +709,7 @@ void Dashboard_TUI::display_tui(va_list args) {
     DVL_Data velocity = va_arg(args, DVL_Data);
     DVL_Data position = va_arg(args, DVL_Data);
     DVL_Data orientation = va_arg(args, DVL_Data);
+    Debug_Message debug = va_arg(args, Debug_Message);
     bool ping_ok = (bool)va_arg(args, int);
     double ping_rtt = va_arg(args, double);
     double seconds_since_ping = va_arg(args, double);
@@ -721,6 +771,11 @@ void Dashboard_TUI::display_tui(va_list args) {
 
     write_header("mission_manager", col_2);
     display_mission_manager(current_mux_mode, 2, mission_manager_heartbeat, ready, col_2);
+
+    reset_cursor_pos();
+
+    write_header("Matlab Debug", col_3);
+    display_debug(col_3, debug);
 
     write(STDOUT_FILENO, "\x1B[38;29H", 8); // jumpt to prompt (line/column)
     write(STDOUT_FILENO, "\x1B[?25h", 6); // visible cursor
