@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.3
+// Model version                  : 1.5
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Jul  2 19:07:07 2026
+// C/C++ source code generated on : Thu Jul  2 21:06:21 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -47,7 +47,7 @@ struct B_cascaded_controller_T {
   cell_wrap_1_cascaded_controll_T varargin_1[13];
   cell_wrap_1_cascaded_controll_T varargin_2[13];
   cell_wrap_1_cascaded_controll_T varargin_3[13];
-  SL_Bus_custom_interfaces_Goal In1_n; // '<S199>/In1'
+  SL_Bus_custom_interfaces_Goal In1_n; // '<S200>/In1'
   SL_Bus_custom_interfaces_Goal rtb_SourceBlock_o2_p_k;
   real_T c_a[16];
   real_T X_u[13];                      // '<S14>/commandExecuter'
@@ -196,13 +196,13 @@ struct B_cascaded_controller_T {
 
 // Block states (default storage) for system '<Root>'
 struct DW_cascaded_controller_T {
-  ros_slros2_internal_block_Sub_T obj; // '<S195>/SourceBlock'
+  ros_slros2_internal_block_Sub_T obj; // '<S196>/SourceBlock'
   ros_slros2_internal_block_Sub_T obj_e;// '<S3>/SourceBlock'
   ros_slros2_internal_block_Sub_T obj_e3;// '<S2>/SourceBlock'
   ros_slros2_internal_block_Sub_T obj_d;// '<S1>/SourceBlock'
-  ros_slros2_internal_block_Pub_T obj_f;// '<S203>/SinkBlock'
-  ros_slros2_internal_block_Pub_T obj_o;// '<S202>/SinkBlock'
-  ros_slros2_internal_block_Pub_T obj_i;// '<S200>/SinkBlock'
+  ros_slros2_internal_block_Pub_T obj_f;// '<S204>/SinkBlock'
+  ros_slros2_internal_block_Pub_T obj_o;// '<S203>/SinkBlock'
+  ros_slros2_internal_block_Pub_T obj_i;// '<S201>/SinkBlock'
   real_T UnitDelay_DSTATE;             // '<S4>/Unit Delay'
   real_T UnitDelay1_DSTATE;            // '<S4>/Unit Delay1'
   real_T PositionIntegrator_DSTATE[3]; // '<S9>/Position Integrator'
@@ -237,10 +237,11 @@ struct DW_cascaded_controller_T {
   int8_T Filter_PrevResetState_a;      // '<S171>/Filter'
   uint8_T PositionIntegrator_IC_LOADING;// '<S9>/Position Integrator'
   uint8_T VelocityIntegrator_IC_LOADING;// '<S9>/Velocity Integrator'
-  boolean_T joystick_mode_enabled_flag;// '<Root>/Data Store Memory'
+  boolean_T start_new_mission_flag;    // '<Root>/Data Store Memory'
   boolean_T start_new_cmd_flag;        // '<Root>/Data Store Memory1'
   boolean_T prior_flag;                // '<S9>/dvl_reset'
   boolean_T qk_not_empty;              // '<S9>/discreteTimeQuatPropagation'
+  boolean_T start_new_mission_flag_a;  // '<S5>/MATLAB Function'
   boolean_T hold_timer_start_time_not_empty;// '<S14>/commandExecuter'
   boolean_T idle_wp_not_empty;         // '<S14>/commandExecuter'
   boolean_T cmd_specific_wp_not_empty; // '<S14>/commandExecuter'
@@ -255,7 +256,7 @@ struct ConstP_cascaded_controller_T {
   FF_maneuvers_bus trickFTListInjector_FF_maneuver;
 
   // Computed Parameter: Constant_Value
-  //  Referenced by: '<S201>/Constant'
+  //  Referenced by: '<S202>/Constant'
 
   SL_Bus_std_msgs_Empty Constant_Value;
 
@@ -426,7 +427,6 @@ extern volatile boolean_T runModel;
 //-
 //  These blocks were eliminated from the model due to optimizations:
 //
-//  Block '<S5>/Scope' : Unused code path elimination
 //  Block '<S13>/Gain' : Eliminated nontunable gain of 1
 //  Block '<S13>/Gain3' : Eliminated nontunable gain of 1
 //  Block '<S13>/Gain4' : Eliminated nontunable gain of 1
@@ -641,20 +641,21 @@ extern volatile boolean_T runModel;
 //  '<S192>' : 'cascaded_controller/low_level_controller_cgn/cascaded_pid_controller_cgn/dRb Controller/preInt Signal/Internal PreInt'
 //  '<S193>' : 'cascaded_controller/low_level_controller_cgn/cascaded_pid_controller_cgn/dRb Controller/preSat Signal/Forward_Path'
 //  '<S194>' : 'cascaded_controller/low_level_controller_cgn/execute_command_cgn/commandExecuter'
-//  '<S195>' : 'cascaded_controller/mission_manager_interface_cgn/Subscribe'
-//  '<S196>' : 'cascaded_controller/mission_manager_interface_cgn/Subsystem'
-//  '<S197>' : 'cascaded_controller/mission_manager_interface_cgn/cmdMsgToCmdBus'
-//  '<S198>' : 'cascaded_controller/mission_manager_interface_cgn/statusKwdToBool'
-//  '<S199>' : 'cascaded_controller/mission_manager_interface_cgn/Subscribe/Enabled Subsystem'
-//  '<S200>' : 'cascaded_controller/mission_manager_interface_cgn/Subsystem/Publish'
-//  '<S201>' : 'cascaded_controller/pwm_heartbeat_publisher/Blank Message1'
-//  '<S202>' : 'cascaded_controller/pwm_heartbeat_publisher/Publish2'
-//  '<S203>' : 'cascaded_controller/pwm_publisher/Publish'
-//  '<S204>' : 'cascaded_controller/state_estimator_cgn/derivedStateEstimates'
-//  '<S205>' : 'cascaded_controller/state_estimator_cgn/discreteTimeQuatPropagation'
-//  '<S206>' : 'cascaded_controller/state_estimator_cgn/dvl_reset'
-//  '<S207>' : 'cascaded_controller/state_estimator_cgn/eulToQuat'
-//  '<S208>' : 'cascaded_controller/state_estimator_cgn/quatToRotm'
+//  '<S195>' : 'cascaded_controller/mission_manager_interface_cgn/MATLAB Function'
+//  '<S196>' : 'cascaded_controller/mission_manager_interface_cgn/Subscribe'
+//  '<S197>' : 'cascaded_controller/mission_manager_interface_cgn/Subsystem'
+//  '<S198>' : 'cascaded_controller/mission_manager_interface_cgn/cmdMsgToCmdBus'
+//  '<S199>' : 'cascaded_controller/mission_manager_interface_cgn/statusKwdToBool'
+//  '<S200>' : 'cascaded_controller/mission_manager_interface_cgn/Subscribe/Enabled Subsystem'
+//  '<S201>' : 'cascaded_controller/mission_manager_interface_cgn/Subsystem/Publish'
+//  '<S202>' : 'cascaded_controller/pwm_heartbeat_publisher/Blank Message1'
+//  '<S203>' : 'cascaded_controller/pwm_heartbeat_publisher/Publish2'
+//  '<S204>' : 'cascaded_controller/pwm_publisher/Publish'
+//  '<S205>' : 'cascaded_controller/state_estimator_cgn/derivedStateEstimates'
+//  '<S206>' : 'cascaded_controller/state_estimator_cgn/discreteTimeQuatPropagation'
+//  '<S207>' : 'cascaded_controller/state_estimator_cgn/dvl_reset'
+//  '<S208>' : 'cascaded_controller/state_estimator_cgn/eulToQuat'
+//  '<S209>' : 'cascaded_controller/state_estimator_cgn/quatToRotm'
 
 #endif                                 // cascaded_controller_h_
 

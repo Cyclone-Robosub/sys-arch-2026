@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.3
+// Model version                  : 1.5
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Jul  2 19:07:07 2026
+// C/C++ source code generated on : Thu Jul  2 21:06:21 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -1909,7 +1909,7 @@ void cascaded_controller::cascaded_co_Publisher_setupImpl(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S200>/SinkBlock'
+  // Start for MATLABSystem: '<S201>/SinkBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -1922,7 +1922,7 @@ void cascaded_controller::cascaded_co_Publisher_setupImpl(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 16; i++) {
-    // Start for MATLABSystem: '<S200>/SinkBlock'
+    // Start for MATLABSystem: '<S201>/SinkBlock'
     cascaded_controller_B.b_zeroDelimTopic_d[i] = b_zeroDelimTopic[i];
   }
 
@@ -1941,7 +1941,7 @@ void cascaded_controller::cascad_Subscriber_setupImpl_dsx(const
   char_T b_zeroDelimTopic[13];
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S195>/SourceBlock'
+  // Start for MATLABSystem: '<S196>/SourceBlock'
   cascaded_controller_B.deadline.sec = 0.0;
   cascaded_controller_B.deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -1955,7 +1955,7 @@ void cascaded_controller::cascad_Subscriber_setupImpl_dsx(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 13; i++) {
-    // Start for MATLABSystem: '<S195>/SourceBlock'
+    // Start for MATLABSystem: '<S196>/SourceBlock'
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
 
@@ -2070,7 +2070,7 @@ void cascaded_controller::cascaded_Publisher_setupImpl_ds(const
   char_T b_zeroDelimTopic[10];
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S203>/SinkBlock'
+  // Start for MATLABSystem: '<S204>/SinkBlock'
   cascaded_controller_B.deadline_l.sec = 0.0;
   cascaded_controller_B.deadline_l.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -2084,7 +2084,7 @@ void cascaded_controller::cascaded_Publisher_setupImpl_ds(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 10; i++) {
-    // Start for MATLABSystem: '<S203>/SinkBlock'
+    // Start for MATLABSystem: '<S204>/SinkBlock'
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
 
@@ -2102,7 +2102,7 @@ void cascaded_controller::cascaded__Publisher_setupImpl_d(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S202>/SinkBlock'
+  // Start for MATLABSystem: '<S203>/SinkBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -2115,7 +2115,7 @@ void cascaded_controller::cascaded__Publisher_setupImpl_d(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 16; i++) {
-    // Start for MATLABSystem: '<S202>/SinkBlock'
+    // Start for MATLABSystem: '<S203>/SinkBlock'
     cascaded_controller_B.b_zeroDelimTopic_l[i] = b_zeroDelimTopic[i];
   }
 
@@ -2247,20 +2247,20 @@ void cascaded_controller::step()
   cascaded_controller_B.DigitalClock = (((&cascaded_controller_M)
     ->Timing.clockTick0) * 0.01);
 
-  // MATLABSystem: '<S195>/SourceBlock'
+  // MATLABSystem: '<S196>/SourceBlock'
   b_varargout_1 = Sub_cascaded_controller_108_4.getLatestMessage
     (&cascaded_controller_B.rtb_SourceBlock_o2_p_k);
 
-  // Outputs for Enabled SubSystem: '<S195>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S199>/Enable'
+  // Outputs for Enabled SubSystem: '<S196>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S200>/Enable'
 
-  // Start for MATLABSystem: '<S195>/SourceBlock'
+  // Start for MATLABSystem: '<S196>/SourceBlock'
   if (b_varargout_1) {
-    // SignalConversion generated from: '<S199>/In1'
+    // SignalConversion generated from: '<S200>/In1'
     cascaded_controller_B.In1_n = cascaded_controller_B.rtb_SourceBlock_o2_p_k;
   }
 
-  // End of Outputs for SubSystem: '<S195>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<S196>/Enabled Subsystem'
 
   // MATLAB Function: '<S5>/cmdMsgToCmdBus'
   for (i = 0; i < 16; i++) {
@@ -2999,14 +2999,14 @@ void cascaded_controller::step()
   //   MATLAB Function: '<Root>/sensorRosMsgToBus'
 
   if (cascaded_controller_DW.prior_flag &&
-      (!cascaded_controller_DW.joystick_mode_enabled_flag)) {
+      (!cascaded_controller_DW.start_new_mission_flag)) {
     cascaded_controller_DW.offset[0] = cascaded_controller_B.In1_a.position.x;
     cascaded_controller_DW.offset[1] = cascaded_controller_B.In1_a.position.y;
     cascaded_controller_DW.offset[2] = cascaded_controller_B.In1_a.position.z;
   }
 
   cascaded_controller_DW.prior_flag =
-    cascaded_controller_DW.joystick_mode_enabled_flag;
+    cascaded_controller_DW.start_new_mission_flag;
   cascaded_controller_B.rtb_dvl_pos_g[0] =
     cascaded_controller_B.In1_a.position.x - cascaded_controller_DW.offset[0];
   cascaded_controller_B.rtb_dvl_pos_g[1] =
@@ -5827,9 +5827,18 @@ void cascaded_controller::step()
   // End of Outputs for SubSystem: '<S4>/cascaded_pid_controller_cgn'
 
   // DataStoreWrite: '<S5>/Data Store Write' incorporates:
-  //   MATLABSystem: '<S195>/SourceBlock'
+  //   MATLABSystem: '<S196>/SourceBlock'
   //
   cascaded_controller_DW.start_new_cmd_flag = b_varargout_1;
+
+  // MATLAB Function: '<S5>/MATLAB Function' incorporates:
+  //   DataStoreWrite: '<S5>/Data Store Write1'
+  //   MATLABSystem: '<S196>/SourceBlock'
+  //
+  cascaded_controller_DW.start_new_mission_flag_a = ((!b_varargout_1) &&
+    cascaded_controller_DW.start_new_mission_flag_a);
+  cascaded_controller_DW.start_new_mission_flag =
+    cascaded_controller_DW.start_new_mission_flag_a;
 
   // MATLAB Function: '<S5>/statusKwdToBool' incorporates:
   //   UnitDelay: '<S5>/Unit Delay'
@@ -5865,9 +5874,9 @@ void cascaded_controller::step()
     cascaded_controller_B.result_msg.reached_waypoint_without_detection = false;
 
     // Outputs for Enabled SubSystem: '<S5>/Subsystem' incorporates:
-    //   EnablePort: '<S196>/Enable'
+    //   EnablePort: '<S197>/Enable'
 
-    // MATLABSystem: '<S200>/SinkBlock'
+    // MATLABSystem: '<S201>/SinkBlock'
     Pub_cascaded_controller_108_8.publish(&cascaded_controller_B.result_msg);
 
     // End of Outputs for SubSystem: '<S5>/Subsystem'
@@ -5882,9 +5891,9 @@ void cascaded_controller::step()
     cascaded_controller_B.result_msg.reached_waypoint_without_detection = false;
 
     // Outputs for Enabled SubSystem: '<S5>/Subsystem' incorporates:
-    //   EnablePort: '<S196>/Enable'
+    //   EnablePort: '<S197>/Enable'
 
-    // MATLABSystem: '<S200>/SinkBlock'
+    // MATLABSystem: '<S201>/SinkBlock'
     Pub_cascaded_controller_108_8.publish(&cascaded_controller_B.result_msg);
 
     // End of Outputs for SubSystem: '<S5>/Subsystem'
@@ -5903,11 +5912,11 @@ void cascaded_controller::step()
 
   // End of BusCreator: '<S7>/Bus Creator3'
 
-  // MATLABSystem: '<S203>/SinkBlock'
+  // MATLABSystem: '<S204>/SinkBlock'
   Pub_cascaded_controller_38_2.publish(&cascaded_controller_B.BusCreator3);
   if ((&cascaded_controller_M)->Timing.TaskCounters.TID[1] == 0) {
-    // MATLABSystem: '<S202>/SinkBlock' incorporates:
-    //   Constant: '<S201>/Constant'
+    // MATLABSystem: '<S203>/SinkBlock' incorporates:
+    //   Constant: '<S202>/Constant'
 
     Pub_cascaded_controller_37_150.publish
       (&cascaded_controller_ConstP.Constant_Value);
@@ -5991,10 +6000,7 @@ void cascaded_controller::step()
 void cascaded_controller::initialize()
 {
   // Start for DataStoreMemory: '<Root>/Data Store Memory'
-  cascaded_controller_DW.joystick_mode_enabled_flag = true;
-
-  // Start for DataStoreMemory: '<Root>/Data Store Memory1'
-  cascaded_controller_DW.start_new_cmd_flag = true;
+  cascaded_controller_DW.start_new_mission_flag = true;
 
   // InitializeConditions for DiscreteIntegrator: '<S9>/Position Integrator'
   cascaded_controller_DW.PositionIntegrator_PrevResetSta = 2;
@@ -6037,8 +6043,11 @@ void cascaded_controller::initialize()
 
   // End of SystemInitialize for SubSystem: '<S4>/cascaded_pid_controller_cgn'
 
+  // SystemInitialize for MATLAB Function: '<S5>/MATLAB Function'
+  cascaded_controller_DW.start_new_mission_flag_a = true;
+
   // SystemInitialize for Enabled SubSystem: '<S5>/Subsystem'
-  // Start for MATLABSystem: '<S200>/SinkBlock'
+  // Start for MATLABSystem: '<S201>/SinkBlock'
   cascaded_controller_DW.obj_i.QOSAvoidROSNamespaceConventions = false;
   cascaded_controller_DW.obj_i.matlabCodegenIsDeleted = false;
   cascaded_controller_DW.obj_i.isSetupComplete = false;
@@ -6048,7 +6057,7 @@ void cascaded_controller::initialize()
 
   // End of SystemInitialize for SubSystem: '<S5>/Subsystem'
 
-  // Start for MATLABSystem: '<S195>/SourceBlock'
+  // Start for MATLABSystem: '<S196>/SourceBlock'
   cascaded_controller_DW.obj.QOSAvoidROSNamespaceConventions = false;
   cascaded_controller_DW.obj.matlabCodegenIsDeleted = false;
   cascaded_controller_DW.obj.isSetupComplete = false;
@@ -6080,7 +6089,7 @@ void cascaded_controller::initialize()
   cascaded_c_Subscriber_setupImpl(&cascaded_controller_DW.obj_d);
   cascaded_controller_DW.obj_d.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S203>/SinkBlock'
+  // Start for MATLABSystem: '<S204>/SinkBlock'
   cascaded_controller_DW.obj_f.QOSAvoidROSNamespaceConventions = false;
   cascaded_controller_DW.obj_f.matlabCodegenIsDeleted = false;
   cascaded_controller_DW.obj_f.isSetupComplete = false;
@@ -6088,7 +6097,7 @@ void cascaded_controller::initialize()
   cascaded_Publisher_setupImpl_ds(&cascaded_controller_DW.obj_f);
   cascaded_controller_DW.obj_f.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S202>/SinkBlock'
+  // Start for MATLABSystem: '<S203>/SinkBlock'
   cascaded_controller_DW.obj_o.QOSAvoidROSNamespaceConventions = false;
   cascaded_controller_DW.obj_o.matlabCodegenIsDeleted = false;
   cascaded_controller_DW.obj_o.isSetupComplete = false;
@@ -6100,7 +6109,7 @@ void cascaded_controller::initialize()
 // Model terminate function
 void cascaded_controller::terminate()
 {
-  // Terminate for MATLABSystem: '<S195>/SourceBlock'
+  // Terminate for MATLABSystem: '<S196>/SourceBlock'
   if (!cascaded_controller_DW.obj.matlabCodegenIsDeleted) {
     cascaded_controller_DW.obj.matlabCodegenIsDeleted = true;
     if ((cascaded_controller_DW.obj.isInitialized == 1) &&
@@ -6109,7 +6118,7 @@ void cascaded_controller::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S195>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S196>/SourceBlock'
 
   // Terminate for MATLABSystem: '<S2>/SourceBlock'
   if (!cascaded_controller_DW.obj_e3.matlabCodegenIsDeleted) {
@@ -6145,7 +6154,7 @@ void cascaded_controller::terminate()
   // End of Terminate for MATLABSystem: '<S1>/SourceBlock'
 
   // Terminate for Enabled SubSystem: '<S5>/Subsystem'
-  // Terminate for MATLABSystem: '<S200>/SinkBlock'
+  // Terminate for MATLABSystem: '<S201>/SinkBlock'
   if (!cascaded_controller_DW.obj_i.matlabCodegenIsDeleted) {
     cascaded_controller_DW.obj_i.matlabCodegenIsDeleted = true;
     if ((cascaded_controller_DW.obj_i.isInitialized == 1) &&
@@ -6154,10 +6163,10 @@ void cascaded_controller::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S200>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S201>/SinkBlock'
   // End of Terminate for SubSystem: '<S5>/Subsystem'
 
-  // Terminate for MATLABSystem: '<S203>/SinkBlock'
+  // Terminate for MATLABSystem: '<S204>/SinkBlock'
   if (!cascaded_controller_DW.obj_f.matlabCodegenIsDeleted) {
     cascaded_controller_DW.obj_f.matlabCodegenIsDeleted = true;
     if ((cascaded_controller_DW.obj_f.isInitialized == 1) &&
@@ -6166,9 +6175,9 @@ void cascaded_controller::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S203>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S204>/SinkBlock'
 
-  // Terminate for MATLABSystem: '<S202>/SinkBlock'
+  // Terminate for MATLABSystem: '<S203>/SinkBlock'
   if (!cascaded_controller_DW.obj_o.matlabCodegenIsDeleted) {
     cascaded_controller_DW.obj_o.matlabCodegenIsDeleted = true;
     if ((cascaded_controller_DW.obj_o.isInitialized == 1) &&
@@ -6177,7 +6186,7 @@ void cascaded_controller::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S202>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S203>/SinkBlock'
 }
 
 // Constructor

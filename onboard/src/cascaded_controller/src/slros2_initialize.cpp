@@ -1,5 +1,5 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 02-Jul-2026 19:07:14
+// Generated 02-Jul-2026 21:06:32
 #include "slros2_initialize.h"
 const std::string SLROSNodeName("cascaded_controller");
 // cascaded_controller/mission_manager_interface_cgn/Subsystem/Publish

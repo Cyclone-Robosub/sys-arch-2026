@@ -4,9 +4,9 @@
 //
 // Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.3
+// Model version                  : 1.5
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Jul 02 19:07:15 2026
+// C/C++ source code generated on : Thu Jul 02 21:06:33 2026
 //
 #ifndef _ROS2_MATLAB_NODEINTERFACE_
 #define _ROS2_MATLAB_NODEINTERFACE_

@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.3
+// Model version                  : 1.5
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Jul  2 19:07:07 2026
+// C/C++ source code generated on : Thu Jul  2 21:06:21 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -571,7 +571,7 @@ struct sensor_bus
 
 #endif
 
-// Custom Type definition for MATLABSystem: '<S203>/SinkBlock'
+// Custom Type definition for MATLABSystem: '<S204>/SinkBlock'
 #include "rmw/qos_profiles.h"
 #ifndef struct_sJ4ih70VmKcvCeguWN0mNVF
 #define struct_sJ4ih70VmKcvCeguWN0mNVF

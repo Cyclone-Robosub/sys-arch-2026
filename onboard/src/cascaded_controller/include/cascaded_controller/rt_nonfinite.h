@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'cascaded_controller'.
 //
-// Model version                  : 1.3
+// Model version                  : 1.5
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Jul  2 19:07:07 2026
+// C/C++ source code generated on : Thu Jul  2 21:06:21 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
