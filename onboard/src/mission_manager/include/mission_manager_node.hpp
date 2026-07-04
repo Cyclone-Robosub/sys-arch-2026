@@ -42,6 +42,7 @@ class MissionManagerNode : public rclcpp::Node {
         void mission_manager_heartbeat_send();
         void publish_current_ready_status();
         void publish_mission_status();
+        void parameter_callback(const rclcpp::Parameter & p);
         void goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle);
         void result_callback(const GoalHandleExecuteTree::WrappedResult & result);
         void idle_goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle);
@@ -60,5 +61,8 @@ class MissionManagerNode : public rclcpp::Node {
         std::shared_ptr<SeekObjectActionServer> seek_object_action_server;
         std::shared_ptr<WaypointActionServer> waypoint_action_server;
         std::shared_ptr<DropperActionServer> dropper_action_server;
+
+        std::shared_ptr<rclcpp::ParameterEventHandler> param_subscriber;
+        std::shared_ptr<rclcpp::ParameterCallbackHandle> cb_handle;
 
 };

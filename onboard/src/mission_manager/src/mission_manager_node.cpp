@@ -2,9 +2,10 @@
 using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
-  this->declare_parameter("mission_file", rclcpp::PARAMETER_STRING);
-  ///param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
-
+  this->declare_parameter<std::string>("mission_file", "TrialTree");
+  param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
+  cb_handle = param_subscriber->add_parameter_callback("mission_file", std::bind(&MissionManagerNode::parameter_callback, this, std::placeholders::_1));
+ 
   cur_mission = this->get_parameter("mission_file").as_string();
   ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
   ready_pub_service =  this->create_service<std_srvs::srv::Trigger>("pub_ready_status", std::bind(&MissionManagerNode::pub_ready_status, this, std::placeholders::_1, std::placeholders::_2));
@@ -60,7 +61,7 @@ void MissionManagerNode::try_start_mission() {
         idle_goal_handle_.reset();
         return;
    }
-   std::this_thread::sleep_for(std::chrono::seconds(15));
+   //std::this_thread::sleep_for(std::chrono::seconds(15));
    ExecuteTree::Goal goal;
    goal.target_tree = cur_mission;
    auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
@@ -130,10 +131,15 @@ void MissionManagerNode::idle_result_callback(const GoalHandleExecuteTree::Wrapp
             break;
         case rclcpp_action::ResultCode::ABORTED:
             RCLCPP_ERROR(this->get_logger(), "Goal was aborted");
+            if (mission_started) {
+                execute_tree_client->async_send_goal(goal, send_goal_options);
+            }
             break;
         case rclcpp_action::ResultCode::CANCELED:
             RCLCPP_ERROR(this->get_logger(), "Goal was canceled");
-            execute_tree_client->async_send_goal(goal, send_goal_options);
+            if (mission_started) {
+                execute_tree_client->async_send_goal(goal, send_goal_options);
+            }
             break;
         default:
             RCLCPP_ERROR(this->get_logger(), "Unknown result code");
@@ -164,6 +170,14 @@ void MissionManagerNode::publish_mission_status() {
     current_mission_status_publisher->publish(mission_status);
 }
 
+void MissionManagerNode::parameter_callback(const rclcpp::Parameter & p) {
+    RCLCPP_INFO(
+        this->get_logger(), "Received an update to parameter \"%s\" of type %s: \"%s\"",
+        p.get_name().c_str(),
+        p.get_type_name().c_str(),
+        p.as_string().c_str());
+    cur_mission = this->get_parameter("mission_file").as_string();
+}
 /*
     Creates MissionManagerNode to oversee the Server and start on conditions
     Creates MissionTreeServer object and spins
