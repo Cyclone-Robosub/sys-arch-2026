@@ -128,6 +128,33 @@ void Thrust_Interface::revive_pico(const std::shared_ptr<std_srvs::srv::Trigger:
     response->success = true;
 }
 
+void Thrust_Interface::revive_pico(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+    (void)request; // stop compiler complaining
+    std::string serial_message = "resume from kill\n";
+    int length = serial_message.size();
+
+    serial_mutex.lock();
+    ssize_t bytes_written = write(pico_fd->get_write_fd(), serial_message.c_str(), length);
+    serial_mutex.unlock();
+    if (bytes_written != length) {
+        response->success = false;
+        RCLCPP_WARN(this->get_logger(), 
+                    "Failed to write complete message to revive Pico. It might still be killed. Wrote %zd/%d bytes.", 
+                    bytes_written, length);
+        return;
+    }
+    // check that Pico responded with success;
+    char response_buf[32] = {0};
+    read(pico_fd->get_read_fd(), response_buf, 32);
+    if (strncmp("revived", response_buf, 7)) { // if we didn't get "revived" from Pico
+        response->success = false;
+        RCLCPP_WARN(this->get_logger(), 
+                    "Successfully wrote revive message to Pico, but did not receive successful response from Pico.");
+        return;
+    }
+    response->success = true;
+}
+
 void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
     std::string serial_message = "Set " + std::to_string(thruster) + " PWM " + std::to_string(pwm) + "\n";
     int length = serial_message.size();

@@ -535,6 +535,59 @@ TEST_F(TestThrustInterface, InactiveThrustInterfaceHeartbeat) {
 
 
 
+ /**
+ * @brief Test that we can send a reset signal when the Pico is alive
+ */
+ TEST_F(TestThrustInterface, RevivePicoSuccess){
+    create_node_with_params(1200,1800);
+    auto client = node->create_client<std_srvs::srv::Trigger>("revive_pico");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    auto future = client->async_send_request(request);
+
+    write_serial_message("revived\r\n");
+
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future.get()->success); // expect that we did received a successful revived response
+    executor.cancel();
+    spin_thread.join();
+ }
+
+ /**
+ * @brief Test that we can send fail successfully when no response from Pico
+ */
+ TEST_F(TestThrustInterface, RevivePicoFailure){
+    create_node_with_params(1200,1800);
+    auto client = node->create_client<std_srvs::srv::Trigger>("revive_pico");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    auto future = client->async_send_request(request);
+
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_FALSE(future.get()->success); // expect that we did not receive a successful revived response
+    executor.cancel();
+    spin_thread.join();
+ }
+
+
+
+
 #ifdef ENABLE_TESTING
 /**
  * @brief Main test runner
