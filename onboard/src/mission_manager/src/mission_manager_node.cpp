@@ -7,6 +7,8 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   cb_handle = param_subscriber->add_parameter_callback("mission_file", std::bind(&MissionManagerNode::parameter_callback, this, std::placeholders::_1));
  
   cur_mission = this->get_parameter("mission_file").as_string();
+  bt_param_client = std::make_shared<rclcpp::AsyncParametersClient>(this, "/bt_action_server");
+
   ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
   ready_pub_service =  this->create_service<std_srvs::srv::Trigger>("pub_ready_status", std::bind(&MissionManagerNode::pub_ready_status, this, std::placeholders::_1, std::placeholders::_2));
   execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "bt_action_server");
@@ -177,7 +179,11 @@ void MissionManagerNode::parameter_callback(const rclcpp::Parameter & p) {
         p.get_type_name().c_str(),
         p.as_string().c_str());
     cur_mission = this->get_parameter("mission_file").as_string();
+    if (bt_param_client->service_is_ready()) {
+        bt_param_client->set_parameters({rclcpp::Parameter("mission_file", cur_mission)});
+    }
 }
+
 /*
     Creates MissionManagerNode to oversee the Server and start on conditions
     Creates MissionTreeServer object and spins

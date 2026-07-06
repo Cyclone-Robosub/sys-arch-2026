@@ -29,6 +29,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
+#include <tinyxml2.h>
+
 namespace BT
 {
 /**
@@ -85,5 +87,7 @@ void RegisterPlugins(bt_server::Params& params, BT::BehaviorTreeFactory& factory
  */
 void RegisterBehaviorTrees(bt_server::Params& params, BT::BehaviorTreeFactory& factory,
                            rclcpp::Node::SharedPtr node);
+
+std::string getTreeNameFromFile(const std::string& filename);
 
 }  // namespace BT

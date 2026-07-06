@@ -64,5 +64,6 @@ class MissionManagerNode : public rclcpp::Node {
 
         std::shared_ptr<rclcpp::ParameterEventHandler> param_subscriber;
         std::shared_ptr<rclcpp::ParameterCallbackHandle> cb_handle;
+        std::shared_ptr<rclcpp::AsyncParametersClient> bt_param_client;
 
 };

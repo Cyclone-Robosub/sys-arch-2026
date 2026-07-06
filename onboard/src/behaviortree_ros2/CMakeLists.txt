@@ -11,10 +11,11 @@ set(THIS_PACKAGE_DEPS
     behaviortree_cpp
     btcpp_ros2_interfaces
     generate_parameter_library
+    tinyxml2
     )
 
 find_package(ament_cmake REQUIRED)
-
+find_package(tinyxml2 REQUIRED)
 foreach(PACKAGE ${THIS_PACKAGE_DEPS})
     find_package(${PACKAGE} REQUIRED )
 endforeach()
@@ -41,6 +42,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     behaviortree_cpp::behaviortree_cpp
     ${btcpp_ros2_interfaces_TARGETS}
     bt_executor_parameters
+    tinyxml2::tinyxml2
 )
 
 
