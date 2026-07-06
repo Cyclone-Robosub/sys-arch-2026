@@ -46,7 +46,7 @@ protected:
         fcntl(read_pipe_fds[0], F_SETFL, (fcntl(read_pipe_fds[0], F_GETFD)|O_NONBLOCK));
         
         // Set up test thruster configuration
-        test_thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
+        test_thrusters = {2, 0, 6, 4, 19, 26, 21, 27};
         active_heartbeat = false;
     }
     

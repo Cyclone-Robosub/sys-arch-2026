@@ -193,7 +193,7 @@ int Pico_FD::open_file() {
 #ifndef ENABLE_TESTING
 
 int main(int argc, char* argv[]) {
-    std::vector<int> thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
+    std::vector<int> thrusters = {2, 0, 6, 4, 19, 26, 21, 27};
     std::unique_ptr<FD_Interface> fd = std::make_unique<Pico_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
     rclcpp::init(argc, argv);
     auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, std::move(fd), 1100, 1900);
