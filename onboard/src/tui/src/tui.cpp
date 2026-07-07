@@ -183,7 +183,7 @@ void Dashboard::dvl_drr_callback(custom_interfaces::msg::DRR::UniquePtr drr) {
 }
 
 void Dashboard::matlab_debug_received_callback(custom_interfaces::msg::Debug::UniquePtr message) {
-    for (int i = 0; i < 256; i ++) { // 256 = message length
+    for (int i = 0; i < 256; i ++) { // 256 = ROS message length. One less than Debug C++ struct length.
         debug.message[i] = message->message[i];
     }
     debug.timestamp = std::chrono::steady_clock::now();

@@ -33,7 +33,7 @@ typedef struct dvl_data {
 } DVL_Data;
 
 typedef struct debug_message {
-    char message[256] = {0};
+    char message[257] = {0}; // one byte more so that we get a guaranteed null termination
     std::chrono::time_point<std::chrono::steady_clock> timestamp;
 } Debug_Message;
 
