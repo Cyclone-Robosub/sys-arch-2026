@@ -23,6 +23,7 @@ class MissionTreeServer : public TreeExecutionServer {
         std::shared_ptr<CustomLogger> logger_cout_;
         rclcpp::Publisher<custom_interfaces::msg::CommandTree>::SharedPtr current_command_publisher;
         std::string cur_mission;
+        std::string mission_file_stored;
         bool nodes_registered = false;
 
 

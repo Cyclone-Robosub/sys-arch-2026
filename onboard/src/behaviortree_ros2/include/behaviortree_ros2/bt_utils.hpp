@@ -56,7 +56,7 @@ std::string GetDirectoryPath(const std::string& parameter_value);
  * @param directory_path Full path to the directory to search for BehaviorTree definitions
  */
 void LoadBehaviorTrees(BT::BehaviorTreeFactory& factory,
-                       const std::string& directory_path);
+                       const std::string& directory_path, std::string mission_file);
 
 /**
  * @brief Function to load a BehaviorTree ROS plugin (or standard BT.CPP plugins)

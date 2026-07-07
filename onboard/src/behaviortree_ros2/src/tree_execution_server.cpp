@@ -107,8 +107,7 @@ TreeExecutionServer::TreeExecutionServer(const rclcpp::Node::SharedPtr& node)
 TreeExecutionServer::~TreeExecutionServer()
 {}
 
-void TreeExecutionServer::executeRegistration()
-{
+void TreeExecutionServer::executeRegistration() {
   // Before executing check if we have new Behaviors or Subtrees to reload
   p_->factory.clearRegisteredBehaviorTrees();
 

@@ -77,7 +77,7 @@ std::string GetDirectoryPath(const std::string& parameter_value)
 }
 
 void LoadBehaviorTrees(BT::BehaviorTreeFactory& factory,
-                       const std::string& directory_path)
+                       const std::string& directory_path, std::string mission_file)
 {
   using std::filesystem::directory_iterator;
   for(const auto& entry : directory_iterator(directory_path))
@@ -89,7 +89,7 @@ void LoadBehaviorTrees(BT::BehaviorTreeFactory& factory,
       } else {
         try {
           std::string name = getTreeNameFromFile(entry.path().string());
-          if (name == "TrialTree") {
+          if (name == mission_file) {
             factory.registerBehaviorTreeFromFile(entry.path().string());
             RCLCPP_INFO(kLogger, "Loaded BehaviorTree: %s", entry.path().filename().c_str());
           }
@@ -182,13 +182,15 @@ void RegisterBehaviorTrees(bt_server::Params& params, BT::BehaviorTreeFactory& f
                            rclcpp::Node::SharedPtr node)
 {
   
-  //params.mission_path;
+  std::string mission_file;
+  node->get_parameter("mission_file", mission_file);
+
   for(const auto& tree_dir : params.behavior_trees) {
     const auto tree_directory = GetDirectoryPath(tree_dir);
     // skip invalid subtree directories
     if(tree_directory.empty())
       continue;
-    LoadBehaviorTrees(factory, tree_directory);
+    LoadBehaviorTrees(factory, tree_directory, mission_file);
   }
 }
 

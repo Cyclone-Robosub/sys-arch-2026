@@ -13,6 +13,7 @@ MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeE
     current_command_publisher = node()->create_publisher<custom_interfaces::msg::CommandTree>("current_command", 10);
     node()->declare_parameter("mission_file", "TrialTree");
     cur_mission = node()->get_parameter("mission_file").as_string();
+    mission_file_stored = cur_mission;
 }
 
 void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
@@ -20,8 +21,10 @@ void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
 }
 
 bool MissionTreeServer::onGoalReceived(const std::string& tree_name, const std::string& payload) {
-    //cur_mission is accessable here
-    executeRegistration();
+    if (mission_file_stored != cur_mission) {
+        mission_file_stored = cur_mission;
+        executeRegistration();
+    }
     return true;
 }
 
