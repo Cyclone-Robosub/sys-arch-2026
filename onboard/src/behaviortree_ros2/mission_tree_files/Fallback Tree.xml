@@ -3,12 +3,12 @@
       main_tree_to_execute="FallbackTree">
   <BehaviorTree ID="FallbackTree">
     <Sequence>
-      <SubTree ID="GoFallback"/>
-      <SubTree ID="Return"/>
+      <SubTree ID="GateTask"/>
+      <SubTree ID="ReturnToGateTask"/>
     </Sequence>
   </BehaviorTree>
 
-  <BehaviorTree ID="GoFallback">
+  <BehaviorTree ID="GateTask">
     <Fallback>
       <DriveToWorldWaypoint world_waypoint="10000000,0,0,0,0,0"
                             waypoint_mask="1,0,0,0,0,0"
@@ -23,7 +23,7 @@
     </Fallback>
   </BehaviorTree>
 
-  <BehaviorTree ID="Return">
+  <BehaviorTree ID="ReturnToGateTask">
     <Sequence>
       <DriveToWorldWaypoint world_waypoint="0,0,0,0,0,0"
                             waypoint_mask="1,0,0,0,0,0"
