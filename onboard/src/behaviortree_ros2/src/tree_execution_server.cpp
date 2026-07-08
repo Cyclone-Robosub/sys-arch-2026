@@ -107,8 +107,7 @@ TreeExecutionServer::TreeExecutionServer(const rclcpp::Node::SharedPtr& node)
 TreeExecutionServer::~TreeExecutionServer()
 {}
 
-void TreeExecutionServer::executeRegistration()
-{
+void TreeExecutionServer::executeRegistration() {
   // Before executing check if we have new Behaviors or Subtrees to reload
   p_->factory.clearRegisteredBehaviorTrees();
 
@@ -119,7 +118,6 @@ void TreeExecutionServer::executeRegistration()
   RegisterPlugins(p_->params, p_->factory, node_);
   // load trees (XML) from multiple directories
   RegisterBehaviorTrees(p_->params, p_->factory, node_);
-  //p_->params.mission_path;
   p_->factory_initialized_ = true;
 }
 

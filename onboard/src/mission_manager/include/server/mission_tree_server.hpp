@@ -15,10 +15,16 @@ class MissionTreeServer : public TreeExecutionServer {
         void onTreeCreated(BT::Tree& tree);
         std::optional<BT::NodeStatus> onLoopAfterTick(BT::NodeStatus status);
         void registerNodesIntoFactory (BT::BehaviorTreeFactory& factory);
+        bool onGoalReceived (const std::string& tree_name, const std::string& payload);
         virtual std::optional<std::string> onTreeExecutionCompleted(BT::NodeStatus status [[maybe_unused]],
                                                               bool was_cancelled [[maybe_unused]]);
+                                                
     private:
         std::shared_ptr<CustomLogger> logger_cout_;
         rclcpp::Publisher<custom_interfaces::msg::CommandTree>::SharedPtr current_command_publisher;
+        std::string cur_mission;
+        std::string mission_file_stored;
+        bool nodes_registered = false;
+
 
 };

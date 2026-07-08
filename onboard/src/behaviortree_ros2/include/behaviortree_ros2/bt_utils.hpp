@@ -29,6 +29,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
+#include <tinyxml2.h>
+
 namespace BT
 {
 /**
@@ -54,7 +56,7 @@ std::string GetDirectoryPath(const std::string& parameter_value);
  * @param directory_path Full path to the directory to search for BehaviorTree definitions
  */
 void LoadBehaviorTrees(BT::BehaviorTreeFactory& factory,
-                       const std::string& directory_path);
+                       const std::string& directory_path, std::string mission_file);
 
 /**
  * @brief Function to load a BehaviorTree ROS plugin (or standard BT.CPP plugins)
@@ -85,5 +87,7 @@ void RegisterPlugins(bt_server::Params& params, BT::BehaviorTreeFactory& factory
  */
 void RegisterBehaviorTrees(bt_server::Params& params, BT::BehaviorTreeFactory& factory,
                            rclcpp::Node::SharedPtr node);
+
+std::string getTreeNameFromFile(const std::string& filename);
 
 }  // namespace BT
