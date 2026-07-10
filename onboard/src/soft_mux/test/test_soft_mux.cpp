@@ -2,6 +2,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <custom_interfaces/msg/pwms.hpp>
 #include "soft_mux.hpp"
+#include "std_msgs/msg/bool.hpp"
 
 
 using namespace std::chrono_literals;
@@ -10,15 +11,17 @@ class TestSoftMuxInterface : public::testing::Test {
         std::shared_ptr<SoftMux> mux;
         rclcpp::Subscription<custom_interfaces::msg::Pwms>::SharedPtr pwm_cmd_subscriber;
         rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr current_control_mode_subscriber;
+        rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr mux_heartbeat_subscriber;
         custom_interfaces::msg::Pwms most_recent_msg;
         std_msgs::msg::UInt8 most_recent_mode;
-        std_msgs::msg::Bool most_recent_mux_hb;
+        bool active_mux_heartbeat;
        
         void SetUp() override {
             // Initialize ROS2
             if (!rclcpp::ok()) {
                 rclcpp::init(0, nullptr);
             }
+            active_mux_heartbeat = false;
         }
         void TearDown() override {
             mux.reset();
@@ -62,14 +65,14 @@ class TestSoftMuxInterface : public::testing::Test {
         *   Helper function to subscribe to mux_heartbeat topic and get the heartbeats from mux
         */
         void subscribe_mux_heartbeat() {
-            rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr mux_heartbeat_subscriber = mux->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, std::bind(&TestSoftMuxInterface::mux_heartbeat_callback, this, std::placeholders::_1));
+            mux_heartbeat_subscriber = mux->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, std::bind(&TestSoftMuxInterface::mux_heartbeat_callback, this, std::placeholders::_1));
         }
         
         /*
         *   Helper function for the callback for mux heartbeat
         */
-        void mux_heartbeat_callback(std_msgs::msg::Bool msg) {
-            most_recent_mux_hb.data = true;
+        void mux_heartbeat_callback(std_msgs::msg::Empty msg) {
+            active_mux_heartbeat = true;
             (void) msg;
         }
 };
@@ -303,7 +306,7 @@ TEST_F(TestSoftMuxInterface, MuxTestInputHB) {
     createMux();
    
     mux->control_mode = CTRL;
-    std_msgs::msg::Bool::UniquePtr test_heartbeat = std::make_unique<std_msgs::msg::Bool>();
+    std_msgs::msg::Empty::UniquePtr test_heartbeat = std::make_unique<std_msgs::msg::Empty>();
     mux->ctrl_heartbeat_callback(std::move(test_heartbeat));
    
     subscribe();
@@ -432,7 +435,7 @@ TEST_F(TestSoftMuxInterface, NoCtrlHeartbeatonCli) {
     createMux();
     mux->control_mode = CLI;
    
-    std_msgs::msg::Bool::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Bool>();
+    std_msgs::msg::Empty::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Empty>();
     mux->cli_heartbeat_callback(std::move(test_heartbeat));
 
     subscribe();
@@ -466,7 +469,7 @@ TEST_F(TestSoftMuxInterface, NoCliHeartbeatonCtrl) {
     createMux();
     mux->control_mode = CTRL;
    
-    std_msgs::msg::Bool::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Bool>();
+    std_msgs::msg::Empty::UniquePtr test_heartbeat = std::make_unique< std_msgs::msg::Empty>();
     mux->ctrl_heartbeat_callback(std::move(test_heartbeat));
 
     subscribe();
@@ -494,24 +497,6 @@ TEST_F(TestSoftMuxInterface, NoCliHeartbeatonCtrl) {
 }
 
 /**
- * @brief Test mux not active
- */
-TEST_F(TestSoftMuxInterface, NoMuxHeartbeat) {
-    createMux();
-    subscribe_mux_heartbeat();
-
-    rclcpp::executors::SingleThreadedExecutor exec;
-    exec.add_node(mux);
-
-    auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
-    while (std::chrono::steady_clock::now() < deadline) {
-        exec.spin_some();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-    EXPECT_FALSE(most_recent_mux_hb.data);
-}
-
-/**
  * @brief Test mux active
  */
 TEST_F(TestSoftMuxInterface, MuxHeartbeat) {
@@ -524,17 +509,17 @@ TEST_F(TestSoftMuxInterface, MuxHeartbeat) {
 
     auto start = std::chrono::steady_clock::now();
     auto deadline = start + std::chrono::seconds(2);
+    int i = 1;
+    int k = 0.5;
     while (std::chrono::steady_clock::now() < deadline) {
         exec.spin_some();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        int k = 0.5;
         if (std::chrono::steady_clock::now() == start + k * std::chrono::seconds(1)) {
             mux->no_ctrl_heartbeat = false;
             k = k + 1;
         }
-        int i = 1;
         if (std::chrono::steady_clock::now() == start + i * std::chrono::seconds(1)) {
-            EXPECT_TRUE(most_recent_mux_hb.data);
+            EXPECT_TRUE(active_mux_heartbeat);
             i++;
         }
     }

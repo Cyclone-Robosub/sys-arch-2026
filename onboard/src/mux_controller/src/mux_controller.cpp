@@ -5,7 +5,7 @@ using namespace std::chrono_literals;
 Mux_Controller::Mux_Controller(std::unique_ptr<TUI_Interface> tui) : Node("mux_controller"), tui(std::move(tui)) {
     current_control_mode_subscriber = this->create_subscription<std_msgs::msg::UInt8>("current_mode", 10, 
         std::bind(&Mux_Controller::control_mode_callback, this, std::placeholders::_1));
-    heartbeat_subscription = this->create_subscription<std_msgs::msg::Bool>("mux_heartbeat", 10, 
+    heartbeat_subscription = this->create_subscription<std_msgs::msg::Empty>("mux_heartbeat", 10, 
         std::bind(&Mux_Controller::mux_heartbeat_received_callback, this, std::placeholders::_1));
     
     heartbeat_timer = this->create_wall_timer(500ms, 
@@ -33,7 +33,7 @@ void Mux_Controller::set_mux_mode(int mode) {
     client->async_send_request(request);
 }
 
-void Mux_Controller::mux_heartbeat_received_callback(std_msgs::msg::Bool::UniquePtr heartbeat) {
+void Mux_Controller::mux_heartbeat_received_callback(std_msgs::msg::Empty::UniquePtr heartbeat) {
     most_recent_heartbeat = std::chrono::steady_clock::now();
     if (no_heartbeat) {
         no_heartbeat = false; // If we just received a heartbeat, then we certainly have a heartbeat!
@@ -103,6 +103,7 @@ void Mux_Controller::work_loop() {
 }
 
 void Mux_Controller::refresh_display() {
+    tui->clear_display();
     tui->refresh_display(2, no_heartbeat, current_control_mode);
 }
 

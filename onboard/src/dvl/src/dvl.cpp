@@ -20,14 +20,18 @@ namespace dvl {
 
         //Services
         config_service = this->create_service<custom_interfaces::srv::SetConfig>("set_config", std::bind(&dvl::DVL::setConfig, this, std::placeholders::_1, std::placeholders::_2));
-        drr_service = this->create_service<std_srvs::srv::Trigger>("set_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
-        gyro_service = this->create_service<std_srvs::srv::Trigger>("set_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
+        drr_service = this->create_service<std_srvs::srv::Trigger>("reset_drr", std::bind(&dvl::DVL::resetDRR, this, std::placeholders::_1, std::placeholders::_2));
+        gyro_service = this->create_service<std_srvs::srv::Trigger>("reset_gyro", std::bind(&dvl::DVL::resetGyro, this, std::placeholders::_1, std::placeholders::_2));
         trigger_ping = this->create_service<std_srvs::srv::Trigger>("triggerPing", std::bind(&dvl::DVL::triggerPing, this, std::placeholders::_1, std::placeholders::_2));
 
         //Publishers
         velocity_report_publisher = this->create_publisher<custom_interfaces::msg::VR>("velocity_report", 10);
         drr_report_publisher = this->create_publisher<custom_interfaces::msg::DRR>("dead_reck_report", 10);
         config_publisher = this->create_publisher<custom_interfaces::msg::Config>("config", 10);
+        heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("dvl_heartbeat", 10);
+
+        heartbeat_timer = this->create_wall_timer(500ms,
+            std::bind(&DVL::publish_heartbeat_callback, this)); // 60 hz
     }
 
     // Ros2 publish functions
@@ -133,6 +137,11 @@ namespace dvl {
         bool success = sendCommand(CMD_TRIGGER_PING);
         response->success = success;
         (void) request;
+    }
+
+    void DVL::publish_heartbeat_callback() {
+        std_msgs::msg::Empty msg;
+        heartbeat_publisher->publish(msg);
     }
 
     //Private Methods
@@ -408,7 +417,6 @@ namespace dvl {
 
     void DVL::workLoop() {
         if(!sendCommand(CMD_RESET_DR)) RCLCPP_WARN(this->get_logger(), "Error with DR reset");
-        if(!sendCommand(CMD_CALIBRATE_GYRO)) RCLCPP_WARN(this->get_logger(), "Error with GYRO rest");
        
         while (rclcpp::ok()) {
             dvl_mutex.lock();

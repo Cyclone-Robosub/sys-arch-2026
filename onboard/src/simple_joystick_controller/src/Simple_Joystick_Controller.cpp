@@ -7,9 +7,9 @@
 //
 // Code generated for Simulink model 'Simple_Joystick_Controller'.
 //
-// Model version                  : 1.10
+// Model version                  : 1.16
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Thu Feb 19 19:35:40 2026
+// C/C++ source code generated on : Thu May 14 23:42:13 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -23,6 +23,27 @@
 #include "rmw/qos_profiles.h"
 #include <stddef.h>
 
+static void rate_scheduler(RT_MODEL_Simple_Joystick_Cont_T *const
+  Simple_Joystick_Controller_M);
+
+//
+//         This function updates active task flag for each subrate.
+//         The function is called at model base rate, hence the
+//         generated code self-manages all its subrates.
+//
+static void rate_scheduler(RT_MODEL_Simple_Joystick_Cont_T *const
+  Simple_Joystick_Controller_M)
+{
+  // Compute which subrates run during the next base time step.  Subrates
+  //  are an integer multiple of the base rate counter.  Therefore, the subtask
+  //  counter is reset when it reaches its limit (zero means run).
+
+  (Simple_Joystick_Controller_M->Timing.TaskCounters.TID[1])++;
+  if ((Simple_Joystick_Controller_M->Timing.TaskCounters.TID[1]) > 1) {// Sample time: [0.0166667s, 0.0s] 
+    Simple_Joystick_Controller_M->Timing.TaskCounters.TID[1] = 0;
+  }
+}
+
 void Simple_Joystick_Controller::Simple_Joy_Subscriber_setupImpl(const
   ros_slros2_internal_block_Sub_T *obj)
 {
@@ -34,7 +55,7 @@ void Simple_Joystick_Controller::Simple_Joy_Subscriber_setupImpl(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S5>/SourceBlock'
+  // Start for MATLABSystem: '<S7>/SourceBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -47,11 +68,11 @@ void Simple_Joystick_Controller::Simple_Joy_Subscriber_setupImpl(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 16; i++) {
-    // Start for MATLABSystem: '<S5>/SourceBlock'
+    // Start for MATLABSystem: '<S7>/SourceBlock'
     Simple_Joystick_Controller_B.b_zeroDelimTopic_c[i] = b_zeroDelimTopic[i];
   }
 
-  Sub_Simple_Joystick_Controller_25.createSubscriber
+  Sub_Simple_Joystick_Controller_77.createSubscriber
     (&Simple_Joystick_Controller_B.b_zeroDelimTopic_c[0], qos_profile);
 }
 
@@ -66,7 +87,7 @@ void Simple_Joystick_Controller::Simple_Jo_Publisher_setupImpl_m(const
   char_T b_zeroDelimTopic[10];
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S9>/SinkBlock'
+  // Start for MATLABSystem: '<S12>/SinkBlock'
   Simple_Joystick_Controller_B.deadline.sec = 0.0;
   Simple_Joystick_Controller_B.deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -80,11 +101,11 @@ void Simple_Joystick_Controller::Simple_Jo_Publisher_setupImpl_m(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 10; i++) {
-    // Start for MATLABSystem: '<S9>/SinkBlock'
+    // Start for MATLABSystem: '<S12>/SinkBlock'
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
 
-  Pub_Simple_Joystick_Controller_30_2.createPublisher(&b_zeroDelimTopic[0],
+  Pub_Simple_Joystick_Controller_86_2.createPublisher(&b_zeroDelimTopic[0],
     qos_profile);
 }
 
@@ -99,7 +120,7 @@ void Simple_Joystick_Controller::Simple_Joys_Publisher_setupImpl(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S7>/SinkBlock'
+  // Start for MATLABSystem: '<S11>/SinkBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -112,18 +133,17 @@ void Simple_Joystick_Controller::Simple_Joys_Publisher_setupImpl(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 16; i++) {
-    // Start for MATLABSystem: '<S7>/SinkBlock'
+    // Start for MATLABSystem: '<S11>/SinkBlock'
     Simple_Joystick_Controller_B.b_zeroDelimTopic[i] = b_zeroDelimTopic[i];
   }
 
-  Pub_Simple_Joystick_HIL_32_150.createPublisher
+  Pub_Simple_Joystick_Controller_85_150.createPublisher
     (&Simple_Joystick_Controller_B.b_zeroDelimTopic[0], qos_profile);
 }
 
 // Model step function
 void Simple_Joystick_Controller::step()
 {
-  SL_Bus_std_msgs_Bool rtb_BusCreator1;
   real_T pwms_horiz_idx_0;
   real_T pwms_horiz_idx_1;
   real_T pwms_horiz_idx_2;
@@ -134,241 +154,277 @@ void Simple_Joystick_Controller::step()
   real32_T pwms_vert_idx_0_tmp;
   real32_T pwms_vert_idx_0_tmp_0;
   boolean_T b_varargout_1;
+  if ((&Simple_Joystick_Controller_M)->Timing.TaskCounters.TID[1] == 0) {
+    // MATLABSystem: '<S7>/SourceBlock'
+    b_varargout_1 = Sub_Simple_Joystick_Controller_77.getLatestMessage
+      (&Simple_Joystick_Controller_B.rtb_SourceBlock_o2_m);
 
-  // MATLABSystem: '<S5>/SourceBlock'
-  b_varargout_1 = Sub_Simple_Joystick_Controller_25.getLatestMessage
-    (&Simple_Joystick_Controller_B.rtb_SourceBlock_o2_m);
+    // Outputs for Enabled SubSystem: '<S7>/Enabled Subsystem' incorporates:
+    //   EnablePort: '<S8>/Enable'
 
-  // Outputs for Enabled SubSystem: '<S5>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S6>/Enable'
+    // Start for MATLABSystem: '<S7>/SourceBlock'
+    if (b_varargout_1) {
+      // SignalConversion generated from: '<S8>/In1'
+      Simple_Joystick_Controller_B.In1 =
+        Simple_Joystick_Controller_B.rtb_SourceBlock_o2_m;
+    }
 
-  // Start for MATLABSystem: '<S5>/SourceBlock'
-  if (b_varargout_1) {
-    // SignalConversion generated from: '<S6>/In1'
-    Simple_Joystick_Controller_B.In1 =
-      Simple_Joystick_Controller_B.rtb_SourceBlock_o2_m;
-  }
+    // End of Start for MATLABSystem: '<S7>/SourceBlock'
+    // End of Outputs for SubSystem: '<S7>/Enabled Subsystem'
 
-  // End of Start for MATLABSystem: '<S5>/SourceBlock'
-  // End of Outputs for SubSystem: '<S5>/Enabled Subsystem'
+    // MATLAB Function: '<S2>/joystick_inputs_to_body_forces' incorporates:
+    //   MATLAB Function: '<S1>/MATLAB Function'
 
-  // MATLAB Function: '<S3>/joystick_inputs_to_body_forces' incorporates:
-  //   SignalConversion generated from: '<S8>/ SFunction '
+    pwms_vert_idx_0_tmp = 300.0F * Simple_Joystick_Controller_B.In1.rise -
+      300.0F * Simple_Joystick_Controller_B.In1.sink;
+    pwms_vert_idx_0_tmp_0 = 300.0F * Simple_Joystick_Controller_B.In1.pitch;
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = (pwms_vert_idx_0_tmp +
+      1500.0F) - pwms_vert_idx_0_tmp_0;
+    Simple_Joystick_Controller_B.pwms_vert_idx_1 = (-pwms_vert_idx_0_tmp +
+      1500.0F) - (-pwms_vert_idx_0_tmp_0);
+    pwms_vert_idx_2 = (pwms_vert_idx_0_tmp + 1500.0F) + pwms_vert_idx_0_tmp_0;
+    pwms_vert_idx_3 = (-pwms_vert_idx_0_tmp + 1500.0F) - pwms_vert_idx_0_tmp_0;
+    pwms_vert_idx_0_tmp = 300.0F * Simple_Joystick_Controller_B.In1.y;
+    pwms_vert_idx_0_tmp_0 = Simple_Joystick_Controller_B.In1.x * 300.0F;
+    pwms_horiz_idx_0_tmp = Simple_Joystick_Controller_B.In1.yaw * 300.0F;
+    pwms_horiz_idx_0 = ((pwms_vert_idx_0_tmp + 1500.0F) + pwms_vert_idx_0_tmp_0)
+      + pwms_horiz_idx_0_tmp;
+    pwms_horiz_idx_1 = ((1500.0F - pwms_vert_idx_0_tmp) + pwms_vert_idx_0_tmp_0)
+      + pwms_horiz_idx_0_tmp;
+    pwms_horiz_idx_2 = ((pwms_vert_idx_0_tmp + 1500.0F) - pwms_vert_idx_0_tmp_0)
+      + pwms_horiz_idx_0_tmp;
+    pwms_horiz_idx_3 = ((1500.0F - pwms_vert_idx_0_tmp) - pwms_vert_idx_0_tmp_0)
+      + pwms_horiz_idx_0_tmp;
+    if (pwms_horiz_idx_0 > 1800.0) {
+      pwms_horiz_idx_0 = 1800.0;
+    }
 
-  pwms_vert_idx_0_tmp = 300.0F * Simple_Joystick_Controller_B.In1.rise - 300.0F *
-    Simple_Joystick_Controller_B.In1.sink;
-  pwms_vert_idx_0_tmp_0 = 300.0F * Simple_Joystick_Controller_B.In1.pitch;
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = (pwms_vert_idx_0_tmp + 1500.0F)
-    - pwms_vert_idx_0_tmp_0;
-  Simple_Joystick_Controller_B.pwms_vert_idx_1 = (-pwms_vert_idx_0_tmp + 1500.0F)
-    - (-pwms_vert_idx_0_tmp_0);
-  pwms_vert_idx_2 = (pwms_vert_idx_0_tmp + 1500.0F) + pwms_vert_idx_0_tmp_0;
-  pwms_vert_idx_3 = (-pwms_vert_idx_0_tmp + 1500.0F) - pwms_vert_idx_0_tmp_0;
-  pwms_vert_idx_0_tmp = 300.0F * Simple_Joystick_Controller_B.In1.y;
-  pwms_vert_idx_0_tmp_0 = Simple_Joystick_Controller_B.In1.x * 300.0F;
-  pwms_horiz_idx_0_tmp = Simple_Joystick_Controller_B.In1.yaw * 300.0F;
-  pwms_horiz_idx_0 = ((pwms_vert_idx_0_tmp + 1500.0F) + pwms_vert_idx_0_tmp_0) +
-    pwms_horiz_idx_0_tmp;
-  pwms_horiz_idx_1 = ((1500.0F - pwms_vert_idx_0_tmp) + pwms_vert_idx_0_tmp_0) +
-    pwms_horiz_idx_0_tmp;
-  pwms_horiz_idx_2 = ((pwms_vert_idx_0_tmp + 1500.0F) - pwms_vert_idx_0_tmp_0) +
-    pwms_horiz_idx_0_tmp;
-  pwms_horiz_idx_3 = ((1500.0F - pwms_vert_idx_0_tmp) - pwms_vert_idx_0_tmp_0) +
-    pwms_horiz_idx_0_tmp;
-  if (pwms_horiz_idx_0 > 1800.0) {
-    pwms_horiz_idx_0 = 1800.0;
-  }
+    if (pwms_horiz_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
 
-  if (pwms_horiz_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 > 1800.0) {
+      Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
+    }
 
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 > 1800.0) {
-    Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
-  }
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
 
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
+      (Simple_Joystick_Controller_B.pwms_vert_idx_0);
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[0] = static_cast<int32_T>
+          (Simple_Joystick_Controller_B.pwms_vert_idx_0);
+      } else {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[0] = MIN_int32_T;
+      }
+    } else {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[0] = MAX_int32_T;
+    }
 
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
-    (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[0] = static_cast<int32_T>
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[4] = static_cast<int32_T>
         (Simple_Joystick_Controller_B.pwms_vert_idx_0);
     } else {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[0] = MIN_int32_T;
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[4] = MAX_int32_T;
     }
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[0] = MAX_int32_T;
-  }
 
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[4] = static_cast<int32_T>
+    pwms_horiz_idx_0 = pwms_horiz_idx_1;
+    if (pwms_horiz_idx_1 > 1800.0) {
+      pwms_horiz_idx_0 = 1800.0;
+    }
+
+    if (pwms_horiz_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
+
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 =
+      Simple_Joystick_Controller_B.pwms_vert_idx_1;
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_1 > 1800.0) {
+      Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
+    }
+
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
+
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
       (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[4] = MAX_int32_T;
-  }
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[1] = static_cast<int32_T>
+          (Simple_Joystick_Controller_B.pwms_vert_idx_0);
+      } else {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[1] = MIN_int32_T;
+      }
+    } else {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[1] = MAX_int32_T;
+    }
 
-  pwms_horiz_idx_0 = pwms_horiz_idx_1;
-  if (pwms_horiz_idx_1 > 1800.0) {
-    pwms_horiz_idx_0 = 1800.0;
-  }
-
-  if (pwms_horiz_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
-
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 =
-    Simple_Joystick_Controller_B.pwms_vert_idx_1;
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_1 > 1800.0) {
-    Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
-  }
-
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
-
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
-    (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[1] = static_cast<int32_T>
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[5] = static_cast<int32_T>
         (Simple_Joystick_Controller_B.pwms_vert_idx_0);
     } else {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[1] = MIN_int32_T;
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[5] = MAX_int32_T;
     }
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[1] = MAX_int32_T;
-  }
 
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[5] = static_cast<int32_T>
+    pwms_horiz_idx_0 = pwms_horiz_idx_2;
+    if (pwms_horiz_idx_2 > 1800.0) {
+      pwms_horiz_idx_0 = 1800.0;
+    }
+
+    if (pwms_horiz_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
+
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = pwms_vert_idx_2;
+    if (pwms_vert_idx_2 > 1800.0) {
+      Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
+    }
+
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
+
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
       (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[5] = MAX_int32_T;
-  }
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[2] = static_cast<int32_T>
+          (Simple_Joystick_Controller_B.pwms_vert_idx_0);
+      } else {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[2] = MIN_int32_T;
+      }
+    } else {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[2] = MAX_int32_T;
+    }
 
-  pwms_horiz_idx_0 = pwms_horiz_idx_2;
-  if (pwms_horiz_idx_2 > 1800.0) {
-    pwms_horiz_idx_0 = 1800.0;
-  }
-
-  if (pwms_horiz_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
-
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = pwms_vert_idx_2;
-  if (pwms_vert_idx_2 > 1800.0) {
-    Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
-  }
-
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
-
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
-    (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[2] = static_cast<int32_T>
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[6] = static_cast<int32_T>
         (Simple_Joystick_Controller_B.pwms_vert_idx_0);
     } else {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[2] = MIN_int32_T;
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[6] = MAX_int32_T;
     }
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[2] = MAX_int32_T;
-  }
 
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[6] = static_cast<int32_T>
+    pwms_horiz_idx_0 = pwms_horiz_idx_3;
+    if (pwms_horiz_idx_3 > 1800.0) {
+      pwms_horiz_idx_0 = 1800.0;
+    }
+
+    if (pwms_horiz_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
+
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = pwms_vert_idx_3;
+    if (pwms_vert_idx_3 > 1800.0) {
+      Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
+    }
+
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
+      pwms_horiz_idx_0 = 1200.0;
+    }
+
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
       (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[6] = MAX_int32_T;
-  }
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[3] = static_cast<int32_T>
+          (Simple_Joystick_Controller_B.pwms_vert_idx_0);
+      } else {
+        // BusCreator: '<S5>/Bus Creator3'
+        Simple_Joystick_Controller_B.BusCreator3.pwms[3] = MIN_int32_T;
+      }
+    } else {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[3] = MAX_int32_T;
+    }
 
-  pwms_horiz_idx_0 = pwms_horiz_idx_3;
-  if (pwms_horiz_idx_3 > 1800.0) {
-    pwms_horiz_idx_0 = 1800.0;
-  }
-
-  if (pwms_horiz_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
-
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = pwms_vert_idx_3;
-  if (pwms_vert_idx_3 > 1800.0) {
-    Simple_Joystick_Controller_B.pwms_vert_idx_0 = 1800.0;
-  }
-
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 1200.0) {
-    pwms_horiz_idx_0 = 1200.0;
-  }
-
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round
-    (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 >= -2.147483648E+9) {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[3] = static_cast<int32_T>
+    Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
+    if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[7] = static_cast<int32_T>
         (Simple_Joystick_Controller_B.pwms_vert_idx_0);
     } else {
-      // BusCreator: '<S4>/Bus Creator3'
-      Simple_Joystick_Controller_B.BusCreator3.pwms[3] = MIN_int32_T;
+      // BusCreator: '<S5>/Bus Creator3'
+      Simple_Joystick_Controller_B.BusCreator3.pwms[7] = MAX_int32_T;
     }
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[3] = MAX_int32_T;
+
+    // End of MATLAB Function: '<S2>/joystick_inputs_to_body_forces'
+
+    // MATLABSystem: '<S12>/SinkBlock'
+    Pub_Simple_Joystick_Controller_86_2.publish
+      (&Simple_Joystick_Controller_B.BusCreator3);
+
+    // MATLAB Function: '<Root>/mode_manager' incorporates:
+    //   MATLAB Function: '<S1>/MATLAB Function'
+
+    if (Simple_Joystick_Controller_B.In1.circle_button) {
+      b_varargout_1 = !Simple_Joystick_Controller_DW.prior_joystick_flag;
+      Simple_Joystick_Controller_DW.joystick_flag = (b_varargout_1 ||
+        Simple_Joystick_Controller_DW.joystick_flag);
+      Simple_Joystick_Controller_DW.joystick_flag = (b_varargout_1 &&
+        Simple_Joystick_Controller_DW.joystick_flag);
+    } else {
+      Simple_Joystick_Controller_DW.prior_joystick_flag =
+        Simple_Joystick_Controller_DW.joystick_flag;
+    }
+
+    if (Simple_Joystick_Controller_B.In1.cross_button) {
+      Simple_Joystick_Controller_DW.do_mission_file_flag =
+        ((!Simple_Joystick_Controller_DW.prior_do_mission_file_flag) ||
+         Simple_Joystick_Controller_DW.do_mission_file_flag);
+    }
+
+    if (Simple_Joystick_Controller_B.In1.circle_button) {
+      Simple_Joystick_Controller_DW.do_mission_file_flag =
+        ((!Simple_Joystick_Controller_DW.prior_do_mission_file_flag) &&
+         Simple_Joystick_Controller_DW.do_mission_file_flag);
+    } else {
+      Simple_Joystick_Controller_DW.prior_do_mission_file_flag =
+        Simple_Joystick_Controller_DW.do_mission_file_flag;
+    }
+
+    // End of MATLAB Function: '<Root>/mode_manager'
+
+    // MATLABSystem: '<S11>/SinkBlock' incorporates:
+    //   Constant: '<S10>/Constant'
+
+    Pub_Simple_Joystick_Controller_85_150.publish
+      (&Simple_Joystick_Controll_ConstP.Constant_Value);
   }
 
-  Simple_Joystick_Controller_B.pwms_vert_idx_0 = std::round(pwms_horiz_idx_0);
-  if (Simple_Joystick_Controller_B.pwms_vert_idx_0 < 2.147483648E+9) {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[7] = static_cast<int32_T>
-      (Simple_Joystick_Controller_B.pwms_vert_idx_0);
-  } else {
-    // BusCreator: '<S4>/Bus Creator3'
-    Simple_Joystick_Controller_B.BusCreator3.pwms[7] = MAX_int32_T;
-  }
-
-  // End of MATLAB Function: '<S3>/joystick_inputs_to_body_forces'
-
-  // MATLABSystem: '<S9>/SinkBlock'
-  Pub_Simple_Joystick_Controller_30_2.publish
-    (&Simple_Joystick_Controller_B.BusCreator3);
-
-  // BusCreator: '<S2>/Bus Creator1' incorporates:
-  //   Constant: '<S2>/Constant'
-
-  rtb_BusCreator1.data = true;
-
-  // MATLABSystem: '<S7>/SinkBlock'
-  Pub_Simple_Joystick_HIL_32_150.publish(&rtb_BusCreator1);
+  rate_scheduler((&Simple_Joystick_Controller_M));
 }
 
 // Model initialize function
 void Simple_Joystick_Controller::initialize()
 {
-  // Start for MATLABSystem: '<S5>/SourceBlock'
+  // SystemInitialize for MATLAB Function: '<Root>/mode_manager'
+  Simple_Joystick_Controller_DW.joystick_flag = true;
+  Simple_Joystick_Controller_DW.prior_joystick_flag = true;
+
+  // Start for MATLABSystem: '<S7>/SourceBlock'
   Simple_Joystick_Controller_DW.obj.QOSAvoidROSNamespaceConventions = false;
   Simple_Joystick_Controller_DW.obj.matlabCodegenIsDeleted = false;
   Simple_Joystick_Controller_DW.obj.isSetupComplete = false;
@@ -376,58 +432,58 @@ void Simple_Joystick_Controller::initialize()
   Simple_Joy_Subscriber_setupImpl(&Simple_Joystick_Controller_DW.obj);
   Simple_Joystick_Controller_DW.obj.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S9>/SinkBlock'
-  Simple_Joystick_Controller_DW.obj_a.QOSAvoidROSNamespaceConventions = false;
-  Simple_Joystick_Controller_DW.obj_a.matlabCodegenIsDeleted = false;
-  Simple_Joystick_Controller_DW.obj_a.isSetupComplete = false;
-  Simple_Joystick_Controller_DW.obj_a.isInitialized = 1;
-  Simple_Jo_Publisher_setupImpl_m(&Simple_Joystick_Controller_DW.obj_a);
-  Simple_Joystick_Controller_DW.obj_a.isSetupComplete = true;
+  // Start for MATLABSystem: '<S12>/SinkBlock'
+  Simple_Joystick_Controller_DW.obj_c.QOSAvoidROSNamespaceConventions = false;
+  Simple_Joystick_Controller_DW.obj_c.matlabCodegenIsDeleted = false;
+  Simple_Joystick_Controller_DW.obj_c.isSetupComplete = false;
+  Simple_Joystick_Controller_DW.obj_c.isInitialized = 1;
+  Simple_Jo_Publisher_setupImpl_m(&Simple_Joystick_Controller_DW.obj_c);
+  Simple_Joystick_Controller_DW.obj_c.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S7>/SinkBlock'
-  Simple_Joystick_Controller_DW.obj_e.QOSAvoidROSNamespaceConventions = false;
-  Simple_Joystick_Controller_DW.obj_e.matlabCodegenIsDeleted = false;
-  Simple_Joystick_Controller_DW.obj_e.isSetupComplete = false;
-  Simple_Joystick_Controller_DW.obj_e.isInitialized = 1;
-  Simple_Joys_Publisher_setupImpl(&Simple_Joystick_Controller_DW.obj_e);
-  Simple_Joystick_Controller_DW.obj_e.isSetupComplete = true;
+  // Start for MATLABSystem: '<S11>/SinkBlock'
+  Simple_Joystick_Controller_DW.obj_g.QOSAvoidROSNamespaceConventions = false;
+  Simple_Joystick_Controller_DW.obj_g.matlabCodegenIsDeleted = false;
+  Simple_Joystick_Controller_DW.obj_g.isSetupComplete = false;
+  Simple_Joystick_Controller_DW.obj_g.isInitialized = 1;
+  Simple_Joys_Publisher_setupImpl(&Simple_Joystick_Controller_DW.obj_g);
+  Simple_Joystick_Controller_DW.obj_g.isSetupComplete = true;
 }
 
 // Model terminate function
 void Simple_Joystick_Controller::terminate()
 {
-  // Terminate for MATLABSystem: '<S5>/SourceBlock'
+  // Terminate for MATLABSystem: '<S7>/SourceBlock'
   if (!Simple_Joystick_Controller_DW.obj.matlabCodegenIsDeleted) {
     Simple_Joystick_Controller_DW.obj.matlabCodegenIsDeleted = true;
     if ((Simple_Joystick_Controller_DW.obj.isInitialized == 1) &&
         Simple_Joystick_Controller_DW.obj.isSetupComplete) {
-      Sub_Simple_Joystick_Controller_25.resetSubscriberPtr();//();
+      Sub_Simple_Joystick_Controller_77.resetSubscriberPtr();//();
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S5>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S7>/SourceBlock'
 
-  // Terminate for MATLABSystem: '<S9>/SinkBlock'
-  if (!Simple_Joystick_Controller_DW.obj_a.matlabCodegenIsDeleted) {
-    Simple_Joystick_Controller_DW.obj_a.matlabCodegenIsDeleted = true;
-    if ((Simple_Joystick_Controller_DW.obj_a.isInitialized == 1) &&
-        Simple_Joystick_Controller_DW.obj_a.isSetupComplete) {
-      Pub_Simple_Joystick_Controller_30_2.resetPublisherPtr();//();
+  // Terminate for MATLABSystem: '<S12>/SinkBlock'
+  if (!Simple_Joystick_Controller_DW.obj_c.matlabCodegenIsDeleted) {
+    Simple_Joystick_Controller_DW.obj_c.matlabCodegenIsDeleted = true;
+    if ((Simple_Joystick_Controller_DW.obj_c.isInitialized == 1) &&
+        Simple_Joystick_Controller_DW.obj_c.isSetupComplete) {
+      Pub_Simple_Joystick_Controller_86_2.resetPublisherPtr();//();
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S9>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S12>/SinkBlock'
 
-  // Terminate for MATLABSystem: '<S7>/SinkBlock'
-  if (!Simple_Joystick_Controller_DW.obj_e.matlabCodegenIsDeleted) {
-    Simple_Joystick_Controller_DW.obj_e.matlabCodegenIsDeleted = true;
-    if ((Simple_Joystick_Controller_DW.obj_e.isInitialized == 1) &&
-        Simple_Joystick_Controller_DW.obj_e.isSetupComplete) {
-      Pub_Simple_Joystick_HIL_32_150.resetPublisherPtr();//();
+  // Terminate for MATLABSystem: '<S11>/SinkBlock'
+  if (!Simple_Joystick_Controller_DW.obj_g.matlabCodegenIsDeleted) {
+    Simple_Joystick_Controller_DW.obj_g.matlabCodegenIsDeleted = true;
+    if ((Simple_Joystick_Controller_DW.obj_g.isInitialized == 1) &&
+        Simple_Joystick_Controller_DW.obj_g.isSetupComplete) {
+      Pub_Simple_Joystick_Controller_85_150.resetPublisherPtr();//();
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S7>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S11>/SinkBlock'
 }
 
 // Constructor

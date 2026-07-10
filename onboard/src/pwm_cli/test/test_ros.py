@@ -172,7 +172,7 @@ def test_heartbeat(setup_heartbeat):
 	msg = True
 	recieve_times = []
 
-	subscriber = heartbeat.create_subscription(Bool, "cli_heartbeat", lambda msg: recieve_times.append(get_time()), 10)
+	subscriber = heartbeat.create_subscription(Empty, "cli_heartbeat", lambda msg: recieve_times.append(get_time()), 10)
 
 	# Runs until it publishes and recieves 10 messages on ROS
 	for x in range(0, 20):

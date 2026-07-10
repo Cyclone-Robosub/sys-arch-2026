@@ -1,0 +1,30 @@
+function [data, info] = dRR
+%DRR gives an empty data for custom_interfaces/DRR
+% Copyright 2019-2021 The MathWorks, Inc.
+data = struct();
+data.MessageType = 'custom_interfaces/DRR';
+[data.time_stamp, info.time_stamp] = ros.internal.ros2.messages.ros2.default_type('int64',1,0);
+[data.position, info.position] = ros.internal.ros2.messages.geometry_msgs.vector3;
+info.position.MLdataType = 'struct';
+[data.angle, info.angle] = ros.internal.ros2.messages.geometry_msgs.vector3;
+info.angle.MLdataType = 'struct';
+[data.pos_std, info.pos_std] = ros.internal.ros2.messages.ros2.default_type('single',1,0);
+[data.status, info.status] = ros.internal.ros2.messages.ros2.default_type('uint8',1,0);
+info.MessageType = 'custom_interfaces/DRR';
+info.constant = 0;
+info.default = 0;
+info.maxstrlen = NaN;
+info.MaxLen = 1;
+info.MinLen = 1;
+info.MatPath = cell(1,11);
+info.MatPath{1} = 'time_stamp';
+info.MatPath{2} = 'position';
+info.MatPath{3} = 'position.x';
+info.MatPath{4} = 'position.y';
+info.MatPath{5} = 'position.z';
+info.MatPath{6} = 'angle';
+info.MatPath{7} = 'angle.x';
+info.MatPath{8} = 'angle.y';
+info.MatPath{9} = 'angle.z';
+info.MatPath{10} = 'pos_std';
+info.MatPath{11} = 'status';
