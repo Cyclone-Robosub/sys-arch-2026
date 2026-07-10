@@ -23,12 +23,12 @@ namespace BT {
             throw BT::RuntimeError("invalid input");
         } else {
             WaypointMask output;
-            output.x = convertFromString<bool>(parts[0]);
-            output.y = convertFromString<bool>(parts[1]);
-            output.z = convertFromString<bool>(parts[2]);
-            output.roll = convertFromString<bool>(parts[3]);
-            output.pitch = convertFromString<bool>(parts[4]);
-            output.yaw = convertFromString<bool>(parts[5]);
+            output.x = convertWaypointMaskBool(parts[0]);
+            output.y = convertWaypointMaskBool(parts[1]);
+            output.z = convertWaypointMaskBool(parts[2]);
+            output.roll = convertWaypointMaskBool(parts[3]);
+            output.pitch = convertWaypointMaskBool(parts[4]);
+            output.yaw = convertWaypointMaskBool(parts[5]);
             return output;
         }
     }
