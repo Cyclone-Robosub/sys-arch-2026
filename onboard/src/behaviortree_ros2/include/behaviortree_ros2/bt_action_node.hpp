@@ -558,21 +558,38 @@ inline void RosActionNode<T>::cancelGoal()
 
   auto& action_client = client_instance_->action_client;
 
-  auto future_result = action_client->async_get_result(goal_handle_);
-  auto future_cancel = action_client->async_cancel_goal(goal_handle_);
-
-  constexpr auto SUCCESS = rclcpp::FutureReturnCode::SUCCESS;
-
-  if(executor.spin_until_future_complete(future_cancel, server_timeout_) != SUCCESS)
-  {
-    RCLCPP_ERROR(logger(), "Failed to cancel action server for [%s]",
-                 action_name_.c_str());
+  if (!goal_handle_) {
+      return;
   }
 
-  if(executor.spin_until_future_complete(future_result, server_timeout_) != SUCCESS)
-  {
-    RCLCPP_ERROR(logger(), "Failed to get result call failed :( for [%s]",
+  try {
+    auto future_result = action_client->async_get_result(goal_handle_);
+    auto future_cancel = action_client->async_cancel_goal(goal_handle_);
+  
+    constexpr auto SUCCESS = rclcpp::FutureReturnCode::SUCCESS;
+
+    if(executor.spin_until_future_complete(future_cancel, server_timeout_) != SUCCESS)
+    {
+      RCLCPP_ERROR(logger(), "Failed to cancel action server for [%s]",
                  action_name_.c_str());
+    }
+
+    if(executor.spin_until_future_complete(future_result, server_timeout_) != SUCCESS)
+    {
+      RCLCPP_ERROR(logger(), "Failed to get result call failed :( for [%s]",
+                 action_name_.c_str());
+    }
+  } catch (const rclcpp_action::exceptions::UnknownGoalHandleError& ex) {
+    RCLCPP_WARN(logger(), "Goal handle is no longer known to this client: %s", ex.what());
+    goal_handle_.reset();
+    future_goal_handle_ = {};
+    return;
+  }
+  catch (const std::exception& ex) {
+    RCLCPP_ERROR(logger(), "Exception while canceling action goal: %s", ex.what());
+    goal_handle_.reset();
+    future_goal_handle_ = {};
+    return;
   }
 }
 

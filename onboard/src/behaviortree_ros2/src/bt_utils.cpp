@@ -77,25 +77,44 @@ std::string GetDirectoryPath(const std::string& parameter_value)
 }
 
 void LoadBehaviorTrees(BT::BehaviorTreeFactory& factory,
-                       const std::string& directory_path)
+                       const std::string& directory_path, std::string mission_file)
 {
   using std::filesystem::directory_iterator;
   for(const auto& entry : directory_iterator(directory_path))
   {
-    if(entry.path().extension() == ".xml")
-    {
-      try
-      {
+    if (entry.path().extension() == ".xml") {
+      if (entry.path().filename().string() == "StationKeep.xml") {
         factory.registerBehaviorTreeFromFile(entry.path().string());
         RCLCPP_INFO(kLogger, "Loaded BehaviorTree: %s", entry.path().filename().c_str());
-      }
-      catch(const std::exception& e)
-      {
-        RCLCPP_ERROR(kLogger, "Failed to load BehaviorTree: %s \n %s",
+      } else {
+        try {
+          std::string name = getTreeNameFromFile(entry.path().string());
+          if (name == mission_file) {
+            factory.registerBehaviorTreeFromFile(entry.path().string());
+            RCLCPP_INFO(kLogger, "Loaded BehaviorTree: %s", entry.path().filename().c_str());
+          }
+        } catch(const std::exception& e) {
+            RCLCPP_ERROR(kLogger, "Failed to load BehaviorTree: %s \n %s",
                      entry.path().filename().c_str(), e.what());
-      }
-    }
+        }
+     }
   }
+}
+}
+
+std::string getTreeNameFromFile(const std::string& filename) {
+    tinyxml2::XMLDocument doc;
+    if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
+        throw std::runtime_error("Failed to load XML file.");
+    }
+
+    tinyxml2::XMLElement* root = doc.RootElement();
+    if (!root) { throw std::runtime_error("Invalid XML root."); }
+
+    if (const char* main_tree = root->Attribute("main_tree_to_execute")) {
+        return main_tree;
+    }
+    throw std::runtime_error("No BehaviorTree ID found in file.");
 }
 
 void LoadPlugin(BT::BehaviorTreeFactory& factory, const std::filesystem::path& file_path,
@@ -163,13 +182,15 @@ void RegisterBehaviorTrees(bt_server::Params& params, BT::BehaviorTreeFactory& f
                            rclcpp::Node::SharedPtr node)
 {
   
-  //params.mission_path;
+  std::string mission_file;
+  node->get_parameter("mission_file", mission_file);
+
   for(const auto& tree_dir : params.behavior_trees) {
     const auto tree_directory = GetDirectoryPath(tree_dir);
     // skip invalid subtree directories
     if(tree_directory.empty())
       continue;
-    LoadBehaviorTrees(factory, tree_directory);
+    LoadBehaviorTrees(factory, tree_directory, mission_file);
   }
 }
 

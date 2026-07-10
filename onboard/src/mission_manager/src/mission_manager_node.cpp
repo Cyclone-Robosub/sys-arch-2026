@@ -2,10 +2,13 @@
 using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
-  this->declare_parameter("mission_file", rclcpp::PARAMETER_STRING);
-  ///param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
-
+  this->declare_parameter<std::string>("mission_file", "TrialTree");
+  param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
+  cb_handle = param_subscriber->add_parameter_callback("mission_file", std::bind(&MissionManagerNode::parameter_callback, this, std::placeholders::_1));
+ 
   cur_mission = this->get_parameter("mission_file").as_string();
+  bt_param_client = std::make_shared<rclcpp::AsyncParametersClient>(this, "/bt_action_server");
+
   ready_service =  this->create_service<std_srvs::srv::Trigger>("ready_signal_service", std::bind(&MissionManagerNode::trigger_ready_signal, this, std::placeholders::_1, std::placeholders::_2));
   ready_pub_service =  this->create_service<std_srvs::srv::Trigger>("pub_ready_status", std::bind(&MissionManagerNode::pub_ready_status, this, std::placeholders::_1, std::placeholders::_2));
   execute_tree_client = rclcpp_action::create_client<ExecuteTree>(this, "bt_action_server");
@@ -130,10 +133,15 @@ void MissionManagerNode::idle_result_callback(const GoalHandleExecuteTree::Wrapp
             break;
         case rclcpp_action::ResultCode::ABORTED:
             RCLCPP_ERROR(this->get_logger(), "Goal was aborted");
+            if (mission_started) {
+                execute_tree_client->async_send_goal(goal, send_goal_options);
+            }
             break;
         case rclcpp_action::ResultCode::CANCELED:
             RCLCPP_ERROR(this->get_logger(), "Goal was canceled");
-            execute_tree_client->async_send_goal(goal, send_goal_options);
+            if (mission_started) {
+                execute_tree_client->async_send_goal(goal, send_goal_options);
+            }
             break;
         default:
             RCLCPP_ERROR(this->get_logger(), "Unknown result code");
@@ -162,6 +170,18 @@ void MissionManagerNode::publish_mission_status() {
     auto mission_status = std_msgs::msg::Bool();
     mission_status.data = mission_started;
     current_mission_status_publisher->publish(mission_status);
+}
+
+void MissionManagerNode::parameter_callback(const rclcpp::Parameter & p) {
+    RCLCPP_INFO(
+        this->get_logger(), "Received an update to parameter \"%s\" of type %s: \"%s\"",
+        p.get_name().c_str(),
+        p.get_type_name().c_str(),
+        p.as_string().c_str());
+    cur_mission = this->get_parameter("mission_file").as_string();
+    if (bt_param_client->service_is_ready()) {
+        bt_param_client->set_parameters({rclcpp::Parameter("mission_file", cur_mission)});
+    }
 }
 
 /*

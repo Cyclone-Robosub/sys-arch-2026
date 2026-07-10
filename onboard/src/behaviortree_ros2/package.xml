@@ -19,6 +19,7 @@
   <depend>behaviortree_cpp</depend>
   <depend>generate_parameter_library</depend>
   <depend>btcpp_ros2_interfaces</depend>
+  <depend>tinyxml2</depend>
 
 <export>
   <build_type>ament_cmake</build_type>
