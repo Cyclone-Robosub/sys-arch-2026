@@ -18,7 +18,8 @@ class TestThrustInterface : public ::testing::Test {
 protected:
     std::shared_ptr<Thrust_Interface> node;
     rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr thrust_interface_heartbeat_subscriber;
-    int pipe_fds[2];  // [0] = read end, [1] = write end
+    int write_pipe_fds[2];  // For when ThrustInterface needs to write to the Pico. [0] = read end, [1] = write end
+    int read_pipe_fds[2];  // For when ThrustInterface needs to read from the Pico. [0] = read end, [1] = write end
     std::vector<int> test_thrusters;
     bool active_heartbeat;
     
@@ -34,13 +35,18 @@ protected:
         }
         
         // Create pipe for mock serial communication
-        // pipe_fds[0] = read end, pipe_fds[1] = write end
-        if (pipe(pipe_fds) == -1) {
-            FAIL() << "Failed to create pipe for mock serial";
+        // write_pipe_fds[0] = read end, write_pipe_fds[1] = write end
+        if (pipe(write_pipe_fds) == -1) {
+            FAIL() << "Failed to create write pipe for mock serial";
         }
+        if (pipe(read_pipe_fds) == -1) {
+            FAIL() << "Failed to create read pipe for mock serial";
+        }
+
+        fcntl(read_pipe_fds[0], F_SETFL, (fcntl(read_pipe_fds[0], F_GETFD)|O_NONBLOCK));
         
         // Set up test thruster configuration
-        test_thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
+        test_thrusters = {2, 0, 6, 4, 19, 26, 21, 27};
         active_heartbeat = false;
     }
     
@@ -51,8 +57,10 @@ protected:
      */
     void TearDown() override {
         node.reset();
-        close(pipe_fds[0]);
-        close(pipe_fds[1]);
+        close(write_pipe_fds[0]);
+        close(write_pipe_fds[1]);
+        close(read_pipe_fds[0]);
+        close(read_pipe_fds[1]);
     }
     
     /**
@@ -67,15 +75,15 @@ protected:
         struct timeval timeout;
         
         FD_ZERO(&readfds);
-        FD_SET(pipe_fds[0], &readfds);
+        FD_SET(write_pipe_fds[0], &readfds);
         
         timeout.tv_sec = timeout_ms / 1000;
         timeout.tv_usec = (timeout_ms % 1000) * 1000;
         
-        int result = select(pipe_fds[0] + 1, &readfds, nullptr, nullptr, &timeout);
+        int result = select(write_pipe_fds[0] + 1, &readfds, nullptr, nullptr, &timeout);
         
         if (result > 0) {
-            ssize_t bytes_read = read(pipe_fds[0], buffer, sizeof(buffer) - 1);
+            ssize_t bytes_read = read(write_pipe_fds[0], buffer, sizeof(buffer) - 1);
             if (bytes_read > 0) {
                 buffer[bytes_read] = '\0';
                 return std::string(buffer);
@@ -83,6 +91,16 @@ protected:
         }
         
         return "";
+    }
+
+    /**
+    * @brief Helper to write a serial message to pipe_fds[1]
+    * 
+    * @param data_type The data type of the serial message
+    */
+    void write_serial_message(std::string message){
+        size_t length = message.size();
+        write(read_pipe_fds[1], message.c_str(), length);
     }
     
     /**
@@ -92,9 +110,9 @@ protected:
      * @param max_pwm Maximum PWM value
      */
     void create_node_with_params(int min_pwm, int max_pwm) {
-        // Use pipe_fds[1] (write end) as the file descriptor
-        // The node will write to it, and we'll read from pipe_fds[0]
-        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(-1, pipe_fds[1]);
+        // Use write_pipe_fds[1] (write end) as the file descriptor
+        // The node will write to it, and we'll read from write_pipe_fds[0]
+        std::unique_ptr<FD_Interface> pipe_fd = std::make_unique<Direct_FD>(read_pipe_fds[0], write_pipe_fds[1]);
 
         node = std::make_shared<Thrust_Interface>(
             test_thrusters, 
@@ -463,6 +481,55 @@ TEST_F(TestThrustInterface, InactiveThrustInterfaceHeartbeat) {
     }
 }
 
+ /**
+ * @brief Test that we can send a reset signal when the Pico is alive
+ */
+ TEST_F(TestThrustInterface, RevivePicoSuccess){
+    create_node_with_params(1200,1800);
+    auto client = node->create_client<std_srvs::srv::Trigger>("revive_pico");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    auto future = client->async_send_request(request);
+
+    write_serial_message("revived\r\n");
+
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_TRUE(future.get()->success); // expect that we did received a successful revived response
+    executor.cancel();
+    spin_thread.join();
+ }
+
+ /**
+ * @brief Test that we can send fail successfully when no response from Pico
+ */
+ TEST_F(TestThrustInterface, RevivePicoFailure){
+    create_node_with_params(1200,1800);
+    auto client = node->create_client<std_srvs::srv::Trigger>("revive_pico");
+    ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(1)));
+
+    rclcpp::executors::SingleThreadedExecutor executor;
+    executor.add_node(node);
+
+    std::thread spin_thread([&executor]() {
+        executor.spin();
+    });
+
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    auto future = client->async_send_request(request);
+
+    ASSERT_EQ(future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_FALSE(future.get()->success); // expect that we did not receive a successful revived response
+    executor.cancel();
+    spin_thread.join();
+ }
 
 #ifdef ENABLE_TESTING
 /**

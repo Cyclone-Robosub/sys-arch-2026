@@ -25,8 +25,11 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters,
 
     heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("thrust_interface_heartbeat", 10);
     
+    kill_switch_service = this->create_service<std_srvs::srv::Trigger>("revive_pico", 
+            std::bind(&Thrust_Interface::revive_pico, this, std::placeholders::_1, std::placeholders::_2));
+    
     heartbeat_timer = this->create_wall_timer(500ms, 
-            std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer
+            std::bind(&Thrust_Interface::heartbeat_callback, this));
 }
     
 void Thrust_Interface::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
@@ -98,6 +101,33 @@ void Thrust_Interface::send_heartbeat() {
     }
 }
 
+void Thrust_Interface::revive_pico(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+    (void)request; // stop compiler complaining
+    std::string serial_message = "resume from kill\n";
+    int length = serial_message.size();
+
+    serial_mutex.lock();
+    ssize_t bytes_written = write(pico_fd->get_write_fd(), serial_message.c_str(), length);
+    serial_mutex.unlock();
+    if (bytes_written != length) {
+        response->success = false;
+        RCLCPP_WARN(this->get_logger(), 
+                    "Failed to write complete message to revive Pico. It might still be killed. Wrote %zd/%d bytes.", 
+                    bytes_written, length);
+        return;
+    }
+    // check that Pico responded with success;
+    char response_buf[32] = {0};
+    read(pico_fd->get_read_fd(), response_buf, 32);
+    if (strncmp("revived", response_buf, 7)) { // if we didn't get "revived" from Pico
+        response->success = false;
+        RCLCPP_WARN(this->get_logger(), 
+                    "Successfully wrote revive message to Pico, but did not receive successful response from Pico.");
+        return;
+    }
+    response->success = true;
+}
+
 void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
     std::string serial_message = "Set " + std::to_string(thruster) + " PWM " + std::to_string(pwm) + "\n";
     int length = serial_message.size();
@@ -163,7 +193,7 @@ int Pico_FD::open_file() {
 #ifndef ENABLE_TESTING
 
 int main(int argc, char* argv[]) {
-    std::vector<int> thrusters = {8, 9, 6, 7, 13, 11, 12, 10};
+    std::vector<int> thrusters = {2, 0, 6, 4, 19, 26, 21, 27};
     std::unique_ptr<FD_Interface> fd = std::make_unique<Pico_FD>("/dev/serial/by-id/usb-MicroPython_Board_in_FS_mode_7327d9a2ecd31892-if00");
     rclcpp::init(argc, argv);
     auto thrust_interface = std::make_shared<Thrust_Interface>(thrusters, std::move(fd), 1100, 1900);
