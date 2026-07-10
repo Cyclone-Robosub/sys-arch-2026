@@ -41,6 +41,7 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
     ready_status_subscription = this->create_subscription<std_msgs::msg::Bool>("current_ready_state", 10, 
         std::bind(&Dashboard::ready_status_callback, this, std::placeholders::_1));
     go_signal_publisher = this->create_publisher<std_msgs::msg::Bool>("go_signal", 10);
+    matlab_pos_reset_publisher = this->create_publisher<std_msgs::msg::Bool>("matlab_pos_reset", 10);
 
     heartbeat_timer = this->create_wall_timer(17ms,
             std::bind(&Dashboard::heartbeat_check_callback, this)); // 60 hz
@@ -225,6 +226,12 @@ void Dashboard::reset_gyro() {
     reset_gyro_client->async_send_request(request);
 }
 
+void Dashboard::reset_matlab_pos() {
+    auto msg = std_msgs::msg::Bool();
+    msg.data = true; 
+    matlab_pos_reset_publisher->publish(msg);
+}
+
 void Dashboard::toggle_ready() {
     if (!mission_manager_heartbeat) {
         return;
@@ -302,12 +309,15 @@ void Dashboard::work_loop() {
                     reset_gyro();
                     break;
                 case 'c':
-                    toggle_ready();
+                    reset_matlab_pos();
                     break;
                 case 'd':
-                    send_go_signal();
+                    toggle_ready();
                     break;
                 case 'e':
+                    send_go_signal();
+                    break;
+                case 'f':
                     send_revive_signal();
                     break;
                 case 'q':
@@ -612,7 +622,7 @@ std::string Dashboard_TUI::pwm_fresh(PWM_Data pwm_data) {
 }
 
 void Dashboard_TUI::display_commands() {
-    printf("\n===================== Commands =====================\n");
+    printf("\n====================================== Commands ======================================\n");
     write(STDOUT_FILENO, "\x1B[s", 3); // Save cursor position
     printf("Mux Control:\n");
     printf("[0]: Disabled\n");
@@ -624,17 +634,24 @@ void Dashboard_TUI::display_commands() {
 
     write(STDOUT_FILENO, "\x1B[u", 3); // Restore cursor position
     jump_to_column(col_2);
-    printf("Robot Control:\n");
+    printf("Sensor Resets:\n");
     jump_to_column(col_2);
     printf("[A]: Reset DRR\n");
     jump_to_column(col_2);
     printf("[B]: Reset Gyro\n");
     jump_to_column(col_2);
-    printf("[C]: Toggle Ready\n");
-    jump_to_column(col_2);
-    printf("[D]: Send Go Signal\n");
-    jump_to_column(col_2);
-    printf("[E]: Revive Pico\n");
+    printf("[C]: Reset Matlab Pos\n");
+    
+    write(STDOUT_FILENO, "\x1B[u", 3); // Restore cursor position
+    fflush(stdout);
+    jump_to_column(col_2_3);
+    printf("Robot Control:\n");
+    jump_to_column(col_2_3);
+    printf("[D]: Toggle Ready\n");
+    jump_to_column(col_2_3);
+    printf("[E]: Send Go Signal\n");
+    jump_to_column(col_2_3);
+    printf("[F]: Revive Pico\n");
 }
 
 void Dashboard_TUI::display_debug(const int col_number, Debug_Message debug) {

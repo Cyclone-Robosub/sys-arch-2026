@@ -133,6 +133,7 @@ private:
     void set_mux_mode(int mode);
     void reset_drr();
     void reset_gyro();
+    void reset_matlab_pos();
     void toggle_ready();
     void send_go_signal();
     void send_revive_signal();
@@ -173,6 +174,7 @@ private:
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr revive_pico_client;
 
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr go_signal_publisher;
+    rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr matlab_pos_reset_publisher;
 
     rclcpp::TimerBase::SharedPtr heartbeat_timer;
     rclcpp::TimerBase::SharedPtr clear_display_timer;
