@@ -25,8 +25,11 @@ Thrust_Interface::Thrust_Interface(std::vector<int> thrusters,
 
     heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("thrust_interface_heartbeat", 10);
     
+    kill_switch_service = this->create_service<std_srvs::srv::Trigger>("revive_pico", 
+            std::bind(&Thrust_Interface::revive_pico, this, std::placeholders::_1, std::placeholders::_2));
+    
     heartbeat_timer = this->create_wall_timer(500ms, 
-            std::bind(&Thrust_Interface::heartbeat_callback, this)); // heartbeat timer
+            std::bind(&Thrust_Interface::heartbeat_callback, this));
 }
     
 void Thrust_Interface::pwm_received_subscription_callback(custom_interfaces::msg::Pwms::UniquePtr pwms_msg) {
@@ -96,6 +99,33 @@ void Thrust_Interface::send_heartbeat() {
         std_msgs::msg::Empty msg;
         this->heartbeat_publisher->publish(msg);
     }
+}
+
+void Thrust_Interface::revive_pico(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
+    (void)request; // stop compiler complaining
+    std::string serial_message = "resume from kill\n";
+    int length = serial_message.size();
+
+    serial_mutex.lock();
+    ssize_t bytes_written = write(pico_fd->get_write_fd(), serial_message.c_str(), length);
+    serial_mutex.unlock();
+    if (bytes_written != length) {
+        response->success = false;
+        RCLCPP_WARN(this->get_logger(), 
+                    "Failed to write complete message to revive Pico. It might still be killed. Wrote %zd/%d bytes.", 
+                    bytes_written, length);
+        return;
+    }
+    // check that Pico responded with success;
+    char response_buf[32] = {0};
+    read(pico_fd->get_read_fd(), response_buf, 32);
+    if (strncmp("revived", response_buf, 7)) { // if we didn't get "revived" from Pico
+        response->success = false;
+        RCLCPP_WARN(this->get_logger(), 
+                    "Successfully wrote revive message to Pico, but did not receive successful response from Pico.");
+        return;
+    }
+    response->success = true;
 }
 
 void Thrust_Interface::send_pwm_to_pico(int thruster, int pwm) {
