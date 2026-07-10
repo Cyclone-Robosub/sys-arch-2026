@@ -54,6 +54,7 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
     mission_manager_client = this->create_client<std_srvs::srv::Trigger>("ready_signal_service");
     force_pub_mux = this->create_client<std_srvs::srv::SetBool>("force_pub");
     force_pub_mission_manager = this->create_client<std_srvs::srv::Trigger>("pub_ready_status");
+    revive_pico_client = this->create_client<std_srvs::srv::Trigger>("revive_pico");
     
     refresh_display();
 }
@@ -238,6 +239,10 @@ void Dashboard::send_go_signal() {
     go_signal_publisher->publish(msg);
 }
 
+void Dashboard::send_revive_signal() {
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    revive_pico_client->async_send_request(request);
+}
 
 void Dashboard::ping_loop() {
     while (rclcpp::ok()) {
@@ -302,8 +307,10 @@ void Dashboard::work_loop() {
                 case 'd':
                     send_go_signal();
                     break;
-                case 'q':
                 case 'e':
+                    send_revive_signal();
+                    break;
+                case 'q':
                     exit = true;
                     break;
                 default:
@@ -626,6 +633,8 @@ void Dashboard_TUI::display_commands() {
     printf("[C]: Toggle Ready\n");
     jump_to_column(col_2);
     printf("[D]: Send Go Signal\n");
+    jump_to_column(col_2);
+    printf("[E]: Revive Pico\n");
 }
 
 void Dashboard_TUI::display_debug(const int col_number, Debug_Message debug) {

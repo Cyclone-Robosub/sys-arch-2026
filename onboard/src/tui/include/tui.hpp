@@ -135,6 +135,7 @@ private:
     void reset_gyro();
     void toggle_ready();
     void send_go_signal();
+    void send_revive_signal();
     
     void refresh_display();
     void clear_display();
@@ -169,6 +170,7 @@ private:
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr mission_manager_client;
     rclcpp::Client<std_srvs::srv::SetBool>::SharedPtr force_pub_mux;
     rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr force_pub_mission_manager;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr revive_pico_client;
 
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr go_signal_publisher;
 
