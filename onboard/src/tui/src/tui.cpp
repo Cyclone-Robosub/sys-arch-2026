@@ -421,43 +421,29 @@ void Dashboard_TUI::write_selectable_header(std::string header, int current_mode
     }
 }
 
-void Dashboard_TUI::display_warning_status(bool heartbeat, const int col_number) {
+void Dashboard_TUI::display_status_with_colour(bool heartbeat, const int col_number, std::string colour_string) {
     jump_to_column(col_number);
     if (!heartbeat) {
         write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
-        write(STDOUT_FILENO, "\x1B[38;5;166;107m", 15); // set orange foreground, white background
+        write(STDOUT_FILENO, colour_string.c_str(), colour_string.length()); // set colour
         printf("== No heartbeat detected! ==\n");
         write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
     } else {
         printf("============ OK ============\n");
     }
     jump_to_column(col_number);
+}
+
+void Dashboard_TUI::display_warning_status(bool heartbeat, const int col_number) {
+    display_status_with_colour(heartbeat, col_number, "\x1B[38;5;166;107m"); // orange foreground, white background
 }
 
 void Dashboard_TUI::display_critical_status(bool heartbeat, const int col_number) {
-    jump_to_column(col_number);
-    if (!heartbeat) {
-        write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
-        write(STDOUT_FILENO, "\x1B[31;107m", 9); // set red foreground, white background
-        printf("== No heartbeat detected! ==\n");
-        write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
-    } else {
-        printf("============ OK ============\n");
-    }
-    jump_to_column(col_number);
+    display_status_with_colour(heartbeat, col_number, "\x1B[31;107m"); // red foreground, white background
 }
 
 void Dashboard_TUI::display_noncritical_status(bool heartbeat, const int col_number) {
-    jump_to_column(col_number);
-    if (!heartbeat) {
-        write(STDOUT_FILENO, "\x1B[5;7m", 6); // blinking, inverted
-        printf("== No heartbeat detected! ==\n");
-        write(STDOUT_FILENO, "\x1B[0m", 4); // reset style
-    }
-    else {
-        printf("============ OK ============\n");
-    }
-    jump_to_column(col_number);
+    display_status_with_colour(heartbeat, col_number, ""); // no special colour (black foreground, white background)
 }
 
 void Dashboard_TUI::display_escalatable_critical_status(int current_mode, int critical_mode, bool heartbeat, const int col_number) {

@@ -48,6 +48,7 @@ class Dashboard_TUI : public TUI_Interface {
         void reset_cursor_pos();
         void write_header(std::string header, const int col_number);
         void write_selectable_header(std::string header, int current_mode, int active_mode, const int col_number);
+        void display_status_with_colour(bool heartbeat, const int col_number, std::string colour_string);
         void display_critical_status(bool heartbeat, const int col_number);
         void display_warning_status(bool heartbeat, const int col_number);
         void display_noncritical_status(bool heartbeat, const int col_number);
