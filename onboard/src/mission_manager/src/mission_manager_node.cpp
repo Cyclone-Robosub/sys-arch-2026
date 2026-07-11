@@ -77,7 +77,6 @@ void MissionManagerNode::try_start_mission() {
 }
 
 void MissionManagerNode::reset_mission() {
-    ready_signal = false;
     go_signal = false;
     mission_started = false;
     publish_mission_status();
