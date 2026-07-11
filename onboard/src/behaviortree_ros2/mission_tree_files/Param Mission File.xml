@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4"
-      main_tree_to_execute="FallbackTree">
-  <BehaviorTree ID="FallbackTree">
-    <Sequence>
-      <SubTree ID="GateTask"/>
-      <SubTree ID="ReturnToGateTask"/>
-    </Sequence>
-  </BehaviorTree>
-
+      main_tree_to_execute="TrialParamTree">
   <BehaviorTree ID="GateTask">
-    <Fallback>
-      <DriveToWorldWaypoint world_waypoint="10000000,0,0,0,0,0"
-                            waypoint_mask="1,0,0,0,0,0"
-                            tolerance="0.2,0,0,0,0,0"
-                            hold_time="0.5"
-                            timeout="5"/>
-      <DriveToWorldWaypoint world_waypoint="10,0,0,0,0,0"
-                            waypoint_mask="1,0,0,0,0,0"
-                            tolerance="0.2,0,0,0,0,0"
-                            hold_time="0.2"
-                            timeout="10"/>
-    </Fallback>
+    <Sequence>
+        <DriveToWorldWaypoint name="gate_drive"
+                              world_waypoint="{@gate_drive.world_waypoint}"
+                              waypoint_mask="{@gate_drive.waypoint_mask}"
+                              tolerance="{@gate_drive.tolerance}"
+                              hold_time="{@gate_drive.hold_time}"
+                              timeout="{@gate_drive.timeout}" />
+    </Sequence>
   </BehaviorTree>
 
   <BehaviorTree ID="ReturnToGateTask">
     <Sequence>
       <DriveToWorldWaypoint world_waypoint="0,0,0,0,0,0"
-                            waypoint_mask="1,0,0,0,0,0"
-                            tolerance="0.2,0,0,0,0,0"
-                            hold_time="0.8"
-                            timeout="8"/>
+                            waypoint_mask="1,1,1,1,1,1"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="999"
+                            timeout="30"
+                            _description="Return to origin"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="TrialParamTree">
+    <Sequence>
+      <SubTree ID="GateTask"
+               _autoremap="false"/>
+      <SubTree ID="ReturnToGateTask"/>
     </Sequence>
   </BehaviorTree>
 

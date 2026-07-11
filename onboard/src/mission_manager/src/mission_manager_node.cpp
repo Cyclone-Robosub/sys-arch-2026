@@ -2,7 +2,7 @@
 using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
-  this->declare_parameter<std::string>("mission_file", "TrialTree");
+  this->declare_parameter<std::string>("mission_file", "TrialParamTree");
   param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
   cb_handle = param_subscriber->add_parameter_callback("mission_file", std::bind(&MissionManagerNode::parameter_callback, this, std::placeholders::_1));
  
@@ -17,6 +17,8 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   mission_manager_heartbeat_publisher = this->create_publisher<std_msgs::msg::Empty>("mission_manager_heartbeat", 10);
   current_ready_status_publisher = this->create_publisher<std_msgs::msg::Bool>("current_ready_state", 10);
   current_mission_status_publisher = this->create_publisher<std_msgs::msg::Bool>("mission_status", 10);
+
+  mission_cmd_service = this->create_service<custom_interfaces::srv::SetMissionCmd>("set_mission_cmd_service", std::bind(&MissionManagerNode::update_mission_cmd_param, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 
@@ -63,9 +65,10 @@ void MissionManagerNode::try_start_mission() {
         idle_goal_handle_.reset();
         return;
    }
-   //std::this_thread::sleep_for(std::chrono::seconds(15));
+   std::this_thread::sleep_for(std::chrono::seconds(15));
    ExecuteTree::Goal goal;
    goal.target_tree = cur_mission;
+   goal.payload = buildMissionPayload();
    auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
    send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::goal_response_callback, this, std::placeholders::_1);
    send_goal_options.result_callback = std::bind(&MissionManagerNode::result_callback, this, std::placeholders::_1);
@@ -125,6 +128,7 @@ void MissionManagerNode::result_callback(const GoalHandleExecuteTree::WrappedRes
 void MissionManagerNode::idle_result_callback(const GoalHandleExecuteTree::WrappedResult & result) {
     ExecuteTree::Goal goal;
     goal.target_tree = cur_mission;
+    goal.payload = buildMissionPayload();
     auto send_goal_options = rclcpp_action::Client<ExecuteTree>::SendGoalOptions();
     send_goal_options.goal_response_callback = std::bind(&MissionManagerNode::goal_response_callback, this, std::placeholders::_1);
     send_goal_options.result_callback = std::bind(&MissionManagerNode::result_callback, this, std::placeholders::_1);
@@ -147,6 +151,22 @@ void MissionManagerNode::idle_result_callback(const GoalHandleExecuteTree::Wrapp
             RCLCPP_ERROR(this->get_logger(), "Unknown result code");
             break;
     }
+}
+void MissionManagerNode::update_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Response> response) {
+    std::string key = request->command_id + "." + request->parameter_name;
+    mission_params[key] = request->value;
+    response->success = true;
+}
+
+std::string MissionManagerNode::buildMissionPayload() {
+    std::string payload;
+    for (const auto& [key, value] : mission_params) {
+          payload += key;
+          payload += "=";
+          payload += value;
+          payload += "\n";
+    }
+    return payload;
 }
 /*
     Heartbeat functions
