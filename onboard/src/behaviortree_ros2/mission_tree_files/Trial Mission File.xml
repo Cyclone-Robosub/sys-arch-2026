@@ -21,6 +21,12 @@
                             hold_time="1"
                             timeout="30"
                             _description="Drive 1m in the -y direction "/>
+      <DriveToWorldWaypoint world_waypoint="0,-1,0.67,0,0,0"
+                            waypoint_mask="1,1,1,1,1,1"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="99999"
+                            timeout="99999"
+                            _description="Return to origin at the same y"/>
     </Sequence>
   </BehaviorTree>
 
@@ -30,7 +36,7 @@
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="99999"
-                            timeout="30"
+                            timeout="99999"
                             _description="Return to origin at the same y"/>
     </Sequence>
   </BehaviorTree>

@@ -1,6 +1,0 @@
-float32 speed_of_sound
-float32 mounting_rotation_offset
-string acoustic_enabled
-string dark_mode_enabled
-string range_mode
-string periodic_cycling_enabled
