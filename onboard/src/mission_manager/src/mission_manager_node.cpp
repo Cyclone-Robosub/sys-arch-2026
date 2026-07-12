@@ -190,6 +190,9 @@ void MissionManagerNode::get_mission_cmd_param(const std::shared_ptr<custom_inte
     printf("%s", params_print.c_str());
     response->success = true;
 }
+void MissionManagerNode::transform_waypt(const std::shared_ptr<custom_interfaces::srv::TransformWaypt::Request> request, std::shared_ptr<custom_interfaces::srv::TransformWaypt::Response> response) {
+    
+}
 /*
     Heartbeat functions
 */
