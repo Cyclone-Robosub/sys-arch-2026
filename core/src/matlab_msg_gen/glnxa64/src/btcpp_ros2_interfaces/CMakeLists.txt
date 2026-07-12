@@ -44,9 +44,9 @@ find_package( rcutils REQUIRED)
 find_package( unique_identifier_msgs REQUIRED)
 # Add package include directories
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/btcpp_ros2_interfaces")
-include_directories("/home/kjhaydon/Programs/MATLAB/R2025b/extern/include")
-include_directories("/home/kjhaydon/Programs/MATLAB/R2025b/extern/include/MatlabDataArray")
-include_directories("/home/kjhaydon/Programs/MATLAB/R2025b/toolbox/ros/include/ros2")
+include_directories("/usr/local/MATLAB/R2025b/extern/include")
+include_directories("/usr/local/MATLAB/R2025b/extern/include/MatlabDataArray")
+include_directories("/usr/local/MATLAB/R2025b/toolbox/ros/include/ros2")
 set (CMAKE_SKIP_BUILD_RPATH false)
 set (CMAKE_BUILD_WITH_INSTALL_RPATH true)
 set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -70,7 +70,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   builtin_interfaces
   unique_identifier_msgs
 )
-link_directories("/home/kjhaydon/Programs/MATLAB/R2025b/extern/bin/glnxa64")
+link_directories("/usr/local/MATLAB/R2025b/extern/bin/glnxa64")
 # Library
 add_library(
     btcpp_ros2_interfaces_matlab 
@@ -90,9 +90,9 @@ target_include_directories(btcpp_ros2_interfaces_matlab PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/btcpp_ros2_interfaces>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries( btcpp_ros2_interfaces_matlab
-	"/home/kjhaydon/Programs/MATLAB/R2025b/sys/os/glnxa64/orig/libstdc++.so.6"
-	"/home/kjhaydon/Programs/MATLAB/R2025b/extern/bin/glnxa64/libMatlabDataArray.so"
-	"/home/kjhaydon/Programs/MATLAB/R2025b/sys/ros2/glnxa64/ros2/lib/librclcpp_action.so"
+	"/usr/local/MATLAB/R2025b/sys/os/glnxa64/orig/libstdc++.so.6"
+	"/usr/local/MATLAB/R2025b/extern/bin/glnxa64/libMatlabDataArray.so"
+	"/usr/local/MATLAB/R2025b/sys/ros2/glnxa64/ros2/lib/librclcpp_action.so"
 	${CMAKE_DL_LIBS}
 	)
 ament_target_dependencies(
@@ -154,4 +154,4 @@ add_custom_command(
 				   )				   
 endforeach(file_i)
 ament_package()
-# Generated on Mon Jun 29 17:48:19 2026
+# Generated on Sat Jul 11 22:51:33 2026

@@ -48,9 +48,9 @@ find_package( std_msgs REQUIRED)
 find_package( unique_identifier_msgs REQUIRED)
 # Add package include directories
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/custom_interfaces")
-include_directories("/home/kjhaydon/Programs/MATLAB/R2025b/extern/include")
-include_directories("/home/kjhaydon/Programs/MATLAB/R2025b/extern/include/MatlabDataArray")
-include_directories("/home/kjhaydon/Programs/MATLAB/R2025b/toolbox/ros/include/ros2")
+include_directories("/usr/local/MATLAB/R2025b/extern/include")
+include_directories("/usr/local/MATLAB/R2025b/extern/include/MatlabDataArray")
+include_directories("/usr/local/MATLAB/R2025b/toolbox/ros/include/ros2")
 set (CMAKE_SKIP_BUILD_RPATH false)
 set (CMAKE_BUILD_WITH_INSTALL_RPATH true)
 set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -60,6 +60,7 @@ set(msg_files
   "msg/CommandTree.msg"
   "msg/Config.msg"
   "msg/DRR.msg"
+  "msg/Debug.msg"
   "msg/Gamepad.msg"
   "msg/Goal.msg"
   "msg/Imu.msg"
@@ -74,7 +75,9 @@ set(msg_files
 set(srv_files
   "srv/ControlMode.srv"
   "srv/GetConfidence.srv"
+  "srv/GetMissionCmd.srv"
   "srv/SetConfig.srv"
+  "srv/SetMissionCmd.srv"
 )
 set(action_files
   "action/DistanceTrick.action"
@@ -98,7 +101,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   std_msgs
   unique_identifier_msgs
 )
-link_directories("/home/kjhaydon/Programs/MATLAB/R2025b/extern/bin/glnxa64")
+link_directories("/usr/local/MATLAB/R2025b/extern/bin/glnxa64")
 # Library
 add_library(
     custom_interfaces_matlab 
@@ -107,6 +110,7 @@ add_library(
     src/custom_interfaces_CommandTree_message.cpp
     src/custom_interfaces_Config_message.cpp
     src/custom_interfaces_DRR_message.cpp
+    src/custom_interfaces_Debug_message.cpp
     src/custom_interfaces_Gamepad_message.cpp
     src/custom_interfaces_Goal_message.cpp
     src/custom_interfaces_Imu_message.cpp
@@ -119,7 +123,9 @@ add_library(
     src/custom_interfaces_WaypointMask_message.cpp
     src/custom_interfaces_ControlMode_service.cpp
     src/custom_interfaces_GetConfidence_service.cpp
+    src/custom_interfaces_GetMissionCmd_service.cpp
     src/custom_interfaces_SetConfig_service.cpp
+    src/custom_interfaces_SetMissionCmd_service.cpp
     src/custom_interfaces_DistanceTrick_action.cpp
     src/custom_interfaces_Dropper_action.cpp
     src/custom_interfaces_DurationTrick_action.cpp
@@ -138,9 +144,9 @@ target_include_directories(custom_interfaces_matlab PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/custom_interfaces>
   $<INSTALL_INTERFACE:include>)
 target_link_libraries( custom_interfaces_matlab
-	"/home/kjhaydon/Programs/MATLAB/R2025b/sys/os/glnxa64/orig/libstdc++.so.6"
-	"/home/kjhaydon/Programs/MATLAB/R2025b/extern/bin/glnxa64/libMatlabDataArray.so"
-	"/home/kjhaydon/Programs/MATLAB/R2025b/sys/ros2/glnxa64/ros2/lib/librclcpp_action.so"
+	"/usr/local/MATLAB/R2025b/sys/os/glnxa64/orig/libstdc++.so.6"
+	"/usr/local/MATLAB/R2025b/extern/bin/glnxa64/libMatlabDataArray.so"
+	"/usr/local/MATLAB/R2025b/sys/ros2/glnxa64/ros2/lib/librclcpp_action.so"
 	${CMAKE_DL_LIBS}
 	)
 ament_target_dependencies(
@@ -210,4 +216,4 @@ add_custom_command(
 				   )				   
 endforeach(file_i)
 ament_package()
-# Generated on Mon Jun 29 17:48:23 2026
+# Generated on Sat Jul 11 22:51:34 2026
