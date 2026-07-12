@@ -22,7 +22,9 @@ bool WaypointCmd::setGoal(Goal& goal) {
     getInput("waypoint_mask", goal.waypoint_mask);
     getInput("tolerance", goal.tolerance);
     getInput("hold_time", goal.hold_time);
+    RCLCPP_INFO(logger(), "%f", goal.timeout);
     getInput("timeout", goal.timeout);
+    
 
     start_time = std::chrono::steady_clock::now();
     timeout_sec = goal.timeout;
@@ -36,6 +38,10 @@ NodeStatus WaypointCmd::tick() {
     double elapsed = std::chrono::duration<double>(now - start_time).count();
     if ((timeout_sec > 0) && (elapsed > timeout_sec)) {
         RCLCPP_ERROR(logger(), "Drive to World Waypoint - Error: timeout");
+        halt();
+        return NodeStatus::FAILURE;
+    } else {
+        RCLCPP_ERROR(logger(), "Drive to World Waypoint - Invalid timeout");
         halt();
         return NodeStatus::FAILURE;
     }

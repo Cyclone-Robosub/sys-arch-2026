@@ -15,6 +15,7 @@
 #include "server/waypoint_server.hpp"
 #include "server/dropper_server.hpp"
 #include "custom_interfaces/srv/set_mission_cmd.hpp"
+#include "custom_interfaces/srv/get_mission_cmd.hpp"
 
 class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
@@ -72,4 +73,6 @@ class MissionManagerNode : public rclcpp::Node {
         std::unordered_map<std::string, std::string> mission_params;
         void update_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Response> response);
         std::string buildMissionPayload();
+        rclcpp::Service<custom_interfaces::srv::GetMissionCmd>::SharedPtr get_mission_cmd_service;
+        void get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response);
 };

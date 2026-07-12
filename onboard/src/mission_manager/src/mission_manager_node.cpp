@@ -19,6 +19,7 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   current_mission_status_publisher = this->create_publisher<std_msgs::msg::Bool>("mission_status", 10);
 
   mission_cmd_service = this->create_service<custom_interfaces::srv::SetMissionCmd>("set_mission_cmd_service", std::bind(&MissionManagerNode::update_mission_cmd_param, this, std::placeholders::_1, std::placeholders::_2));
+  get_mission_cmd_service = this->create_service<custom_interfaces::srv::GetMissionCmd>("get_mission_cmd_service", std::bind(&MissionManagerNode::get_mission_cmd_param, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 
@@ -76,7 +77,6 @@ void MissionManagerNode::try_start_mission() {
 }
 
 void MissionManagerNode::reset_mission() {
-    ready_signal = false;
     go_signal = false;
     mission_started = false;
     publish_mission_status();
@@ -167,6 +167,24 @@ std::string MissionManagerNode::buildMissionPayload() {
           payload += "\n";
     }
     return payload;
+}
+
+void MissionManagerNode::get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response) {
+    std::string search_id = request->command_id;
+    std::string params_print = "Parameters for " + search_id + ":\n";
+    for (const auto& [key, value] : mission_params) {
+        size_t pos = key.find(".");
+        if (pos != std::string::npos) {
+            std::string cmd = key.substr(0, pos);
+            if (cmd == search_id) {
+                std::string param = key.substr(pos + 1);
+                params_print = params_print + param + " : " + value + "\n";
+            }
+        }
+    }
+    //RCLCPP_INFO(this->get_logger(), "%s", params_print.c_str());
+    printf("%s", params_print.c_str());
+    response->success = true;
 }
 /*
     Heartbeat functions
