@@ -1,3 +1,0 @@
-geometry_msgs/Pose position
-geometry_msgs/Pose velocity
-geometry_msgs/Pose acceleration
