@@ -66,7 +66,7 @@ void MissionManagerNode::try_start_mission() {
         idle_goal_handle_.reset();
         return;
    }
-   std::this_thread::sleep_for(std::chrono::seconds(15));
+   std::this_thread::sleep_for(std::chrono::seconds(2));
    ExecuteTree::Goal goal;
    goal.target_tree = cur_mission;
    goal.payload = buildMissionPayload();
