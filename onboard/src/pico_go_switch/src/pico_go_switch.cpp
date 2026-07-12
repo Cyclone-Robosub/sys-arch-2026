@@ -18,8 +18,7 @@ void Pico_Go_Switch::check_for_go_signal() {
     ssize_t bytes_written = read(pico_fd->get_read_fd(), buffer, buffer_length);
     
     if (bytes_written != 0) {
-        std::string pico_message = std::string(buffer);
-        if (pico_message == "True") {
+        if (strncmp(buffer, "True", 4) == 0) {
             publish_go_signal();
         }
     }

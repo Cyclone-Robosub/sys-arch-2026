@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+    <node pkg="pico_go_switch" exec="pico_go_switch" name="pico_go_switch" output="screen"></node>
+</launch>
