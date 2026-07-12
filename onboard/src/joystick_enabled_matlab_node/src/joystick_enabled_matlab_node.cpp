@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.11
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Sat Jul 11 23:06:24 2026
+// C/C++ source code generated on : Sun Jul 12 15:12:27 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -100,7 +100,7 @@ real_T rt_atan2d_snf(real_T u0, real_T u1)
   return y;
 }
 
-// Function for MATLAB Function: '<S26>/quatToEul'
+// Function for MATLAB Function: '<S25>/quatToEul'
 void joystick_enabled_matlab_node::joystick_enabled_matla_wrapToPi(real_T
   *lambda)
 {
@@ -149,8 +149,8 @@ void joystick_enabled_matlab_node::joystick_enabled_matla_wrapToPi(real_T
 
 //
 // Output and update for atomic system:
-//    '<S26>/quatToEul'
-//    '<S26>/quatToEul1'
+//    '<S25>/quatToEul'
+//    '<S25>/quatToEul1'
 //
 void joystick_enabled_matlab_node::joystick_enabled__quatToEul(const real_T
   rtu_qib_u[4], real_T rty_Eul_u[3], B_quatToEul_joystick_enabled__T *localB)
@@ -238,7 +238,7 @@ real_T joystick_enabled_matlab_node::joystick_enabled__rt_atan2d_snf(real_T u0,
   return y;
 }
 
-// Function for MATLAB Function: '<S26>/guidanceLaw'
+// Function for MATLAB Function: '<S25>/guidanceLaw'
 void joystick_enabled_matlab_node::joystick_enabled_mat_wrapToPi_k(real_T
   *lambda)
 {
@@ -246,46 +246,46 @@ void joystick_enabled_matlab_node::joystick_enabled_mat_wrapToPi_k(real_T
   joystick_enabled_matlab_node_B.trueCount = 0;
   tmp = ((*lambda < -3.1415926535897931) || (*lambda > 3.1415926535897931));
   if (tmp) {
-    for (joystick_enabled_matlab_node_B.i_f = 0;
-         joystick_enabled_matlab_node_B.i_f < 1;
-         joystick_enabled_matlab_node_B.i_f++) {
+    for (joystick_enabled_matlab_node_B.i_i = 0;
+         joystick_enabled_matlab_node_B.i_i < 1;
+         joystick_enabled_matlab_node_B.i_i++) {
       joystick_enabled_matlab_node_B.trueCount++;
     }
   }
 
   if (joystick_enabled_matlab_node_B.trueCount - 1 >= 0) {
     if (std::isnan(*lambda + 3.1415926535897931)) {
-      joystick_enabled_matlab_node_B.q_m = (rtNaN);
+      joystick_enabled_matlab_node_B.q_n = (rtNaN);
     } else if (std::isinf(*lambda + 3.1415926535897931)) {
-      joystick_enabled_matlab_node_B.q_m = (rtNaN);
+      joystick_enabled_matlab_node_B.q_n = (rtNaN);
     } else {
-      joystick_enabled_matlab_node_B.q_m = std::abs((*lambda +
+      joystick_enabled_matlab_node_B.q_n = std::abs((*lambda +
         3.1415926535897931) / 6.2831853071795862);
-      if (std::abs(joystick_enabled_matlab_node_B.q_m - std::floor
-                   (joystick_enabled_matlab_node_B.q_m + 0.5)) >
-          2.2204460492503131E-16 * joystick_enabled_matlab_node_B.q_m) {
-        joystick_enabled_matlab_node_B.q_m = std::fmod(*lambda +
+      if (std::abs(joystick_enabled_matlab_node_B.q_n - std::floor
+                   (joystick_enabled_matlab_node_B.q_n + 0.5)) >
+          2.2204460492503131E-16 * joystick_enabled_matlab_node_B.q_n) {
+        joystick_enabled_matlab_node_B.q_n = std::fmod(*lambda +
           3.1415926535897931, 6.2831853071795862);
       } else {
-        joystick_enabled_matlab_node_B.q_m = 0.0;
+        joystick_enabled_matlab_node_B.q_n = 0.0;
       }
 
-      if (joystick_enabled_matlab_node_B.q_m == 0.0) {
-        joystick_enabled_matlab_node_B.q_m = 0.0;
-      } else if (joystick_enabled_matlab_node_B.q_m < 0.0) {
-        joystick_enabled_matlab_node_B.q_m += 6.2831853071795862;
+      if (joystick_enabled_matlab_node_B.q_n == 0.0) {
+        joystick_enabled_matlab_node_B.q_n = 0.0;
+      } else if (joystick_enabled_matlab_node_B.q_n < 0.0) {
+        joystick_enabled_matlab_node_B.q_n += 6.2831853071795862;
       }
     }
 
     joystick_enabled_matlab_node_B.varargin_1_data =
-      joystick_enabled_matlab_node_B.q_m;
+      joystick_enabled_matlab_node_B.q_n;
   }
 
-  for (joystick_enabled_matlab_node_B.i_f = 0;
-       joystick_enabled_matlab_node_B.i_f <
+  for (joystick_enabled_matlab_node_B.i_i = 0;
+       joystick_enabled_matlab_node_B.i_i <
        joystick_enabled_matlab_node_B.trueCount;
-       joystick_enabled_matlab_node_B.i_f++) {
-    joystick_enabled_matlab_node_B.i_g = 0;
+       joystick_enabled_matlab_node_B.i_i++) {
+    joystick_enabled_matlab_node_B.i_f = 0;
     if ((joystick_enabled_matlab_node_B.varargin_1_data == 0.0) && (*lambda +
          3.1415926535897931 > 0.0)) {
       joystick_enabled_matlab_node_B.varargin_1_data = 6.2831853071795862;
@@ -298,34 +298,34 @@ void joystick_enabled_matlab_node::joystick_enabled_mat_wrapToPi_k(real_T
   }
 }
 
-// Function for MATLAB Function: '<S27>/commandExecuter'
+// Function for MATLAB Function: '<S26>/commandExecuter'
 void joystick_enabled_matlab_node::joystick_enabled_ma_eulToQuat_f(const real_T
   Eul[3], real_T qib[4])
 {
   joystick_enabled_matlab_node_B.eta_j = std::cos(Eul[1]);
-  joystick_enabled_matlab_node_B.scale_o = std::sin(Eul[1]);
-  joystick_enabled_matlab_node_B.b_t_i = std::cos(Eul[2]);
-  joystick_enabled_matlab_node_B.rotm_tmp_o = std::sin(Eul[2]);
+  joystick_enabled_matlab_node_B.scale_j = std::sin(Eul[1]);
+  joystick_enabled_matlab_node_B.b_t_n = std::cos(Eul[2]);
+  joystick_enabled_matlab_node_B.rotm_tmp_i = std::sin(Eul[2]);
   joystick_enabled_matlab_node_B.eps_idx_1 = std::sin(Eul[0]);
-  joystick_enabled_matlab_node_B.rotm_tmp_n = std::cos(Eul[0]);
+  joystick_enabled_matlab_node_B.rotm_tmp_o = std::cos(Eul[0]);
   joystick_enabled_matlab_node_B.rotm_idx_0 =
-    joystick_enabled_matlab_node_B.eta_j * joystick_enabled_matlab_node_B.b_t_i;
+    joystick_enabled_matlab_node_B.eta_j * joystick_enabled_matlab_node_B.b_t_n;
   joystick_enabled_matlab_node_B.eps_idx_2 =
     joystick_enabled_matlab_node_B.eta_j *
-    joystick_enabled_matlab_node_B.rotm_tmp_o;
+    joystick_enabled_matlab_node_B.rotm_tmp_i;
   joystick_enabled_matlab_node_B.rotm_idx_4_tmp =
     joystick_enabled_matlab_node_B.eps_idx_1 *
-    joystick_enabled_matlab_node_B.scale_o;
+    joystick_enabled_matlab_node_B.scale_j;
   joystick_enabled_matlab_node_B.eps_idx_0 =
     joystick_enabled_matlab_node_B.rotm_idx_4_tmp *
-    joystick_enabled_matlab_node_B.rotm_tmp_o +
-    joystick_enabled_matlab_node_B.rotm_tmp_n *
-    joystick_enabled_matlab_node_B.b_t_i;
-  joystick_enabled_matlab_node_B.absxk_n =
+    joystick_enabled_matlab_node_B.rotm_tmp_i +
+    joystick_enabled_matlab_node_B.rotm_tmp_o *
+    joystick_enabled_matlab_node_B.b_t_n;
+  joystick_enabled_matlab_node_B.absxk_o =
     joystick_enabled_matlab_node_B.eps_idx_1 *
     joystick_enabled_matlab_node_B.eta_j;
   joystick_enabled_matlab_node_B.rotm_idx_8 =
-    joystick_enabled_matlab_node_B.rotm_tmp_n *
+    joystick_enabled_matlab_node_B.rotm_tmp_o *
     joystick_enabled_matlab_node_B.eta_j;
   joystick_enabled_matlab_node_B.eta_j = std::sqrt
     (((joystick_enabled_matlab_node_B.rotm_idx_0 +
@@ -333,55 +333,55 @@ void joystick_enabled_matlab_node::joystick_enabled_ma_eulToQuat_f(const real_T
       joystick_enabled_matlab_node_B.rotm_idx_8) + 1.0) / 2.0;
   if (joystick_enabled_matlab_node_B.eta_j != 0.0) {
     joystick_enabled_matlab_node_B.rotm_idx_0 =
-      joystick_enabled_matlab_node_B.rotm_tmp_n *
-      joystick_enabled_matlab_node_B.scale_o;
+      joystick_enabled_matlab_node_B.rotm_tmp_o *
+      joystick_enabled_matlab_node_B.scale_j;
     joystick_enabled_matlab_node_B.rotm_idx_8 = 4.0 *
       joystick_enabled_matlab_node_B.eta_j;
     joystick_enabled_matlab_node_B.eps_idx_0 =
-      (joystick_enabled_matlab_node_B.absxk_n -
+      (joystick_enabled_matlab_node_B.absxk_o -
        (joystick_enabled_matlab_node_B.rotm_idx_0 *
-        joystick_enabled_matlab_node_B.rotm_tmp_o -
+        joystick_enabled_matlab_node_B.rotm_tmp_i -
         joystick_enabled_matlab_node_B.eps_idx_1 *
-        joystick_enabled_matlab_node_B.b_t_i)) /
+        joystick_enabled_matlab_node_B.b_t_n)) /
       joystick_enabled_matlab_node_B.rotm_idx_8;
     joystick_enabled_matlab_node_B.eps_idx_1 =
       ((joystick_enabled_matlab_node_B.rotm_idx_0 *
-        joystick_enabled_matlab_node_B.b_t_i +
+        joystick_enabled_matlab_node_B.b_t_n +
         joystick_enabled_matlab_node_B.eps_idx_1 *
-        joystick_enabled_matlab_node_B.rotm_tmp_o) -
-       (-joystick_enabled_matlab_node_B.scale_o)) /
+        joystick_enabled_matlab_node_B.rotm_tmp_i) -
+       (-joystick_enabled_matlab_node_B.scale_j)) /
       joystick_enabled_matlab_node_B.rotm_idx_8;
     joystick_enabled_matlab_node_B.eps_idx_2 =
       (joystick_enabled_matlab_node_B.eps_idx_2 -
        (joystick_enabled_matlab_node_B.rotm_idx_4_tmp *
-        joystick_enabled_matlab_node_B.b_t_i -
-        joystick_enabled_matlab_node_B.rotm_tmp_n *
-        joystick_enabled_matlab_node_B.rotm_tmp_o)) /
+        joystick_enabled_matlab_node_B.b_t_n -
+        joystick_enabled_matlab_node_B.rotm_tmp_o *
+        joystick_enabled_matlab_node_B.rotm_tmp_i)) /
       joystick_enabled_matlab_node_B.rotm_idx_8;
   } else {
-    joystick_enabled_matlab_node_B.b_t_i =
+    joystick_enabled_matlab_node_B.b_t_n =
       (joystick_enabled_matlab_node_B.rotm_idx_0 + 1.0) / 2.0;
-    joystick_enabled_matlab_node_B.x[0] = joystick_enabled_matlab_node_B.b_t_i;
+    joystick_enabled_matlab_node_B.x[0] = joystick_enabled_matlab_node_B.b_t_n;
     joystick_enabled_matlab_node_B.eps_idx_1 =
       (joystick_enabled_matlab_node_B.eps_idx_0 + 1.0) / 2.0;
     joystick_enabled_matlab_node_B.x[1] =
       joystick_enabled_matlab_node_B.eps_idx_1;
-    joystick_enabled_matlab_node_B.rotm_tmp_o =
+    joystick_enabled_matlab_node_B.rotm_tmp_i =
       (joystick_enabled_matlab_node_B.rotm_idx_8 + 1.0) / 2.0;
     joystick_enabled_matlab_node_B.x[2] =
-      joystick_enabled_matlab_node_B.rotm_tmp_o;
-    if (!std::isnan(joystick_enabled_matlab_node_B.b_t_i)) {
-      joystick_enabled_matlab_node_B.idx_f = 1;
+      joystick_enabled_matlab_node_B.rotm_tmp_i;
+    if (!std::isnan(joystick_enabled_matlab_node_B.b_t_n)) {
+      joystick_enabled_matlab_node_B.idx_i = 1;
     } else {
       boolean_T exitg1;
-      joystick_enabled_matlab_node_B.idx_f = 0;
+      joystick_enabled_matlab_node_B.idx_i = 0;
       joystick_enabled_matlab_node_B.b_k = 2;
       exitg1 = false;
       while ((!exitg1) && (joystick_enabled_matlab_node_B.b_k < 4)) {
         if (!std::isnan
             (joystick_enabled_matlab_node_B.x[joystick_enabled_matlab_node_B.b_k
              - 1])) {
-          joystick_enabled_matlab_node_B.idx_f =
+          joystick_enabled_matlab_node_B.idx_i =
             joystick_enabled_matlab_node_B.b_k;
           exitg1 = true;
         } else {
@@ -390,24 +390,24 @@ void joystick_enabled_matlab_node::joystick_enabled_ma_eulToQuat_f(const real_T
       }
     }
 
-    if (joystick_enabled_matlab_node_B.idx_f == 0) {
+    if (joystick_enabled_matlab_node_B.idx_i == 0) {
       joystick_enabled_matlab_node_B.b_k = 1;
     } else {
       joystick_enabled_matlab_node_B.eps_idx_0 =
-        joystick_enabled_matlab_node_B.x[joystick_enabled_matlab_node_B.idx_f -
+        joystick_enabled_matlab_node_B.x[joystick_enabled_matlab_node_B.idx_i -
         1];
-      joystick_enabled_matlab_node_B.b_k = joystick_enabled_matlab_node_B.idx_f;
+      joystick_enabled_matlab_node_B.b_k = joystick_enabled_matlab_node_B.idx_i;
       for (joystick_enabled_matlab_node_B.c_k =
-           joystick_enabled_matlab_node_B.idx_f + 1;
+           joystick_enabled_matlab_node_B.idx_i + 1;
            joystick_enabled_matlab_node_B.c_k < 4;
            joystick_enabled_matlab_node_B.c_k++) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n =
+        joystick_enabled_matlab_node_B.rotm_tmp_o =
           joystick_enabled_matlab_node_B.x[joystick_enabled_matlab_node_B.c_k -
           1];
         if (joystick_enabled_matlab_node_B.eps_idx_0 <
-            joystick_enabled_matlab_node_B.rotm_tmp_n) {
+            joystick_enabled_matlab_node_B.rotm_tmp_o) {
           joystick_enabled_matlab_node_B.eps_idx_0 =
-            joystick_enabled_matlab_node_B.rotm_tmp_n;
+            joystick_enabled_matlab_node_B.rotm_tmp_o;
           joystick_enabled_matlab_node_B.b_k =
             joystick_enabled_matlab_node_B.c_k;
         }
@@ -417,185 +417,185 @@ void joystick_enabled_matlab_node::joystick_enabled_ma_eulToQuat_f(const real_T
     switch (joystick_enabled_matlab_node_B.b_k) {
      case 1:
       joystick_enabled_matlab_node_B.eps_idx_0 = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.b_t_i));
+        joystick_enabled_matlab_node_B.b_t_n));
       if (std::isnan(joystick_enabled_matlab_node_B.eps_idx_2)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = (rtNaN);
+        joystick_enabled_matlab_node_B.rotm_tmp_o = (rtNaN);
       } else if (joystick_enabled_matlab_node_B.eps_idx_2 < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_o = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_n =
+        joystick_enabled_matlab_node_B.rotm_tmp_o =
           (joystick_enabled_matlab_node_B.eps_idx_2 > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_1 = std::sqrt(std::fmax(0.0,
         joystick_enabled_matlab_node_B.eps_idx_1)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_n;
-      if (std::isnan(-joystick_enabled_matlab_node_B.scale_o)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = (rtNaN);
-      } else if (-joystick_enabled_matlab_node_B.scale_o < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_o;
+      if (std::isnan(-joystick_enabled_matlab_node_B.scale_j)) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = (rtNaN);
+      } else if (-joystick_enabled_matlab_node_B.scale_j < 0.0) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_n =
-          (-joystick_enabled_matlab_node_B.scale_o > 0.0);
+        joystick_enabled_matlab_node_B.rotm_tmp_o =
+          (-joystick_enabled_matlab_node_B.scale_j > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_2 = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.rotm_tmp_o)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_n;
+        joystick_enabled_matlab_node_B.rotm_tmp_i)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_o;
       break;
 
      case 2:
       joystick_enabled_matlab_node_B.eps_idx_1 = std::sqrt(std::fmax(0.0,
         joystick_enabled_matlab_node_B.eps_idx_1));
       if (std::isnan(joystick_enabled_matlab_node_B.eps_idx_2)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = (rtNaN);
+        joystick_enabled_matlab_node_B.rotm_tmp_o = (rtNaN);
       } else if (joystick_enabled_matlab_node_B.eps_idx_2 < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_o = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_n =
+        joystick_enabled_matlab_node_B.rotm_tmp_o =
           (joystick_enabled_matlab_node_B.eps_idx_2 > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_0 = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.b_t_i)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_n;
-      if (std::isnan(joystick_enabled_matlab_node_B.absxk_n)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = (rtNaN);
-      } else if (joystick_enabled_matlab_node_B.absxk_n < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = -1.0;
+        joystick_enabled_matlab_node_B.b_t_n)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_o;
+      if (std::isnan(joystick_enabled_matlab_node_B.absxk_o)) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = (rtNaN);
+      } else if (joystick_enabled_matlab_node_B.absxk_o < 0.0) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_n =
-          (joystick_enabled_matlab_node_B.absxk_n > 0.0);
+        joystick_enabled_matlab_node_B.rotm_tmp_o =
+          (joystick_enabled_matlab_node_B.absxk_o > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_2 = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.rotm_tmp_o)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_n;
+        joystick_enabled_matlab_node_B.rotm_tmp_i)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_o;
       break;
 
      default:
       joystick_enabled_matlab_node_B.eps_idx_2 = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.rotm_tmp_o));
-      if (std::isnan(-joystick_enabled_matlab_node_B.scale_o)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = (rtNaN);
-      } else if (-joystick_enabled_matlab_node_B.scale_o < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_i));
+      if (std::isnan(-joystick_enabled_matlab_node_B.scale_j)) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = (rtNaN);
+      } else if (-joystick_enabled_matlab_node_B.scale_j < 0.0) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_n =
-          (-joystick_enabled_matlab_node_B.scale_o > 0.0);
+        joystick_enabled_matlab_node_B.rotm_tmp_o =
+          (-joystick_enabled_matlab_node_B.scale_j > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_0 = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.b_t_i)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_n;
-      if (std::isnan(joystick_enabled_matlab_node_B.absxk_n)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = (rtNaN);
-      } else if (joystick_enabled_matlab_node_B.absxk_n < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_n = -1.0;
+        joystick_enabled_matlab_node_B.b_t_n)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_o;
+      if (std::isnan(joystick_enabled_matlab_node_B.absxk_o)) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = (rtNaN);
+      } else if (joystick_enabled_matlab_node_B.absxk_o < 0.0) {
+        joystick_enabled_matlab_node_B.rotm_tmp_o = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_n =
-          (joystick_enabled_matlab_node_B.absxk_n > 0.0);
+        joystick_enabled_matlab_node_B.rotm_tmp_o =
+          (joystick_enabled_matlab_node_B.absxk_o > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_1 = std::sqrt(std::fmax(0.0,
         joystick_enabled_matlab_node_B.eps_idx_1)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_n;
+        joystick_enabled_matlab_node_B.rotm_tmp_o;
       break;
     }
   }
 
-  joystick_enabled_matlab_node_B.scale_o = 3.3121686421112381E-170;
-  joystick_enabled_matlab_node_B.absxk_n = std::abs
+  joystick_enabled_matlab_node_B.scale_j = 3.3121686421112381E-170;
+  joystick_enabled_matlab_node_B.absxk_o = std::abs
     (joystick_enabled_matlab_node_B.eps_idx_0);
-  if (joystick_enabled_matlab_node_B.absxk_n > 3.3121686421112381E-170) {
-    joystick_enabled_matlab_node_B.rotm_tmp_o = 1.0;
-    joystick_enabled_matlab_node_B.scale_o =
-      joystick_enabled_matlab_node_B.absxk_n;
+  if (joystick_enabled_matlab_node_B.absxk_o > 3.3121686421112381E-170) {
+    joystick_enabled_matlab_node_B.rotm_tmp_i = 1.0;
+    joystick_enabled_matlab_node_B.scale_j =
+      joystick_enabled_matlab_node_B.absxk_o;
   } else {
-    joystick_enabled_matlab_node_B.b_t_i =
-      joystick_enabled_matlab_node_B.absxk_n / 3.3121686421112381E-170;
-    joystick_enabled_matlab_node_B.rotm_tmp_o =
-      joystick_enabled_matlab_node_B.b_t_i *
-      joystick_enabled_matlab_node_B.b_t_i;
+    joystick_enabled_matlab_node_B.b_t_n =
+      joystick_enabled_matlab_node_B.absxk_o / 3.3121686421112381E-170;
+    joystick_enabled_matlab_node_B.rotm_tmp_i =
+      joystick_enabled_matlab_node_B.b_t_n *
+      joystick_enabled_matlab_node_B.b_t_n;
   }
 
-  joystick_enabled_matlab_node_B.absxk_n = std::abs
+  joystick_enabled_matlab_node_B.absxk_o = std::abs
     (joystick_enabled_matlab_node_B.eps_idx_1);
-  if (joystick_enabled_matlab_node_B.absxk_n >
-      joystick_enabled_matlab_node_B.scale_o) {
-    joystick_enabled_matlab_node_B.b_t_i =
-      joystick_enabled_matlab_node_B.scale_o /
-      joystick_enabled_matlab_node_B.absxk_n;
-    joystick_enabled_matlab_node_B.rotm_tmp_o =
-      joystick_enabled_matlab_node_B.rotm_tmp_o *
-      joystick_enabled_matlab_node_B.b_t_i *
-      joystick_enabled_matlab_node_B.b_t_i + 1.0;
-    joystick_enabled_matlab_node_B.scale_o =
-      joystick_enabled_matlab_node_B.absxk_n;
+  if (joystick_enabled_matlab_node_B.absxk_o >
+      joystick_enabled_matlab_node_B.scale_j) {
+    joystick_enabled_matlab_node_B.b_t_n =
+      joystick_enabled_matlab_node_B.scale_j /
+      joystick_enabled_matlab_node_B.absxk_o;
+    joystick_enabled_matlab_node_B.rotm_tmp_i =
+      joystick_enabled_matlab_node_B.rotm_tmp_i *
+      joystick_enabled_matlab_node_B.b_t_n *
+      joystick_enabled_matlab_node_B.b_t_n + 1.0;
+    joystick_enabled_matlab_node_B.scale_j =
+      joystick_enabled_matlab_node_B.absxk_o;
   } else {
-    joystick_enabled_matlab_node_B.b_t_i =
-      joystick_enabled_matlab_node_B.absxk_n /
-      joystick_enabled_matlab_node_B.scale_o;
-    joystick_enabled_matlab_node_B.rotm_tmp_o +=
-      joystick_enabled_matlab_node_B.b_t_i *
-      joystick_enabled_matlab_node_B.b_t_i;
+    joystick_enabled_matlab_node_B.b_t_n =
+      joystick_enabled_matlab_node_B.absxk_o /
+      joystick_enabled_matlab_node_B.scale_j;
+    joystick_enabled_matlab_node_B.rotm_tmp_i +=
+      joystick_enabled_matlab_node_B.b_t_n *
+      joystick_enabled_matlab_node_B.b_t_n;
   }
 
-  joystick_enabled_matlab_node_B.absxk_n = std::abs
+  joystick_enabled_matlab_node_B.absxk_o = std::abs
     (joystick_enabled_matlab_node_B.eps_idx_2);
-  if (joystick_enabled_matlab_node_B.absxk_n >
-      joystick_enabled_matlab_node_B.scale_o) {
-    joystick_enabled_matlab_node_B.b_t_i =
-      joystick_enabled_matlab_node_B.scale_o /
-      joystick_enabled_matlab_node_B.absxk_n;
-    joystick_enabled_matlab_node_B.rotm_tmp_o =
-      joystick_enabled_matlab_node_B.rotm_tmp_o *
-      joystick_enabled_matlab_node_B.b_t_i *
-      joystick_enabled_matlab_node_B.b_t_i + 1.0;
-    joystick_enabled_matlab_node_B.scale_o =
-      joystick_enabled_matlab_node_B.absxk_n;
+  if (joystick_enabled_matlab_node_B.absxk_o >
+      joystick_enabled_matlab_node_B.scale_j) {
+    joystick_enabled_matlab_node_B.b_t_n =
+      joystick_enabled_matlab_node_B.scale_j /
+      joystick_enabled_matlab_node_B.absxk_o;
+    joystick_enabled_matlab_node_B.rotm_tmp_i =
+      joystick_enabled_matlab_node_B.rotm_tmp_i *
+      joystick_enabled_matlab_node_B.b_t_n *
+      joystick_enabled_matlab_node_B.b_t_n + 1.0;
+    joystick_enabled_matlab_node_B.scale_j =
+      joystick_enabled_matlab_node_B.absxk_o;
   } else {
-    joystick_enabled_matlab_node_B.b_t_i =
-      joystick_enabled_matlab_node_B.absxk_n /
-      joystick_enabled_matlab_node_B.scale_o;
-    joystick_enabled_matlab_node_B.rotm_tmp_o +=
-      joystick_enabled_matlab_node_B.b_t_i *
-      joystick_enabled_matlab_node_B.b_t_i;
+    joystick_enabled_matlab_node_B.b_t_n =
+      joystick_enabled_matlab_node_B.absxk_o /
+      joystick_enabled_matlab_node_B.scale_j;
+    joystick_enabled_matlab_node_B.rotm_tmp_i +=
+      joystick_enabled_matlab_node_B.b_t_n *
+      joystick_enabled_matlab_node_B.b_t_n;
   }
 
   if (joystick_enabled_matlab_node_B.eta_j >
-      joystick_enabled_matlab_node_B.scale_o) {
-    joystick_enabled_matlab_node_B.b_t_i =
-      joystick_enabled_matlab_node_B.scale_o /
+      joystick_enabled_matlab_node_B.scale_j) {
+    joystick_enabled_matlab_node_B.b_t_n =
+      joystick_enabled_matlab_node_B.scale_j /
       joystick_enabled_matlab_node_B.eta_j;
-    joystick_enabled_matlab_node_B.rotm_tmp_o =
-      joystick_enabled_matlab_node_B.rotm_tmp_o *
-      joystick_enabled_matlab_node_B.b_t_i *
-      joystick_enabled_matlab_node_B.b_t_i + 1.0;
-    joystick_enabled_matlab_node_B.scale_o =
+    joystick_enabled_matlab_node_B.rotm_tmp_i =
+      joystick_enabled_matlab_node_B.rotm_tmp_i *
+      joystick_enabled_matlab_node_B.b_t_n *
+      joystick_enabled_matlab_node_B.b_t_n + 1.0;
+    joystick_enabled_matlab_node_B.scale_j =
       joystick_enabled_matlab_node_B.eta_j;
   } else {
-    joystick_enabled_matlab_node_B.b_t_i = joystick_enabled_matlab_node_B.eta_j /
-      joystick_enabled_matlab_node_B.scale_o;
-    joystick_enabled_matlab_node_B.rotm_tmp_o +=
-      joystick_enabled_matlab_node_B.b_t_i *
-      joystick_enabled_matlab_node_B.b_t_i;
+    joystick_enabled_matlab_node_B.b_t_n = joystick_enabled_matlab_node_B.eta_j /
+      joystick_enabled_matlab_node_B.scale_j;
+    joystick_enabled_matlab_node_B.rotm_tmp_i +=
+      joystick_enabled_matlab_node_B.b_t_n *
+      joystick_enabled_matlab_node_B.b_t_n;
   }
 
-  joystick_enabled_matlab_node_B.rotm_tmp_o =
-    joystick_enabled_matlab_node_B.scale_o * std::sqrt
-    (joystick_enabled_matlab_node_B.rotm_tmp_o);
+  joystick_enabled_matlab_node_B.rotm_tmp_i =
+    joystick_enabled_matlab_node_B.scale_j * std::sqrt
+    (joystick_enabled_matlab_node_B.rotm_tmp_i);
   qib[0] = joystick_enabled_matlab_node_B.eps_idx_0 /
-    joystick_enabled_matlab_node_B.rotm_tmp_o;
+    joystick_enabled_matlab_node_B.rotm_tmp_i;
   qib[1] = joystick_enabled_matlab_node_B.eps_idx_1 /
-    joystick_enabled_matlab_node_B.rotm_tmp_o;
+    joystick_enabled_matlab_node_B.rotm_tmp_i;
   qib[2] = joystick_enabled_matlab_node_B.eps_idx_2 /
-    joystick_enabled_matlab_node_B.rotm_tmp_o;
+    joystick_enabled_matlab_node_B.rotm_tmp_i;
   qib[3] = joystick_enabled_matlab_node_B.eta_j /
-    joystick_enabled_matlab_node_B.rotm_tmp_o;
+    joystick_enabled_matlab_node_B.rotm_tmp_i;
 }
 
-// Function for MATLAB Function: '<S27>/commandExecuter'
+// Function for MATLAB Function: '<S26>/commandExecuter'
 boolean_T joystick_enabled_matlab_node::joystick_enabled_ma_withinWPTol(const
   real_T X_Ri[3], const real_T X_qib[4], const real_T X_u[13], const real_T
   cmd_wp_tol[6])
@@ -636,23 +636,23 @@ boolean_T joystick_enabled_matlab_node::joystick_enabled_ma_withinWPTol(const
     joystick_enabled_matlab_node_B.qinv_m[3] * 2.0 - 1.0;
   joystick_enabled_matlab_node_B.qe_matlab_idx_0 = 2.0 *
     joystick_enabled_matlab_node_B.qinv_m[3];
-  for (joystick_enabled_matlab_node_B.c_k_i = 0;
-       joystick_enabled_matlab_node_B.c_k_i < 3;
-       joystick_enabled_matlab_node_B.c_k_i++) {
+  for (joystick_enabled_matlab_node_B.c_k_f = 0;
+       joystick_enabled_matlab_node_B.c_k_f < 3;
+       joystick_enabled_matlab_node_B.c_k_f++) {
     joystick_enabled_matlab_node_B.qe_matlab_idx_2 = 2.0 *
-      joystick_enabled_matlab_node_B.qinv_m[joystick_enabled_matlab_node_B.c_k_i];
-    joystick_enabled_matlab_node_B.a[3 * joystick_enabled_matlab_node_B.c_k_i] =
+      joystick_enabled_matlab_node_B.qinv_m[joystick_enabled_matlab_node_B.c_k_f];
+    joystick_enabled_matlab_node_B.a[3 * joystick_enabled_matlab_node_B.c_k_f] =
       joystick_enabled_matlab_node_B.qe_matlab_idx_2 *
       joystick_enabled_matlab_node_B.qinv_m[0] +
       joystick_enabled_matlab_node_B.qe_matlab_idx_1 * static_cast<real_T>
-      (b[joystick_enabled_matlab_node_B.c_k_i]);
-    joystick_enabled_matlab_node_B.a[3 * joystick_enabled_matlab_node_B.c_k_i +
-      1] = static_cast<real_T>(b[joystick_enabled_matlab_node_B.c_k_i + 3]) *
+      (b[joystick_enabled_matlab_node_B.c_k_f]);
+    joystick_enabled_matlab_node_B.a[3 * joystick_enabled_matlab_node_B.c_k_f +
+      1] = static_cast<real_T>(b[joystick_enabled_matlab_node_B.c_k_f + 3]) *
       joystick_enabled_matlab_node_B.qe_matlab_idx_1 +
       joystick_enabled_matlab_node_B.qe_matlab_idx_2 *
       joystick_enabled_matlab_node_B.qinv_m[1];
-    joystick_enabled_matlab_node_B.a[3 * joystick_enabled_matlab_node_B.c_k_i +
-      2] = static_cast<real_T>(b[joystick_enabled_matlab_node_B.c_k_i + 6]) *
+    joystick_enabled_matlab_node_B.a[3 * joystick_enabled_matlab_node_B.c_k_f +
+      2] = static_cast<real_T>(b[joystick_enabled_matlab_node_B.c_k_f + 6]) *
       joystick_enabled_matlab_node_B.qe_matlab_idx_1 +
       joystick_enabled_matlab_node_B.qe_matlab_idx_2 *
       joystick_enabled_matlab_node_B.qinv_m[2];
@@ -684,12 +684,12 @@ boolean_T joystick_enabled_matlab_node::joystick_enabled_ma_withinWPTol(const
     joystick_enabled_matlab_node_B.qinv_m[0];
   joystick_enabled_matlab_node_B.b_a[8] =
     joystick_enabled_matlab_node_B.qe_matlab_idx_1;
-  for (joystick_enabled_matlab_node_B.c_k_i = 0;
-       joystick_enabled_matlab_node_B.c_k_i < 9;
-       joystick_enabled_matlab_node_B.c_k_i++) {
-    joystick_enabled_matlab_node_B.Cbi_p[joystick_enabled_matlab_node_B.c_k_i] =
-      joystick_enabled_matlab_node_B.a[joystick_enabled_matlab_node_B.c_k_i] +
-      joystick_enabled_matlab_node_B.b_a[joystick_enabled_matlab_node_B.c_k_i];
+  for (joystick_enabled_matlab_node_B.c_k_f = 0;
+       joystick_enabled_matlab_node_B.c_k_f < 9;
+       joystick_enabled_matlab_node_B.c_k_f++) {
+    joystick_enabled_matlab_node_B.Cbi_p[joystick_enabled_matlab_node_B.c_k_f] =
+      joystick_enabled_matlab_node_B.a[joystick_enabled_matlab_node_B.c_k_f] +
+      joystick_enabled_matlab_node_B.b_a[joystick_enabled_matlab_node_B.c_k_f];
   }
 
   joystick_enabled_matlab_node_B.qe_matlab_idx_2 = std::asin(std::fmax(-1.0, std::
@@ -726,31 +726,31 @@ boolean_T joystick_enabled_matlab_node::joystick_enabled_ma_withinWPTol(const
   joystick_enabled_matlab_node_B.R_error[2] = std::abs(X_Ri[2] - X_u[2]);
   joystick_enabled_matlab_node_B.R_error[5] = std::abs
     (joystick_enabled_matlab_node_B.qe_matlab_idx_1);
-  for (joystick_enabled_matlab_node_B.c_k_i = 0;
-       joystick_enabled_matlab_node_B.c_k_i < 6;
-       joystick_enabled_matlab_node_B.c_k_i++) {
-    joystick_enabled_matlab_node_B.b_x[joystick_enabled_matlab_node_B.c_k_i] =
-      (joystick_enabled_matlab_node_B.R_error[joystick_enabled_matlab_node_B.c_k_i]
-       < cmd_wp_tol[joystick_enabled_matlab_node_B.c_k_i]);
+  for (joystick_enabled_matlab_node_B.c_k_f = 0;
+       joystick_enabled_matlab_node_B.c_k_f < 6;
+       joystick_enabled_matlab_node_B.c_k_f++) {
+    joystick_enabled_matlab_node_B.b_x[joystick_enabled_matlab_node_B.c_k_f] =
+      (joystick_enabled_matlab_node_B.R_error[joystick_enabled_matlab_node_B.c_k_f]
+       < cmd_wp_tol[joystick_enabled_matlab_node_B.c_k_f]);
   }
 
   tf = true;
-  joystick_enabled_matlab_node_B.c_k_i = 0;
+  joystick_enabled_matlab_node_B.c_k_f = 0;
   exitg1 = false;
-  while ((!exitg1) && (joystick_enabled_matlab_node_B.c_k_i < 6)) {
-    if (!joystick_enabled_matlab_node_B.b_x[joystick_enabled_matlab_node_B.c_k_i])
+  while ((!exitg1) && (joystick_enabled_matlab_node_B.c_k_f < 6)) {
+    if (!joystick_enabled_matlab_node_B.b_x[joystick_enabled_matlab_node_B.c_k_f])
     {
       tf = false;
       exitg1 = true;
     } else {
-      joystick_enabled_matlab_node_B.c_k_i++;
+      joystick_enabled_matlab_node_B.c_k_f++;
     }
   }
 
   return tf;
 }
 
-// Function for MATLAB Function: '<S27>/commandExecuter'
+// Function for MATLAB Function: '<S26>/commandExecuter'
 void joystick_enabled_matlab_node::joystick_e_executeDurationTrick(real_T
   cmd_hold_time, const int8_T cmd_trick_id[16], const real_T idle_wp[6], const
   real_T X_Ri[3], const real_T X_Eul[3], const real_T X_Cib[9], real_T
@@ -956,7 +956,7 @@ void joystick_enabled_matlab_node::joystick_e_executeDurationTrick(real_T
       hc[joystick_enabled_matlab_node_B.c_ret];
     joystick_enabled_matlab_node_B.r.f1[joystick_enabled_matlab_node_B.c_ret] =
       ic[joystick_enabled_matlab_node_B.c_ret];
-    joystick_enabled_matlab_node_B.s_d.f1[joystick_enabled_matlab_node_B.c_ret] =
+    joystick_enabled_matlab_node_B.s_l.f1[joystick_enabled_matlab_node_B.c_ret] =
       jc[joystick_enabled_matlab_node_B.c_ret];
     joystick_enabled_matlab_node_B.u.f1[joystick_enabled_matlab_node_B.c_ret] =
       kc[joystick_enabled_matlab_node_B.c_ret];
@@ -1011,7 +1011,7 @@ void joystick_enabled_matlab_node::joystick_e_executeDurationTrick(real_T
   joystick_enabled_matlab_node_B.varargin_2[3] =
     joystick_enabled_matlab_node_B.r;
   joystick_enabled_matlab_node_B.varargin_2[4] =
-    joystick_enabled_matlab_node_B.s_d;
+    joystick_enabled_matlab_node_B.s_l;
   joystick_enabled_matlab_node_B.varargin_2[5] =
     joystick_enabled_matlab_node_B.u;
   joystick_enabled_matlab_node_B.varargin_2[6] =
@@ -1731,340 +1731,340 @@ void joystick_enabled_matlab_node::joystick_e_executeDurationTrick(real_T
   }
 }
 
-// Function for MATLAB Function: '<S26>/guidanceLaw'
+// Function for MATLAB Function: '<S25>/guidanceLaw'
 real_T joystick_enabled_matlab_node::joystick_enabled_matlab_no_norm(const
   real_T x[2])
 {
   real_T y;
   joystick_enabled_matlab_node_B.scale_a = 3.3121686421112381E-170;
-  joystick_enabled_matlab_node_B.absxk_i = std::abs(x[0]);
-  if (joystick_enabled_matlab_node_B.absxk_i > 3.3121686421112381E-170) {
+  joystick_enabled_matlab_node_B.absxk_a = std::abs(x[0]);
+  if (joystick_enabled_matlab_node_B.absxk_a > 3.3121686421112381E-170) {
     y = 1.0;
     joystick_enabled_matlab_node_B.scale_a =
-      joystick_enabled_matlab_node_B.absxk_i;
+      joystick_enabled_matlab_node_B.absxk_a;
   } else {
-    joystick_enabled_matlab_node_B.t_l = joystick_enabled_matlab_node_B.absxk_i /
+    joystick_enabled_matlab_node_B.t_i = joystick_enabled_matlab_node_B.absxk_a /
       3.3121686421112381E-170;
-    y = joystick_enabled_matlab_node_B.t_l * joystick_enabled_matlab_node_B.t_l;
+    y = joystick_enabled_matlab_node_B.t_i * joystick_enabled_matlab_node_B.t_i;
   }
 
-  joystick_enabled_matlab_node_B.absxk_i = std::abs(x[1]);
-  if (joystick_enabled_matlab_node_B.absxk_i >
+  joystick_enabled_matlab_node_B.absxk_a = std::abs(x[1]);
+  if (joystick_enabled_matlab_node_B.absxk_a >
       joystick_enabled_matlab_node_B.scale_a) {
-    joystick_enabled_matlab_node_B.t_l = joystick_enabled_matlab_node_B.scale_a /
-      joystick_enabled_matlab_node_B.absxk_i;
-    y = y * joystick_enabled_matlab_node_B.t_l *
-      joystick_enabled_matlab_node_B.t_l + 1.0;
+    joystick_enabled_matlab_node_B.t_i = joystick_enabled_matlab_node_B.scale_a /
+      joystick_enabled_matlab_node_B.absxk_a;
+    y = y * joystick_enabled_matlab_node_B.t_i *
+      joystick_enabled_matlab_node_B.t_i + 1.0;
     joystick_enabled_matlab_node_B.scale_a =
-      joystick_enabled_matlab_node_B.absxk_i;
+      joystick_enabled_matlab_node_B.absxk_a;
   } else {
-    joystick_enabled_matlab_node_B.t_l = joystick_enabled_matlab_node_B.absxk_i /
+    joystick_enabled_matlab_node_B.t_i = joystick_enabled_matlab_node_B.absxk_a /
       joystick_enabled_matlab_node_B.scale_a;
-    y += joystick_enabled_matlab_node_B.t_l * joystick_enabled_matlab_node_B.t_l;
+    y += joystick_enabled_matlab_node_B.t_i * joystick_enabled_matlab_node_B.t_i;
   }
 
   return joystick_enabled_matlab_node_B.scale_a * std::sqrt(y);
 }
 
-// Function for MATLAB Function: '<S26>/quatInjector'
+// Function for MATLAB Function: '<S25>/quatInjector'
 void joystick_enabled_matlab_node::joystick_enabled_matl_eulToQuat(const real_T
   Eul[3], real_T qib[4])
 {
-  joystick_enabled_matlab_node_B.eta_c = std::cos(Eul[1]);
-  joystick_enabled_matlab_node_B.scale_m = std::sin(Eul[1]);
-  joystick_enabled_matlab_node_B.b_t_j = std::cos(Eul[2]);
-  joystick_enabled_matlab_node_B.rotm_tmp_h = std::sin(Eul[2]);
-  joystick_enabled_matlab_node_B.eps_idx_1_p = std::sin(Eul[0]);
-  joystick_enabled_matlab_node_B.rotm_tmp_c = std::cos(Eul[0]);
-  joystick_enabled_matlab_node_B.rotm_idx_0_a =
-    joystick_enabled_matlab_node_B.eta_c * joystick_enabled_matlab_node_B.b_t_j;
+  joystick_enabled_matlab_node_B.eta_m = std::cos(Eul[1]);
+  joystick_enabled_matlab_node_B.scale_c = std::sin(Eul[1]);
+  joystick_enabled_matlab_node_B.b_t_m = std::cos(Eul[2]);
+  joystick_enabled_matlab_node_B.rotm_tmp_j = std::sin(Eul[2]);
+  joystick_enabled_matlab_node_B.eps_idx_1_c = std::sin(Eul[0]);
+  joystick_enabled_matlab_node_B.rotm_tmp_h = std::cos(Eul[0]);
+  joystick_enabled_matlab_node_B.rotm_idx_0_p =
+    joystick_enabled_matlab_node_B.eta_m * joystick_enabled_matlab_node_B.b_t_m;
   joystick_enabled_matlab_node_B.eps_idx_2_p =
-    joystick_enabled_matlab_node_B.eta_c *
-    joystick_enabled_matlab_node_B.rotm_tmp_h;
-  joystick_enabled_matlab_node_B.rotm_idx_4_tmp_a =
-    joystick_enabled_matlab_node_B.eps_idx_1_p *
-    joystick_enabled_matlab_node_B.scale_m;
+    joystick_enabled_matlab_node_B.eta_m *
+    joystick_enabled_matlab_node_B.rotm_tmp_j;
+  joystick_enabled_matlab_node_B.rotm_idx_4_tmp_e =
+    joystick_enabled_matlab_node_B.eps_idx_1_c *
+    joystick_enabled_matlab_node_B.scale_c;
   joystick_enabled_matlab_node_B.eps_idx_0_c =
-    joystick_enabled_matlab_node_B.rotm_idx_4_tmp_a *
-    joystick_enabled_matlab_node_B.rotm_tmp_h +
-    joystick_enabled_matlab_node_B.rotm_tmp_c *
-    joystick_enabled_matlab_node_B.b_t_j;
+    joystick_enabled_matlab_node_B.rotm_idx_4_tmp_e *
+    joystick_enabled_matlab_node_B.rotm_tmp_j +
+    joystick_enabled_matlab_node_B.rotm_tmp_h *
+    joystick_enabled_matlab_node_B.b_t_m;
   joystick_enabled_matlab_node_B.absxk_m =
-    joystick_enabled_matlab_node_B.eps_idx_1_p *
-    joystick_enabled_matlab_node_B.eta_c;
-  joystick_enabled_matlab_node_B.rotm_idx_8_e =
-    joystick_enabled_matlab_node_B.rotm_tmp_c *
-    joystick_enabled_matlab_node_B.eta_c;
-  joystick_enabled_matlab_node_B.eta_c = std::sqrt
-    (((joystick_enabled_matlab_node_B.rotm_idx_0_a +
+    joystick_enabled_matlab_node_B.eps_idx_1_c *
+    joystick_enabled_matlab_node_B.eta_m;
+  joystick_enabled_matlab_node_B.rotm_idx_8_a =
+    joystick_enabled_matlab_node_B.rotm_tmp_h *
+    joystick_enabled_matlab_node_B.eta_m;
+  joystick_enabled_matlab_node_B.eta_m = std::sqrt
+    (((joystick_enabled_matlab_node_B.rotm_idx_0_p +
        joystick_enabled_matlab_node_B.eps_idx_0_c) +
-      joystick_enabled_matlab_node_B.rotm_idx_8_e) + 1.0) / 2.0;
-  if (joystick_enabled_matlab_node_B.eta_c != 0.0) {
-    joystick_enabled_matlab_node_B.rotm_idx_0_a =
-      joystick_enabled_matlab_node_B.rotm_tmp_c *
-      joystick_enabled_matlab_node_B.scale_m;
-    joystick_enabled_matlab_node_B.rotm_idx_8_e = 4.0 *
-      joystick_enabled_matlab_node_B.eta_c;
+      joystick_enabled_matlab_node_B.rotm_idx_8_a) + 1.0) / 2.0;
+  if (joystick_enabled_matlab_node_B.eta_m != 0.0) {
+    joystick_enabled_matlab_node_B.rotm_idx_0_p =
+      joystick_enabled_matlab_node_B.rotm_tmp_h *
+      joystick_enabled_matlab_node_B.scale_c;
+    joystick_enabled_matlab_node_B.rotm_idx_8_a = 4.0 *
+      joystick_enabled_matlab_node_B.eta_m;
     joystick_enabled_matlab_node_B.eps_idx_0_c =
       (joystick_enabled_matlab_node_B.absxk_m -
-       (joystick_enabled_matlab_node_B.rotm_idx_0_a *
-        joystick_enabled_matlab_node_B.rotm_tmp_h -
-        joystick_enabled_matlab_node_B.eps_idx_1_p *
-        joystick_enabled_matlab_node_B.b_t_j)) /
-      joystick_enabled_matlab_node_B.rotm_idx_8_e;
-    joystick_enabled_matlab_node_B.eps_idx_1_p =
-      ((joystick_enabled_matlab_node_B.rotm_idx_0_a *
-        joystick_enabled_matlab_node_B.b_t_j +
-        joystick_enabled_matlab_node_B.eps_idx_1_p *
-        joystick_enabled_matlab_node_B.rotm_tmp_h) -
-       (-joystick_enabled_matlab_node_B.scale_m)) /
-      joystick_enabled_matlab_node_B.rotm_idx_8_e;
+       (joystick_enabled_matlab_node_B.rotm_idx_0_p *
+        joystick_enabled_matlab_node_B.rotm_tmp_j -
+        joystick_enabled_matlab_node_B.eps_idx_1_c *
+        joystick_enabled_matlab_node_B.b_t_m)) /
+      joystick_enabled_matlab_node_B.rotm_idx_8_a;
+    joystick_enabled_matlab_node_B.eps_idx_1_c =
+      ((joystick_enabled_matlab_node_B.rotm_idx_0_p *
+        joystick_enabled_matlab_node_B.b_t_m +
+        joystick_enabled_matlab_node_B.eps_idx_1_c *
+        joystick_enabled_matlab_node_B.rotm_tmp_j) -
+       (-joystick_enabled_matlab_node_B.scale_c)) /
+      joystick_enabled_matlab_node_B.rotm_idx_8_a;
     joystick_enabled_matlab_node_B.eps_idx_2_p =
       (joystick_enabled_matlab_node_B.eps_idx_2_p -
-       (joystick_enabled_matlab_node_B.rotm_idx_4_tmp_a *
-        joystick_enabled_matlab_node_B.b_t_j -
-        joystick_enabled_matlab_node_B.rotm_tmp_c *
-        joystick_enabled_matlab_node_B.rotm_tmp_h)) /
-      joystick_enabled_matlab_node_B.rotm_idx_8_e;
+       (joystick_enabled_matlab_node_B.rotm_idx_4_tmp_e *
+        joystick_enabled_matlab_node_B.b_t_m -
+        joystick_enabled_matlab_node_B.rotm_tmp_h *
+        joystick_enabled_matlab_node_B.rotm_tmp_j)) /
+      joystick_enabled_matlab_node_B.rotm_idx_8_a;
   } else {
-    joystick_enabled_matlab_node_B.b_t_j =
-      (joystick_enabled_matlab_node_B.rotm_idx_0_a + 1.0) / 2.0;
-    joystick_enabled_matlab_node_B.x_j[0] = joystick_enabled_matlab_node_B.b_t_j;
-    joystick_enabled_matlab_node_B.eps_idx_1_p =
+    joystick_enabled_matlab_node_B.b_t_m =
+      (joystick_enabled_matlab_node_B.rotm_idx_0_p + 1.0) / 2.0;
+    joystick_enabled_matlab_node_B.x_j[0] = joystick_enabled_matlab_node_B.b_t_m;
+    joystick_enabled_matlab_node_B.eps_idx_1_c =
       (joystick_enabled_matlab_node_B.eps_idx_0_c + 1.0) / 2.0;
     joystick_enabled_matlab_node_B.x_j[1] =
-      joystick_enabled_matlab_node_B.eps_idx_1_p;
-    joystick_enabled_matlab_node_B.rotm_tmp_h =
-      (joystick_enabled_matlab_node_B.rotm_idx_8_e + 1.0) / 2.0;
+      joystick_enabled_matlab_node_B.eps_idx_1_c;
+    joystick_enabled_matlab_node_B.rotm_tmp_j =
+      (joystick_enabled_matlab_node_B.rotm_idx_8_a + 1.0) / 2.0;
     joystick_enabled_matlab_node_B.x_j[2] =
-      joystick_enabled_matlab_node_B.rotm_tmp_h;
-    if (!std::isnan(joystick_enabled_matlab_node_B.b_t_j)) {
-      joystick_enabled_matlab_node_B.idx_c = 1;
+      joystick_enabled_matlab_node_B.rotm_tmp_j;
+    if (!std::isnan(joystick_enabled_matlab_node_B.b_t_m)) {
+      joystick_enabled_matlab_node_B.idx_g = 1;
     } else {
       boolean_T exitg1;
-      joystick_enabled_matlab_node_B.idx_c = 0;
-      joystick_enabled_matlab_node_B.b_k_o = 2;
+      joystick_enabled_matlab_node_B.idx_g = 0;
+      joystick_enabled_matlab_node_B.b_k_c = 2;
       exitg1 = false;
-      while ((!exitg1) && (joystick_enabled_matlab_node_B.b_k_o < 4)) {
+      while ((!exitg1) && (joystick_enabled_matlab_node_B.b_k_c < 4)) {
         if (!std::isnan
-            (joystick_enabled_matlab_node_B.x_j[joystick_enabled_matlab_node_B.b_k_o
+            (joystick_enabled_matlab_node_B.x_j[joystick_enabled_matlab_node_B.b_k_c
              - 1])) {
-          joystick_enabled_matlab_node_B.idx_c =
-            joystick_enabled_matlab_node_B.b_k_o;
+          joystick_enabled_matlab_node_B.idx_g =
+            joystick_enabled_matlab_node_B.b_k_c;
           exitg1 = true;
         } else {
-          joystick_enabled_matlab_node_B.b_k_o++;
+          joystick_enabled_matlab_node_B.b_k_c++;
         }
       }
     }
 
-    if (joystick_enabled_matlab_node_B.idx_c == 0) {
-      joystick_enabled_matlab_node_B.b_k_o = 1;
+    if (joystick_enabled_matlab_node_B.idx_g == 0) {
+      joystick_enabled_matlab_node_B.b_k_c = 1;
     } else {
       joystick_enabled_matlab_node_B.eps_idx_0_c =
-        joystick_enabled_matlab_node_B.x_j[joystick_enabled_matlab_node_B.idx_c
+        joystick_enabled_matlab_node_B.x_j[joystick_enabled_matlab_node_B.idx_g
         - 1];
-      joystick_enabled_matlab_node_B.b_k_o =
-        joystick_enabled_matlab_node_B.idx_c;
-      for (joystick_enabled_matlab_node_B.c_k_l =
-           joystick_enabled_matlab_node_B.idx_c + 1;
-           joystick_enabled_matlab_node_B.c_k_l < 4;
-           joystick_enabled_matlab_node_B.c_k_l++) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c =
-          joystick_enabled_matlab_node_B.x_j[joystick_enabled_matlab_node_B.c_k_l
+      joystick_enabled_matlab_node_B.b_k_c =
+        joystick_enabled_matlab_node_B.idx_g;
+      for (joystick_enabled_matlab_node_B.c_k_o =
+           joystick_enabled_matlab_node_B.idx_g + 1;
+           joystick_enabled_matlab_node_B.c_k_o < 4;
+           joystick_enabled_matlab_node_B.c_k_o++) {
+        joystick_enabled_matlab_node_B.rotm_tmp_h =
+          joystick_enabled_matlab_node_B.x_j[joystick_enabled_matlab_node_B.c_k_o
           - 1];
         if (joystick_enabled_matlab_node_B.eps_idx_0_c <
-            joystick_enabled_matlab_node_B.rotm_tmp_c) {
+            joystick_enabled_matlab_node_B.rotm_tmp_h) {
           joystick_enabled_matlab_node_B.eps_idx_0_c =
-            joystick_enabled_matlab_node_B.rotm_tmp_c;
-          joystick_enabled_matlab_node_B.b_k_o =
-            joystick_enabled_matlab_node_B.c_k_l;
+            joystick_enabled_matlab_node_B.rotm_tmp_h;
+          joystick_enabled_matlab_node_B.b_k_c =
+            joystick_enabled_matlab_node_B.c_k_o;
         }
       }
     }
 
-    switch (joystick_enabled_matlab_node_B.b_k_o) {
+    switch (joystick_enabled_matlab_node_B.b_k_c) {
      case 1:
       joystick_enabled_matlab_node_B.eps_idx_0_c = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.b_t_j));
+        joystick_enabled_matlab_node_B.b_t_m));
       if (std::isnan(joystick_enabled_matlab_node_B.eps_idx_2_p)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = (rtNaN);
+        joystick_enabled_matlab_node_B.rotm_tmp_h = (rtNaN);
       } else if (joystick_enabled_matlab_node_B.eps_idx_2_p < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_h = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_c =
+        joystick_enabled_matlab_node_B.rotm_tmp_h =
           (joystick_enabled_matlab_node_B.eps_idx_2_p > 0.0);
       }
 
-      joystick_enabled_matlab_node_B.eps_idx_1_p = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.eps_idx_1_p)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_c;
-      if (std::isnan(-joystick_enabled_matlab_node_B.scale_m)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = (rtNaN);
-      } else if (-joystick_enabled_matlab_node_B.scale_m < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = -1.0;
+      joystick_enabled_matlab_node_B.eps_idx_1_c = std::sqrt(std::fmax(0.0,
+        joystick_enabled_matlab_node_B.eps_idx_1_c)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_h;
+      if (std::isnan(-joystick_enabled_matlab_node_B.scale_c)) {
+        joystick_enabled_matlab_node_B.rotm_tmp_h = (rtNaN);
+      } else if (-joystick_enabled_matlab_node_B.scale_c < 0.0) {
+        joystick_enabled_matlab_node_B.rotm_tmp_h = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_c =
-          (-joystick_enabled_matlab_node_B.scale_m > 0.0);
+        joystick_enabled_matlab_node_B.rotm_tmp_h =
+          (-joystick_enabled_matlab_node_B.scale_c > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_2_p = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.rotm_tmp_h)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_c;
+        joystick_enabled_matlab_node_B.rotm_tmp_j)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_h;
       break;
 
      case 2:
-      joystick_enabled_matlab_node_B.eps_idx_1_p = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.eps_idx_1_p));
+      joystick_enabled_matlab_node_B.eps_idx_1_c = std::sqrt(std::fmax(0.0,
+        joystick_enabled_matlab_node_B.eps_idx_1_c));
       if (std::isnan(joystick_enabled_matlab_node_B.eps_idx_2_p)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = (rtNaN);
+        joystick_enabled_matlab_node_B.rotm_tmp_h = (rtNaN);
       } else if (joystick_enabled_matlab_node_B.eps_idx_2_p < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_h = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_c =
+        joystick_enabled_matlab_node_B.rotm_tmp_h =
           (joystick_enabled_matlab_node_B.eps_idx_2_p > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_0_c = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.b_t_j)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_c;
+        joystick_enabled_matlab_node_B.b_t_m)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_h;
       if (std::isnan(joystick_enabled_matlab_node_B.absxk_m)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = (rtNaN);
+        joystick_enabled_matlab_node_B.rotm_tmp_h = (rtNaN);
       } else if (joystick_enabled_matlab_node_B.absxk_m < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_h = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_c =
+        joystick_enabled_matlab_node_B.rotm_tmp_h =
           (joystick_enabled_matlab_node_B.absxk_m > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_2_p = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.rotm_tmp_h)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_c;
+        joystick_enabled_matlab_node_B.rotm_tmp_j)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_h;
       break;
 
      default:
       joystick_enabled_matlab_node_B.eps_idx_2_p = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.rotm_tmp_h));
-      if (std::isnan(-joystick_enabled_matlab_node_B.scale_m)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = (rtNaN);
-      } else if (-joystick_enabled_matlab_node_B.scale_m < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_j));
+      if (std::isnan(-joystick_enabled_matlab_node_B.scale_c)) {
+        joystick_enabled_matlab_node_B.rotm_tmp_h = (rtNaN);
+      } else if (-joystick_enabled_matlab_node_B.scale_c < 0.0) {
+        joystick_enabled_matlab_node_B.rotm_tmp_h = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_c =
-          (-joystick_enabled_matlab_node_B.scale_m > 0.0);
+        joystick_enabled_matlab_node_B.rotm_tmp_h =
+          (-joystick_enabled_matlab_node_B.scale_c > 0.0);
       }
 
       joystick_enabled_matlab_node_B.eps_idx_0_c = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.b_t_j)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_c;
+        joystick_enabled_matlab_node_B.b_t_m)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_h;
       if (std::isnan(joystick_enabled_matlab_node_B.absxk_m)) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = (rtNaN);
+        joystick_enabled_matlab_node_B.rotm_tmp_h = (rtNaN);
       } else if (joystick_enabled_matlab_node_B.absxk_m < 0.0) {
-        joystick_enabled_matlab_node_B.rotm_tmp_c = -1.0;
+        joystick_enabled_matlab_node_B.rotm_tmp_h = -1.0;
       } else {
-        joystick_enabled_matlab_node_B.rotm_tmp_c =
+        joystick_enabled_matlab_node_B.rotm_tmp_h =
           (joystick_enabled_matlab_node_B.absxk_m > 0.0);
       }
 
-      joystick_enabled_matlab_node_B.eps_idx_1_p = std::sqrt(std::fmax(0.0,
-        joystick_enabled_matlab_node_B.eps_idx_1_p)) *
-        joystick_enabled_matlab_node_B.rotm_tmp_c;
+      joystick_enabled_matlab_node_B.eps_idx_1_c = std::sqrt(std::fmax(0.0,
+        joystick_enabled_matlab_node_B.eps_idx_1_c)) *
+        joystick_enabled_matlab_node_B.rotm_tmp_h;
       break;
     }
   }
 
-  joystick_enabled_matlab_node_B.scale_m = 3.3121686421112381E-170;
+  joystick_enabled_matlab_node_B.scale_c = 3.3121686421112381E-170;
   joystick_enabled_matlab_node_B.absxk_m = std::abs
     (joystick_enabled_matlab_node_B.eps_idx_0_c);
   if (joystick_enabled_matlab_node_B.absxk_m > 3.3121686421112381E-170) {
-    joystick_enabled_matlab_node_B.rotm_tmp_h = 1.0;
-    joystick_enabled_matlab_node_B.scale_m =
+    joystick_enabled_matlab_node_B.rotm_tmp_j = 1.0;
+    joystick_enabled_matlab_node_B.scale_c =
       joystick_enabled_matlab_node_B.absxk_m;
   } else {
-    joystick_enabled_matlab_node_B.b_t_j =
+    joystick_enabled_matlab_node_B.b_t_m =
       joystick_enabled_matlab_node_B.absxk_m / 3.3121686421112381E-170;
-    joystick_enabled_matlab_node_B.rotm_tmp_h =
-      joystick_enabled_matlab_node_B.b_t_j *
-      joystick_enabled_matlab_node_B.b_t_j;
+    joystick_enabled_matlab_node_B.rotm_tmp_j =
+      joystick_enabled_matlab_node_B.b_t_m *
+      joystick_enabled_matlab_node_B.b_t_m;
   }
 
   joystick_enabled_matlab_node_B.absxk_m = std::abs
-    (joystick_enabled_matlab_node_B.eps_idx_1_p);
+    (joystick_enabled_matlab_node_B.eps_idx_1_c);
   if (joystick_enabled_matlab_node_B.absxk_m >
-      joystick_enabled_matlab_node_B.scale_m) {
-    joystick_enabled_matlab_node_B.b_t_j =
-      joystick_enabled_matlab_node_B.scale_m /
+      joystick_enabled_matlab_node_B.scale_c) {
+    joystick_enabled_matlab_node_B.b_t_m =
+      joystick_enabled_matlab_node_B.scale_c /
       joystick_enabled_matlab_node_B.absxk_m;
-    joystick_enabled_matlab_node_B.rotm_tmp_h =
-      joystick_enabled_matlab_node_B.rotm_tmp_h *
-      joystick_enabled_matlab_node_B.b_t_j *
-      joystick_enabled_matlab_node_B.b_t_j + 1.0;
-    joystick_enabled_matlab_node_B.scale_m =
+    joystick_enabled_matlab_node_B.rotm_tmp_j =
+      joystick_enabled_matlab_node_B.rotm_tmp_j *
+      joystick_enabled_matlab_node_B.b_t_m *
+      joystick_enabled_matlab_node_B.b_t_m + 1.0;
+    joystick_enabled_matlab_node_B.scale_c =
       joystick_enabled_matlab_node_B.absxk_m;
   } else {
-    joystick_enabled_matlab_node_B.b_t_j =
+    joystick_enabled_matlab_node_B.b_t_m =
       joystick_enabled_matlab_node_B.absxk_m /
-      joystick_enabled_matlab_node_B.scale_m;
-    joystick_enabled_matlab_node_B.rotm_tmp_h +=
-      joystick_enabled_matlab_node_B.b_t_j *
-      joystick_enabled_matlab_node_B.b_t_j;
+      joystick_enabled_matlab_node_B.scale_c;
+    joystick_enabled_matlab_node_B.rotm_tmp_j +=
+      joystick_enabled_matlab_node_B.b_t_m *
+      joystick_enabled_matlab_node_B.b_t_m;
   }
 
   joystick_enabled_matlab_node_B.absxk_m = std::abs
     (joystick_enabled_matlab_node_B.eps_idx_2_p);
   if (joystick_enabled_matlab_node_B.absxk_m >
-      joystick_enabled_matlab_node_B.scale_m) {
-    joystick_enabled_matlab_node_B.b_t_j =
-      joystick_enabled_matlab_node_B.scale_m /
+      joystick_enabled_matlab_node_B.scale_c) {
+    joystick_enabled_matlab_node_B.b_t_m =
+      joystick_enabled_matlab_node_B.scale_c /
       joystick_enabled_matlab_node_B.absxk_m;
-    joystick_enabled_matlab_node_B.rotm_tmp_h =
-      joystick_enabled_matlab_node_B.rotm_tmp_h *
-      joystick_enabled_matlab_node_B.b_t_j *
-      joystick_enabled_matlab_node_B.b_t_j + 1.0;
-    joystick_enabled_matlab_node_B.scale_m =
+    joystick_enabled_matlab_node_B.rotm_tmp_j =
+      joystick_enabled_matlab_node_B.rotm_tmp_j *
+      joystick_enabled_matlab_node_B.b_t_m *
+      joystick_enabled_matlab_node_B.b_t_m + 1.0;
+    joystick_enabled_matlab_node_B.scale_c =
       joystick_enabled_matlab_node_B.absxk_m;
   } else {
-    joystick_enabled_matlab_node_B.b_t_j =
+    joystick_enabled_matlab_node_B.b_t_m =
       joystick_enabled_matlab_node_B.absxk_m /
-      joystick_enabled_matlab_node_B.scale_m;
-    joystick_enabled_matlab_node_B.rotm_tmp_h +=
-      joystick_enabled_matlab_node_B.b_t_j *
-      joystick_enabled_matlab_node_B.b_t_j;
+      joystick_enabled_matlab_node_B.scale_c;
+    joystick_enabled_matlab_node_B.rotm_tmp_j +=
+      joystick_enabled_matlab_node_B.b_t_m *
+      joystick_enabled_matlab_node_B.b_t_m;
   }
 
-  if (joystick_enabled_matlab_node_B.eta_c >
-      joystick_enabled_matlab_node_B.scale_m) {
-    joystick_enabled_matlab_node_B.b_t_j =
-      joystick_enabled_matlab_node_B.scale_m /
-      joystick_enabled_matlab_node_B.eta_c;
-    joystick_enabled_matlab_node_B.rotm_tmp_h =
-      joystick_enabled_matlab_node_B.rotm_tmp_h *
-      joystick_enabled_matlab_node_B.b_t_j *
-      joystick_enabled_matlab_node_B.b_t_j + 1.0;
-    joystick_enabled_matlab_node_B.scale_m =
-      joystick_enabled_matlab_node_B.eta_c;
+  if (joystick_enabled_matlab_node_B.eta_m >
+      joystick_enabled_matlab_node_B.scale_c) {
+    joystick_enabled_matlab_node_B.b_t_m =
+      joystick_enabled_matlab_node_B.scale_c /
+      joystick_enabled_matlab_node_B.eta_m;
+    joystick_enabled_matlab_node_B.rotm_tmp_j =
+      joystick_enabled_matlab_node_B.rotm_tmp_j *
+      joystick_enabled_matlab_node_B.b_t_m *
+      joystick_enabled_matlab_node_B.b_t_m + 1.0;
+    joystick_enabled_matlab_node_B.scale_c =
+      joystick_enabled_matlab_node_B.eta_m;
   } else {
-    joystick_enabled_matlab_node_B.b_t_j = joystick_enabled_matlab_node_B.eta_c /
-      joystick_enabled_matlab_node_B.scale_m;
-    joystick_enabled_matlab_node_B.rotm_tmp_h +=
-      joystick_enabled_matlab_node_B.b_t_j *
-      joystick_enabled_matlab_node_B.b_t_j;
+    joystick_enabled_matlab_node_B.b_t_m = joystick_enabled_matlab_node_B.eta_m /
+      joystick_enabled_matlab_node_B.scale_c;
+    joystick_enabled_matlab_node_B.rotm_tmp_j +=
+      joystick_enabled_matlab_node_B.b_t_m *
+      joystick_enabled_matlab_node_B.b_t_m;
   }
 
-  joystick_enabled_matlab_node_B.rotm_tmp_h =
-    joystick_enabled_matlab_node_B.scale_m * std::sqrt
-    (joystick_enabled_matlab_node_B.rotm_tmp_h);
+  joystick_enabled_matlab_node_B.rotm_tmp_j =
+    joystick_enabled_matlab_node_B.scale_c * std::sqrt
+    (joystick_enabled_matlab_node_B.rotm_tmp_j);
   qib[0] = joystick_enabled_matlab_node_B.eps_idx_0_c /
-    joystick_enabled_matlab_node_B.rotm_tmp_h;
-  qib[1] = joystick_enabled_matlab_node_B.eps_idx_1_p /
-    joystick_enabled_matlab_node_B.rotm_tmp_h;
+    joystick_enabled_matlab_node_B.rotm_tmp_j;
+  qib[1] = joystick_enabled_matlab_node_B.eps_idx_1_c /
+    joystick_enabled_matlab_node_B.rotm_tmp_j;
   qib[2] = joystick_enabled_matlab_node_B.eps_idx_2_p /
-    joystick_enabled_matlab_node_B.rotm_tmp_h;
-  qib[3] = joystick_enabled_matlab_node_B.eta_c /
-    joystick_enabled_matlab_node_B.rotm_tmp_h;
+    joystick_enabled_matlab_node_B.rotm_tmp_j;
+  qib[3] = joystick_enabled_matlab_node_B.eta_m /
+    joystick_enabled_matlab_node_B.rotm_tmp_j;
 }
 
-// Function for MATLAB Function: '<S26>/rateInjector'
+// Function for MATLAB Function: '<S25>/rateInjector'
 boolean_T joystick_enabled_matlab_node::joystick_enabled_matlab_isequal(const
   char_T varargin_1[16])
 {
@@ -2076,15 +2076,15 @@ boolean_T joystick_enabled_matlab_node::joystick_enabled_matlab_isequal(const
   boolean_T exitg1;
   p = false;
   b_p = true;
-  joystick_enabled_matlab_node_B.k_f = 0;
+  joystick_enabled_matlab_node_B.k_c = 0;
   exitg1 = false;
-  while ((!exitg1) && (joystick_enabled_matlab_node_B.k_f < 16)) {
-    if (varargin_1[joystick_enabled_matlab_node_B.k_f] !=
-        b[joystick_enabled_matlab_node_B.k_f]) {
+  while ((!exitg1) && (joystick_enabled_matlab_node_B.k_c < 16)) {
+    if (varargin_1[joystick_enabled_matlab_node_B.k_c] !=
+        b[joystick_enabled_matlab_node_B.k_c]) {
       b_p = false;
       exitg1 = true;
     } else {
-      joystick_enabled_matlab_node_B.k_f++;
+      joystick_enabled_matlab_node_B.k_c++;
     }
   }
 
@@ -2095,29 +2095,29 @@ boolean_T joystick_enabled_matlab_node::joystick_enabled_matlab_isequal(const
   return p;
 }
 
-// Function for MATLAB Function: '<S26>/rateInjector'
+// Function for MATLAB Function: '<S25>/rateInjector'
 boolean_T joystick_enabled_matlab_node::joystick_enabled_matlab__strcmp(const
   char_T b[16])
 {
   static const char_T b_a[16]{ 'r', 's', 'f', 'f', '_', 'r', 'o', 'l', 'l', 'R',
     'i', 'g', 'h', 't', '_', '_' };
 
-  joystick_enabled_matlab_node_B.ret_e = std::memcmp(&b_a[0], &b[0], 16);
-  return joystick_enabled_matlab_node_B.ret_e == 0;
+  joystick_enabled_matlab_node_B.ret_p = std::memcmp(&b_a[0], &b[0], 16);
+  return joystick_enabled_matlab_node_B.ret_p == 0;
 }
 
-// Function for MATLAB Function: '<S26>/rateInjector'
+// Function for MATLAB Function: '<S25>/rateInjector'
 boolean_T joystick_enabled_matlab_node::joystick_enabled_matla_strcmp_g(const
   char_T b[16])
 {
   static const char_T b_a[16]{ 'r', 's', 'f', 'f', '_', 'r', 'o', 'l', 'l', 'L',
     'e', 'f', 't', '_', '_', '_' };
 
-  joystick_enabled_matlab_node_B.ret_p = std::memcmp(&b_a[0], &b[0], 16);
-  return joystick_enabled_matlab_node_B.ret_p == 0;
+  joystick_enabled_matlab_node_B.ret_f = std::memcmp(&b_a[0], &b[0], 16);
+  return joystick_enabled_matlab_node_B.ret_f == 0;
 }
 
-// Function for MATLAB Function: '<S26>/rateInjector'
+// Function for MATLAB Function: '<S25>/rateInjector'
 boolean_T joystick_enabled_matlab_node::joystick_enabled_matl_strcmp_gy(const
   char_T b[16])
 {
@@ -2128,7 +2128,7 @@ boolean_T joystick_enabled_matlab_node::joystick_enabled_matl_strcmp_gy(const
   return joystick_enabled_matlab_node_B.ret == 0;
 }
 
-// Function for MATLAB Function: '<S33>/forceToPWMCalculator'
+// Function for MATLAB Function: '<S32>/forceToPWMCalculator'
 void joystick_enabled_matlab_node::joystick_enabled_matlab_minimum(const real_T
   x[6], real_T *ex, int32_T *idx)
 {
@@ -2137,15 +2137,15 @@ void joystick_enabled_matlab_node::joystick_enabled_matlab_minimum(const real_T
   } else {
     boolean_T exitg1;
     joystick_enabled_matlab_node_B.b_idx_m = 0;
-    joystick_enabled_matlab_node_B.k_c = 2;
+    joystick_enabled_matlab_node_B.k_m = 2;
     exitg1 = false;
-    while ((!exitg1) && (joystick_enabled_matlab_node_B.k_c < 7)) {
-      if (!std::isnan(x[joystick_enabled_matlab_node_B.k_c - 1])) {
+    while ((!exitg1) && (joystick_enabled_matlab_node_B.k_m < 7)) {
+      if (!std::isnan(x[joystick_enabled_matlab_node_B.k_m - 1])) {
         joystick_enabled_matlab_node_B.b_idx_m =
-          joystick_enabled_matlab_node_B.k_c;
+          joystick_enabled_matlab_node_B.k_m;
         exitg1 = true;
       } else {
-        joystick_enabled_matlab_node_B.k_c++;
+        joystick_enabled_matlab_node_B.k_m++;
       }
     }
   }
@@ -2156,21 +2156,21 @@ void joystick_enabled_matlab_node::joystick_enabled_matlab_minimum(const real_T
   } else {
     *ex = x[joystick_enabled_matlab_node_B.b_idx_m - 1];
     *idx = joystick_enabled_matlab_node_B.b_idx_m;
-    for (joystick_enabled_matlab_node_B.k_c =
+    for (joystick_enabled_matlab_node_B.k_m =
          joystick_enabled_matlab_node_B.b_idx_m + 1;
-         joystick_enabled_matlab_node_B.k_c < 7;
-         joystick_enabled_matlab_node_B.k_c++) {
-      joystick_enabled_matlab_node_B.x_o2 = x[joystick_enabled_matlab_node_B.k_c
+         joystick_enabled_matlab_node_B.k_m < 7;
+         joystick_enabled_matlab_node_B.k_m++) {
+      joystick_enabled_matlab_node_B.x_o = x[joystick_enabled_matlab_node_B.k_m
         - 1];
-      if (*ex > joystick_enabled_matlab_node_B.x_o2) {
-        *ex = joystick_enabled_matlab_node_B.x_o2;
-        *idx = joystick_enabled_matlab_node_B.k_c;
+      if (*ex > joystick_enabled_matlab_node_B.x_o) {
+        *ex = joystick_enabled_matlab_node_B.x_o;
+        *idx = joystick_enabled_matlab_node_B.k_m;
       }
     }
   }
 }
 
-// Function for MATLAB Function: '<S33>/forceToPWMCalculator'
+// Function for MATLAB Function: '<S32>/forceToPWMCalculator'
 void joystick_enabled_matlab_node::joystick_enabled_matl_minimum_i(const real_T
   x_data[], const int32_T *x_size, real_T *ex, int32_T *idx)
 {
@@ -2194,16 +2194,16 @@ void joystick_enabled_matlab_node::joystick_enabled_matl_minimum_i(const real_T
     } else {
       boolean_T exitg1;
       joystick_enabled_matlab_node_B.b_idx = 0;
-      joystick_enabled_matlab_node_B.k_m = 2;
+      joystick_enabled_matlab_node_B.k_l = 2;
       exitg1 = false;
-      while ((!exitg1) && (joystick_enabled_matlab_node_B.k_m <=
+      while ((!exitg1) && (joystick_enabled_matlab_node_B.k_l <=
                            joystick_enabled_matlab_node_B.last)) {
-        if (!std::isnan(x_data[joystick_enabled_matlab_node_B.k_m - 1])) {
+        if (!std::isnan(x_data[joystick_enabled_matlab_node_B.k_l - 1])) {
           joystick_enabled_matlab_node_B.b_idx =
-            joystick_enabled_matlab_node_B.k_m;
+            joystick_enabled_matlab_node_B.k_l;
           exitg1 = true;
         } else {
-          joystick_enabled_matlab_node_B.k_m++;
+          joystick_enabled_matlab_node_B.k_l++;
         }
       }
     }
@@ -2214,16 +2214,16 @@ void joystick_enabled_matlab_node::joystick_enabled_matl_minimum_i(const real_T
     } else {
       *ex = x_data[joystick_enabled_matlab_node_B.b_idx - 1];
       *idx = joystick_enabled_matlab_node_B.b_idx;
-      for (joystick_enabled_matlab_node_B.k_m =
+      for (joystick_enabled_matlab_node_B.k_l =
            joystick_enabled_matlab_node_B.b_idx + 1;
-           joystick_enabled_matlab_node_B.k_m <=
+           joystick_enabled_matlab_node_B.k_l <=
            joystick_enabled_matlab_node_B.last;
-           joystick_enabled_matlab_node_B.k_m++) {
-        joystick_enabled_matlab_node_B.x_o =
-          x_data[joystick_enabled_matlab_node_B.k_m - 1];
-        if (*ex > joystick_enabled_matlab_node_B.x_o) {
-          *ex = joystick_enabled_matlab_node_B.x_o;
-          *idx = joystick_enabled_matlab_node_B.k_m;
+           joystick_enabled_matlab_node_B.k_l++) {
+        joystick_enabled_matlab_node_B.x_l =
+          x_data[joystick_enabled_matlab_node_B.k_l - 1];
+        if (*ex > joystick_enabled_matlab_node_B.x_l) {
+          *ex = joystick_enabled_matlab_node_B.x_l;
+          *idx = joystick_enabled_matlab_node_B.k_l;
         }
       }
     }
@@ -2241,7 +2241,7 @@ void joystick_enabled_matlab_node::joystick_en_Publisher_setupImpl(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S23>/SinkBlock'
+  // Start for MATLABSystem: '<S22>/SinkBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -2254,15 +2254,15 @@ void joystick_enabled_matlab_node::joystick_en_Publisher_setupImpl(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 16; i++) {
-    // Start for MATLABSystem: '<S23>/SinkBlock'
-    joystick_enabled_matlab_node_B.b_zeroDelimTopic_b[i] = b_zeroDelimTopic[i];
+    // Start for MATLABSystem: '<S22>/SinkBlock'
+    joystick_enabled_matlab_node_B.b_zeroDelimTopic_o[i] = b_zeroDelimTopic[i];
   }
 
   Pub_joystick_enabled_matlab_node_360_7.createPublisher
-    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_b[0], qos_profile);
+    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_o[0], qos_profile);
 }
 
-void joystick_enabled_matlab_node::joy_Subscriber_setupImpl_oroz0s(const
+void joystick_enabled_matlab_node::joys_Subscriber_setupImpl_oroz0(const
   ros_slros2_internal_block_Sub_T *obj)
 {
   static const char_T b_zeroDelimTopic[16]{ "/ps5_controller" };
@@ -2273,7 +2273,7 @@ void joystick_enabled_matlab_node::joy_Subscriber_setupImpl_oroz0s(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S228>/SourceBlock'
+  // Start for MATLABSystem: '<S224>/SourceBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -2286,12 +2286,12 @@ void joystick_enabled_matlab_node::joy_Subscriber_setupImpl_oroz0s(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 16; i++) {
-    // Start for MATLABSystem: '<S228>/SourceBlock'
-    joystick_enabled_matlab_node_B.b_zeroDelimTopic_o[i] = b_zeroDelimTopic[i];
+    // Start for MATLABSystem: '<S224>/SourceBlock'
+    joystick_enabled_matlab_node_B.b_zeroDelimTopic_l[i] = b_zeroDelimTopic[i];
   }
 
   Sub_joystick_enabled_matlab_node_428.createSubscriber
-    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_o[0], qos_profile);
+    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_l[0], qos_profile);
 }
 
 void joystick_enabled_matlab_node::joystic_Subscriber_setupImpl_or(const
@@ -2306,8 +2306,8 @@ void joystick_enabled_matlab_node::joystic_Subscriber_setupImpl_or(const
   qos_profile = rmw_qos_profile_default;
 
   // Start for MATLABSystem: '<S3>/SourceBlock'
-  joystick_enabled_matlab_node_B.deadline_b.sec = 0.0;
-  joystick_enabled_matlab_node_B.deadline_b.nsec = 0.0;
+  joystick_enabled_matlab_node_B.deadline_n.sec = 0.0;
+  joystick_enabled_matlab_node_B.deadline_n.nsec = 0.0;
   lifespan.sec = 0.0;
   lifespan.nsec = 0.0;
   liveliness_lease_duration.sec = 0.0;
@@ -2315,7 +2315,7 @@ void joystick_enabled_matlab_node::joystic_Subscriber_setupImpl_or(const
   SET_QOS_VALUES(qos_profile, RMW_QOS_POLICY_HISTORY_KEEP_LAST, (size_t)10.0,
                  RMW_QOS_POLICY_DURABILITY_VOLATILE,
                  RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-                 joystick_enabled_matlab_node_B.deadline_b, lifespan,
+                 joystick_enabled_matlab_node_B.deadline_n, lifespan,
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 12; i++) {
@@ -2352,11 +2352,11 @@ void joystick_enabled_matlab_node::joysti_Subscriber_setupImpl_oro(const
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 17; i++) {
     // Start for MATLABSystem: '<S8>/SourceBlock'
-    joystick_enabled_matlab_node_B.b_zeroDelimTopic_l[i] = b_zeroDelimTopic[i];
+    joystick_enabled_matlab_node_B.b_zeroDelimTopic_g[i] = b_zeroDelimTopic[i];
   }
 
   Sub_joystick_enabled_matlab_node_412.createSubscriber
-    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_l[0], qos_profile);
+    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_g[0], qos_profile);
 }
 
 void joystick_enabled_matlab_node::joystick_Subscriber_setupImpl_o(const
@@ -2384,11 +2384,11 @@ void joystick_enabled_matlab_node::joystick_Subscriber_setupImpl_o(const
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 18; i++) {
     // Start for MATLABSystem: '<S2>/SourceBlock'
-    joystick_enabled_matlab_node_B.b_zeroDelimTopic_g[i] = b_zeroDelimTopic[i];
+    joystick_enabled_matlab_node_B.b_zeroDelimTopic_d[i] = b_zeroDelimTopic[i];
   }
 
   Sub_joystick_enabled_matlab_node_363.createSubscriber
-    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_g[0], qos_profile);
+    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_d[0], qos_profile);
 }
 
 void joystick_enabled_matlab_node::joystick_e_Subscriber_setupImpl(const
@@ -2402,9 +2402,9 @@ void joystick_enabled_matlab_node::joystick_e_Subscriber_setupImpl(const
   char_T b_zeroDelimTopic[13];
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S18>/SourceBlock'
-  joystick_enabled_matlab_node_B.deadline_n.sec = 0.0;
-  joystick_enabled_matlab_node_B.deadline_n.nsec = 0.0;
+  // Start for MATLABSystem: '<S17>/SourceBlock'
+  joystick_enabled_matlab_node_B.deadline_b.sec = 0.0;
+  joystick_enabled_matlab_node_B.deadline_b.nsec = 0.0;
   lifespan.sec = 0.0;
   lifespan.nsec = 0.0;
   liveliness_lease_duration.sec = 0.0;
@@ -2412,11 +2412,11 @@ void joystick_enabled_matlab_node::joystick_e_Subscriber_setupImpl(const
   SET_QOS_VALUES(qos_profile, RMW_QOS_POLICY_HISTORY_KEEP_LAST, (size_t)10.0,
                  RMW_QOS_POLICY_DURABILITY_VOLATILE,
                  RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-                 joystick_enabled_matlab_node_B.deadline_n, lifespan,
+                 joystick_enabled_matlab_node_B.deadline_b, lifespan,
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 13; i++) {
-    // Start for MATLABSystem: '<S18>/SourceBlock'
+    // Start for MATLABSystem: '<S17>/SourceBlock'
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
 
@@ -2435,7 +2435,7 @@ void joystick_enabled_matlab_node::joyst_Subscriber_setupImpl_oroz(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S222>/SourceBlock'
+  // Start for MATLABSystem: '<S221>/SourceBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -2448,43 +2448,11 @@ void joystick_enabled_matlab_node::joyst_Subscriber_setupImpl_oroz(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 18; i++) {
-    // Start for MATLABSystem: '<S222>/SourceBlock'
-    joystick_enabled_matlab_node_B.b_zeroDelimTopic_d[i] = b_zeroDelimTopic[i];
-  }
-
-  Sub_joystick_enabled_matlab_node_416.createSubscriber
-    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_d[0], qos_profile);
-}
-
-void joystick_enabled_matlab_node::joys_Subscriber_setupImpl_oroz0(const
-  ros_slros2_internal_block_Sub_T *obj)
-{
-  static const char_T b_zeroDelimTopic[20]{ "/joystick_heartbeat" };
-
-  rmw_qos_profile_t qos_profile;
-  sJ4ih70VmKcvCeguWN0mNVF deadline;
-  sJ4ih70VmKcvCeguWN0mNVF lifespan;
-  sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
-  qos_profile = rmw_qos_profile_default;
-
-  // Start for MATLABSystem: '<S225>/SourceBlock'
-  deadline.sec = 0.0;
-  deadline.nsec = 0.0;
-  lifespan.sec = 0.0;
-  lifespan.nsec = 0.0;
-  liveliness_lease_duration.sec = 0.0;
-  liveliness_lease_duration.nsec = 0.0;
-  SET_QOS_VALUES(qos_profile, RMW_QOS_POLICY_HISTORY_KEEP_LAST, (size_t)10.0,
-                 RMW_QOS_POLICY_DURABILITY_VOLATILE,
-                 RMW_QOS_POLICY_RELIABILITY_RELIABLE, deadline, lifespan,
-                 RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
-                 (bool)obj->QOSAvoidROSNamespaceConventions);
-  for (int32_T i{0}; i < 20; i++) {
-    // Start for MATLABSystem: '<S225>/SourceBlock'
+    // Start for MATLABSystem: '<S221>/SourceBlock'
     joystick_enabled_matlab_node_B.b_zeroDelimTopic[i] = b_zeroDelimTopic[i];
   }
 
-  Sub_joystick_enabled_matlab_node_423.createSubscriber
+  Sub_joystick_enabled_matlab_node_416.createSubscriber
     (&joystick_enabled_matlab_node_B.b_zeroDelimTopic[0], qos_profile);
 }
 
@@ -2499,9 +2467,9 @@ void joystick_enabled_matlab_node::joystic_Publisher_setupImpl_oro(const
   char_T b_zeroDelimTopic[10];
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S233>/SinkBlock'
-  joystick_enabled_matlab_node_B.deadline_l.sec = 0.0;
-  joystick_enabled_matlab_node_B.deadline_l.nsec = 0.0;
+  // Start for MATLABSystem: '<S229>/SinkBlock'
+  joystick_enabled_matlab_node_B.deadline_bs.sec = 0.0;
+  joystick_enabled_matlab_node_B.deadline_bs.nsec = 0.0;
   lifespan.sec = 0.0;
   lifespan.nsec = 0.0;
   liveliness_lease_duration.sec = 0.0;
@@ -2509,11 +2477,11 @@ void joystick_enabled_matlab_node::joystic_Publisher_setupImpl_oro(const
   SET_QOS_VALUES(qos_profile, RMW_QOS_POLICY_HISTORY_KEEP_LAST, (size_t)10.0,
                  RMW_QOS_POLICY_DURABILITY_VOLATILE,
                  RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-                 joystick_enabled_matlab_node_B.deadline_l, lifespan,
+                 joystick_enabled_matlab_node_B.deadline_bs, lifespan,
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 10; i++) {
-    // Start for MATLABSystem: '<S233>/SinkBlock'
+    // Start for MATLABSystem: '<S229>/SinkBlock'
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
 
@@ -2532,7 +2500,7 @@ void joystick_enabled_matlab_node::joystick__Publisher_setupImpl_o(const
   char_T b_zeroDelimTopic[14];
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S220>/SinkBlock'
+  // Start for MATLABSystem: '<S219>/SinkBlock'
   joystick_enabled_matlab_node_B.deadline.sec = 0.0;
   joystick_enabled_matlab_node_B.deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -2546,7 +2514,7 @@ void joystick_enabled_matlab_node::joystick__Publisher_setupImpl_o(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 14; i++) {
-    // Start for MATLABSystem: '<S220>/SinkBlock'
+    // Start for MATLABSystem: '<S219>/SinkBlock'
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
 
@@ -2565,7 +2533,7 @@ void joystick_enabled_matlab_node::joystick_Publisher_setupImpl_or(const
   sJ4ih70VmKcvCeguWN0mNVF liveliness_lease_duration;
   qos_profile = rmw_qos_profile_default;
 
-  // Start for MATLABSystem: '<S232>/SinkBlock'
+  // Start for MATLABSystem: '<S228>/SinkBlock'
   deadline.sec = 0.0;
   deadline.nsec = 0.0;
   lifespan.sec = 0.0;
@@ -2578,12 +2546,12 @@ void joystick_enabled_matlab_node::joystick_Publisher_setupImpl_or(const
                  RMW_QOS_POLICY_LIVELINESS_AUTOMATIC, liveliness_lease_duration,
                  (bool)obj->QOSAvoidROSNamespaceConventions);
   for (int32_T i{0}; i < 16; i++) {
-    // Start for MATLABSystem: '<S232>/SinkBlock'
-    joystick_enabled_matlab_node_B.b_zeroDelimTopic_lx[i] = b_zeroDelimTopic[i];
+    // Start for MATLABSystem: '<S228>/SinkBlock'
+    joystick_enabled_matlab_node_B.b_zeroDelimTopic_dy[i] = b_zeroDelimTopic[i];
   }
 
   Pub_joystick_enabled_matlab_node_435_150.createPublisher
-    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_lx[0], qos_profile);
+    (&joystick_enabled_matlab_node_B.b_zeroDelimTopic_dy[0], qos_profile);
 }
 
 // Model step function for TID0
@@ -2706,26 +2674,26 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     rate_monotonic_scheduler((&joystick_enabled_matlab_node_M));
   }
 
-  // MATLABSystem: '<S228>/SourceBlock'
+  // MATLABSystem: '<S224>/SourceBlock'
   joystick_enabled_matlab_node_B.b_varargout_1 =
     Sub_joystick_enabled_matlab_node_428.getLatestMessage
     (&joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_lx_g);
 
-  // Outputs for Enabled SubSystem: '<S228>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S229>/Enable'
+  // Outputs for Enabled SubSystem: '<S224>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S225>/Enable'
 
-  // Start for MATLABSystem: '<S228>/SourceBlock'
+  // Start for MATLABSystem: '<S224>/SourceBlock'
   if (joystick_enabled_matlab_node_B.b_varargout_1) {
-    // SignalConversion generated from: '<S229>/In1'
+    // SignalConversion generated from: '<S225>/In1'
     joystick_enabled_matlab_node_B.In1_f =
       joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_lx_g;
   }
 
-  // End of Start for MATLABSystem: '<S228>/SourceBlock'
-  // End of Outputs for SubSystem: '<S228>/Enabled Subsystem'
+  // End of Start for MATLABSystem: '<S224>/SourceBlock'
+  // End of Outputs for SubSystem: '<S224>/Enabled Subsystem'
 
   // MATLAB Function: '<Root>/joystick_mode_manager' incorporates:
-  //   MATLAB Function: '<S12>/MATLAB Function'
+  //   MATLAB Function: '<S11>/MATLAB Function'
 
   if (joystick_enabled_matlab_node_B.In1_f.circle_button) {
     joystick_enabled_matlab_node_DW.joystick_flag =
@@ -2760,11 +2728,11 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     (&joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_b_c);
 
   // Outputs for Enabled SubSystem: '<S3>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S25>/Enable'
+  //   EnablePort: '<S24>/Enable'
 
   // Start for MATLABSystem: '<S3>/SourceBlock'
   if (joystick_enabled_matlab_node_B.b_varargout_1) {
-    // SignalConversion generated from: '<S25>/In1'
+    // SignalConversion generated from: '<S24>/In1'
     joystick_enabled_matlab_node_B.In1_o =
       joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_b_c;
   }
@@ -2778,11 +2746,11 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     (&joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_m);
 
   // Outputs for Enabled SubSystem: '<S8>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S221>/Enable'
+  //   EnablePort: '<S220>/Enable'
 
   // Start for MATLABSystem: '<S8>/SourceBlock'
   if (joystick_enabled_matlab_node_B.b_varargout_1) {
-    // SignalConversion generated from: '<S221>/In1'
+    // SignalConversion generated from: '<S220>/In1'
     joystick_enabled_matlab_node_B.In1 =
       joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_m;
   }
@@ -2790,16 +2758,16 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   // End of Outputs for SubSystem: '<S8>/Enabled Subsystem'
 
   // MATLABSystem: '<S2>/SourceBlock'
-  joystick_enabled_matlab_node_B.b_varargout_1_o =
+  joystick_enabled_matlab_node_B.b_varargout_1_e =
     Sub_joystick_enabled_matlab_node_363.getLatestMessage
     (&joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_l_c);
 
   // Outputs for Enabled SubSystem: '<S2>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S24>/Enable'
+  //   EnablePort: '<S23>/Enable'
 
   // Start for MATLABSystem: '<S2>/SourceBlock'
-  if (joystick_enabled_matlab_node_B.b_varargout_1_o) {
-    // SignalConversion generated from: '<S24>/In1'
+  if (joystick_enabled_matlab_node_B.b_varargout_1_e) {
+    // SignalConversion generated from: '<S23>/In1'
     joystick_enabled_matlab_node_B.In1_g =
       joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_l_c;
   }
@@ -2813,11 +2781,11 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.In1_g.angle.y * 0.017453292519943295;
   joystick_enabled_matlab_node_B.Integrator_i[2] =
     joystick_enabled_matlab_node_B.In1_g.angle.z * 0.017453292519943295;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 9;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_i]
-      = b[joystick_enabled_matlab_node_B.i_i];
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 9;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_o]
+      = b[joystick_enabled_matlab_node_B.i_o];
   }
 
   // MATLAB Function: '<Root>/MATLAB Function' incorporates:
@@ -2828,8 +2796,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     static_cast<int32_T>(joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[4]))
     + static_cast<int32_T>(joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[8]);
 
-  // MATLABSystem: '<S18>/SourceBlock'
-  joystick_enabled_matlab_node_B.b_varargout_1_h =
+  // MATLABSystem: '<S17>/SourceBlock'
+  joystick_enabled_matlab_node_B.b_varargout_1_o =
     Sub_joystick_enabled_matlab_node_360_284.getLatestMessage
     (&joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_e_k);
 
@@ -2840,10 +2808,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   // MATLAB Function: '<S1>/MATLAB Function' incorporates:
   //   DataStoreWrite: '<S1>/Data Store Write1'
   //   DataStoreWrite: '<S1>/Data Store Write2'
-  //   MATLABSystem: '<S18>/SourceBlock'
+  //   MATLABSystem: '<S17>/SourceBlock'
   //
   if ((!joystick_enabled_matlab_node_DW.mission_is_started) &&
-      joystick_enabled_matlab_node_B.b_varargout_1_h) {
+      joystick_enabled_matlab_node_B.b_varargout_1_o) {
     joystick_enabled_matlab_node_B.reset_dvl_pos = true;
     joystick_enabled_matlab_node_DW.mission_is_started = true;
   } else {
@@ -2852,17 +2820,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
   // End of MATLAB Function: '<S1>/MATLAB Function'
 
-  // Outputs for Enabled SubSystem: '<S18>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S22>/Enable'
+  // Outputs for Enabled SubSystem: '<S17>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S21>/Enable'
 
-  // Start for MATLABSystem: '<S18>/SourceBlock'
-  if (joystick_enabled_matlab_node_B.b_varargout_1_h) {
-    // SignalConversion generated from: '<S22>/In1'
+  // Start for MATLABSystem: '<S17>/SourceBlock'
+  if (joystick_enabled_matlab_node_B.b_varargout_1_o) {
+    // SignalConversion generated from: '<S21>/In1'
     joystick_enabled_matlab_node_B.In1_e =
       joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_e_k;
   }
 
-  // End of Outputs for SubSystem: '<S18>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<S17>/Enabled Subsystem'
 
   // MATLAB Function: '<S1>/cmdMsgToCmdBus'
   joystick_enabled_matlab_node_B.cmd.wp_tol[0] =
@@ -2877,24 +2845,24 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.In1_e.tolerance.pitch;
   joystick_enabled_matlab_node_B.cmd.wp_tol[5] =
     joystick_enabled_matlab_node_B.In1_e.tolerance.yaw;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 16;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 16;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.integrator_reset =
-      joystick_enabled_matlab_node_B.In1_e.command_id[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.In1_e.command_id[joystick_enabled_matlab_node_B.i_o];
     if (joystick_enabled_matlab_node_B.integrator_reset > 127) {
       joystick_enabled_matlab_node_B.integrator_reset = 127U;
     }
 
-    joystick_enabled_matlab_node_B.cmd.cmd_id[joystick_enabled_matlab_node_B.i_i]
+    joystick_enabled_matlab_node_B.cmd.cmd_id[joystick_enabled_matlab_node_B.i_o]
       = static_cast<int8_T>(joystick_enabled_matlab_node_B.integrator_reset);
     joystick_enabled_matlab_node_B.integrator_reset =
-      joystick_enabled_matlab_node_B.In1_e.trick[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.In1_e.trick[joystick_enabled_matlab_node_B.i_o];
     if (joystick_enabled_matlab_node_B.integrator_reset > 127) {
       joystick_enabled_matlab_node_B.integrator_reset = 127U;
     }
 
-    joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_i]
+    joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_o]
       = static_cast<int8_T>(joystick_enabled_matlab_node_B.integrator_reset);
   }
 
@@ -2909,19 +2877,19 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.UnitDelay_DSTATE_d[2];
   joystick_enabled_matlab_node_B.fd[3] =
     joystick_enabled_matlab_node_DW.UnitDelay_DSTATE_d[3];
-  joystick_enabled_matlab_node_B.i_i = std::memcmp(&a[0],
+  joystick_enabled_matlab_node_B.i_o = std::memcmp(&a[0],
     &joystick_enabled_matlab_node_B.fd[0], 4);
-  if (joystick_enabled_matlab_node_B.i_i == 0) {
+  if (joystick_enabled_matlab_node_B.i_o == 0) {
     joystick_enabled_matlab_node_B.b_index = 0;
   } else {
-    joystick_enabled_matlab_node_B.i_i = std::memcmp(&b_a[0],
+    joystick_enabled_matlab_node_B.i_o = std::memcmp(&b_a[0],
       &joystick_enabled_matlab_node_B.fd[0], 4);
-    if (joystick_enabled_matlab_node_B.i_i == 0) {
+    if (joystick_enabled_matlab_node_B.i_o == 0) {
       joystick_enabled_matlab_node_B.b_index = 1;
     } else {
-      joystick_enabled_matlab_node_B.i_i = std::memcmp(&c_a[0],
+      joystick_enabled_matlab_node_B.i_o = std::memcmp(&c_a[0],
         &joystick_enabled_matlab_node_B.fd[0], 4);
-      if (joystick_enabled_matlab_node_B.i_i == 0) {
+      if (joystick_enabled_matlab_node_B.i_o == 0) {
         joystick_enabled_matlab_node_B.b_index = 2;
       } else {
         joystick_enabled_matlab_node_B.b_index = -1;
@@ -2932,20 +2900,20 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   switch (joystick_enabled_matlab_node_B.b_index) {
    case 0:
     joystick_enabled_matlab_node_B.result_msg.success = true;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 16;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.result_msg.found_object[joystick_enabled_matlab_node_B.i_i]
-        = b_0[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 16;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.result_msg.found_object[joystick_enabled_matlab_node_B.i_o]
+        = b_0[joystick_enabled_matlab_node_B.i_o];
     }
 
     joystick_enabled_matlab_node_B.result_msg.reached_waypoint_without_detection
       = false;
 
     // Outputs for Enabled SubSystem: '<S1>/Subsystem' incorporates:
-    //   EnablePort: '<S19>/Enable'
+    //   EnablePort: '<S18>/Enable'
 
-    // MATLABSystem: '<S23>/SinkBlock'
+    // MATLABSystem: '<S22>/SinkBlock'
     Pub_joystick_enabled_matlab_node_360_7.publish
       (&joystick_enabled_matlab_node_B.result_msg);
 
@@ -2954,20 +2922,20 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
    case 1:
     joystick_enabled_matlab_node_B.result_msg.success = false;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 16;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.result_msg.found_object[joystick_enabled_matlab_node_B.i_i]
-        = b_0[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 16;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.result_msg.found_object[joystick_enabled_matlab_node_B.i_o]
+        = b_0[joystick_enabled_matlab_node_B.i_o];
     }
 
     joystick_enabled_matlab_node_B.result_msg.reached_waypoint_without_detection
       = false;
 
     // Outputs for Enabled SubSystem: '<S1>/Subsystem' incorporates:
-    //   EnablePort: '<S19>/Enable'
+    //   EnablePort: '<S18>/Enable'
 
-    // MATLABSystem: '<S23>/SinkBlock'
+    // MATLABSystem: '<S22>/SinkBlock'
     Pub_joystick_enabled_matlab_node_360_7.publish
       (&joystick_enabled_matlab_node_B.result_msg);
 
@@ -2980,7 +2948,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
   // End of MATLAB Function: '<S1>/statusKwdToBool'
 
-  // DigitalClock: '<S27>/Digital Clock' incorporates:
+  // DigitalClock: '<S26>/Digital Clock' incorporates:
   //   DigitalClock: '<Root>/Digital Clock'
 
   joystick_enabled_matlab_node_B.idx = (((&joystick_enabled_matlab_node_M)
@@ -3004,10 +2972,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.Cbi[3] =
     joystick_enabled_matlab_node_B.rotm_tmp *
     joystick_enabled_matlab_node_B.theta;
-  joystick_enabled_matlab_node_B.theta_b =
+  joystick_enabled_matlab_node_B.theta_h =
     joystick_enabled_matlab_node_B.b_scale *
     joystick_enabled_matlab_node_B.norm_w;
-  joystick_enabled_matlab_node_B.Cbi[4] = joystick_enabled_matlab_node_B.theta_b
+  joystick_enabled_matlab_node_B.Cbi[4] = joystick_enabled_matlab_node_B.theta_h
     * joystick_enabled_matlab_node_B.theta +
     joystick_enabled_matlab_node_B.b_absxk * joystick_enabled_matlab_node_B.t;
   joystick_enabled_matlab_node_B.Cbi[7] = joystick_enabled_matlab_node_B.b_scale
@@ -3038,7 +3006,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
        (-joystick_enabled_matlab_node_B.norm_w)) /
       joystick_enabled_matlab_node_B.scale;
     joystick_enabled_matlab_node_B.eps[2] = (joystick_enabled_matlab_node_B.Cbi
-      [3] - (joystick_enabled_matlab_node_B.theta_b *
+      [3] - (joystick_enabled_matlab_node_B.theta_h *
              joystick_enabled_matlab_node_B.t -
              joystick_enabled_matlab_node_B.b_absxk *
              joystick_enabled_matlab_node_B.theta)) /
@@ -3076,31 +3044,31 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     }
 
     if (joystick_enabled_matlab_node_B.b_index == 0) {
-      joystick_enabled_matlab_node_B.i_i = 1;
+      joystick_enabled_matlab_node_B.i_o = 1;
     } else {
       joystick_enabled_matlab_node_B.absxk =
         joystick_enabled_matlab_node_B.Integrator_i[joystick_enabled_matlab_node_B.b_index
         - 1];
-      joystick_enabled_matlab_node_B.i_i =
+      joystick_enabled_matlab_node_B.i_o =
         joystick_enabled_matlab_node_B.b_index;
       for (joystick_enabled_matlab_node_B.pos =
            joystick_enabled_matlab_node_B.b_index + 1;
            joystick_enabled_matlab_node_B.pos < 4;
            joystick_enabled_matlab_node_B.pos++) {
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e =
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d =
           joystick_enabled_matlab_node_B.Integrator_i[joystick_enabled_matlab_node_B.pos
           - 1];
         if (joystick_enabled_matlab_node_B.absxk <
-            joystick_enabled_matlab_node_B.rtb_Integrator_i_e) {
+            joystick_enabled_matlab_node_B.rtb_Integrator_i_d) {
           joystick_enabled_matlab_node_B.absxk =
-            joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
-          joystick_enabled_matlab_node_B.i_i =
+            joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
+          joystick_enabled_matlab_node_B.i_o =
             joystick_enabled_matlab_node_B.pos;
         }
       }
     }
 
-    switch (joystick_enabled_matlab_node_B.i_i) {
+    switch (joystick_enabled_matlab_node_B.i_o) {
      case 1:
       joystick_enabled_matlab_node_B.eps[0] = std::sqrt(std::fmax(0.0,
         joystick_enabled_matlab_node_B.t));
@@ -3267,33 +3235,33 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   // Product: '<S6>/Matrix Multiply2' incorporates:
   //   Constant: '<S6>/Constant1'
 
-  joystick_enabled_matlab_node_B.rtb_Integrator_i_e = 0.0;
+  joystick_enabled_matlab_node_B.rtb_Integrator_i_d = 0.0;
   joystick_enabled_matlab_node_B.rtb_X_est_wb = 0.0;
-  joystick_enabled_matlab_node_B.rtb_X_est_wb_j = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  joystick_enabled_matlab_node_B.rtb_X_est_wb_a = 0.0;
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_B.dv3[joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e +=
+      joystick_enabled_matlab_node_B.dv3[joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d +=
       joystick_enabled_matlab__ConstP.Constant1_Value_e[3 *
-      joystick_enabled_matlab_node_B.i_i] * joystick_enabled_matlab_node_B.b_t;
+      joystick_enabled_matlab_node_B.i_o] * joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.rtb_X_est_wb +=
       joystick_enabled_matlab__ConstP.Constant1_Value_e[3 *
-      joystick_enabled_matlab_node_B.i_i + 1] *
+      joystick_enabled_matlab_node_B.i_o + 1] *
       joystick_enabled_matlab_node_B.b_t;
-    joystick_enabled_matlab_node_B.rtb_X_est_wb_j +=
+    joystick_enabled_matlab_node_B.rtb_X_est_wb_a +=
       joystick_enabled_matlab__ConstP.Constant1_Value_e[3 *
-      joystick_enabled_matlab_node_B.i_i + 2] *
+      joystick_enabled_matlab_node_B.i_o + 2] *
       joystick_enabled_matlab_node_B.b_t;
   }
 
   joystick_enabled_matlab_node_B.X_est.wb[2] =
-    joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+    joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
   joystick_enabled_matlab_node_B.X_est.wb[1] =
     joystick_enabled_matlab_node_B.rtb_X_est_wb;
   joystick_enabled_matlab_node_B.X_est.wb[0] =
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
 
   // MATLAB Function: '<S6>/discreteTimeQuatPropagation' incorporates:
   //   MATLAB Function: '<S6>/eulToQuat'
@@ -3308,7 +3276,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.qk_not_empty = true;
   }
 
-  if (joystick_enabled_matlab_node_B.b_varargout_1_o) {
+  if (joystick_enabled_matlab_node_B.b_varargout_1_e) {
     joystick_enabled_matlab_node_DW.qk[0] = joystick_enabled_matlab_node_B.eps[0]
       / joystick_enabled_matlab_node_B.eps_tmp;
     joystick_enabled_matlab_node_DW.qk[1] = joystick_enabled_matlab_node_B.eps[1]
@@ -3321,7 +3289,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
   joystick_enabled_matlab_node_B.scale = 3.3121686421112381E-170;
   joystick_enabled_matlab_node_B.absxk = std::abs
-    (joystick_enabled_matlab_node_B.rtb_Integrator_i_e);
+    (joystick_enabled_matlab_node_B.rtb_Integrator_i_d);
   if (joystick_enabled_matlab_node_B.absxk > 3.3121686421112381E-170) {
     joystick_enabled_matlab_node_B.norm_w = 1.0;
     joystick_enabled_matlab_node_B.scale = joystick_enabled_matlab_node_B.absxk;
@@ -3350,7 +3318,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   }
 
   joystick_enabled_matlab_node_B.absxk = std::abs
-    (joystick_enabled_matlab_node_B.rtb_X_est_wb_j);
+    (joystick_enabled_matlab_node_B.rtb_X_est_wb_a);
   if (joystick_enabled_matlab_node_B.absxk >
       joystick_enabled_matlab_node_B.scale) {
     joystick_enabled_matlab_node_B.t = joystick_enabled_matlab_node_B.scale /
@@ -3369,34 +3337,34 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.norm_w = joystick_enabled_matlab_node_B.scale *
     std::sqrt(joystick_enabled_matlab_node_B.norm_w);
   if (joystick_enabled_matlab_node_B.norm_w > 1.0E-10) {
-    joystick_enabled_matlab_node_B.b_a_h = std::sin(0.5 *
+    joystick_enabled_matlab_node_B.b_a_l = std::sin(0.5 *
       joystick_enabled_matlab_node_B.norm_w * 0.01) /
       joystick_enabled_matlab_node_B.norm_w;
-    joystick_enabled_matlab_node_B.eps[0] = joystick_enabled_matlab_node_B.b_a_h
-      * joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
-    joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.b_a_h
+    joystick_enabled_matlab_node_B.eps[0] = joystick_enabled_matlab_node_B.b_a_l
+      * joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
+    joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.b_a_l
       * joystick_enabled_matlab_node_B.rtb_X_est_wb;
-    joystick_enabled_matlab_node_B.eps[2] = joystick_enabled_matlab_node_B.b_a_h
-      * joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+    joystick_enabled_matlab_node_B.eps[2] = joystick_enabled_matlab_node_B.b_a_l
+      * joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
   } else {
     joystick_enabled_matlab_node_B.eps[0] = 0.005 *
-      joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+      joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
     joystick_enabled_matlab_node_B.eps[1] = 0.005 *
       joystick_enabled_matlab_node_B.rtb_X_est_wb;
     joystick_enabled_matlab_node_B.eps[2] = 0.005 *
-      joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+      joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
   }
 
   joystick_enabled_matlab_node_B.norm_w = std::cos(0.5 *
     joystick_enabled_matlab_node_B.norm_w * 0.01);
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 9;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 9;
+       joystick_enabled_matlab_node_B.i_o++) {
     // MATLAB Function: '<S6>/quatToRotm' incorporates:
     //   MATLAB Function: '<S6>/derivedStateEstimates'
 
-    joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_i]
-      = b[joystick_enabled_matlab_node_B.i_i];
+    joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_o]
+      = b[joystick_enabled_matlab_node_B.i_o];
   }
 
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[0] = 0.0;
@@ -3414,37 +3382,37 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[5] =
     joystick_enabled_matlab_node_B.eps[0];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[8] = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.b_index = joystick_enabled_matlab_node_B.i_i <<
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.b_index = joystick_enabled_matlab_node_B.i_o <<
       2;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index] =
       joystick_enabled_matlab_node_B.qk_plus_1_tmp[3 *
-      joystick_enabled_matlab_node_B.i_i] *
+      joystick_enabled_matlab_node_B.i_o] *
       joystick_enabled_matlab_node_B.norm_w -
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp[3 *
-      joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.pos = 3 * joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.pos = 3 * joystick_enabled_matlab_node_B.i_o
       + 1;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index +
       1] =
       joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.pos]
       * joystick_enabled_matlab_node_B.norm_w -
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.pos];
-    joystick_enabled_matlab_node_B.pos = 3 * joystick_enabled_matlab_node_B.i_i
+    joystick_enabled_matlab_node_B.pos = 3 * joystick_enabled_matlab_node_B.i_o
       + 2;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index +
       2] =
       joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.pos]
       * joystick_enabled_matlab_node_B.norm_w -
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.pos];
-    joystick_enabled_matlab_node_B.eps_d =
-      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.i_i + 12] =
-      joystick_enabled_matlab_node_B.eps_d;
+    joystick_enabled_matlab_node_B.eps_b =
+      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.i_o + 12] =
+      joystick_enabled_matlab_node_B.eps_b;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index +
-      3] = -joystick_enabled_matlab_node_B.eps_d;
+      3] = -joystick_enabled_matlab_node_B.eps_b;
   }
 
   joystick_enabled_matlab_node_B.c_a[15] = joystick_enabled_matlab_node_B.norm_w;
@@ -3452,12 +3420,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.norm_w = 0.0;
   joystick_enabled_matlab_node_B.t = 0.0;
   joystick_enabled_matlab_node_B.theta = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 4;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 4;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_DW.qk[joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.b_index = joystick_enabled_matlab_node_B.i_i <<
+      joystick_enabled_matlab_node_DW.qk[joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.b_index = joystick_enabled_matlab_node_B.i_o <<
       2;
     joystick_enabled_matlab_node_B.b_absxk +=
       joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index]
@@ -3581,8 +3549,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2;
 
   // MATLAB Function: '<S6>/quatToRotm' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatToRotm'
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatToRotm'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
   //   MATLAB Function: '<S6>/discreteTimeQuatPropagation'
   //   Math: '<S6>/Transpose'
@@ -3590,83 +3558,83 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.upper_force_index =
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 *
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 * 2.0 - 1.0;
-  joystick_enabled_matlab_node_B.b_a_h = 2.0 *
+  joystick_enabled_matlab_node_B.b_a_l = 2.0 *
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp[3 *
-      joystick_enabled_matlab_node_B.i_i] = 2.0 *
+      joystick_enabled_matlab_node_B.i_o] = 2.0 *
       joystick_enabled_matlab_node_B.X_est.qib[0] *
-      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_o];
 
     // Math: '<S6>/Transpose' incorporates:
     //   MATLAB Function: '<S4>/quatToEul'
-    //   Math: '<S26>/Transpose'
+    //   Math: '<S25>/Transpose'
 
     joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[3 *
-      joystick_enabled_matlab_node_B.i_i] =
-      joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.i_o] =
+      joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 1;
+      joystick_enabled_matlab_node_B.i_o + 1;
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.b_index]
       = 2.0 * joystick_enabled_matlab_node_B.X_est.qib[1] *
-      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_o];
 
     // Math: '<S6>/Transpose' incorporates:
     //   MATLAB Function: '<S4>/quatToEul'
-    //   Math: '<S26>/Transpose'
+    //   Math: '<S25>/Transpose'
 
     joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
       =
-      joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_o
       + 3];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 2;
+      joystick_enabled_matlab_node_B.i_o + 2;
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.b_index]
       = 2.0 * joystick_enabled_matlab_node_B.X_est.qib[2] *
-      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_o];
 
     // Math: '<S6>/Transpose' incorporates:
     //   MATLAB Function: '<S4>/quatToEul'
-    //   Math: '<S26>/Transpose'
+    //   Math: '<S25>/Transpose'
 
     joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
       =
-      joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_o
       + 6];
   }
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.Cbi[3 * joystick_enabled_matlab_node_B.i_i] =
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.Cbi[3 * joystick_enabled_matlab_node_B.i_o] =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[3 *
-      joystick_enabled_matlab_node_B.i_i] *
+      joystick_enabled_matlab_node_B.i_o] *
       joystick_enabled_matlab_node_B.upper_force_index +
-      joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_o];
 
     // Math: '<S6>/Transpose'
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 1;
+      joystick_enabled_matlab_node_B.i_o + 1;
     joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.b_index] =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
       * joystick_enabled_matlab_node_B.upper_force_index +
-      joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_o
       + 3];
 
     // Math: '<S6>/Transpose'
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 2;
+      joystick_enabled_matlab_node_B.i_o + 2;
     joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.b_index] =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
       * joystick_enabled_matlab_node_B.upper_force_index +
-      joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_o
       + 6];
   }
 
   joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 =
-    joystick_enabled_matlab_node_B.b_a_h * 0.0;
+    joystick_enabled_matlab_node_B.b_a_l * 0.0;
 
   // Math: '<S6>/Transpose' incorporates:
   //   MATLAB Function: '<S6>/derivedStateEstimates'
@@ -3676,12 +3644,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
 
   // MATLAB Function: '<S6>/quatToRotm' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatToRotm'
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatToRotm'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
 
   joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 =
-    joystick_enabled_matlab_node_B.b_a_h *
+    joystick_enabled_matlab_node_B.b_a_l *
     -joystick_enabled_matlab_node_B.X_est.qib[2];
 
   // Math: '<S6>/Transpose' incorporates:
@@ -3692,11 +3660,11 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0;
 
   // MATLAB Function: '<S6>/quatToRotm' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatToRotm'
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatToRotm'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
 
-  joystick_enabled_matlab_node_B.phi = joystick_enabled_matlab_node_B.b_a_h *
+  joystick_enabled_matlab_node_B.phi = joystick_enabled_matlab_node_B.b_a_l *
     joystick_enabled_matlab_node_B.X_est.qib[1];
 
   // Math: '<S6>/Transpose' incorporates:
@@ -3707,11 +3675,11 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.phi;
 
   // MATLAB Function: '<S6>/quatToRotm' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatToRotm'
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatToRotm'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
 
-  joystick_enabled_matlab_node_B.alpha = joystick_enabled_matlab_node_B.b_a_h *
+  joystick_enabled_matlab_node_B.alpha = joystick_enabled_matlab_node_B.b_a_l *
     joystick_enabled_matlab_node_B.X_est.qib[2];
 
   // Math: '<S6>/Transpose' incorporates:
@@ -3724,12 +3692,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
 
   // MATLAB Function: '<S6>/quatToRotm' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatToRotm'
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatToRotm'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
 
   joystick_enabled_matlab_node_B.upper_voltage_index =
-    joystick_enabled_matlab_node_B.b_a_h *
+    joystick_enabled_matlab_node_B.b_a_l *
     -joystick_enabled_matlab_node_B.X_est.qib[0];
 
   // Math: '<S6>/Transpose' incorporates:
@@ -3740,12 +3708,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.upper_voltage_index;
 
   // MATLAB Function: '<S6>/quatToRotm' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatToRotm'
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatToRotm'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
 
   joystick_enabled_matlab_node_B.lower_voltage_index =
-    joystick_enabled_matlab_node_B.b_a_h *
+    joystick_enabled_matlab_node_B.b_a_l *
     -joystick_enabled_matlab_node_B.X_est.qib[1];
 
   // Math: '<S6>/Transpose' incorporates:
@@ -3756,12 +3724,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.lower_voltage_index;
 
   // MATLAB Function: '<S6>/quatToRotm' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatToRotm'
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatToRotm'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
 
   joystick_enabled_matlab_node_B.pwms_horiz_idx_1 =
-    joystick_enabled_matlab_node_B.b_a_h *
+    joystick_enabled_matlab_node_B.b_a_l *
     joystick_enabled_matlab_node_B.X_est.qib[0];
 
   // Math: '<S6>/Transpose' incorporates:
@@ -3772,36 +3740,36 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.pwms_horiz_idx_1;
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[8] =
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 9;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_i] =
-      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i] +
-      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_i];
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 9;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_o] =
+      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o] +
+      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_o];
   }
 
-  // MATLABSystem: '<S222>/SourceBlock'
+  // MATLABSystem: '<S221>/SourceBlock'
   joystick_enabled_matlab_node_B.OR1 =
     Sub_joystick_enabled_matlab_node_416.getLatestMessage
-    (&joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_j_l);
+    (&joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_j_h);
 
-  // Outputs for Enabled SubSystem: '<S222>/Enabled Subsystem' incorporates:
-  //   EnablePort: '<S223>/Enable'
+  // Outputs for Enabled SubSystem: '<S221>/Enabled Subsystem' incorporates:
+  //   EnablePort: '<S222>/Enable'
 
-  // Start for MATLABSystem: '<S222>/SourceBlock'
+  // Start for MATLABSystem: '<S221>/SourceBlock'
   if (joystick_enabled_matlab_node_B.OR1) {
-    // SignalConversion generated from: '<S223>/In1'
+    // SignalConversion generated from: '<S222>/In1'
     joystick_enabled_matlab_node_B.In1_b =
-      joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_j_l;
+      joystick_enabled_matlab_node_B.rtb_SourceBlock_o2_j_h;
   }
 
-  // End of Outputs for SubSystem: '<S222>/Enabled Subsystem'
+  // End of Outputs for SubSystem: '<S221>/Enabled Subsystem'
 
   // Logic: '<S6>/OR' incorporates:
   //   DataStoreRead: '<S6>/Data Store Read1'
   //   Logic: '<S9>/AND'
   //   MATLAB Function: '<Root>/joystick_mode_manager'
-  //   MATLABSystem: '<S222>/SourceBlock'
+  //   MATLABSystem: '<S221>/SourceBlock'
   //
   joystick_enabled_matlab_node_B.reset_dvl_pos =
     (joystick_enabled_matlab_node_B.reset_dvl_pos ||
@@ -3839,29 +3807,29 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   // Product: '<S6>/Matrix Multiply3' incorporates:
   //   Math: '<S6>/Transpose'
 
-  joystick_enabled_matlab_node_B.eps_d = 0.0;
-  joystick_enabled_matlab_node_B.eps_a = 0.0;
+  joystick_enabled_matlab_node_B.eps_b = 0.0;
+  joystick_enabled_matlab_node_B.eps_f = 0.0;
   joystick_enabled_matlab_node_B.norm_w = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_B.rtb_dvl_pos_l[joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.eps_d +=
+      joystick_enabled_matlab_node_B.rtb_dvl_pos_l[joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.eps_b +=
       joystick_enabled_matlab_node_B.Cbi_c[3 *
-      joystick_enabled_matlab_node_B.i_i] * joystick_enabled_matlab_node_B.b_t;
-    joystick_enabled_matlab_node_B.eps_a +=
+      joystick_enabled_matlab_node_B.i_o] * joystick_enabled_matlab_node_B.b_t;
+    joystick_enabled_matlab_node_B.eps_f +=
       joystick_enabled_matlab_node_B.Cbi_c[3 *
-      joystick_enabled_matlab_node_B.i_i + 1] *
+      joystick_enabled_matlab_node_B.i_o + 1] *
       joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.norm_w +=
       joystick_enabled_matlab_node_B.Cbi_c[3 *
-      joystick_enabled_matlab_node_B.i_i + 2] *
+      joystick_enabled_matlab_node_B.i_o + 2] *
       joystick_enabled_matlab_node_B.b_t;
   }
 
   joystick_enabled_matlab_node_B.eps[2] = joystick_enabled_matlab_node_B.norm_w;
-  joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.eps_a;
+  joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.eps_f;
 
   // DiscreteIntegrator: '<S6>/Position Integrator' incorporates:
   //   MATLABSystem: '<S2>/SourceBlock'
@@ -3869,19 +3837,19 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   //
   if (joystick_enabled_matlab_node_DW.PositionIntegrator_IC_LOADING != 0) {
     joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[0] =
-      joystick_enabled_matlab_node_B.eps_d;
+      joystick_enabled_matlab_node_B.eps_b;
     joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[1] =
-      joystick_enabled_matlab_node_B.eps_a;
+      joystick_enabled_matlab_node_B.eps_f;
     joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[2] =
       joystick_enabled_matlab_node_B.norm_w;
   }
 
-  if (joystick_enabled_matlab_node_B.b_varargout_1_o &&
+  if (joystick_enabled_matlab_node_B.b_varargout_1_e &&
       (joystick_enabled_matlab_node_DW.PositionIntegrator_PrevResetSta <= 0)) {
     joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[0] =
-      joystick_enabled_matlab_node_B.eps_d;
+      joystick_enabled_matlab_node_B.eps_b;
     joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[1] =
-      joystick_enabled_matlab_node_B.eps_a;
+      joystick_enabled_matlab_node_B.eps_f;
     joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[2] =
       joystick_enabled_matlab_node_B.norm_w;
   }
@@ -3916,20 +3884,20 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.norm_w = 0.0;
   joystick_enabled_matlab_node_B.t = 0.0;
   joystick_enabled_matlab_node_B.theta = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab__ConstP.Constant_Value_m[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab__ConstP.Constant_Value_m[joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.norm_w +=
       joystick_enabled_matlab_node_B.Cbi_c[3 *
-      joystick_enabled_matlab_node_B.i_i] * joystick_enabled_matlab_node_B.b_t;
+      joystick_enabled_matlab_node_B.i_o] * joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.t += joystick_enabled_matlab_node_B.Cbi_c[3 *
-      joystick_enabled_matlab_node_B.i_i + 1] *
+      joystick_enabled_matlab_node_B.i_o + 1] *
       joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.theta +=
       joystick_enabled_matlab_node_B.Cbi_c[3 *
-      joystick_enabled_matlab_node_B.i_i + 2] *
+      joystick_enabled_matlab_node_B.i_o + 2] *
       joystick_enabled_matlab_node_B.b_t;
   }
 
@@ -3944,20 +3912,20 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   //   MATLAB Function: '<Root>/sensorRosMsgToBus'
   //   Product: '<S6>/Matrix Multiply1'
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.rtb_dvl_pos_l[joystick_enabled_matlab_node_B.i_i]
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.rtb_dvl_pos_l[joystick_enabled_matlab_node_B.i_o]
       =
-      ((joystick_enabled_matlab__ConstP.Constant1_Value_e[joystick_enabled_matlab_node_B.i_i
+      ((joystick_enabled_matlab__ConstP.Constant1_Value_e[joystick_enabled_matlab_node_B.i_o
         + 3] *
         joystick_enabled_matlab_node_B.In1_o.imu_fusion.linear_acceleration.y +
-        joystick_enabled_matlab__ConstP.Constant1_Value_e[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab__ConstP.Constant1_Value_e[joystick_enabled_matlab_node_B.i_o]
         * joystick_enabled_matlab_node_B.In1_o.imu_fusion.linear_acceleration.x)
-       + joystick_enabled_matlab__ConstP.Constant1_Value_e[joystick_enabled_matlab_node_B.i_i
+       + joystick_enabled_matlab__ConstP.Constant1_Value_e[joystick_enabled_matlab_node_B.i_o
        + 6] *
        joystick_enabled_matlab_node_B.In1_o.imu_fusion.linear_acceleration.z) -
-      joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_o];
   }
 
   // End of Sum: '<S6>/Sum'
@@ -3982,21 +3950,21 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.pwms_horiz_idx_1;
   joystick_enabled_matlab_node_B.Cbi_c[8] =
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 9;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.X_est.Cib[joystick_enabled_matlab_node_B.i_i]
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 9;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.X_est.Cib[joystick_enabled_matlab_node_B.i_o]
       = (joystick_enabled_matlab_node_B.upper_force_index *
-         joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_i]
-         + joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_i])
-      + joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i] +=
-      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_i];
+         joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_o]
+         + joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.i_o])
+      + joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o] +=
+      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_o];
   }
 
-  joystick_enabled_matlab_node_B.theta_b = std::asin(std::fmax(-1.0, std::fmin
+  joystick_enabled_matlab_node_B.theta_h = std::asin(std::fmax(-1.0, std::fmin
     (1.0, joystick_enabled_matlab_node_B.Cbi[6])));
-  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_b)) < 1.0E-6) {
+  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_h)) < 1.0E-6) {
     joystick_enabled_matlab_node_B.norm_w = 0.0;
     joystick_enabled_matlab_node_B.t = joystick_enabled__rt_atan2d_snf
       (-joystick_enabled_matlab_node_B.Cbi[1],
@@ -4011,7 +3979,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   }
 
   joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.norm_w);
-  joystick_enabled_matlab_node_B.theta = -joystick_enabled_matlab_node_B.theta_b;
+  joystick_enabled_matlab_node_B.theta = -joystick_enabled_matlab_node_B.theta_h;
   joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.theta);
   joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.t);
   joystick_enabled_matlab_node_B.b_scale = 0.0;
@@ -4025,30 +3993,30 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.pwms_horiz_idx_2 = 0.0;
   joystick_enabled_matlab_node_B.pwms_horiz_idx_3 = 0.0;
   joystick_enabled_matlab_node_B.rtb_X_est_idx_2 = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_DW.PositionIntegrator_DSTATE[joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.eta =
       joystick_enabled_matlab_node_B.X_est.Cib[3 *
-      joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.b_scale += joystick_enabled_matlab_node_B.eta
       * joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 =
       joystick_enabled_matlab_node_B.X_est.Cib[3 *
-      joystick_enabled_matlab_node_B.i_i + 1];
+      joystick_enabled_matlab_node_B.i_o + 1];
     joystick_enabled_matlab_node_B.b_absxk +=
       joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 *
       joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.eps_tmp =
       joystick_enabled_matlab_node_B.X_est.Cib[3 *
-      joystick_enabled_matlab_node_B.i_i + 2];
+      joystick_enabled_matlab_node_B.i_o + 2];
     joystick_enabled_matlab_node_B.rotm_tmp +=
       joystick_enabled_matlab_node_B.eps_tmp *
       joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.pwms_horiz_idx_2 +=
       joystick_enabled_matlab_node_B.eta * joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.pwms_horiz_idx_3 +=
@@ -4068,15 +4036,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
   // Logic: '<S4>/OR1' incorporates:
   //   MATLAB Function: '<Root>/joystick_mode_manager'
-  //   MATLABSystem: '<S18>/SourceBlock'
+  //   MATLABSystem: '<S17>/SourceBlock'
   //
   joystick_enabled_matlab_node_B.OR1 =
-    (joystick_enabled_matlab_node_B.b_varargout_1_h ||
+    (joystick_enabled_matlab_node_B.b_varargout_1_o ||
      joystick_enabled_matlab_node_DW.joystick_flag);
 
-  // MATLAB Function: '<S27>/commandExecuter' incorporates:
-  //   DataStoreWrite: '<S27>/Data Store Write'
-  //   DigitalClock: '<S27>/Digital Clock'
+  // MATLAB Function: '<S26>/commandExecuter' incorporates:
+  //   DataStoreWrite: '<S26>/Data Store Write'
+  //   DigitalClock: '<S26>/Digital Clock'
   //   DiscreteIntegrator: '<S6>/Position Integrator'
   //   MATLAB Function: '<S1>/cmdMsgToCmdBus'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
@@ -4105,12 +4073,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   }
 
   if (!joystick_enabled_matlab_node_DW.cmd_specific_wp_not_empty) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 6;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_DW.cmd_specific_wp[joystick_enabled_matlab_node_B.i_i]
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 6;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_DW.cmd_specific_wp[joystick_enabled_matlab_node_B.i_o]
         =
-        joystick_enabled_matlab_node_DW.idle_wp[joystick_enabled_matlab_node_B.i_i];
+        joystick_enabled_matlab_node_DW.idle_wp[joystick_enabled_matlab_node_B.i_o];
     }
 
     joystick_enabled_matlab_node_DW.cmd_specific_wp_not_empty = true;
@@ -4137,31 +4105,31 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.prior_action_id = 0.0;
   }
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 16;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_i] =
-      joystick_enabled_matlab_node_B.cmd.cmd_id[joystick_enabled_matlab_node_B.i_i];
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 16;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_o] =
+      joystick_enabled_matlab_node_B.cmd.cmd_id[joystick_enabled_matlab_node_B.i_o];
   }
 
-  joystick_enabled_matlab_node_B.i_i = std::memcmp(&a_0[0],
+  joystick_enabled_matlab_node_B.i_o = std::memcmp(&a_0[0],
     &joystick_enabled_matlab_node_B.s[0], 16);
-  if (joystick_enabled_matlab_node_B.i_i == 0) {
+  if (joystick_enabled_matlab_node_B.i_o == 0) {
     joystick_enabled_matlab_node_B.b_index = 0;
   } else {
-    joystick_enabled_matlab_node_B.i_i = std::memcmp(&b_a_0[0],
+    joystick_enabled_matlab_node_B.i_o = std::memcmp(&b_a_0[0],
       &joystick_enabled_matlab_node_B.s[0], 16);
-    if (joystick_enabled_matlab_node_B.i_i == 0) {
+    if (joystick_enabled_matlab_node_B.i_o == 0) {
       joystick_enabled_matlab_node_B.b_index = 1;
     } else {
-      joystick_enabled_matlab_node_B.i_i = std::memcmp(&c_a_0[0],
+      joystick_enabled_matlab_node_B.i_o = std::memcmp(&c_a_0[0],
         &joystick_enabled_matlab_node_B.s[0], 16);
-      if (joystick_enabled_matlab_node_B.i_i == 0) {
+      if (joystick_enabled_matlab_node_B.i_o == 0) {
         joystick_enabled_matlab_node_B.b_index = 2;
       } else {
-        joystick_enabled_matlab_node_B.i_i = std::memcmp(&d_a[0],
+        joystick_enabled_matlab_node_B.i_o = std::memcmp(&d_a[0],
           &joystick_enabled_matlab_node_B.s[0], 16);
-        if (joystick_enabled_matlab_node_B.i_i == 0) {
+        if (joystick_enabled_matlab_node_B.i_o == 0) {
           joystick_enabled_matlab_node_B.b_index = 3;
         } else {
           joystick_enabled_matlab_node_B.b_index = -1;
@@ -4241,12 +4209,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_DW.UnitDelay_DSTATE_d[3] = 78;
     }
 
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 6;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_DW.cmd_specific_wp[joystick_enabled_matlab_node_B.i_i]
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 6;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_DW.cmd_specific_wp[joystick_enabled_matlab_node_B.i_o]
         =
-        joystick_enabled_matlab_node_DW.idle_wp[joystick_enabled_matlab_node_B.i_i];
+        joystick_enabled_matlab_node_DW.idle_wp[joystick_enabled_matlab_node_B.i_o];
     }
     break;
 
@@ -4279,22 +4247,22 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.eta = 0.0;
       joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 = 0.0;
       joystick_enabled_matlab_node_B.eps_tmp = 0.0;
-      for (joystick_enabled_matlab_node_B.i_i = 0;
-           joystick_enabled_matlab_node_B.i_i < 3;
-           joystick_enabled_matlab_node_B.i_i++) {
+      for (joystick_enabled_matlab_node_B.i_o = 0;
+           joystick_enabled_matlab_node_B.i_o < 3;
+           joystick_enabled_matlab_node_B.i_o++) {
         joystick_enabled_matlab_node_B.b_t =
-          joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_i];
+          joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_o];
         joystick_enabled_matlab_node_B.eta +=
           joystick_enabled_matlab_node_B.X_est.Cib[3 *
-          joystick_enabled_matlab_node_B.i_i] *
+          joystick_enabled_matlab_node_B.i_o] *
           joystick_enabled_matlab_node_B.b_t;
         joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 +=
           joystick_enabled_matlab_node_B.X_est.Cib[3 *
-          joystick_enabled_matlab_node_B.i_i + 1] *
+          joystick_enabled_matlab_node_B.i_o + 1] *
           joystick_enabled_matlab_node_B.b_t;
         joystick_enabled_matlab_node_B.eps_tmp +=
           joystick_enabled_matlab_node_B.X_est.Cib[3 *
-          joystick_enabled_matlab_node_B.i_i + 2] *
+          joystick_enabled_matlab_node_B.i_o + 2] *
           joystick_enabled_matlab_node_B.b_t;
       }
 
@@ -4425,76 +4393,76 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     break;
   }
 
-  // End of MATLAB Function: '<S27>/commandExecuter'
+  // End of MATLAB Function: '<S26>/commandExecuter'
 
   // MATLAB Function: '<S4>/quatToEul' incorporates:
-  //   MATLAB Function: '<S27>/quatToEul'
+  //   MATLAB Function: '<S26>/quatToEul'
 
   joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.X_u[6] *
     joystick_enabled_matlab_node_B.X_u[6] * 2.0 - 1.0;
-  joystick_enabled_matlab_node_B.b_a_h = 2.0 *
+  joystick_enabled_matlab_node_B.b_a_l = 2.0 *
     joystick_enabled_matlab_node_B.X_u[6];
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 9;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_i]
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 9;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.i_o]
       = joystick_enabled_matlab_node_B.b_t *
-      joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_o];
   }
 
-  joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.b_a_h *
+  joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.b_a_l *
     0.0;
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[0] =
     joystick_enabled_matlab_node_B.b_t;
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[1] =
-    joystick_enabled_matlab_node_B.b_a_h * -joystick_enabled_matlab_node_B.X_u[5];
+    joystick_enabled_matlab_node_B.b_a_l * -joystick_enabled_matlab_node_B.X_u[5];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[2] =
-    joystick_enabled_matlab_node_B.b_a_h * joystick_enabled_matlab_node_B.X_u[4];
+    joystick_enabled_matlab_node_B.b_a_l * joystick_enabled_matlab_node_B.X_u[4];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[3] =
-    joystick_enabled_matlab_node_B.b_a_h * joystick_enabled_matlab_node_B.X_u[5];
+    joystick_enabled_matlab_node_B.b_a_l * joystick_enabled_matlab_node_B.X_u[5];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[4] =
     joystick_enabled_matlab_node_B.b_t;
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[5] =
-    joystick_enabled_matlab_node_B.b_a_h * -joystick_enabled_matlab_node_B.X_u[3];
+    joystick_enabled_matlab_node_B.b_a_l * -joystick_enabled_matlab_node_B.X_u[3];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[6] =
-    joystick_enabled_matlab_node_B.b_a_h * -joystick_enabled_matlab_node_B.X_u[4];
+    joystick_enabled_matlab_node_B.b_a_l * -joystick_enabled_matlab_node_B.X_u[4];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[7] =
-    joystick_enabled_matlab_node_B.b_a_h * joystick_enabled_matlab_node_B.X_u[3];
+    joystick_enabled_matlab_node_B.b_a_l * joystick_enabled_matlab_node_B.X_u[3];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp[8] =
     joystick_enabled_matlab_node_B.b_t;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.theta_b =
-      joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_i + 3]
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.theta_h =
+      joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_o + 3]
       * 2.0;
-    joystick_enabled_matlab_node_B.Cbi[3 * joystick_enabled_matlab_node_B.i_i] =
-      (joystick_enabled_matlab_node_B.theta_b *
+    joystick_enabled_matlab_node_B.Cbi[3 * joystick_enabled_matlab_node_B.i_o] =
+      (joystick_enabled_matlab_node_B.theta_h *
        joystick_enabled_matlab_node_B.X_u[3] +
        joystick_enabled_matlab_node_B.qk_plus_1_tmp[3 *
-       joystick_enabled_matlab_node_B.i_i]) +
+       joystick_enabled_matlab_node_B.i_o]) +
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp[3 *
-      joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 1;
+      joystick_enabled_matlab_node_B.i_o + 1;
     joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.b_index] =
-      (joystick_enabled_matlab_node_B.theta_b *
+      (joystick_enabled_matlab_node_B.theta_h *
        joystick_enabled_matlab_node_B.X_u[4] +
        joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.b_index])
       + joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.b_index];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 2;
+      joystick_enabled_matlab_node_B.i_o + 2;
     joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.b_index] =
-      (joystick_enabled_matlab_node_B.theta_b *
+      (joystick_enabled_matlab_node_B.theta_h *
        joystick_enabled_matlab_node_B.X_u[5] +
        joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.b_index])
       + joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.b_index];
   }
 
-  joystick_enabled_matlab_node_B.theta_b = std::asin(std::fmax(-1.0, std::fmin
+  joystick_enabled_matlab_node_B.theta_h = std::asin(std::fmax(-1.0, std::fmin
     (1.0, joystick_enabled_matlab_node_B.Cbi[6])));
-  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_b)) < 1.0E-6) {
-    // SignalConversion generated from: '<S219>/ SFunction ' incorporates:
+  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_h)) < 1.0E-6) {
+    // SignalConversion generated from: '<S218>/ SFunction ' incorporates:
     //   MATLAB Function: '<S7>/MATLAB Function'
 
     joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[3] = 0.0;
@@ -4502,7 +4470,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled__rt_atan2d_snf(-joystick_enabled_matlab_node_B.Cbi[1],
       joystick_enabled_matlab_node_B.Cbi[4]);
   } else {
-    // SignalConversion generated from: '<S219>/ SFunction ' incorporates:
+    // SignalConversion generated from: '<S218>/ SFunction ' incorporates:
     //   MATLAB Function: '<S7>/MATLAB Function'
 
     joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[3] =
@@ -4513,20 +4481,20 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.Cbi[0]);
   }
 
-  // SignalConversion generated from: '<S219>/ SFunction ' incorporates:
+  // SignalConversion generated from: '<S218>/ SFunction ' incorporates:
   //   MATLAB Function: '<S4>/quatToEul'
   //   MATLAB Function: '<S7>/MATLAB Function'
 
   joystick_enabled_mat_wrapToPi_k
     (&joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[3]);
   joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[4] =
-    -joystick_enabled_matlab_node_B.theta_b;
+    -joystick_enabled_matlab_node_B.theta_h;
   joystick_enabled_mat_wrapToPi_k
     (&joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[4]);
   joystick_enabled_mat_wrapToPi_k
     (&joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[5]);
 
-  // MATLAB Function: '<S26>/guidanceLaw' incorporates:
+  // MATLAB Function: '<S25>/guidanceLaw' incorporates:
   //   MATLAB Function: '<S6>/derivedStateEstimates'
   //   MATLAB Function: '<S6>/discreteTimeQuatPropagation'
   //   UnitDelay: '<S4>/Unit Delay'
@@ -4597,14 +4565,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 =
     joystick_enabled_matlab_no_norm(joystick_enabled_matlab_node_B.Ri_xy_e);
   if (joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 >= 0.5) {
-    joystick_enabled_matlab_node_B.theta_b = std::sin
+    joystick_enabled_matlab_node_B.theta_h = std::sin
       (joystick_enabled_matlab_node_DW.persistant_yaw_target);
     joystick_enabled_matlab_node_B.eps_tmp = std::cos
       (joystick_enabled_matlab_node_DW.persistant_yaw_target);
     joystick_enabled_matlab_node_B.b_t = std::sin
       (joystick_enabled_matlab_node_DW.persistant_yaw_target);
     joystick_enabled_matlab_node_B.absxk = 0.0 *
-      joystick_enabled_matlab_node_B.theta_b;
+      joystick_enabled_matlab_node_B.theta_h;
     joystick_enabled_matlab_node_B.Cbi[4] = joystick_enabled_matlab_node_B.absxk
       + joystick_enabled_matlab_node_B.eps_tmp;
     joystick_enabled_matlab_node_B.eta = std::sqrt(((std::cos
@@ -4625,7 +4593,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.eps_n[2] =
         (joystick_enabled_matlab_node_B.b_t -
          (joystick_enabled_matlab_node_B.eps_tmp -
-          joystick_enabled_matlab_node_B.theta_b)) /
+          joystick_enabled_matlab_node_B.theta_h)) /
         joystick_enabled_matlab_node_B.scale;
     } else {
       joystick_enabled_matlab_node_B.eps_tmp = (std::cos
@@ -4657,31 +4625,31 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       }
 
       if (joystick_enabled_matlab_node_B.b_index == 0) {
-        joystick_enabled_matlab_node_B.i_i = 1;
+        joystick_enabled_matlab_node_B.i_o = 1;
       } else {
         joystick_enabled_matlab_node_B.absxk =
           joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.b_index
           - 1];
-        joystick_enabled_matlab_node_B.i_i =
+        joystick_enabled_matlab_node_B.i_o =
           joystick_enabled_matlab_node_B.b_index;
         for (joystick_enabled_matlab_node_B.d_k =
              joystick_enabled_matlab_node_B.b_index + 1;
              joystick_enabled_matlab_node_B.d_k < 4;
              joystick_enabled_matlab_node_B.d_k++) {
-          joystick_enabled_matlab_node_B.eps_d =
+          joystick_enabled_matlab_node_B.eps_b =
             joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.d_k
             - 1];
           if (joystick_enabled_matlab_node_B.absxk <
-              joystick_enabled_matlab_node_B.eps_d) {
+              joystick_enabled_matlab_node_B.eps_b) {
             joystick_enabled_matlab_node_B.absxk =
-              joystick_enabled_matlab_node_B.eps_d;
-            joystick_enabled_matlab_node_B.i_i =
+              joystick_enabled_matlab_node_B.eps_b;
+            joystick_enabled_matlab_node_B.i_o =
               joystick_enabled_matlab_node_B.d_k;
           }
         }
       }
 
-      switch (joystick_enabled_matlab_node_B.i_i) {
+      switch (joystick_enabled_matlab_node_B.i_o) {
        case 1:
         joystick_enabled_matlab_node_B.eps_n[0] = std::sqrt(std::fmax(0.0,
           joystick_enabled_matlab_node_B.eps_tmp));
@@ -4879,18 +4847,18 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.qinv[3] * 2.0 - 1.0;
   joystick_enabled_matlab_node_B.b_t = 2.0 *
     joystick_enabled_matlab_node_B.qinv[3];
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.eps_tmp = 2.0 *
-      joystick_enabled_matlab_node_B.qinv[joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.Cbi_c[3 * joystick_enabled_matlab_node_B.i_i]
+      joystick_enabled_matlab_node_B.qinv[joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.Cbi_c[3 * joystick_enabled_matlab_node_B.i_o]
       = joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[3 *
-      joystick_enabled_matlab_node_B.i_i] * joystick_enabled_matlab_node_B.eta +
+      joystick_enabled_matlab_node_B.i_o] * joystick_enabled_matlab_node_B.eta +
       joystick_enabled_matlab_node_B.eps_tmp *
       joystick_enabled_matlab_node_B.qinv[0];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 1;
+      joystick_enabled_matlab_node_B.i_o + 1;
     joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.b_index]
       =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -4898,7 +4866,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.eps_tmp *
       joystick_enabled_matlab_node_B.qinv[1];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 2;
+      joystick_enabled_matlab_node_B.i_o + 2;
     joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.b_index]
       =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -4926,17 +4894,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.b_t * joystick_enabled_matlab_node_B.qinv[0];
   joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[8] =
     joystick_enabled_matlab_node_B.eta;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 9;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i] =
-      joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_i] +
-      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_i];
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 9;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o] =
+      joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_o] +
+      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_o];
   }
 
-  joystick_enabled_matlab_node_B.theta_b = std::asin(std::fmax(-1.0, std::fmin
+  joystick_enabled_matlab_node_B.theta_h = std::asin(std::fmax(-1.0, std::fmin
     (1.0, joystick_enabled_matlab_node_B.Cbi[6])));
-  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_b)) < 1.0E-6) {
+  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_h)) < 1.0E-6) {
     joystick_enabled_matlab_node_B.eps[0] = 0.0;
     joystick_enabled_matlab_node_B.b_t = joystick_enabled__rt_atan2d_snf
       (-joystick_enabled_matlab_node_B.Cbi[1],
@@ -4951,23 +4919,23 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   }
 
   joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.eps[0]);
-  joystick_enabled_matlab_node_B.theta_b =
-    -joystick_enabled_matlab_node_B.theta_b;
-  joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.theta_b);
+  joystick_enabled_matlab_node_B.theta_h =
+    -joystick_enabled_matlab_node_B.theta_h;
+  joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.theta_h);
   joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.b_t);
-  joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.theta_b;
+  joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.theta_h;
   joystick_enabled_matlab_node_B.eps[2] = joystick_enabled_matlab_node_B.b_t;
   joystick_enabled_matlab_node_B.OR1 = false;
   rtb_RelationalOperator_idx_0 = true;
-  joystick_enabled_matlab_node_B.i_i = 0;
+  joystick_enabled_matlab_node_B.i_o = 0;
   exitg1 = false;
-  while ((!exitg1) && (joystick_enabled_matlab_node_B.i_i < 16)) {
-    if (joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_i] !=
-        c[joystick_enabled_matlab_node_B.i_i]) {
+  while ((!exitg1) && (joystick_enabled_matlab_node_B.i_o < 16)) {
+    if (joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_o] !=
+        c[joystick_enabled_matlab_node_B.i_o]) {
       rtb_RelationalOperator_idx_0 = false;
       exitg1 = true;
     } else {
-      joystick_enabled_matlab_node_B.i_i++;
+      joystick_enabled_matlab_node_B.i_o++;
     }
   }
 
@@ -4981,15 +4949,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   } else {
     joystick_enabled_matlab_node_B.OR1 = false;
     rtb_RelationalOperator_idx_0 = true;
-    joystick_enabled_matlab_node_B.i_i = 0;
+    joystick_enabled_matlab_node_B.i_o = 0;
     exitg1 = false;
-    while ((!exitg1) && (joystick_enabled_matlab_node_B.i_i < 16)) {
-      if (joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_i]
-          != d[joystick_enabled_matlab_node_B.i_i]) {
+    while ((!exitg1) && (joystick_enabled_matlab_node_B.i_o < 16)) {
+      if (joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_o]
+          != d[joystick_enabled_matlab_node_B.i_o]) {
         rtb_RelationalOperator_idx_0 = false;
         exitg1 = true;
       } else {
-        joystick_enabled_matlab_node_B.i_i++;
+        joystick_enabled_matlab_node_B.i_o++;
       }
     }
 
@@ -5003,24 +4971,24 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   }
 
   if (guard1) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 16;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 16;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_o];
     }
 
     joystick_enabled_matlab_node_B.OR1 = false;
     rtb_RelationalOperator_idx_0 = true;
-    joystick_enabled_matlab_node_B.i_i = 0;
+    joystick_enabled_matlab_node_B.i_o = 0;
     exitg1 = false;
-    while ((!exitg1) && (joystick_enabled_matlab_node_B.i_i < 16)) {
-      if (joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_i]
-          != e[joystick_enabled_matlab_node_B.i_i]) {
+    while ((!exitg1) && (joystick_enabled_matlab_node_B.i_o < 16)) {
+      if (joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_o]
+          != e[joystick_enabled_matlab_node_B.i_o]) {
         rtb_RelationalOperator_idx_0 = false;
         exitg1 = true;
       } else {
-        joystick_enabled_matlab_node_B.i_i++;
+        joystick_enabled_matlab_node_B.i_o++;
       }
     }
 
@@ -5031,7 +4999,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     if (joystick_enabled_matlab_node_B.OR1) {
       joystick_enabled_matlab_node_B.eps[0] = 0.0;
       joystick_enabled_matlab_node_B.eps[1] =
-        joystick_enabled_matlab_node_B.theta_b;
+        joystick_enabled_matlab_node_B.theta_h;
       joystick_enabled_matlab_node_B.eps[2] = joystick_enabled_matlab_node_B.b_t;
     }
   }
@@ -5043,16 +5011,16 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.Rb_u[2] = std::abs
     (joystick_enabled_matlab_node_B.eps[2]);
   if (!std::isnan(joystick_enabled_matlab_node_B.Rb_u[0])) {
-    joystick_enabled_matlab_node_B.i_i = 1;
+    joystick_enabled_matlab_node_B.i_o = 1;
   } else {
-    joystick_enabled_matlab_node_B.i_i = 0;
+    joystick_enabled_matlab_node_B.i_o = 0;
     joystick_enabled_matlab_node_B.b_index = 2;
     exitg1 = false;
     while ((!exitg1) && (joystick_enabled_matlab_node_B.b_index < 4)) {
       if (!std::isnan
           (joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.b_index
            - 1])) {
-        joystick_enabled_matlab_node_B.i_i =
+        joystick_enabled_matlab_node_B.i_o =
           joystick_enabled_matlab_node_B.b_index;
         exitg1 = true;
       } else {
@@ -5061,41 +5029,41 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     }
   }
 
-  if (joystick_enabled_matlab_node_B.i_i == 0) {
+  if (joystick_enabled_matlab_node_B.i_o == 0) {
     joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.Rb_u[0];
   } else {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_i - 1];
+      joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_o - 1];
     for (joystick_enabled_matlab_node_B.b_index =
-         joystick_enabled_matlab_node_B.i_i + 1;
+         joystick_enabled_matlab_node_B.i_o + 1;
          joystick_enabled_matlab_node_B.b_index < 4;
          joystick_enabled_matlab_node_B.b_index++) {
-      joystick_enabled_matlab_node_B.b_a_h =
+      joystick_enabled_matlab_node_B.b_a_l =
         joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.b_index
         - 1];
       if (joystick_enabled_matlab_node_B.b_t <
-          joystick_enabled_matlab_node_B.b_a_h) {
+          joystick_enabled_matlab_node_B.b_a_l) {
         joystick_enabled_matlab_node_B.b_t =
-          joystick_enabled_matlab_node_B.b_a_h;
+          joystick_enabled_matlab_node_B.b_a_l;
       }
     }
   }
 
   if (joystick_enabled_matlab_node_B.b_t > 0.17453292519943295) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.b_t = 2.0 *
-        joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_i];
+        joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_o];
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[3 *
-        joystick_enabled_matlab_node_B.i_i] =
+        joystick_enabled_matlab_node_B.i_o] =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[3 *
-        joystick_enabled_matlab_node_B.i_i] *
+        joystick_enabled_matlab_node_B.i_o] *
         joystick_enabled_matlab_node_B.upper_force_index +
         joystick_enabled_matlab_node_B.b_t *
         joystick_enabled_matlab_node_B.X_est.qib[0];
       joystick_enabled_matlab_node_B.b_index = 3 *
-        joystick_enabled_matlab_node_B.i_i + 1;
+        joystick_enabled_matlab_node_B.i_o + 1;
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.b_index]
         =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5103,7 +5071,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
         joystick_enabled_matlab_node_B.b_t *
         joystick_enabled_matlab_node_B.X_est.qib[1];
       joystick_enabled_matlab_node_B.b_index = 3 *
-        joystick_enabled_matlab_node_B.i_i + 2;
+        joystick_enabled_matlab_node_B.i_o + 2;
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.b_index]
         =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5129,51 +5097,51 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.pwms_horiz_idx_1;
     joystick_enabled_matlab_node_B.Cbi_c[8] =
       joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 9;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_i]
-        + joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 9;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_o]
+        + joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_o];
     }
 
-    joystick_enabled_matlab_node_B.b_a_h = 0.0;
+    joystick_enabled_matlab_node_B.b_a_l = 0.0;
+    joystick_enabled_matlab_node_B.rtb_Rb_u_b = 0.0;
     joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0;
-    joystick_enabled_matlab_node_B.rtb_Rb_u_f = 0.0;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.b_t =
-        joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_i];
-      joystick_enabled_matlab_node_B.b_a_h +=
+        joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_o];
+      joystick_enabled_matlab_node_B.b_a_l +=
         joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i] * joystick_enabled_matlab_node_B.b_t;
+        joystick_enabled_matlab_node_B.i_o] * joystick_enabled_matlab_node_B.b_t;
+      joystick_enabled_matlab_node_B.rtb_Rb_u_b +=
+        joystick_enabled_matlab_node_B.Cbi[3 *
+        joystick_enabled_matlab_node_B.i_o + 1] *
+        joystick_enabled_matlab_node_B.b_t;
       joystick_enabled_matlab_node_B.rtb_Rb_u_j +=
         joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i + 1] *
-        joystick_enabled_matlab_node_B.b_t;
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f +=
-        joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i + 2] *
+        joystick_enabled_matlab_node_B.i_o + 2] *
         joystick_enabled_matlab_node_B.b_t;
     }
 
     joystick_enabled_matlab_node_B.Rb_u[2] =
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f;
-    joystick_enabled_matlab_node_B.Rb_u[1] =
       joystick_enabled_matlab_node_B.rtb_Rb_u_j;
+    joystick_enabled_matlab_node_B.Rb_u[1] =
+      joystick_enabled_matlab_node_B.rtb_Rb_u_b;
     joystick_enabled_matlab_node_B.Rb_u[0] =
-      joystick_enabled_matlab_node_B.b_a_h;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_i]
-        - ((joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.b_a_l;
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_o]
+        - ((joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o
             + 3] * joystick_enabled_matlab_node_B.b_absxk +
-            joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i]
+            joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o]
             * joystick_enabled_matlab_node_B.b_scale) +
-           joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i
+           joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o
            + 6] * joystick_enabled_matlab_node_B.rotm_tmp);
     }
 
@@ -5183,20 +5151,20 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.eps[2];
     joystick_enabled_matlab_node_DW.action_id = 1.0;
   } else if (joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 >= 0.5) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.b_t = 2.0 *
-        joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_i];
+        joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_o];
       joystick_enabled_matlab_node_B.Cbi_c[3 *
-        joystick_enabled_matlab_node_B.i_i] =
+        joystick_enabled_matlab_node_B.i_o] =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[3 *
-        joystick_enabled_matlab_node_B.i_i] *
+        joystick_enabled_matlab_node_B.i_o] *
         joystick_enabled_matlab_node_B.upper_force_index +
         joystick_enabled_matlab_node_B.b_t *
         joystick_enabled_matlab_node_B.X_est.qib[0];
       joystick_enabled_matlab_node_B.b_index = 3 *
-        joystick_enabled_matlab_node_B.i_i + 1;
+        joystick_enabled_matlab_node_B.i_o + 1;
       joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.b_index]
         =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5204,7 +5172,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
         joystick_enabled_matlab_node_B.b_t *
         joystick_enabled_matlab_node_B.X_est.qib[1];
       joystick_enabled_matlab_node_B.b_index = 3 *
-        joystick_enabled_matlab_node_B.i_i + 2;
+        joystick_enabled_matlab_node_B.i_o + 2;
       joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.b_index]
         =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5231,70 +5199,70 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.pwms_horiz_idx_1;
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[8] =
       joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 9;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_i]
-        + joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 9;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_o]
+        + joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_o];
     }
 
-    joystick_enabled_matlab_node_B.b_a_h = 0.0;
+    joystick_enabled_matlab_node_B.b_a_l = 0.0;
+    joystick_enabled_matlab_node_B.rtb_Rb_u_b = 0.0;
     joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0;
-    joystick_enabled_matlab_node_B.rtb_Rb_u_f = 0.0;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.b_t =
-        joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_i];
-      joystick_enabled_matlab_node_B.b_a_h +=
+        joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_o];
+      joystick_enabled_matlab_node_B.b_a_l +=
         joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i] * joystick_enabled_matlab_node_B.b_t;
+        joystick_enabled_matlab_node_B.i_o] * joystick_enabled_matlab_node_B.b_t;
+      joystick_enabled_matlab_node_B.rtb_Rb_u_b +=
+        joystick_enabled_matlab_node_B.Cbi[3 *
+        joystick_enabled_matlab_node_B.i_o + 1] *
+        joystick_enabled_matlab_node_B.b_t;
       joystick_enabled_matlab_node_B.rtb_Rb_u_j +=
         joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i + 1] *
-        joystick_enabled_matlab_node_B.b_t;
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f +=
-        joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i + 2] *
+        joystick_enabled_matlab_node_B.i_o + 2] *
         joystick_enabled_matlab_node_B.b_t;
     }
 
     joystick_enabled_matlab_node_B.Rb_u[2] =
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f;
-    joystick_enabled_matlab_node_B.Rb_u[1] =
       joystick_enabled_matlab_node_B.rtb_Rb_u_j;
+    joystick_enabled_matlab_node_B.Rb_u[1] =
+      joystick_enabled_matlab_node_B.rtb_Rb_u_b;
     joystick_enabled_matlab_node_B.Rb_u[0] =
-      joystick_enabled_matlab_node_B.b_a_h;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.eps_n[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_i]
-        - ((joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.b_a_l;
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.eps_n[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_o]
+        - ((joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o
             + 3] * joystick_enabled_matlab_node_B.b_absxk +
-            joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i]
+            joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o]
             * joystick_enabled_matlab_node_B.b_scale) +
-           joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i
+           joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o
            + 6] * joystick_enabled_matlab_node_B.rotm_tmp);
     }
 
     joystick_enabled_matlab_node_DW.action_id = 2.0;
   } else {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.b_t = 2.0 *
-        joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_i];
+        joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_o];
       joystick_enabled_matlab_node_B.Cbi_c[3 *
-        joystick_enabled_matlab_node_B.i_i] =
+        joystick_enabled_matlab_node_B.i_o] =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[3 *
-        joystick_enabled_matlab_node_B.i_i] *
+        joystick_enabled_matlab_node_B.i_o] *
         joystick_enabled_matlab_node_B.upper_force_index +
         joystick_enabled_matlab_node_B.b_t *
         joystick_enabled_matlab_node_B.X_est.qib[0];
       joystick_enabled_matlab_node_B.b_index = 3 *
-        joystick_enabled_matlab_node_B.i_i + 1;
+        joystick_enabled_matlab_node_B.i_o + 1;
       joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.b_index]
         =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5302,7 +5270,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
         joystick_enabled_matlab_node_B.b_t *
         joystick_enabled_matlab_node_B.X_est.qib[1];
       joystick_enabled_matlab_node_B.b_index = 3 *
-        joystick_enabled_matlab_node_B.i_i + 2;
+        joystick_enabled_matlab_node_B.i_o + 2;
       joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.b_index]
         =
         joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5329,51 +5297,51 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.pwms_horiz_idx_1;
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[8] =
       joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 9;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_i]
-        + joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 9;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_o]
+        + joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_o];
     }
 
-    joystick_enabled_matlab_node_B.b_a_h = 0.0;
+    joystick_enabled_matlab_node_B.b_a_l = 0.0;
+    joystick_enabled_matlab_node_B.rtb_Rb_u_b = 0.0;
     joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0;
-    joystick_enabled_matlab_node_B.rtb_Rb_u_f = 0.0;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.b_t =
-        joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_i];
-      joystick_enabled_matlab_node_B.b_a_h +=
+        joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_o];
+      joystick_enabled_matlab_node_B.b_a_l +=
         joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i] * joystick_enabled_matlab_node_B.b_t;
+        joystick_enabled_matlab_node_B.i_o] * joystick_enabled_matlab_node_B.b_t;
+      joystick_enabled_matlab_node_B.rtb_Rb_u_b +=
+        joystick_enabled_matlab_node_B.Cbi[3 *
+        joystick_enabled_matlab_node_B.i_o + 1] *
+        joystick_enabled_matlab_node_B.b_t;
       joystick_enabled_matlab_node_B.rtb_Rb_u_j +=
         joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i + 1] *
-        joystick_enabled_matlab_node_B.b_t;
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f +=
-        joystick_enabled_matlab_node_B.Cbi[3 *
-        joystick_enabled_matlab_node_B.i_i + 2] *
+        joystick_enabled_matlab_node_B.i_o + 2] *
         joystick_enabled_matlab_node_B.b_t;
     }
 
     joystick_enabled_matlab_node_B.Rb_u[2] =
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f;
-    joystick_enabled_matlab_node_B.Rb_u[1] =
       joystick_enabled_matlab_node_B.rtb_Rb_u_j;
+    joystick_enabled_matlab_node_B.Rb_u[1] =
+      joystick_enabled_matlab_node_B.rtb_Rb_u_b;
     joystick_enabled_matlab_node_B.Rb_u[0] =
-      joystick_enabled_matlab_node_B.b_a_h;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 3;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.eps_n[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_i]
-        - ((joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i
+      joystick_enabled_matlab_node_B.b_a_l;
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 3;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.eps_n[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_o]
+        - ((joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o
             + 3] * joystick_enabled_matlab_node_B.b_absxk +
-            joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i]
+            joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o]
             * joystick_enabled_matlab_node_B.b_scale) +
-           joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_i
+           joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.i_o
            + 6] * joystick_enabled_matlab_node_B.rotm_tmp);
     }
 
@@ -5387,13 +5355,13 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_DW.prior_action_id_g =
     joystick_enabled_matlab_node_DW.action_id;
 
-  // Gain: '<S26>/Gain5' incorporates:
-  //   DataStoreWrite: '<S26>/Data Store Write1'
-  //   RelationalOperator: '<S30>/FixPt Relational Operator'
-  //   UnitDelay: '<S30>/Delay Input1'
+  // Gain: '<S25>/Gain5' incorporates:
+  //   DataStoreWrite: '<S25>/Data Store Write1'
+  //   RelationalOperator: '<S29>/FixPt Relational Operator'
+  //   UnitDelay: '<S29>/Delay Input1'
   //   UnitDelay: '<S4>/Unit Delay'
   //
-  //  Block description for '<S30>/Delay Input1':
+  //  Block description for '<S29>/Delay Input1':
   //
   //   Store in Global RAM
 
@@ -5401,7 +5369,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     ((joystick_enabled_matlab_node_DW.UnitDelay_DSTATE !=
       joystick_enabled_matlab_node_DW.DelayInput1_DSTATE) << 7);
 
-  // MATLAB Function: '<S26>/quatInjector' incorporates:
+  // MATLAB Function: '<S25>/quatInjector' incorporates:
   //   MATLAB Function: '<S6>/derivedStateEstimates'
   //   UnitDelay: '<S4>/Unit Delay'
 
@@ -5409,16 +5377,16 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.Rb_u[2] = joystick_enabled_matlab_node_B.t;
   if ((joystick_enabled_matlab_node_DW.UnitDelay_DSTATE == 2.0) ||
       (joystick_enabled_matlab_node_DW.UnitDelay_DSTATE == 1.0)) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 16;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 16;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_o];
     }
 
-    joystick_enabled_matlab_node_B.i_i = std::memcmp(&a_1[0],
+    joystick_enabled_matlab_node_B.i_o = std::memcmp(&a_1[0],
       &joystick_enabled_matlab_node_B.x1[0], 16);
-    if (joystick_enabled_matlab_node_B.i_i == 0) {
+    if (joystick_enabled_matlab_node_B.i_o == 0) {
       joystick_enabled_matlab_node_B.Rb_u[0] =
         joystick_enabled_matlab_node_B.norm_w + 3.1;
       joystick_enabled_matl_eulToQuat(joystick_enabled_matlab_node_B.Rb_u,
@@ -5444,10 +5412,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.qib_int_u[3];
   }
 
-  // End of MATLAB Function: '<S26>/quatInjector'
+  // End of MATLAB Function: '<S25>/quatInjector'
 
-  // DiscreteIntegrator: '<S32>/Discrete-Time Integrator' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read6'
+  // DiscreteIntegrator: '<S31>/Discrete-Time Integrator' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read6'
 
   if ((joystick_enabled_matlab_node_B.integrator_reset > 0) &&
       (joystick_enabled_matlab_node_DW.DiscreteTimeIntegrator_PrevRese <= 0)) {
@@ -5457,9 +5425,9 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.DiscreteTimeIntegrator_DSTATE[3] = 0.0;
   }
 
-  // MATLAB Function: '<S26>/deltaQuatError' incorporates:
-  //   MATLAB Function: '<S26>/guidanceLaw'
-  //   MATLAB Function: '<S26>/quatPID'
+  // MATLAB Function: '<S25>/deltaQuatError' incorporates:
+  //   MATLAB Function: '<S25>/guidanceLaw'
+  //   MATLAB Function: '<S25>/quatPID'
   //   MATLAB Function: '<S6>/discreteTimeQuatPropagation'
 
   joystick_enabled_matlab_node_B.b_t =
@@ -5471,7 +5439,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
      joystick_enabled_matlab_node_B.qe_matlab[1]) -
     -joystick_enabled_matlab_node_B.X_est.qib[2] *
     joystick_enabled_matlab_node_B.qe_matlab[2];
-  joystick_enabled_matlab_node_B.eps_d =
+  joystick_enabled_matlab_node_B.eps_b =
     (joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 *
      joystick_enabled_matlab_node_B.qe_matlab[0] +
      joystick_enabled_matlab_node_B.qe_matlab[3] *
@@ -5480,7 +5448,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
      joystick_enabled_matlab_node_B.qe_matlab[2] -
      joystick_enabled_matlab_node_B.qe_matlab[1] *
      -joystick_enabled_matlab_node_B.X_est.qib[2]);
-  joystick_enabled_matlab_node_B.eta = joystick_enabled_matlab_node_B.eps_d;
+  joystick_enabled_matlab_node_B.eta = joystick_enabled_matlab_node_B.eps_b;
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp =
     (joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 *
      joystick_enabled_matlab_node_B.qe_matlab[1] +
@@ -5492,7 +5460,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
      joystick_enabled_matlab_node_B.qe_matlab[2]);
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 =
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
-  joystick_enabled_matlab_node_B.b_a_h =
+  joystick_enabled_matlab_node_B.b_a_l =
     (joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 *
      joystick_enabled_matlab_node_B.qe_matlab[2] +
      joystick_enabled_matlab_node_B.qe_matlab[3] *
@@ -5502,43 +5470,43 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
      joystick_enabled_matlab_node_B.qe_matlab[0] *
      -joystick_enabled_matlab_node_B.X_est.qib[1]);
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 =
-    joystick_enabled_matlab_node_B.b_a_h;
+    joystick_enabled_matlab_node_B.b_a_l;
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_3 =
     joystick_enabled_matlab_node_B.b_t;
   if (joystick_enabled_matlab_node_B.b_t < 0.0) {
-    joystick_enabled_matlab_node_B.eta = -joystick_enabled_matlab_node_B.eps_d;
+    joystick_enabled_matlab_node_B.eta = -joystick_enabled_matlab_node_B.eps_b;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 =
       -joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 =
-      -joystick_enabled_matlab_node_B.b_a_h;
+      -joystick_enabled_matlab_node_B.b_a_l;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_3 =
       -joystick_enabled_matlab_node_B.b_t;
   }
 
   joystick_enabled_matlab_node_B.OR1 = false;
   if (std::isnan(joystick_enabled_matlab_node_B.rtb_delta_qe_idx_3)) {
-    joystick_enabled_matlab_node_B.theta_b = (rtNaN);
+    joystick_enabled_matlab_node_B.theta_h = (rtNaN);
   } else {
-    joystick_enabled_matlab_node_B.theta_b =
+    joystick_enabled_matlab_node_B.theta_h =
       (joystick_enabled_matlab_node_B.rtb_delta_qe_idx_3 > 0.0);
   }
 
-  if (joystick_enabled_matlab_node_B.theta_b == 0.0) {
+  if (joystick_enabled_matlab_node_B.theta_h == 0.0) {
     joystick_enabled_matlab_node_B.OR1 = true;
   }
 
   if (!joystick_enabled_matlab_node_B.OR1) {
-    joystick_enabled_matlab_node_B.eta *= joystick_enabled_matlab_node_B.theta_b;
+    joystick_enabled_matlab_node_B.eta *= joystick_enabled_matlab_node_B.theta_h;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1 *=
-      joystick_enabled_matlab_node_B.theta_b;
+      joystick_enabled_matlab_node_B.theta_h;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2 *=
-      joystick_enabled_matlab_node_B.theta_b;
+      joystick_enabled_matlab_node_B.theta_h;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_3 *=
-      joystick_enabled_matlab_node_B.theta_b;
+      joystick_enabled_matlab_node_B.theta_h;
   }
 
-  // SignalConversion generated from: '<S26>/Discrete Transfer Fcn' incorporates:
-  //   MATLAB Function: '<S26>/deltaQuatError'
+  // SignalConversion generated from: '<S25>/Discrete Transfer Fcn' incorporates:
+  //   MATLAB Function: '<S25>/deltaQuatError'
 
   joystick_enabled_matlab_node_B.qe_matlab_g[0] = 1.0 -
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_3;
@@ -5549,8 +5517,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.qe_matlab_g[3] = 0.0 -
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2;
 
-  // DiscreteTransferFcn: '<S26>/Discrete Transfer Fcn' incorporates:
-  //   MATLAB Function: '<S26>/deltaQuatError'
+  // DiscreteTransferFcn: '<S25>/Discrete Transfer Fcn' incorporates:
+  //   MATLAB Function: '<S25>/deltaQuatError'
 
   joystick_enabled_matlab_node_B.eps_tmp = ((1.0 -
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_3) -
@@ -5581,24 +5549,24 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.eps_tmp + -10.0 *
     joystick_enabled_matlab_node_DW.DiscreteTransferFcn_states[3];
 
-  // MATLAB Function: '<S26>/quatPID' incorporates:
-  //   DiscreteIntegrator: '<S32>/Discrete-Time Integrator'
-  //   Gain: '<S26>/Gain1'
-  //   Gain: '<S26>/Gain2'
-  //   SignalConversion generated from: '<S26>/Discrete Transfer Fcn'
+  // MATLAB Function: '<S25>/quatPID' incorporates:
+  //   DiscreteIntegrator: '<S31>/Discrete-Time Integrator'
+  //   Gain: '<S25>/Gain1'
+  //   Gain: '<S25>/Gain2'
+  //   SignalConversion generated from: '<S25>/Discrete Transfer Fcn'
 
-  joystick_enabled_matlab_node_B.qinv[0] = joystick_enabled_matlab_node_B.eps_d;
+  joystick_enabled_matlab_node_B.qinv[0] = joystick_enabled_matlab_node_B.eps_b;
   joystick_enabled_matlab_node_B.qinv[1] =
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
-  joystick_enabled_matlab_node_B.qinv[2] = joystick_enabled_matlab_node_B.b_a_h;
+  joystick_enabled_matlab_node_B.qinv[2] = joystick_enabled_matlab_node_B.b_a_l;
   joystick_enabled_matlab_node_B.qinv[3] = joystick_enabled_matlab_node_B.b_t;
   if (joystick_enabled_matlab_node_B.b_t < 0.0) {
     joystick_enabled_matlab_node_B.qinv[0] =
-      -joystick_enabled_matlab_node_B.eps_d;
+      -joystick_enabled_matlab_node_B.eps_b;
     joystick_enabled_matlab_node_B.qinv[1] =
       -joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
     joystick_enabled_matlab_node_B.qinv[2] =
-      -joystick_enabled_matlab_node_B.b_a_h;
+      -joystick_enabled_matlab_node_B.b_a_l;
     joystick_enabled_matlab_node_B.qinv[3] = -joystick_enabled_matlab_node_B.b_t;
   }
 
@@ -5615,17 +5583,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.Qe1[3] = -joystick_enabled_matlab_node_B.qinv[1];
   joystick_enabled_matlab_node_B.Qe1[7] = joystick_enabled_matlab_node_B.qinv[0];
   joystick_enabled_matlab_node_B.Qe1[11] = joystick_enabled_matlab_node_B.qinv[3];
-  joystick_enabled_matlab_node_B.eps_d = 0.0;
+  joystick_enabled_matlab_node_B.eps_b = 0.0;
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp = 0.0;
-  joystick_enabled_matlab_node_B.b_a_h = 0.0;
-  joystick_enabled_matlab_node_B.eps_a = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 4;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.rtb_Rb_u_f = 0.0;
+  joystick_enabled_matlab_node_B.b_a_l = 0.0;
+  joystick_enabled_matlab_node_B.eps_f = 0.0;
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 4;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0;
-    joystick_enabled_matlab_node_B.theta_b = 0.0;
-    joystick_enabled_matlab_node_B.Qe1_b = 0.0;
+    joystick_enabled_matlab_node_B.rtb_Rb_u_b = 0.0;
+    joystick_enabled_matlab_node_B.theta_h = 0.0;
+    joystick_enabled_matlab_node_B.Qe1_e = 0.0;
     for (joystick_enabled_matlab_node_B.b_index = 0;
          joystick_enabled_matlab_node_B.b_index < 3;
          joystick_enabled_matlab_node_B.b_index++) {
@@ -5633,49 +5601,49 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
         joystick_enabled_matlab_node_B.b_index << 2;
       joystick_enabled_matlab_node_B.b_t =
         joystick_enabled_matlab_node_B.Qe1[joystick_enabled_matlab_node_B.pos +
-        joystick_enabled_matlab_node_B.i_i];
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f +=
+        joystick_enabled_matlab_node_B.i_o];
+      joystick_enabled_matlab_node_B.rtb_Rb_u_j +=
         joystick_enabled_matlab_node_B.Qe1[joystick_enabled_matlab_node_B.pos] *
         joystick_enabled_matlab_node_B.b_t;
-      joystick_enabled_matlab_node_B.rtb_Rb_u_j +=
+      joystick_enabled_matlab_node_B.rtb_Rb_u_b +=
         joystick_enabled_matlab_node_B.Qe1[joystick_enabled_matlab_node_B.pos +
         1] * joystick_enabled_matlab_node_B.b_t;
-      joystick_enabled_matlab_node_B.theta_b +=
+      joystick_enabled_matlab_node_B.theta_h +=
         joystick_enabled_matlab_node_B.Qe1[joystick_enabled_matlab_node_B.pos +
         2] * joystick_enabled_matlab_node_B.b_t;
-      joystick_enabled_matlab_node_B.Qe1_b +=
+      joystick_enabled_matlab_node_B.Qe1_e +=
         joystick_enabled_matlab_node_B.Qe1[joystick_enabled_matlab_node_B.pos +
         3] * joystick_enabled_matlab_node_B.b_t;
     }
 
-    joystick_enabled_matlab_node_B.b_index = joystick_enabled_matlab_node_B.i_i <<
+    joystick_enabled_matlab_node_B.b_index = joystick_enabled_matlab_node_B.i_o <<
       2;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index +
-      3] = joystick_enabled_matlab_node_B.Qe1_b;
+      3] = joystick_enabled_matlab_node_B.Qe1_e;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index +
-      2] = joystick_enabled_matlab_node_B.theta_b;
+      2] = joystick_enabled_matlab_node_B.theta_h;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index +
-      1] = joystick_enabled_matlab_node_B.rtb_Rb_u_j;
+      1] = joystick_enabled_matlab_node_B.rtb_Rb_u_b;
     joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index] =
-      joystick_enabled_matlab_node_B.rtb_Rb_u_f;
-    joystick_enabled_matlab_node_B.dv1[joystick_enabled_matlab_node_B.i_i] =
-      (joystick_enabled_matlab__ConstP.Gain1_Gain[joystick_enabled_matlab_node_B.i_i]
-       * joystick_enabled_matlab_node_B.qe_matlab_g[joystick_enabled_matlab_node_B.i_i]
+      joystick_enabled_matlab_node_B.rtb_Rb_u_j;
+    joystick_enabled_matlab_node_B.dv1[joystick_enabled_matlab_node_B.i_o] =
+      (joystick_enabled_matlab__ConstP.Gain1_Gain[joystick_enabled_matlab_node_B.i_o]
+       * joystick_enabled_matlab_node_B.qe_matlab_g[joystick_enabled_matlab_node_B.i_o]
        + 0.0 *
-       joystick_enabled_matlab_node_DW.DiscreteTimeIntegrator_DSTATE[joystick_enabled_matlab_node_B.i_i])
-      + joystick_enabled_matlab_node_B.DiscreteTransferFcn[joystick_enabled_matlab_node_B.i_i];
+       joystick_enabled_matlab_node_DW.DiscreteTimeIntegrator_DSTATE[joystick_enabled_matlab_node_B.i_o])
+      + joystick_enabled_matlab_node_B.DiscreteTransferFcn[joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_B.dv1[joystick_enabled_matlab_node_B.i_i];
-    joystick_enabled_matlab_node_B.eps_d +=
+      joystick_enabled_matlab_node_B.dv1[joystick_enabled_matlab_node_B.i_o];
+    joystick_enabled_matlab_node_B.eps_b +=
       joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index]
       * joystick_enabled_matlab_node_B.b_t;
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp +=
       joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index
       + 1] * joystick_enabled_matlab_node_B.b_t;
-    joystick_enabled_matlab_node_B.b_a_h +=
+    joystick_enabled_matlab_node_B.b_a_l +=
       joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index
       + 2] * joystick_enabled_matlab_node_B.b_t;
-    joystick_enabled_matlab_node_B.eps_a +=
+    joystick_enabled_matlab_node_B.eps_f +=
       joystick_enabled_matlab_node_B.c_a[joystick_enabled_matlab_node_B.b_index
       + 3] * joystick_enabled_matlab_node_B.b_t;
   }
@@ -5694,39 +5662,39 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.Qe1[11] = -joystick_enabled_matlab_node_B.qinv
     [3];
   joystick_enabled_matlab_node_B.dv1[0] = 2.0 *
-    joystick_enabled_matlab_node_B.eps_d;
+    joystick_enabled_matlab_node_B.eps_b;
   joystick_enabled_matlab_node_B.dv1[1] = 2.0 *
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
   joystick_enabled_matlab_node_B.dv1[2] = 2.0 *
-    joystick_enabled_matlab_node_B.b_a_h;
+    joystick_enabled_matlab_node_B.b_a_l;
   joystick_enabled_matlab_node_B.dv1[3] = 2.0 *
-    joystick_enabled_matlab_node_B.eps_a;
+    joystick_enabled_matlab_node_B.eps_f;
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp = 0.0;
-  joystick_enabled_matlab_node_B.eps_d = 0.0;
-  joystick_enabled_matlab_node_B.b_a_h = 0.0;
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 4;
-       joystick_enabled_matlab_node_B.i_i++) {
+  joystick_enabled_matlab_node_B.eps_b = 0.0;
+  joystick_enabled_matlab_node_B.b_a_l = 0.0;
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 4;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_B.dv1[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.dv1[joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp +=
-      joystick_enabled_matlab_node_B.Qe1[3 * joystick_enabled_matlab_node_B.i_i]
+      joystick_enabled_matlab_node_B.Qe1[3 * joystick_enabled_matlab_node_B.i_o]
       * joystick_enabled_matlab_node_B.b_t;
-    joystick_enabled_matlab_node_B.eps_d += joystick_enabled_matlab_node_B.Qe1[3
-      * joystick_enabled_matlab_node_B.i_i + 1] *
+    joystick_enabled_matlab_node_B.eps_b += joystick_enabled_matlab_node_B.Qe1[3
+      * joystick_enabled_matlab_node_B.i_o + 1] *
       joystick_enabled_matlab_node_B.b_t;
-    joystick_enabled_matlab_node_B.b_a_h += joystick_enabled_matlab_node_B.Qe1[3
-      * joystick_enabled_matlab_node_B.i_i + 2] *
+    joystick_enabled_matlab_node_B.b_a_l += joystick_enabled_matlab_node_B.Qe1[3
+      * joystick_enabled_matlab_node_B.i_o + 2] *
       joystick_enabled_matlab_node_B.b_t;
   }
 
-  joystick_enabled_matlab_node_B.wb_u[2] = joystick_enabled_matlab_node_B.b_a_h;
-  joystick_enabled_matlab_node_B.wb_u[1] = joystick_enabled_matlab_node_B.eps_d;
+  joystick_enabled_matlab_node_B.wb_u[2] = joystick_enabled_matlab_node_B.b_a_l;
+  joystick_enabled_matlab_node_B.wb_u[1] = joystick_enabled_matlab_node_B.eps_b;
   joystick_enabled_matlab_node_B.wb_u[0] =
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
 
-  // DiscreteIntegrator: '<S137>/Integrator' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read1'
+  // DiscreteIntegrator: '<S136>/Integrator' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read1'
 
   if ((joystick_enabled_matlab_node_B.integrator_reset > 0) &&
       (joystick_enabled_matlab_node_DW.Integrator_PrevResetState <= 0)) {
@@ -5735,8 +5703,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE[2] = 0.0;
   }
 
-  // DiscreteIntegrator: '<S132>/Filter' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read1'
+  // DiscreteIntegrator: '<S131>/Filter' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read1'
 
   if ((joystick_enabled_matlab_node_B.integrator_reset > 0) &&
       (joystick_enabled_matlab_node_DW.Filter_PrevResetState <= 0)) {
@@ -5745,72 +5713,72 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Filter_DSTATE[2] = 0.0;
   }
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
-    // Gain: '<S130>/Derivative Gain'
-    joystick_enabled_matlab_node_B.eps_d =
-      joystick_enabled_matlab_node_B.eps_n[joystick_enabled_matlab_node_B.i_i];
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
+    // Gain: '<S129>/Derivative Gain'
+    joystick_enabled_matlab_node_B.eps_b =
+      joystick_enabled_matlab_node_B.eps_n[joystick_enabled_matlab_node_B.i_o];
 
-    // Gain: '<S140>/Filter Coefficient' incorporates:
-    //   DiscreteIntegrator: '<S132>/Filter'
-    //   Gain: '<S130>/Derivative Gain'
-    //   Sum: '<S132>/SumD'
+    // Gain: '<S139>/Filter Coefficient' incorporates:
+    //   DiscreteIntegrator: '<S131>/Filter'
+    //   Gain: '<S129>/Derivative Gain'
+    //   Sum: '<S131>/SumD'
 
-    joystick_enabled_matlab_node_B.eps_a = (0.0 *
-      joystick_enabled_matlab_node_B.eps_d -
-      joystick_enabled_matlab_node_DW.Filter_DSTATE[joystick_enabled_matlab_node_B.i_i])
+    joystick_enabled_matlab_node_B.eps_f = (0.0 *
+      joystick_enabled_matlab_node_B.eps_b -
+      joystick_enabled_matlab_node_DW.Filter_DSTATE[joystick_enabled_matlab_node_B.i_o])
       * 100.0;
-    joystick_enabled_matlab_node_B.eps_p[joystick_enabled_matlab_node_B.i_i] =
-      joystick_enabled_matlab_node_B.eps_a;
+    joystick_enabled_matlab_node_B.eps_p[joystick_enabled_matlab_node_B.i_o] =
+      joystick_enabled_matlab_node_B.eps_f;
 
-    // Sum: '<S146>/Sum' incorporates:
-    //   DeadZone: '<S129>/DeadZone'
-    //   DiscreteIntegrator: '<S137>/Integrator'
-    //   Gain: '<S140>/Filter Coefficient'
-    //   Gain: '<S142>/Proportional Gain'
+    // Sum: '<S145>/Sum' incorporates:
+    //   DeadZone: '<S128>/DeadZone'
+    //   DiscreteIntegrator: '<S136>/Integrator'
+    //   Gain: '<S139>/Filter Coefficient'
+    //   Gain: '<S141>/Proportional Gain'
 
-    joystick_enabled_matlab_node_B.b_a_h =
-      (joystick_enabled_matlab__ConstP.ProportionalGain_Gain[joystick_enabled_matlab_node_B.i_i]
-       * joystick_enabled_matlab_node_B.eps_d +
-       joystick_enabled_matlab_node_DW.Integrator_DSTATE[joystick_enabled_matlab_node_B.i_i])
-      + joystick_enabled_matlab_node_B.eps_a;
-    joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_i] =
-      joystick_enabled_matlab_node_B.b_a_h;
+    joystick_enabled_matlab_node_B.b_a_l =
+      (joystick_enabled_matlab__ConstP.ProportionalGain_Gain[joystick_enabled_matlab_node_B.i_o]
+       * joystick_enabled_matlab_node_B.eps_b +
+       joystick_enabled_matlab_node_DW.Integrator_DSTATE[joystick_enabled_matlab_node_B.i_o])
+      + joystick_enabled_matlab_node_B.eps_f;
+    joystick_enabled_matlab_node_B.Rb_u[joystick_enabled_matlab_node_B.i_o] =
+      joystick_enabled_matlab_node_B.b_a_l;
 
-    // Saturate: '<S144>/Saturation'
-    if (joystick_enabled_matlab_node_B.b_a_h > 1.0) {
-      // MATLAB Function: '<S26>/dRbSetpointInjector'
-      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_i] =
+    // Saturate: '<S143>/Saturation'
+    if (joystick_enabled_matlab_node_B.b_a_l > 1.0) {
+      // MATLAB Function: '<S25>/dRbSetpointInjector'
+      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_o] =
         1.0;
-    } else if (joystick_enabled_matlab_node_B.b_a_h < -1.0) {
-      // MATLAB Function: '<S26>/dRbSetpointInjector'
-      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_i] =
+    } else if (joystick_enabled_matlab_node_B.b_a_l < -1.0) {
+      // MATLAB Function: '<S25>/dRbSetpointInjector'
+      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_o] =
         -1.0;
     } else {
-      // MATLAB Function: '<S26>/dRbSetpointInjector'
-      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.b_a_h;
+      // MATLAB Function: '<S25>/dRbSetpointInjector'
+      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.b_a_l;
     }
 
-    // End of Saturate: '<S144>/Saturation'
+    // End of Saturate: '<S143>/Saturation'
 
-    // MATLAB Function: '<S26>/quatToRotm' incorporates:
-    //   DataStoreRead: '<S26>/Data Store Read'
-    //   DataStoreWrite: '<S26>/Data Store Write'
-    //   Math: '<S26>/Transpose'
+    // MATLAB Function: '<S25>/quatToRotm' incorporates:
+    //   DataStoreRead: '<S25>/Data Store Read'
+    //   DataStoreWrite: '<S25>/Data Store Write'
+    //   Math: '<S25>/Transpose'
 
     joystick_enabled_matlab_node_B.b_t = 2.0 *
-      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.X_est.qib[joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[3 *
-      joystick_enabled_matlab_node_B.i_i] =
+      joystick_enabled_matlab_node_B.i_o] =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[3 *
-      joystick_enabled_matlab_node_B.i_i] *
+      joystick_enabled_matlab_node_B.i_o] *
       joystick_enabled_matlab_node_B.upper_force_index +
       joystick_enabled_matlab_node_B.b_t *
       joystick_enabled_matlab_node_B.X_est.qib[0];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 1;
+      joystick_enabled_matlab_node_B.i_o + 1;
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.b_index]
       =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5818,7 +5786,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.b_t *
       joystick_enabled_matlab_node_B.X_est.qib[1];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 2;
+      joystick_enabled_matlab_node_B.i_o + 2;
     joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.b_index]
       =
       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.b_index]
@@ -5827,7 +5795,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.X_est.qib[2];
   }
 
-  // Math: '<S26>/Transpose'
+  // Math: '<S25>/Transpose'
   joystick_enabled_matlab_node_B.Cbi_c[0] =
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
   joystick_enabled_matlab_node_B.Cbi_c[1] =
@@ -5845,104 +5813,104 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.Cbi_c[8] =
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0;
 
-  // MATLAB Function: '<S26>/quatToRotm'
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 9;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_i]
+  // MATLAB Function: '<S25>/quatToRotm'
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 9;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_o]
       =
-      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_i]
-      + joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.rtb_Cbi_tmp_b[joystick_enabled_matlab_node_B.i_o]
+      + joystick_enabled_matlab_node_B.Cbi_c[joystick_enabled_matlab_node_B.i_o];
   }
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
-    // Sum: '<S26>/Subtract4' incorporates:
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
+    // Sum: '<S25>/Subtract4' incorporates:
     //   MATLAB Function: '<S6>/derivedStateEstimates'
-    //   Product: '<S26>/Matrix Multiply3'
+    //   Product: '<S25>/Matrix Multiply3'
 
-    joystick_enabled_matlab_node_B.dRb_e[joystick_enabled_matlab_node_B.i_i] =
-      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_i] -
-      ((joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_i
+    joystick_enabled_matlab_node_B.dRb_e[joystick_enabled_matlab_node_B.i_o] =
+      joystick_enabled_matlab_node_B.eps[joystick_enabled_matlab_node_B.i_o] -
+      ((joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_o
         + 3] * joystick_enabled_matlab_node_B.pwms_horiz_idx_3 +
-        joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_o]
         * joystick_enabled_matlab_node_B.pwms_horiz_idx_2) +
-       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_i
+       joystick_enabled_matlab_node_B.rtb_sensors_dvl_cov[joystick_enabled_matlab_node_B.i_o
        + 6] * joystick_enabled_matlab_node_B.rtb_X_est_idx_2);
 
-    // MATLAB Function: '<S26>/rateInjector' incorporates:
-    //   SignalConversion generated from: '<S26>/Bus Selector'
-    //   Sum: '<S26>/Subtract'
+    // MATLAB Function: '<S25>/rateInjector' incorporates:
+    //   SignalConversion generated from: '<S25>/Bus Selector'
+    //   Sum: '<S25>/Subtract'
 
-    joystick_enabled_matlab_node_B.wb_u[joystick_enabled_matlab_node_B.i_i] -=
-      joystick_enabled_matlab_node_B.X_est.wb[joystick_enabled_matlab_node_B.i_i];
+    joystick_enabled_matlab_node_B.wb_u[joystick_enabled_matlab_node_B.i_o] -=
+      joystick_enabled_matlab_node_B.X_est.wb[joystick_enabled_matlab_node_B.i_o];
   }
 
-  // MATLAB Function: '<S26>/rateInjector' incorporates:
+  // MATLAB Function: '<S25>/rateInjector' incorporates:
   //   DiscreteIntegrator: '<S6>/Velocity Integrator'
-  //   MATLAB Function: '<S26>/trickFTListInjector'
+  //   MATLAB Function: '<S25>/trickFTListInjector'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
   //   Product: '<S6>/Matrix Multiply2'
 
   joystick_enabled_matlab_node_B.OR1 = joystick_enabled_matlab_isequal
     (joystick_enabled_matlab_node_B.s);
   if (joystick_enabled_matlab_node_B.OR1) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 16;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 16;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.x1[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_o];
     }
 
-    joystick_enabled_matlab_node_B.i_i = std::memcmp(&a_2[0],
+    joystick_enabled_matlab_node_B.i_o = std::memcmp(&a_2[0],
       &joystick_enabled_matlab_node_B.x1[0], 16);
-    if (joystick_enabled_matlab_node_B.i_i == 0) {
+    if (joystick_enabled_matlab_node_B.i_o == 0) {
       joystick_enabled_matlab_node_B.b_index = 0;
     } else {
-      joystick_enabled_matlab_node_B.i_i = std::memcmp(&b_a_1[0],
+      joystick_enabled_matlab_node_B.i_o = std::memcmp(&b_a_1[0],
         &joystick_enabled_matlab_node_B.x1[0], 16);
-      if (joystick_enabled_matlab_node_B.i_i == 0) {
+      if (joystick_enabled_matlab_node_B.i_o == 0) {
         joystick_enabled_matlab_node_B.b_index = 1;
       } else {
-        joystick_enabled_matlab_node_B.i_i = std::memcmp(&c_a_1[0],
+        joystick_enabled_matlab_node_B.i_o = std::memcmp(&c_a_1[0],
           &joystick_enabled_matlab_node_B.x1[0], 16);
-        if (joystick_enabled_matlab_node_B.i_i == 0) {
+        if (joystick_enabled_matlab_node_B.i_o == 0) {
           joystick_enabled_matlab_node_B.b_index = 2;
         } else {
-          joystick_enabled_matlab_node_B.i_i = std::memcmp(&d_a_0[0],
+          joystick_enabled_matlab_node_B.i_o = std::memcmp(&d_a_0[0],
             &joystick_enabled_matlab_node_B.x1[0], 16);
-          if (joystick_enabled_matlab_node_B.i_i == 0) {
+          if (joystick_enabled_matlab_node_B.i_o == 0) {
             joystick_enabled_matlab_node_B.b_index = 3;
           } else {
-            joystick_enabled_matlab_node_B.i_i = std::memcmp(&e_a[0],
+            joystick_enabled_matlab_node_B.i_o = std::memcmp(&e_a[0],
               &joystick_enabled_matlab_node_B.x1[0], 16);
-            if (joystick_enabled_matlab_node_B.i_i == 0) {
+            if (joystick_enabled_matlab_node_B.i_o == 0) {
               joystick_enabled_matlab_node_B.b_index = 4;
             } else {
-              joystick_enabled_matlab_node_B.i_i = std::memcmp(&f_a[0],
+              joystick_enabled_matlab_node_B.i_o = std::memcmp(&f_a[0],
                 &joystick_enabled_matlab_node_B.x1[0], 16);
-              if (joystick_enabled_matlab_node_B.i_i == 0) {
+              if (joystick_enabled_matlab_node_B.i_o == 0) {
                 joystick_enabled_matlab_node_B.b_index = 5;
               } else {
-                joystick_enabled_matlab_node_B.i_i = std::memcmp(&g_a[0],
+                joystick_enabled_matlab_node_B.i_o = std::memcmp(&g_a[0],
                   &joystick_enabled_matlab_node_B.x1[0], 16);
-                if (joystick_enabled_matlab_node_B.i_i == 0) {
+                if (joystick_enabled_matlab_node_B.i_o == 0) {
                   joystick_enabled_matlab_node_B.b_index = 6;
                 } else {
-                  joystick_enabled_matlab_node_B.i_i = std::memcmp(&h_a[0],
+                  joystick_enabled_matlab_node_B.i_o = std::memcmp(&h_a[0],
                     &joystick_enabled_matlab_node_B.x1[0], 16);
-                  if (joystick_enabled_matlab_node_B.i_i == 0) {
+                  if (joystick_enabled_matlab_node_B.i_o == 0) {
                     joystick_enabled_matlab_node_B.b_index = 7;
                   } else {
-                    joystick_enabled_matlab_node_B.i_i = std::memcmp(&i_a[0],
+                    joystick_enabled_matlab_node_B.i_o = std::memcmp(&i_a[0],
                       &joystick_enabled_matlab_node_B.x1[0], 16);
-                    if (joystick_enabled_matlab_node_B.i_i == 0) {
+                    if (joystick_enabled_matlab_node_B.i_o == 0) {
                       joystick_enabled_matlab_node_B.b_index = 8;
                     } else {
-                      joystick_enabled_matlab_node_B.i_i = std::memcmp(&j_a[0],
+                      joystick_enabled_matlab_node_B.i_o = std::memcmp(&j_a[0],
                         &joystick_enabled_matlab_node_B.x1[0], 16);
-                      if (joystick_enabled_matlab_node_B.i_i == 0) {
+                      if (joystick_enabled_matlab_node_B.i_o == 0) {
                         joystick_enabled_matlab_node_B.b_index = 9;
                       } else if (joystick_enabled_matlab__strcmp
                                  (joystick_enabled_matlab_node_B.x1)) {
@@ -5971,7 +5939,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.5 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -5979,14 +5947,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 1:
       joystick_enabled_matlab_node_B.dRb_e[0] = -0.5 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -5994,14 +5962,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 2:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6009,14 +5977,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = -1.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 3:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6024,14 +5992,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 1.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 4:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 1.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6039,14 +6007,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 5:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = -1.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6054,14 +6022,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 6:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 1.0 -
@@ -6069,14 +6037,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 7:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = -1.0 -
@@ -6084,14 +6052,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 8:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6099,14 +6067,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 1.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 9:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6114,14 +6082,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = -1.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 10:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 1.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6129,14 +6097,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 11:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = -1.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6144,14 +6112,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
 
      case 12:
       joystick_enabled_matlab_node_B.dRb_e[0] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[0];
       joystick_enabled_matlab_node_B.wb_u[0] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_Integrator_i_e;
+        joystick_enabled_matlab_node_B.rtb_Integrator_i_d;
       joystick_enabled_matlab_node_B.dRb_e[1] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[1];
       joystick_enabled_matlab_node_B.wb_u[1] = 0.0 -
@@ -6159,13 +6127,13 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.dRb_e[2] = 0.0 -
         joystick_enabled_matlab_node_DW.VelocityIntegrator_DSTATE[2];
       joystick_enabled_matlab_node_B.wb_u[2] = 0.0 -
-        joystick_enabled_matlab_node_B.rtb_X_est_wb_j;
+        joystick_enabled_matlab_node_B.rtb_X_est_wb_a;
       break;
     }
   }
 
-  // DiscreteIntegrator: '<S82>/Integrator' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read7'
+  // DiscreteIntegrator: '<S81>/Integrator' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read7'
 
   if ((joystick_enabled_matlab_node_B.integrator_reset > 0) &&
       (joystick_enabled_matlab_node_DW.Integrator_PrevResetState_d <= 0)) {
@@ -6174,8 +6142,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[2] = 0.0;
   }
 
-  // DiscreteIntegrator: '<S77>/Filter' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read7'
+  // DiscreteIntegrator: '<S76>/Filter' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read7'
 
   if ((joystick_enabled_matlab_node_B.integrator_reset > 0) &&
       (joystick_enabled_matlab_node_DW.Filter_PrevResetState_j <= 0)) {
@@ -6184,145 +6152,145 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Filter_DSTATE_n[2] = 0.0;
   }
 
-  // Gain: '<S85>/Filter Coefficient' incorporates:
-  //   DiscreteIntegrator: '<S77>/Filter'
-  //   Gain: '<S75>/Derivative Gain'
-  //   Sum: '<S77>/SumD'
+  // Gain: '<S84>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S76>/Filter'
+  //   Gain: '<S74>/Derivative Gain'
+  //   Sum: '<S76>/SumD'
 
-  joystick_enabled_matlab_node_B.eps_d = (0.0 *
+  joystick_enabled_matlab_node_B.eps_b = (0.0 *
     joystick_enabled_matlab_node_B.wb_u[0] -
     joystick_enabled_matlab_node_DW.Filter_DSTATE_n[0]) * 100.0;
-  joystick_enabled_matlab_node_B.eps[0] = joystick_enabled_matlab_node_B.eps_d;
+  joystick_enabled_matlab_node_B.eps[0] = joystick_enabled_matlab_node_B.eps_b;
 
-  // Sum: '<S91>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S82>/Integrator'
-  //   Gain: '<S75>/Derivative Gain'
+  // Sum: '<S90>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S81>/Integrator'
+  //   Gain: '<S74>/Derivative Gain'
 
   joystick_enabled_matlab_node_B.upper_force_index =
     (joystick_enabled_matlab_node_B.wb_u[0] +
      joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[0]) +
-    joystick_enabled_matlab_node_B.eps_d;
+    joystick_enabled_matlab_node_B.eps_b;
   joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 =
     joystick_enabled_matlab_node_B.upper_force_index;
 
-  // DeadZone: '<S74>/DeadZone'
+  // DeadZone: '<S73>/DeadZone'
   if (joystick_enabled_matlab_node_B.upper_force_index > 10.0) {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e =
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d =
       joystick_enabled_matlab_node_B.upper_force_index - 10.0;
   } else if (joystick_enabled_matlab_node_B.upper_force_index >= -10.0) {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e = 0.0;
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d = 0.0;
   } else {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e =
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d =
       joystick_enabled_matlab_node_B.upper_force_index - -10.0;
   }
 
-  // RelationalOperator: '<S72>/Relational Operator' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
+  // RelationalOperator: '<S71>/Relational Operator' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
 
   rtb_RelationalOperator_idx_0 =
-    (joystick_enabled_matlab_node_B.rtb_Integrator_i_e != 0.0);
+    (joystick_enabled_matlab_node_B.rtb_Integrator_i_d != 0.0);
 
-  // RelationalOperator: '<S72>/fix for DT propagation issue' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
+  // RelationalOperator: '<S71>/fix for DT propagation issue' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
 
   rtb_fixforDTpropagationissue_id =
-    (joystick_enabled_matlab_node_B.rtb_Integrator_i_e > 0.0);
+    (joystick_enabled_matlab_node_B.rtb_Integrator_i_d > 0.0);
 
-  // Gain: '<S79>/Integral Gain' incorporates:
-  //   Gain: '<S75>/Derivative Gain'
+  // Gain: '<S78>/Integral Gain' incorporates:
+  //   Gain: '<S74>/Derivative Gain'
 
   joystick_enabled_matlab_node_B.Integrator_i[0] =
     joystick_enabled_matlab_node_B.wb_u[0];
 
-  // Gain: '<S85>/Filter Coefficient' incorporates:
-  //   DiscreteIntegrator: '<S77>/Filter'
-  //   Gain: '<S75>/Derivative Gain'
-  //   Sum: '<S77>/SumD'
+  // Gain: '<S84>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S76>/Filter'
+  //   Gain: '<S74>/Derivative Gain'
+  //   Sum: '<S76>/SumD'
 
-  joystick_enabled_matlab_node_B.eps_d = (0.0 *
+  joystick_enabled_matlab_node_B.eps_b = (0.0 *
     joystick_enabled_matlab_node_B.wb_u[1] -
     joystick_enabled_matlab_node_DW.Filter_DSTATE_n[1]) * 100.0;
-  joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.eps_d;
+  joystick_enabled_matlab_node_B.eps[1] = joystick_enabled_matlab_node_B.eps_b;
 
-  // Gain: '<S87>/Proportional Gain' incorporates:
-  //   Gain: '<S75>/Derivative Gain'
-  //   Gain: '<S79>/Integral Gain'
+  // Gain: '<S86>/Proportional Gain' incorporates:
+  //   Gain: '<S74>/Derivative Gain'
+  //   Gain: '<S78>/Integral Gain'
 
   joystick_enabled_matlab_node_B.rtb_X_est_wb = 5.0 *
     joystick_enabled_matlab_node_B.wb_u[1];
 
-  // Sum: '<S91>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S82>/Integrator'
-  //   Gain: '<S87>/Proportional Gain'
+  // Sum: '<S90>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S81>/Integrator'
+  //   Gain: '<S86>/Proportional Gain'
 
   joystick_enabled_matlab_node_B.upper_force_index =
     (joystick_enabled_matlab_node_B.rtb_X_est_wb +
      joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[1]) +
-    joystick_enabled_matlab_node_B.eps_d;
+    joystick_enabled_matlab_node_B.eps_b;
   joystick_enabled_matlab_node_B.b_t =
     joystick_enabled_matlab_node_B.upper_force_index;
 
-  // DeadZone: '<S74>/DeadZone'
+  // DeadZone: '<S73>/DeadZone'
   if (joystick_enabled_matlab_node_B.upper_force_index > 10.0) {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e =
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d =
       joystick_enabled_matlab_node_B.upper_force_index - 10.0;
   } else if (joystick_enabled_matlab_node_B.upper_force_index >= -10.0) {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e = 0.0;
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d = 0.0;
   } else {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e =
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d =
       joystick_enabled_matlab_node_B.upper_force_index - -10.0;
   }
 
-  // RelationalOperator: '<S72>/Relational Operator' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
+  // RelationalOperator: '<S71>/Relational Operator' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
 
   rtb_RelationalOperator_idx_1 =
-    (joystick_enabled_matlab_node_B.rtb_Integrator_i_e != 0.0);
+    (joystick_enabled_matlab_node_B.rtb_Integrator_i_d != 0.0);
 
-  // RelationalOperator: '<S72>/fix for DT propagation issue' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
+  // RelationalOperator: '<S71>/fix for DT propagation issue' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
 
   rtb_fixforDTpropagationissue__0 =
-    (joystick_enabled_matlab_node_B.rtb_Integrator_i_e > 0.0);
+    (joystick_enabled_matlab_node_B.rtb_Integrator_i_d > 0.0);
 
-  // Gain: '<S85>/Filter Coefficient' incorporates:
-  //   DiscreteIntegrator: '<S77>/Filter'
-  //   Gain: '<S75>/Derivative Gain'
-  //   Sum: '<S77>/SumD'
+  // Gain: '<S84>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S76>/Filter'
+  //   Gain: '<S74>/Derivative Gain'
+  //   Sum: '<S76>/SumD'
 
-  joystick_enabled_matlab_node_B.eps_d = (0.0 *
+  joystick_enabled_matlab_node_B.eps_b = (0.0 *
     joystick_enabled_matlab_node_B.wb_u[2] -
     joystick_enabled_matlab_node_DW.Filter_DSTATE_n[2]) * 100.0;
 
-  // Gain: '<S87>/Proportional Gain' incorporates:
-  //   Gain: '<S75>/Derivative Gain'
-  //   Gain: '<S79>/Integral Gain'
+  // Gain: '<S86>/Proportional Gain' incorporates:
+  //   Gain: '<S74>/Derivative Gain'
+  //   Gain: '<S78>/Integral Gain'
 
-  joystick_enabled_matlab_node_B.rtb_X_est_wb_j = 5.0 *
+  joystick_enabled_matlab_node_B.rtb_X_est_wb_a = 5.0 *
     joystick_enabled_matlab_node_B.wb_u[2];
 
-  // Sum: '<S91>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S82>/Integrator'
-  //   Gain: '<S87>/Proportional Gain'
+  // Sum: '<S90>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S81>/Integrator'
+  //   Gain: '<S86>/Proportional Gain'
 
   joystick_enabled_matlab_node_B.upper_force_index =
-    (joystick_enabled_matlab_node_B.rtb_X_est_wb_j +
+    (joystick_enabled_matlab_node_B.rtb_X_est_wb_a +
      joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[2]) +
-    joystick_enabled_matlab_node_B.eps_d;
+    joystick_enabled_matlab_node_B.eps_b;
 
-  // DeadZone: '<S74>/DeadZone'
+  // DeadZone: '<S73>/DeadZone'
   if (joystick_enabled_matlab_node_B.upper_force_index > 10.0) {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e =
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d =
       joystick_enabled_matlab_node_B.upper_force_index - 10.0;
   } else if (joystick_enabled_matlab_node_B.upper_force_index >= -10.0) {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e = 0.0;
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d = 0.0;
   } else {
-    joystick_enabled_matlab_node_B.rtb_Integrator_i_e =
+    joystick_enabled_matlab_node_B.rtb_Integrator_i_d =
       joystick_enabled_matlab_node_B.upper_force_index - -10.0;
   }
 
-  // DiscreteIntegrator: '<S192>/Integrator' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read9'
+  // DiscreteIntegrator: '<S191>/Integrator' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read9'
 
   if ((joystick_enabled_matlab_node_B.integrator_reset > 0) &&
       (joystick_enabled_matlab_node_DW.Integrator_PrevResetState_p <= 0)) {
@@ -6331,8 +6299,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[2] = 0.0;
   }
 
-  // DiscreteIntegrator: '<S187>/Filter' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read9'
+  // DiscreteIntegrator: '<S186>/Filter' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read9'
 
   if ((joystick_enabled_matlab_node_B.integrator_reset > 0) &&
       (joystick_enabled_matlab_node_DW.Filter_PrevResetState_a <= 0)) {
@@ -6341,10 +6309,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Filter_DSTATE_g[2] = 0.0;
   }
 
-  // Gain: '<S195>/Filter Coefficient' incorporates:
-  //   DiscreteIntegrator: '<S187>/Filter'
-  //   Gain: '<S185>/Derivative Gain'
-  //   Sum: '<S187>/SumD'
+  // Gain: '<S194>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S186>/Filter'
+  //   Gain: '<S184>/Derivative Gain'
+  //   Sum: '<S186>/SumD'
 
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp = (0.0 *
     joystick_enabled_matlab_node_B.dRb_e[0] -
@@ -6352,10 +6320,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.wb_u[0] =
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
 
-  // Sum: '<S201>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   Gain: '<S185>/Derivative Gain'
-  //   Gain: '<S197>/Proportional Gain'
+  // Sum: '<S200>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   Gain: '<S184>/Derivative Gain'
+  //   Gain: '<S196>/Proportional Gain'
 
   joystick_enabled_matlab_node_B.phi = (60.0 *
     joystick_enabled_matlab_node_B.dRb_e[0] +
@@ -6364,7 +6332,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 =
     joystick_enabled_matlab_node_B.phi;
 
-  // Saturate: '<S89>/Saturation'
+  // Saturate: '<S88>/Saturation'
   if (joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 > 10.0) {
     joystick_enabled_matlab_node_B.dv3[0] = 10.0;
   } else if (joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 < -10.0) {
@@ -6374,7 +6342,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0;
   }
 
-  // Saturate: '<S199>/Saturation'
+  // Saturate: '<S198>/Saturation'
   if (joystick_enabled_matlab_node_B.phi > 100.0) {
     joystick_enabled_matlab_node_B.dv4[0] = 100.0;
   } else if (joystick_enabled_matlab_node_B.phi < -100.0) {
@@ -6383,10 +6351,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.dv4[0] = joystick_enabled_matlab_node_B.phi;
   }
 
-  // Gain: '<S195>/Filter Coefficient' incorporates:
-  //   DiscreteIntegrator: '<S187>/Filter'
-  //   Gain: '<S185>/Derivative Gain'
-  //   Sum: '<S187>/SumD'
+  // Gain: '<S194>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S186>/Filter'
+  //   Gain: '<S184>/Derivative Gain'
+  //   Sum: '<S186>/SumD'
 
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp = (0.0 *
     joystick_enabled_matlab_node_B.dRb_e[1] -
@@ -6394,10 +6362,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.wb_u[1] =
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
 
-  // Sum: '<S201>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   Gain: '<S185>/Derivative Gain'
-  //   Gain: '<S197>/Proportional Gain'
+  // Sum: '<S200>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   Gain: '<S184>/Derivative Gain'
+  //   Gain: '<S196>/Proportional Gain'
 
   joystick_enabled_matlab_node_B.phi = (60.0 *
     joystick_enabled_matlab_node_B.dRb_e[1] +
@@ -6406,7 +6374,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 =
     joystick_enabled_matlab_node_B.phi;
 
-  // Saturate: '<S89>/Saturation'
+  // Saturate: '<S88>/Saturation'
   if (joystick_enabled_matlab_node_B.b_t > 10.0) {
     joystick_enabled_matlab_node_B.dv3[1] = 10.0;
   } else if (joystick_enabled_matlab_node_B.b_t < -10.0) {
@@ -6415,7 +6383,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.dv3[1] = joystick_enabled_matlab_node_B.b_t;
   }
 
-  // Saturate: '<S199>/Saturation'
+  // Saturate: '<S198>/Saturation'
   if (joystick_enabled_matlab_node_B.phi > 100.0) {
     joystick_enabled_matlab_node_B.dv4[1] = 100.0;
   } else if (joystick_enabled_matlab_node_B.phi < -100.0) {
@@ -6424,27 +6392,27 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.dv4[1] = joystick_enabled_matlab_node_B.phi;
   }
 
-  // Gain: '<S195>/Filter Coefficient' incorporates:
-  //   DiscreteIntegrator: '<S187>/Filter'
-  //   Gain: '<S185>/Derivative Gain'
-  //   Sum: '<S187>/SumD'
+  // Gain: '<S194>/Filter Coefficient' incorporates:
+  //   DiscreteIntegrator: '<S186>/Filter'
+  //   Gain: '<S184>/Derivative Gain'
+  //   Sum: '<S186>/SumD'
 
   joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp = (0.0 *
     joystick_enabled_matlab_node_B.dRb_e[2] -
     joystick_enabled_matlab_node_DW.Filter_DSTATE_g[2]) * 100.0;
 
-  // Sum: '<S201>/Sum' incorporates:
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   Gain: '<S185>/Derivative Gain'
-  //   Gain: '<S197>/Proportional Gain'
+  // Sum: '<S200>/Sum' incorporates:
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   Gain: '<S184>/Derivative Gain'
+  //   Gain: '<S196>/Proportional Gain'
 
   joystick_enabled_matlab_node_B.phi = (100.0 *
     joystick_enabled_matlab_node_B.dRb_e[2] +
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[2]) +
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
 
-  // Saturate: '<S89>/Saturation' incorporates:
-  //   Sum: '<S91>/Sum'
+  // Saturate: '<S88>/Saturation' incorporates:
+  //   Sum: '<S90>/Sum'
 
   if (joystick_enabled_matlab_node_B.upper_force_index > 10.0) {
     joystick_enabled_matlab_node_B.dv3[2] = 10.0;
@@ -6455,7 +6423,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.upper_force_index;
   }
 
-  // Saturate: '<S199>/Saturation'
+  // Saturate: '<S198>/Saturation'
   if (joystick_enabled_matlab_node_B.phi > 100.0) {
     joystick_enabled_matlab_node_B.dv4[2] = 100.0;
   } else if (joystick_enabled_matlab_node_B.phi < -100.0) {
@@ -6464,133 +6432,133 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.dv4[2] = joystick_enabled_matlab_node_B.phi;
   }
 
-  // Product: '<S26>/Matrix Multiply' incorporates:
-  //   Constant: '<S26>/Constant'
+  // Product: '<S25>/Matrix Multiply' incorporates:
+  //   Constant: '<S25>/Constant'
 
   std::memset(&joystick_enabled_matlab_node_B.pwms[0], 0, sizeof(real_T) << 3U);
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_B.dv3[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.dv3[joystick_enabled_matlab_node_B.i_o];
     for (joystick_enabled_matlab_node_B.b_index = 0;
          joystick_enabled_matlab_node_B.b_index < 8;
          joystick_enabled_matlab_node_B.b_index++) {
       joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.b_index]
         += joystick_enabled_matlab__ConstP.Constant_Value_p
-        [(joystick_enabled_matlab_node_B.i_i << 3) +
+        [(joystick_enabled_matlab_node_B.i_o << 3) +
         joystick_enabled_matlab_node_B.b_index] *
         joystick_enabled_matlab_node_B.b_t;
     }
   }
 
-  // End of Product: '<S26>/Matrix Multiply'
+  // End of Product: '<S25>/Matrix Multiply'
 
-  // Product: '<S26>/Matrix Multiply1' incorporates:
-  //   Constant: '<S26>/Constant1'
+  // Product: '<S25>/Matrix Multiply1' incorporates:
+  //   Constant: '<S25>/Constant1'
 
   std::memset(&joystick_enabled_matlab_node_B.dv[0], 0, sizeof(real_T) << 3U);
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
     joystick_enabled_matlab_node_B.b_t =
-      joystick_enabled_matlab_node_B.dv4[joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.dv4[joystick_enabled_matlab_node_B.i_o];
     for (joystick_enabled_matlab_node_B.b_index = 0;
          joystick_enabled_matlab_node_B.b_index < 8;
          joystick_enabled_matlab_node_B.b_index++) {
       joystick_enabled_matlab_node_B.dv[joystick_enabled_matlab_node_B.b_index] +=
         joystick_enabled_matlab__ConstP.Constant1_Value
-        [(joystick_enabled_matlab_node_B.i_i << 3) +
+        [(joystick_enabled_matlab_node_B.i_o << 3) +
         joystick_enabled_matlab_node_B.b_index] *
         joystick_enabled_matlab_node_B.b_t;
     }
   }
 
-  // End of Product: '<S26>/Matrix Multiply1'
+  // End of Product: '<S25>/Matrix Multiply1'
 
-  // MATLAB Function: '<S26>/thrusterAllocator'
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 8;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
-      = joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_i]
-      + joystick_enabled_matlab_node_B.dv[joystick_enabled_matlab_node_B.i_i];
+  // MATLAB Function: '<S25>/thrusterAllocator'
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 8;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
+      = joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_o]
+      + joystick_enabled_matlab_node_B.dv[joystick_enabled_matlab_node_B.i_o];
   }
 
-  // End of MATLAB Function: '<S26>/thrusterAllocator'
+  // End of MATLAB Function: '<S25>/thrusterAllocator'
 
-  // MATLAB Function: '<S26>/trickFTListInjector'
+  // MATLAB Function: '<S25>/trickFTListInjector'
   if (joystick_enabled_matlab_node_B.OR1) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 16;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_i] =
-        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_i];
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 16;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_o] =
+        joystick_enabled_matlab_node_B.cmd.trick_id[joystick_enabled_matlab_node_B.i_o];
     }
 
-    joystick_enabled_matlab_node_B.i_i = std::memcmp(&a_3[0],
+    joystick_enabled_matlab_node_B.i_o = std::memcmp(&a_3[0],
       &joystick_enabled_matlab_node_B.s[0], 16);
-    if (joystick_enabled_matlab_node_B.i_i == 0) {
+    if (joystick_enabled_matlab_node_B.i_o == 0) {
       joystick_enabled_matlab_node_B.b_index = 0;
     } else {
-      joystick_enabled_matlab_node_B.i_i = std::memcmp(&b_a_2[0],
+      joystick_enabled_matlab_node_B.i_o = std::memcmp(&b_a_2[0],
         &joystick_enabled_matlab_node_B.s[0], 16);
-      if (joystick_enabled_matlab_node_B.i_i == 0) {
+      if (joystick_enabled_matlab_node_B.i_o == 0) {
         joystick_enabled_matlab_node_B.b_index = 1;
       } else {
-        joystick_enabled_matlab_node_B.i_i = std::memcmp(&c_a_2[0],
+        joystick_enabled_matlab_node_B.i_o = std::memcmp(&c_a_2[0],
           &joystick_enabled_matlab_node_B.s[0], 16);
-        if (joystick_enabled_matlab_node_B.i_i == 0) {
+        if (joystick_enabled_matlab_node_B.i_o == 0) {
           joystick_enabled_matlab_node_B.b_index = 2;
         } else {
-          joystick_enabled_matlab_node_B.i_i = std::memcmp(&d_a_1[0],
+          joystick_enabled_matlab_node_B.i_o = std::memcmp(&d_a_1[0],
             &joystick_enabled_matlab_node_B.s[0], 16);
-          if (joystick_enabled_matlab_node_B.i_i == 0) {
+          if (joystick_enabled_matlab_node_B.i_o == 0) {
             joystick_enabled_matlab_node_B.b_index = 3;
           } else {
-            joystick_enabled_matlab_node_B.i_i = std::memcmp(&e_a_0[0],
+            joystick_enabled_matlab_node_B.i_o = std::memcmp(&e_a_0[0],
               &joystick_enabled_matlab_node_B.s[0], 16);
-            if (joystick_enabled_matlab_node_B.i_i == 0) {
+            if (joystick_enabled_matlab_node_B.i_o == 0) {
               joystick_enabled_matlab_node_B.b_index = 4;
             } else {
-              joystick_enabled_matlab_node_B.i_i = std::memcmp(&f_a_0[0],
+              joystick_enabled_matlab_node_B.i_o = std::memcmp(&f_a_0[0],
                 &joystick_enabled_matlab_node_B.s[0], 16);
-              if (joystick_enabled_matlab_node_B.i_i == 0) {
+              if (joystick_enabled_matlab_node_B.i_o == 0) {
                 joystick_enabled_matlab_node_B.b_index = 5;
               } else {
-                joystick_enabled_matlab_node_B.i_i = std::memcmp(&g_a_0[0],
+                joystick_enabled_matlab_node_B.i_o = std::memcmp(&g_a_0[0],
                   &joystick_enabled_matlab_node_B.s[0], 16);
-                if (joystick_enabled_matlab_node_B.i_i == 0) {
+                if (joystick_enabled_matlab_node_B.i_o == 0) {
                   joystick_enabled_matlab_node_B.b_index = 6;
                 } else {
-                  joystick_enabled_matlab_node_B.i_i = std::memcmp(&h_a_0[0],
+                  joystick_enabled_matlab_node_B.i_o = std::memcmp(&h_a_0[0],
                     &joystick_enabled_matlab_node_B.s[0], 16);
-                  if (joystick_enabled_matlab_node_B.i_i == 0) {
+                  if (joystick_enabled_matlab_node_B.i_o == 0) {
                     joystick_enabled_matlab_node_B.b_index = 7;
                   } else {
-                    joystick_enabled_matlab_node_B.i_i = std::memcmp(&i_a_0[0],
+                    joystick_enabled_matlab_node_B.i_o = std::memcmp(&i_a_0[0],
                       &joystick_enabled_matlab_node_B.s[0], 16);
-                    if (joystick_enabled_matlab_node_B.i_i == 0) {
+                    if (joystick_enabled_matlab_node_B.i_o == 0) {
                       joystick_enabled_matlab_node_B.b_index = 8;
                     } else {
-                      joystick_enabled_matlab_node_B.i_i = std::memcmp(&j_a_0[0],
+                      joystick_enabled_matlab_node_B.i_o = std::memcmp(&j_a_0[0],
                         &joystick_enabled_matlab_node_B.s[0], 16);
-                      if (joystick_enabled_matlab_node_B.i_i == 0) {
+                      if (joystick_enabled_matlab_node_B.i_o == 0) {
                         joystick_enabled_matlab_node_B.b_index = 9;
                       } else {
-                        joystick_enabled_matlab_node_B.i_i = std::memcmp(&k_a[0],
+                        joystick_enabled_matlab_node_B.i_o = std::memcmp(&k_a[0],
                           &joystick_enabled_matlab_node_B.s[0], 16);
-                        if (joystick_enabled_matlab_node_B.i_i == 0) {
+                        if (joystick_enabled_matlab_node_B.i_o == 0) {
                           joystick_enabled_matlab_node_B.b_index = 10;
                         } else {
-                          joystick_enabled_matlab_node_B.i_i = std::memcmp(&l_a
+                          joystick_enabled_matlab_node_B.i_o = std::memcmp(&l_a
                             [0], &joystick_enabled_matlab_node_B.s[0], 16);
-                          if (joystick_enabled_matlab_node_B.i_i == 0) {
+                          if (joystick_enabled_matlab_node_B.i_o == 0) {
                             joystick_enabled_matlab_node_B.b_index = 11;
                           } else {
-                            joystick_enabled_matlab_node_B.i_i = std::memcmp
+                            joystick_enabled_matlab_node_B.i_o = std::memcmp
                               (&m_a[0], &joystick_enabled_matlab_node_B.s[0], 16);
-                            if (joystick_enabled_matlab_node_B.i_i == 0) {
+                            if (joystick_enabled_matlab_node_B.i_o == 0) {
                               joystick_enabled_matlab_node_B.b_index = 12;
                             } else {
                               joystick_enabled_matlab_node_B.b_index = -1;
@@ -6608,105 +6576,105 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       }
     }
 
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 8;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 8;
+         joystick_enabled_matlab_node_B.i_o++) {
       switch (joystick_enabled_matlab_node_B.b_index) {
        case 0:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.forward
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 1:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.backward
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 2:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
-          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.up[joystick_enabled_matlab_node_B.i_i];
+          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.up[joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 3:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
-          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.down[joystick_enabled_matlab_node_B.i_i];
+          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.down[joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 4:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
-          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.left[joystick_enabled_matlab_node_B.i_i];
+          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.left[joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 5:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
-          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.right[joystick_enabled_matlab_node_B.i_i];
+          joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.right[joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 6:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.pitchUp
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 7:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.pitchDown
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 8:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.yawRight
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 9:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.yawLeft
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 10:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.rollRight
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 11:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           =
           joystick_enabled_matlab__ConstP.trickFTListInjector_FF_maneuver.rollLeft
-          [joystick_enabled_matlab_node_B.i_i];
+          [joystick_enabled_matlab_node_B.i_o];
         break;
 
        case 12:
-        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.i_o]
           = 0.0;
         break;
       }
     }
   }
 
-  // MATLAB Function: '<S33>/forceToPWMCalculator' incorporates:
-  //   Constant: '<S26>/Constant3'
+  // MATLAB Function: '<S32>/forceToPWMCalculator' incorporates:
+  //   Constant: '<S25>/Constant3'
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 8;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_i] =
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 8;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_o] =
       1500.0;
   }
 
@@ -6733,8 +6701,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_minimum
         (joystick_enabled_matlab_node_B.varargin_1_f,
          &joystick_enabled_matlab_node_B.upper_force_index,
-         &joystick_enabled_matlab_node_B.i_i);
-      switch (joystick_enabled_matlab_node_B.i_i) {
+         &joystick_enabled_matlab_node_B.i_o);
+      switch (joystick_enabled_matlab_node_B.i_o) {
        case 1:
         joystick_enabled_matlab_node_B.lower_voltage_index = 1.0;
         joystick_enabled_matlab_node_B.upper_voltage_index = 1.0;
@@ -6746,17 +6714,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
         break;
 
        default:
-        if (joystick_enabled_matlab__ConstP.forceToPWMCalculator_voltage[joystick_enabled_matlab_node_B.i_i
+        if (joystick_enabled_matlab__ConstP.forceToPWMCalculator_voltage[joystick_enabled_matlab_node_B.i_o
             - 1] < 15.0) {
           joystick_enabled_matlab_node_B.lower_voltage_index =
-            joystick_enabled_matlab_node_B.i_i;
+            joystick_enabled_matlab_node_B.i_o;
           joystick_enabled_matlab_node_B.upper_voltage_index =
-            static_cast<real_T>(joystick_enabled_matlab_node_B.i_i) + 1.0;
+            static_cast<real_T>(joystick_enabled_matlab_node_B.i_o) + 1.0;
         } else {
           joystick_enabled_matlab_node_B.upper_voltage_index =
-            joystick_enabled_matlab_node_B.i_i;
+            joystick_enabled_matlab_node_B.i_o;
           joystick_enabled_matlab_node_B.lower_voltage_index = static_cast<
-            real_T>(joystick_enabled_matlab_node_B.i_i) - 1.0;
+            real_T>(joystick_enabled_matlab_node_B.i_o) - 1.0;
         }
         break;
       }
@@ -6794,17 +6762,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
           static_cast<int32_T>
           (joystick_enabled_matlab_node_B.lower_voltage_index) - 1];
         joystick_enabled_matlab_node_B.force_column_size_idx_0 = 201;
-        for (joystick_enabled_matlab_node_B.i_i = 0;
-             joystick_enabled_matlab_node_B.i_i < 201;
-             joystick_enabled_matlab_node_B.i_i++) {
+        for (joystick_enabled_matlab_node_B.i_o = 0;
+             joystick_enabled_matlab_node_B.i_o < 201;
+             joystick_enabled_matlab_node_B.i_o++) {
           joystick_enabled_matlab_node_B.d_k = (static_cast<int32_T>
             (joystick_enabled_matlab_node_B.lower_voltage_index) - 1) * 201 +
-            joystick_enabled_matlab_node_B.i_i;
-          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_i]
+            joystick_enabled_matlab_node_B.i_o;
+          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_o]
             = (joystick_enabled_matlab__ConstP.forceToPWMCalculator_cw_force[(
                 static_cast<int32_T>
                 (joystick_enabled_matlab_node_B.upper_voltage_index) - 1) * 201
-               + joystick_enabled_matlab_node_B.i_i] -
+               + joystick_enabled_matlab_node_B.i_o] -
                joystick_enabled_matlab__ConstP.forceToPWMCalculator_cw_force[joystick_enabled_matlab_node_B.d_k])
             * joystick_enabled_matlab_node_B.upper_force_index /
             joystick_enabled_matlab_node_B.b_t +
@@ -6814,45 +6782,45 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
       joystick_enabled_matlab_node_B.b_varargin_1_size =
         joystick_enabled_matlab_node_B.force_column_size_idx_0;
-      for (joystick_enabled_matlab_node_B.i_i = 0;
-           joystick_enabled_matlab_node_B.i_i <
+      for (joystick_enabled_matlab_node_B.i_o = 0;
+           joystick_enabled_matlab_node_B.i_o <
            joystick_enabled_matlab_node_B.force_column_size_idx_0;
-           joystick_enabled_matlab_node_B.i_i++) {
-        joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_i]
+           joystick_enabled_matlab_node_B.i_o++) {
+        joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_o]
           =
-          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_i]
+          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_o]
           - joystick_enabled_matlab_node_B.alpha;
-        joystick_enabled_matlab_node_B.b_varargin_1_data[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.b_varargin_1_data[joystick_enabled_matlab_node_B.i_o]
           = std::abs
-          (joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_i]);
+          (joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_o]);
       }
 
       joystick_enabled_matl_minimum_i
         (joystick_enabled_matlab_node_B.b_varargin_1_data,
          &joystick_enabled_matlab_node_B.b_varargin_1_size,
          &joystick_enabled_matlab_node_B.upper_force_index,
-         &joystick_enabled_matlab_node_B.i_i);
-      if ((joystick_enabled_matlab_node_B.i_i == 1) ||
-          (joystick_enabled_matlab_node_B.i_i == 2)) {
+         &joystick_enabled_matlab_node_B.i_o);
+      if ((joystick_enabled_matlab_node_B.i_o == 1) ||
+          (joystick_enabled_matlab_node_B.i_o == 2)) {
         joystick_enabled_matlab_node_B.b_t = 1.0;
         joystick_enabled_matlab_node_B.upper_force_index = 1.0;
-      } else if ((joystick_enabled_matlab_node_B.i_i == 8) ||
-                 (joystick_enabled_matlab_node_B.i_i == 7)) {
+      } else if ((joystick_enabled_matlab_node_B.i_o == 8) ||
+                 (joystick_enabled_matlab_node_B.i_o == 7)) {
         joystick_enabled_matlab_node_B.b_t = 8.0;
         joystick_enabled_matlab_node_B.upper_force_index = 8.0;
       } else if
-          (joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_i
+          (joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_o
            - 1] <
            joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.b_index])
       {
-        joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.i_i;
+        joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.i_o;
         joystick_enabled_matlab_node_B.upper_force_index = static_cast<real_T>
-          (joystick_enabled_matlab_node_B.i_i) + 1.0;
+          (joystick_enabled_matlab_node_B.i_o) + 1.0;
       } else {
         joystick_enabled_matlab_node_B.upper_force_index =
-          joystick_enabled_matlab_node_B.i_i;
+          joystick_enabled_matlab_node_B.i_o;
         joystick_enabled_matlab_node_B.b_t = static_cast<real_T>
-          (joystick_enabled_matlab_node_B.i_i) - 1.0;
+          (joystick_enabled_matlab_node_B.i_o) - 1.0;
       }
 
       if (joystick_enabled_matlab_node_B.upper_force_index >
@@ -6918,20 +6886,20 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.b_index]
         = 1500.0;
     } else {
-      for (joystick_enabled_matlab_node_B.i_i = 0;
-           joystick_enabled_matlab_node_B.i_i < 6;
-           joystick_enabled_matlab_node_B.i_i++) {
-        joystick_enabled_matlab_node_B.varargin_1_f[joystick_enabled_matlab_node_B.i_i]
+      for (joystick_enabled_matlab_node_B.i_o = 0;
+           joystick_enabled_matlab_node_B.i_o < 6;
+           joystick_enabled_matlab_node_B.i_o++) {
+        joystick_enabled_matlab_node_B.varargin_1_f[joystick_enabled_matlab_node_B.i_o]
           = std::abs
-          (joystick_enabled_matlab__ConstP.forceToPWMCalculator_voltage[joystick_enabled_matlab_node_B.i_i]
+          (joystick_enabled_matlab__ConstP.forceToPWMCalculator_voltage[joystick_enabled_matlab_node_B.i_o]
            - 15.0);
       }
 
       joystick_enabled_matlab_minimum
         (joystick_enabled_matlab_node_B.varargin_1_f,
          &joystick_enabled_matlab_node_B.upper_force_index,
-         &joystick_enabled_matlab_node_B.i_i);
-      switch (joystick_enabled_matlab_node_B.i_i) {
+         &joystick_enabled_matlab_node_B.i_o);
+      switch (joystick_enabled_matlab_node_B.i_o) {
        case 1:
         joystick_enabled_matlab_node_B.lower_voltage_index = 1.0;
         joystick_enabled_matlab_node_B.upper_voltage_index = 1.0;
@@ -6943,17 +6911,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
         break;
 
        default:
-        if (joystick_enabled_matlab__ConstP.forceToPWMCalculator_voltage[joystick_enabled_matlab_node_B.i_i
+        if (joystick_enabled_matlab__ConstP.forceToPWMCalculator_voltage[joystick_enabled_matlab_node_B.i_o
             - 1] < 15.0) {
           joystick_enabled_matlab_node_B.lower_voltage_index =
-            joystick_enabled_matlab_node_B.i_i;
+            joystick_enabled_matlab_node_B.i_o;
           joystick_enabled_matlab_node_B.upper_voltage_index =
-            static_cast<real_T>(joystick_enabled_matlab_node_B.i_i) + 1.0;
+            static_cast<real_T>(joystick_enabled_matlab_node_B.i_o) + 1.0;
         } else {
           joystick_enabled_matlab_node_B.upper_voltage_index =
-            joystick_enabled_matlab_node_B.i_i;
+            joystick_enabled_matlab_node_B.i_o;
           joystick_enabled_matlab_node_B.lower_voltage_index = static_cast<
-            real_T>(joystick_enabled_matlab_node_B.i_i) - 1.0;
+            real_T>(joystick_enabled_matlab_node_B.i_o) - 1.0;
         }
         break;
       }
@@ -6979,7 +6947,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
           static_cast<int32_T>
           (joystick_enabled_matlab_node_B.lower_voltage_index) - 1];
       } else {
-        joystick_enabled_matlab_node_B.b_a_h = 15.0 -
+        joystick_enabled_matlab_node_B.b_a_l = 15.0 -
           joystick_enabled_matlab__ConstP.forceToPWMCalculator_voltage[
           static_cast<int32_T>
           (joystick_enabled_matlab_node_B.lower_voltage_index) - 1];
@@ -6991,19 +6959,19 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
           static_cast<int32_T>
           (joystick_enabled_matlab_node_B.lower_voltage_index) - 1];
         joystick_enabled_matlab_node_B.force_column_size_idx_0 = 201;
-        for (joystick_enabled_matlab_node_B.i_i = 0;
-             joystick_enabled_matlab_node_B.i_i < 201;
-             joystick_enabled_matlab_node_B.i_i++) {
+        for (joystick_enabled_matlab_node_B.i_o = 0;
+             joystick_enabled_matlab_node_B.i_o < 201;
+             joystick_enabled_matlab_node_B.i_o++) {
           joystick_enabled_matlab_node_B.d_k = (static_cast<int32_T>
             (joystick_enabled_matlab_node_B.lower_voltage_index) - 1) * 201 +
-            joystick_enabled_matlab_node_B.i_i;
-          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_i]
+            joystick_enabled_matlab_node_B.i_o;
+          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_o]
             = (joystick_enabled_matlab__ConstP.forceToPWMCalculator_ccw_force[(
                 static_cast<int32_T>
                 (joystick_enabled_matlab_node_B.upper_voltage_index) - 1) * 201
-               + joystick_enabled_matlab_node_B.i_i] -
+               + joystick_enabled_matlab_node_B.i_o] -
                joystick_enabled_matlab__ConstP.forceToPWMCalculator_ccw_force[joystick_enabled_matlab_node_B.d_k])
-            * joystick_enabled_matlab_node_B.b_a_h /
+            * joystick_enabled_matlab_node_B.b_a_l /
             joystick_enabled_matlab_node_B.b_t +
             joystick_enabled_matlab__ConstP.forceToPWMCalculator_ccw_force[joystick_enabled_matlab_node_B.d_k];
         }
@@ -7011,45 +6979,45 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
       joystick_enabled_matlab_node_B.b_varargin_1_size =
         joystick_enabled_matlab_node_B.force_column_size_idx_0;
-      for (joystick_enabled_matlab_node_B.i_i = 0;
-           joystick_enabled_matlab_node_B.i_i <
+      for (joystick_enabled_matlab_node_B.i_o = 0;
+           joystick_enabled_matlab_node_B.i_o <
            joystick_enabled_matlab_node_B.force_column_size_idx_0;
-           joystick_enabled_matlab_node_B.i_i++) {
-        joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_i]
+           joystick_enabled_matlab_node_B.i_o++) {
+        joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_o]
           =
-          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_i]
+          joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_o]
           - joystick_enabled_matlab_node_B.alpha;
-        joystick_enabled_matlab_node_B.b_varargin_1_data[joystick_enabled_matlab_node_B.i_i]
+        joystick_enabled_matlab_node_B.b_varargin_1_data[joystick_enabled_matlab_node_B.i_o]
           = std::abs
-          (joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_i]);
+          (joystick_enabled_matlab_node_B.b_x_data[joystick_enabled_matlab_node_B.i_o]);
       }
 
       joystick_enabled_matl_minimum_i
         (joystick_enabled_matlab_node_B.b_varargin_1_data,
          &joystick_enabled_matlab_node_B.b_varargin_1_size,
          &joystick_enabled_matlab_node_B.upper_force_index,
-         &joystick_enabled_matlab_node_B.i_i);
-      if ((joystick_enabled_matlab_node_B.i_i == 1) ||
-          (joystick_enabled_matlab_node_B.i_i == 2)) {
+         &joystick_enabled_matlab_node_B.i_o);
+      if ((joystick_enabled_matlab_node_B.i_o == 1) ||
+          (joystick_enabled_matlab_node_B.i_o == 2)) {
         joystick_enabled_matlab_node_B.b_t = 1.0;
         joystick_enabled_matlab_node_B.upper_force_index = 1.0;
-      } else if ((joystick_enabled_matlab_node_B.i_i == 8) ||
-                 (joystick_enabled_matlab_node_B.i_i == 7)) {
+      } else if ((joystick_enabled_matlab_node_B.i_o == 8) ||
+                 (joystick_enabled_matlab_node_B.i_o == 7)) {
         joystick_enabled_matlab_node_B.b_t = 8.0;
         joystick_enabled_matlab_node_B.upper_force_index = 8.0;
       } else if
-          (joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_i
+          (joystick_enabled_matlab_node_B.force_column_data[joystick_enabled_matlab_node_B.i_o
            - 1] <
            joystick_enabled_matlab_node_B.FT_cmd_list[joystick_enabled_matlab_node_B.b_index])
       {
-        joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.i_i;
+        joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.i_o;
         joystick_enabled_matlab_node_B.upper_force_index = static_cast<real_T>
-          (joystick_enabled_matlab_node_B.i_i) + 1.0;
+          (joystick_enabled_matlab_node_B.i_o) + 1.0;
       } else {
         joystick_enabled_matlab_node_B.upper_force_index =
-          joystick_enabled_matlab_node_B.i_i;
+          joystick_enabled_matlab_node_B.i_o;
         joystick_enabled_matlab_node_B.b_t = static_cast<real_T>
-          (joystick_enabled_matlab_node_B.i_i) - 1.0;
+          (joystick_enabled_matlab_node_B.i_o) - 1.0;
       }
 
       if (joystick_enabled_matlab_node_B.upper_force_index >
@@ -7092,56 +7060,56 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     }
   }
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 8;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_i] =
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 8;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_o] =
       std::fmax(1100.0, std::fmin(1900.0,
-      joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_i]));
+      joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_o]));
   }
 
-  // DeadZone: '<S129>/DeadZone'
+  // DeadZone: '<S128>/DeadZone'
   if (joystick_enabled_matlab_node_B.Rb_u[0] > 1.0) {
-    joystick_enabled_matlab_node_B.b_a_h = joystick_enabled_matlab_node_B.Rb_u[0]
+    joystick_enabled_matlab_node_B.b_a_l = joystick_enabled_matlab_node_B.Rb_u[0]
       - 1.0;
 
-    // Switch: '<S127>/Switch1' incorporates:
-    //   Constant: '<S127>/Constant'
+    // Switch: '<S126>/Switch1' incorporates:
+    //   Constant: '<S126>/Constant'
 
     tmp = 1;
   } else {
     if (joystick_enabled_matlab_node_B.Rb_u[0] >= -1.0) {
-      joystick_enabled_matlab_node_B.b_a_h = 0.0;
+      joystick_enabled_matlab_node_B.b_a_l = 0.0;
     } else {
-      joystick_enabled_matlab_node_B.b_a_h =
+      joystick_enabled_matlab_node_B.b_a_l =
         joystick_enabled_matlab_node_B.Rb_u[0] - -1.0;
     }
 
-    // Switch: '<S127>/Switch1' incorporates:
-    //   Constant: '<S127>/Constant2'
+    // Switch: '<S126>/Switch1' incorporates:
+    //   Constant: '<S126>/Constant2'
 
     tmp = -1;
   }
 
-  // Switch: '<S127>/Switch' incorporates:
-  //   Constant: '<S127>/Clamping_zero'
-  //   Constant: '<S127>/Constant1'
-  //   DeadZone: '<S129>/DeadZone'
-  //   Gain: '<S134>/Integral Gain'
-  //   Logic: '<S127>/AND3'
-  //   RelationalOperator: '<S127>/Equal1'
-  //   RelationalOperator: '<S127>/Relational Operator'
-  //   Switch: '<S127>/Switch1'
-  //   Switch: '<S127>/Switch2'
+  // Switch: '<S126>/Switch' incorporates:
+  //   Constant: '<S126>/Clamping_zero'
+  //   Constant: '<S126>/Constant1'
+  //   DeadZone: '<S128>/DeadZone'
+  //   Gain: '<S133>/Integral Gain'
+  //   Logic: '<S126>/AND3'
+  //   RelationalOperator: '<S126>/Equal1'
+  //   RelationalOperator: '<S126>/Relational Operator'
+  //   Switch: '<S126>/Switch1'
+  //   Switch: '<S126>/Switch2'
 
-  if ((joystick_enabled_matlab_node_B.b_a_h != 0.0) && (tmp == -1)) {
-    joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0;
+  if ((joystick_enabled_matlab_node_B.b_a_l != 0.0) && (tmp == -1)) {
+    joystick_enabled_matlab_node_B.rtb_Rb_u_b = 0.0;
   } else {
-    joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0 *
+    joystick_enabled_matlab_node_B.rtb_Rb_u_b = 0.0 *
       joystick_enabled_matlab_node_B.eps_n[0];
   }
 
-  // DeadZone: '<S184>/DeadZone'
+  // DeadZone: '<S183>/DeadZone'
   if (joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 > 100.0) {
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 -= 100.0;
   } else if (joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 >= -100.0) {
@@ -7150,52 +7118,52 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 -= -100.0;
   }
 
-  // Gain: '<S189>/Integral Gain'
+  // Gain: '<S188>/Integral Gain'
   joystick_enabled_matlab_node_B.eps_n[0] = 20.0 *
     joystick_enabled_matlab_node_B.dRb_e[0];
 
-  // DeadZone: '<S129>/DeadZone'
+  // DeadZone: '<S128>/DeadZone'
   if (joystick_enabled_matlab_node_B.Rb_u[1] > 1.0) {
-    joystick_enabled_matlab_node_B.b_a_h = joystick_enabled_matlab_node_B.Rb_u[1]
+    joystick_enabled_matlab_node_B.b_a_l = joystick_enabled_matlab_node_B.Rb_u[1]
       - 1.0;
 
-    // Switch: '<S127>/Switch1' incorporates:
-    //   Constant: '<S127>/Constant'
+    // Switch: '<S126>/Switch1' incorporates:
+    //   Constant: '<S126>/Constant'
 
     tmp = 1;
   } else {
     if (joystick_enabled_matlab_node_B.Rb_u[1] >= -1.0) {
-      joystick_enabled_matlab_node_B.b_a_h = 0.0;
+      joystick_enabled_matlab_node_B.b_a_l = 0.0;
     } else {
-      joystick_enabled_matlab_node_B.b_a_h =
+      joystick_enabled_matlab_node_B.b_a_l =
         joystick_enabled_matlab_node_B.Rb_u[1] - -1.0;
     }
 
-    // Switch: '<S127>/Switch1' incorporates:
-    //   Constant: '<S127>/Constant2'
+    // Switch: '<S126>/Switch1' incorporates:
+    //   Constant: '<S126>/Constant2'
 
     tmp = -1;
   }
 
-  // Switch: '<S127>/Switch' incorporates:
-  //   Constant: '<S127>/Clamping_zero'
-  //   Constant: '<S127>/Constant1'
-  //   DeadZone: '<S129>/DeadZone'
-  //   Gain: '<S134>/Integral Gain'
-  //   Logic: '<S127>/AND3'
-  //   RelationalOperator: '<S127>/Equal1'
-  //   RelationalOperator: '<S127>/Relational Operator'
-  //   Switch: '<S127>/Switch1'
-  //   Switch: '<S127>/Switch2'
+  // Switch: '<S126>/Switch' incorporates:
+  //   Constant: '<S126>/Clamping_zero'
+  //   Constant: '<S126>/Constant1'
+  //   DeadZone: '<S128>/DeadZone'
+  //   Gain: '<S133>/Integral Gain'
+  //   Logic: '<S126>/AND3'
+  //   RelationalOperator: '<S126>/Equal1'
+  //   RelationalOperator: '<S126>/Relational Operator'
+  //   Switch: '<S126>/Switch1'
+  //   Switch: '<S126>/Switch2'
 
-  if ((joystick_enabled_matlab_node_B.b_a_h != 0.0) && (tmp == -1)) {
-    joystick_enabled_matlab_node_B.rtb_Rb_u_f = 0.0;
+  if ((joystick_enabled_matlab_node_B.b_a_l != 0.0) && (tmp == -1)) {
+    joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0;
   } else {
-    joystick_enabled_matlab_node_B.rtb_Rb_u_f = 0.0 *
+    joystick_enabled_matlab_node_B.rtb_Rb_u_j = 0.0 *
       joystick_enabled_matlab_node_B.eps_n[1];
   }
 
-  // DeadZone: '<S184>/DeadZone'
+  // DeadZone: '<S183>/DeadZone'
   if (joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 > 100.0) {
     joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 -= 100.0;
   } else if (joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 >= -100.0) {
@@ -7204,53 +7172,53 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 -= -100.0;
   }
 
-  // Gain: '<S189>/Integral Gain'
+  // Gain: '<S188>/Integral Gain'
   joystick_enabled_matlab_node_B.eps_n[1] = 20.0 *
     joystick_enabled_matlab_node_B.dRb_e[1];
 
-  // DeadZone: '<S129>/DeadZone'
+  // DeadZone: '<S128>/DeadZone'
   if (joystick_enabled_matlab_node_B.Rb_u[2] > 1.0) {
-    joystick_enabled_matlab_node_B.b_a_h = joystick_enabled_matlab_node_B.Rb_u[2]
+    joystick_enabled_matlab_node_B.b_a_l = joystick_enabled_matlab_node_B.Rb_u[2]
       - 1.0;
 
-    // Switch: '<S127>/Switch1' incorporates:
-    //   Constant: '<S127>/Constant'
+    // Switch: '<S126>/Switch1' incorporates:
+    //   Constant: '<S126>/Constant'
 
     tmp = 1;
   } else {
     if (joystick_enabled_matlab_node_B.Rb_u[2] >= -1.0) {
-      joystick_enabled_matlab_node_B.b_a_h = 0.0;
+      joystick_enabled_matlab_node_B.b_a_l = 0.0;
     } else {
-      joystick_enabled_matlab_node_B.b_a_h =
+      joystick_enabled_matlab_node_B.b_a_l =
         joystick_enabled_matlab_node_B.Rb_u[2] - -1.0;
     }
 
-    // Switch: '<S127>/Switch1' incorporates:
-    //   Constant: '<S127>/Constant2'
+    // Switch: '<S126>/Switch1' incorporates:
+    //   Constant: '<S126>/Constant2'
 
     tmp = -1;
   }
 
-  // Switch: '<S127>/Switch' incorporates:
-  //   Constant: '<S127>/Clamping_zero'
-  //   Constant: '<S127>/Constant1'
-  //   DeadZone: '<S129>/DeadZone'
-  //   Gain: '<S134>/Integral Gain'
-  //   Logic: '<S127>/AND3'
-  //   RelationalOperator: '<S127>/Equal1'
-  //   RelationalOperator: '<S127>/Relational Operator'
-  //   Switch: '<S127>/Switch1'
-  //   Switch: '<S127>/Switch2'
+  // Switch: '<S126>/Switch' incorporates:
+  //   Constant: '<S126>/Clamping_zero'
+  //   Constant: '<S126>/Constant1'
+  //   DeadZone: '<S128>/DeadZone'
+  //   Gain: '<S133>/Integral Gain'
+  //   Logic: '<S126>/AND3'
+  //   RelationalOperator: '<S126>/Equal1'
+  //   RelationalOperator: '<S126>/Relational Operator'
+  //   Switch: '<S126>/Switch1'
+  //   Switch: '<S126>/Switch2'
 
-  if ((joystick_enabled_matlab_node_B.b_a_h != 0.0) && (tmp == -1)) {
-    joystick_enabled_matlab_node_B.b_a_h = 0.0;
+  if ((joystick_enabled_matlab_node_B.b_a_l != 0.0) && (tmp == -1)) {
+    joystick_enabled_matlab_node_B.b_a_l = 0.0;
   } else {
-    joystick_enabled_matlab_node_B.b_a_h = 0.0 *
+    joystick_enabled_matlab_node_B.b_a_l = 0.0 *
       joystick_enabled_matlab_node_B.eps_n[2];
   }
 
-  // DeadZone: '<S184>/DeadZone' incorporates:
-  //   Sum: '<S201>/Sum'
+  // DeadZone: '<S183>/DeadZone' incorporates:
+  //   Sum: '<S200>/Sum'
 
   if (joystick_enabled_matlab_node_B.phi > 100.0) {
     joystick_enabled_matlab_node_B.upper_force_index =
@@ -7262,53 +7230,53 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.phi - -100.0;
   }
 
-  // Gain: '<S189>/Integral Gain'
-  joystick_enabled_matlab_node_B.eps_a = 20.0 *
+  // Gain: '<S188>/Integral Gain'
+  joystick_enabled_matlab_node_B.eps_f = 20.0 *
     joystick_enabled_matlab_node_B.dRb_e[2];
 
-  // MATLAB Function: '<S26>/quatToEul'
+  // MATLAB Function: '<S25>/quatToEul'
   joystick_enabled__quatToEul(joystick_enabled_matlab_node_B.qib_int_u,
     joystick_enabled_matlab_node_B.dRb_e,
     &joystick_enabled_matlab_node_B.sf_quatToEul);
 
-  // MATLAB Function: '<S26>/quatToEul1'
+  // MATLAB Function: '<S25>/quatToEul1'
   joystick_enabled__quatToEul(joystick_enabled_matlab_node_B.qe_matlab,
     joystick_enabled_matlab_node_B.dRb_e,
     &joystick_enabled_matlab_node_B.sf_quatToEul1);
 
-  // MATLAB Function: '<S27>/quatToEul'
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 3;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.theta_b =
-      joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_i + 3]
+  // MATLAB Function: '<S26>/quatToEul'
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 3;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.theta_h =
+      joystick_enabled_matlab_node_B.X_u[joystick_enabled_matlab_node_B.i_o + 3]
       * 2.0;
-    joystick_enabled_matlab_node_B.Cbi[3 * joystick_enabled_matlab_node_B.i_i] =
-      (joystick_enabled_matlab_node_B.theta_b *
+    joystick_enabled_matlab_node_B.Cbi[3 * joystick_enabled_matlab_node_B.i_o] =
+      (joystick_enabled_matlab_node_B.theta_h *
        joystick_enabled_matlab_node_B.X_u[3] +
        joystick_enabled_matlab_node_B.qk_plus_1_tmp[3 *
-       joystick_enabled_matlab_node_B.i_i]) +
+       joystick_enabled_matlab_node_B.i_o]) +
       joystick_enabled_matlab_node_B.rtb_Cbi_tmp[3 *
-      joystick_enabled_matlab_node_B.i_i];
+      joystick_enabled_matlab_node_B.i_o];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 1;
+      joystick_enabled_matlab_node_B.i_o + 1;
     joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.b_index] =
-      (joystick_enabled_matlab_node_B.theta_b *
+      (joystick_enabled_matlab_node_B.theta_h *
        joystick_enabled_matlab_node_B.X_u[4] +
        joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.b_index])
       + joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.b_index];
     joystick_enabled_matlab_node_B.b_index = 3 *
-      joystick_enabled_matlab_node_B.i_i + 2;
+      joystick_enabled_matlab_node_B.i_o + 2;
     joystick_enabled_matlab_node_B.Cbi[joystick_enabled_matlab_node_B.b_index] =
-      (joystick_enabled_matlab_node_B.theta_b *
+      (joystick_enabled_matlab_node_B.theta_h *
        joystick_enabled_matlab_node_B.X_u[5] +
        joystick_enabled_matlab_node_B.qk_plus_1_tmp[joystick_enabled_matlab_node_B.b_index])
       + joystick_enabled_matlab_node_B.rtb_Cbi_tmp[joystick_enabled_matlab_node_B.b_index];
   }
 
-  joystick_enabled_matlab_node_B.theta_b = std::asin(std::fmax(-1.0, std::fmin
+  joystick_enabled_matlab_node_B.theta_h = std::asin(std::fmax(-1.0, std::fmin
     (1.0, joystick_enabled_matlab_node_B.Cbi[6])));
-  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_b)) < 1.0E-6) {
+  if (std::abs(std::cos(-joystick_enabled_matlab_node_B.theta_h)) < 1.0E-6) {
     joystick_enabled_matlab_node_B.phi = 0.0;
     joystick_enabled_matlab_node_B.b_t = joystick_enabled__rt_atan2d_snf
       (-joystick_enabled_matlab_node_B.Cbi[1],
@@ -7323,27 +7291,13 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   }
 
   joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.phi);
-  joystick_enabled_matlab_node_B.theta_b =
-    -joystick_enabled_matlab_node_B.theta_b;
-  joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.theta_b);
+  joystick_enabled_matlab_node_B.theta_h =
+    -joystick_enabled_matlab_node_B.theta_h;
+  joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.theta_h);
   joystick_enabled_mat_wrapToPi_k(&joystick_enabled_matlab_node_B.b_t);
 
-  // MATLABSystem: '<S225>/SourceBlock'
-  joystick_enabled_matlab_node_B.OR1 =
-    Sub_joystick_enabled_matlab_node_423.getLatestMessage
-    (&joystick_enabled_matlab_node_B.r_h);
-
-  // MATLAB Function: '<S10>/MATLAB Function' incorporates:
-  //   MATLABSystem: '<S225>/SourceBlock'
-  //
-  if (!joystick_enabled_matlab_node_B.OR1) {
-    joystick_enabled_matlab_node_DW.time_since_last_beat += 0.001;
-  } else {
-    joystick_enabled_matlab_node_DW.time_since_last_beat = 0.0;
-  }
-
-  // MATLAB Function: '<S13>/joystick_inputs_to_body_forces' incorporates:
-  //   MATLAB Function: '<S12>/MATLAB Function'
+  // MATLAB Function: '<S12>/joystick_inputs_to_body_forces' incorporates:
+  //   MATLAB Function: '<S11>/MATLAB Function'
 
   joystick_enabled_matlab_node_B.b_t = ((300.0F *
     joystick_enabled_matlab_node_B.In1_f.rise - 300.0F *
@@ -7465,43 +7419,24 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.pwms_horiz_idx_3 = 1200.0;
   }
 
-  // Switch: '<Root>/Switch1' incorporates:
+  // Switch: '<Root>/Switch' incorporates:
   //   MATLAB Function: '<Root>/joystick_mode_manager'
-  //   MATLAB Function: '<S10>/MATLAB Function'
-  //   Switch: '<Root>/Switch'
 
-  if (joystick_enabled_matlab_node_DW.time_since_last_beat > 1.0) {
-    // BusCreator: '<S15>/Bus Creator3'
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 8;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.BusCreator3.pwms[joystick_enabled_matlab_node_B.i_i]
-        = 1500;
-    }
-  } else if (joystick_enabled_matlab_node_DW.joystick_flag) {
-    // MATLAB Function: '<S13>/joystick_inputs_to_body_forces'
+  if (joystick_enabled_matlab_node_DW.joystick_flag) {
+    // MATLAB Function: '<S12>/joystick_inputs_to_body_forces'
     joystick_enabled_matlab_node_B.b_t = std::round
       (joystick_enabled_matlab_node_B.b_t);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[0] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[0] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[0] = MAX_int32_T;
     }
 
@@ -7509,24 +7444,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       (joystick_enabled_matlab_node_B.lower_voltage_index);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[4] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[4] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[4] = MAX_int32_T;
     }
 
@@ -7534,24 +7460,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       (joystick_enabled_matlab_node_B.phi);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[1] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[1] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[1] = MAX_int32_T;
     }
 
@@ -7559,24 +7476,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       (joystick_enabled_matlab_node_B.pwms_horiz_idx_1);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[5] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[5] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[5] = MAX_int32_T;
     }
 
@@ -7584,24 +7492,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       (joystick_enabled_matlab_node_B.alpha);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[2] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[2] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[2] = MAX_int32_T;
     }
 
@@ -7609,24 +7508,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       (joystick_enabled_matlab_node_B.pwms_horiz_idx_2);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[6] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[6] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[6] = MAX_int32_T;
     }
 
@@ -7634,24 +7524,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       (joystick_enabled_matlab_node_B.upper_voltage_index);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[3] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[3] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[3] = MAX_int32_T;
     }
 
@@ -7659,37 +7540,27 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       (joystick_enabled_matlab_node_B.pwms_horiz_idx_3);
     if (joystick_enabled_matlab_node_B.b_t < 2.147483648E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= -2.147483648E+9) {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[7] = static_cast<int32_T>
           (joystick_enabled_matlab_node_B.b_t);
       } else {
-        // BusCreator: '<S15>/Bus Creator3' incorporates:
-        //   Switch: '<Root>/Switch'
-        //   Switch: '<Root>/Switch1'
-
+        // BusCreator: '<S14>/Bus Creator3'
         joystick_enabled_matlab_node_B.BusCreator3.pwms[7] = MIN_int32_T;
       }
     } else {
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   Switch: '<Root>/Switch'
-      //   Switch: '<Root>/Switch1'
-
+      // BusCreator: '<S14>/Bus Creator3'
       joystick_enabled_matlab_node_B.BusCreator3.pwms[7] = MAX_int32_T;
     }
   } else {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 8;
-         joystick_enabled_matlab_node_B.i_i++) {
-      // DataTypeConversion: '<S26>/Cast' incorporates:
-      //   MATLAB Function: '<S33>/forceToPWMCalculator'
-      //   Switch: '<Root>/Switch'
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 8;
+         joystick_enabled_matlab_node_B.i_o++) {
+      // DataTypeConversion: '<S25>/Cast' incorporates:
+      //   MATLAB Function: '<S32>/forceToPWMCalculator'
       //   Switch: '<S4>/Switch'
 
       joystick_enabled_matlab_node_B.b_t =
-        joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_i];
+        joystick_enabled_matlab_node_B.pwms[joystick_enabled_matlab_node_B.i_o];
       if (std::isnan(joystick_enabled_matlab_node_B.b_t) || std::isinf
           (joystick_enabled_matlab_node_B.b_t)) {
         joystick_enabled_matlab_node_B.b_t = 0.0;
@@ -7698,13 +7569,13 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
           (joystick_enabled_matlab_node_B.b_t, 4.294967296E+9);
       }
 
-      // BusCreator: '<S15>/Bus Creator3' incorporates:
-      //   DataTypeConversion: '<S26>/Cast'
-      //   MATLAB Function: '<S33>/forceToPWMCalculator'
+      // BusCreator: '<S14>/Bus Creator3' incorporates:
+      //   DataTypeConversion: '<S25>/Cast'
+      //   MATLAB Function: '<S32>/forceToPWMCalculator'
       //   Switch: '<Root>/Switch'
       //   Switch: '<S4>/Switch'
 
-      joystick_enabled_matlab_node_B.BusCreator3.pwms[joystick_enabled_matlab_node_B.i_i]
+      joystick_enabled_matlab_node_B.BusCreator3.pwms[joystick_enabled_matlab_node_B.i_o]
         = joystick_enabled_matlab_node_B.b_t < 0.0 ? -static_cast<int32_T>(
         static_cast<uint32_T>(-joystick_enabled_matlab_node_B.b_t)) :
         static_cast<int32_T>(static_cast<uint32_T>
@@ -7712,13 +7583,13 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     }
   }
 
-  // End of Switch: '<Root>/Switch1'
+  // End of Switch: '<Root>/Switch'
 
-  // MATLABSystem: '<S233>/SinkBlock'
+  // MATLABSystem: '<S229>/SinkBlock'
   Pub_joystick_enabled_matlab_node_436_2.publish
     (&joystick_enabled_matlab_node_B.BusCreator3);
 
-  // SignalConversion generated from: '<S219>/ SFunction ' incorporates:
+  // SignalConversion generated from: '<S218>/ SFunction ' incorporates:
   //   DataStoreRead: '<Root>/Data Store Read12'
   //   DataStoreRead: '<Root>/Data Store Read6'
   //   DataStoreWrite: '<S4>/Data Store Write'
@@ -7730,7 +7601,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   //   MATLAB Function: '<Root>/sensorRosMsgToBus'
   //   MATLAB Function: '<S6>/derivedStateEstimates'
   //   MATLAB Function: '<S7>/MATLAB Function'
-  //   MATLABSystem: '<S18>/SourceBlock'
+  //   MATLABSystem: '<S17>/SourceBlock'
   //
   joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[0] =
     joystick_enabled_matlab_node_B.X_u[0];
@@ -7757,7 +7628,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[14] =
     joystick_enabled_matlab_node_B.DataStoreRead_k;
   joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[15] =
-    joystick_enabled_matlab_node_B.b_varargout_1_h;
+    joystick_enabled_matlab_node_B.b_varargout_1_o;
   joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[16] =
     joystick_enabled_matlab_node_B.db6;
   joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[17] =
@@ -7772,10 +7643,10 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.db11;
 
   // MATLAB Function: '<S7>/MATLAB Function'
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 256;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.temp_char[joystick_enabled_matlab_node_B.i_i]
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 256;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.temp_char[joystick_enabled_matlab_node_B.i_o]
       = '_';
   }
 
@@ -7783,16 +7654,16 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   for (joystick_enabled_matlab_node_B.b_index = 0;
        joystick_enabled_matlab_node_B.b_index < 22;
        joystick_enabled_matlab_node_B.b_index++) {
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 16;
-         joystick_enabled_matlab_node_B.i_i++) {
-      joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_i] = ' ';
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 16;
+         joystick_enabled_matlab_node_B.i_o++) {
+      joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_o] = ' ';
     }
 
-    joystick_enabled_matlab_node_B.theta_b = std::abs
+    joystick_enabled_matlab_node_B.theta_h = std::abs
       (joystick_enabled_matlab_node_B.TmpSignalConversionAtSFunct[joystick_enabled_matlab_node_B.b_index]);
     joystick_enabled_matlab_node_B.b_t = std::floor
-      (joystick_enabled_matlab_node_B.theta_b);
+      (joystick_enabled_matlab_node_B.theta_h);
     if (joystick_enabled_matlab_node_B.b_t < 4.294967296E+9) {
       joystick_enabled_matlab_node_B.temp = static_cast<uint32_T>
         (joystick_enabled_matlab_node_B.b_t);
@@ -7803,7 +7674,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.int_part =
       joystick_enabled_matlab_node_B.temp;
     joystick_enabled_matlab_node_B.b_t = std::round
-      ((joystick_enabled_matlab_node_B.theta_b - static_cast<real_T>
+      ((joystick_enabled_matlab_node_B.theta_h - static_cast<real_T>
         (joystick_enabled_matlab_node_B.temp)) * 10000.0);
     if (joystick_enabled_matlab_node_B.b_t < 4.294967296E+9) {
       if (joystick_enabled_matlab_node_B.b_t >= 0.0) {
@@ -7829,26 +7700,26 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 
     joystick_enabled_matlab_node_B.temp =
       joystick_enabled_matlab_node_B.int_part;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i < 10;
-         joystick_enabled_matlab_node_B.i_i++) {
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o < 10;
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.digits[9 -
-        joystick_enabled_matlab_node_B.i_i] = static_cast<int8_T>
+        joystick_enabled_matlab_node_B.i_o] = static_cast<int8_T>
         (static_cast<int8_T>(joystick_enabled_matlab_node_B.temp -
           joystick_enabled_matlab_node_B.temp / 10U * 10U) + 48);
       joystick_enabled_matlab_node_B.temp /= 10U;
     }
 
     joystick_enabled_matlab_node_B.db6 = 9;
-    joystick_enabled_matlab_node_B.i_i = 0;
+    joystick_enabled_matlab_node_B.i_o = 0;
     exitg1 = false;
-    while ((!exitg1) && (joystick_enabled_matlab_node_B.i_i < 10)) {
-      if (joystick_enabled_matlab_node_B.digits[joystick_enabled_matlab_node_B.i_i]
+    while ((!exitg1) && (joystick_enabled_matlab_node_B.i_o < 10)) {
+      if (joystick_enabled_matlab_node_B.digits[joystick_enabled_matlab_node_B.i_o]
           != '0') {
-        joystick_enabled_matlab_node_B.db6 = joystick_enabled_matlab_node_B.i_i;
+        joystick_enabled_matlab_node_B.db6 = joystick_enabled_matlab_node_B.i_o;
         exitg1 = true;
       } else {
-        joystick_enabled_matlab_node_B.i_i++;
+        joystick_enabled_matlab_node_B.i_o++;
       }
     }
 
@@ -7864,14 +7735,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     }
 
     joystick_enabled_matlab_node_B.d_k = -joystick_enabled_matlab_node_B.db6;
-    for (joystick_enabled_matlab_node_B.i_i = 0;
-         joystick_enabled_matlab_node_B.i_i <=
+    for (joystick_enabled_matlab_node_B.i_o = 0;
+         joystick_enabled_matlab_node_B.i_o <=
          joystick_enabled_matlab_node_B.d_k + 9;
-         joystick_enabled_matlab_node_B.i_i++) {
+         joystick_enabled_matlab_node_B.i_o++) {
       joystick_enabled_matlab_node_B.s[(joystick_enabled_matlab_node_B.pos +
-        joystick_enabled_matlab_node_B.i_i) - 1] =
+        joystick_enabled_matlab_node_B.i_o) - 1] =
         joystick_enabled_matlab_node_B.digits[joystick_enabled_matlab_node_B.db6
-        + joystick_enabled_matlab_node_B.i_i];
+        + joystick_enabled_matlab_node_B.i_o];
     }
 
     joystick_enabled_matlab_node_B.pos = (joystick_enabled_matlab_node_B.pos -
@@ -7908,14 +7779,14 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
           (joystick_enabled_matlab_node_B.idx);
       }
 
-      for (joystick_enabled_matlab_node_B.i_i = 0;
-           joystick_enabled_matlab_node_B.i_i <
+      for (joystick_enabled_matlab_node_B.i_o = 0;
+           joystick_enabled_matlab_node_B.i_o <
            joystick_enabled_matlab_node_B.pos;
-           joystick_enabled_matlab_node_B.i_i++) {
+           joystick_enabled_matlab_node_B.i_o++) {
         joystick_enabled_matlab_node_B.temp_char
           [(joystick_enabled_matlab_node_B.db6 +
-            joystick_enabled_matlab_node_B.i_i) - 1] =
-          joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_i];
+            joystick_enabled_matlab_node_B.i_o) - 1] =
+          joystick_enabled_matlab_node_B.s[joystick_enabled_matlab_node_B.i_o];
       }
 
       joystick_enabled_matlab_node_B.idx += static_cast<real_T>
@@ -7930,15 +7801,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     }
   }
 
-  for (joystick_enabled_matlab_node_B.i_i = 0;
-       joystick_enabled_matlab_node_B.i_i < 256;
-       joystick_enabled_matlab_node_B.i_i++) {
-    joystick_enabled_matlab_node_B.debug_msg.message[joystick_enabled_matlab_node_B.i_i]
+  for (joystick_enabled_matlab_node_B.i_o = 0;
+       joystick_enabled_matlab_node_B.i_o < 256;
+       joystick_enabled_matlab_node_B.i_o++) {
+    joystick_enabled_matlab_node_B.debug_msg.message[joystick_enabled_matlab_node_B.i_o]
       = static_cast<uint8_T>
-      (joystick_enabled_matlab_node_B.temp_char[joystick_enabled_matlab_node_B.i_i]);
+      (joystick_enabled_matlab_node_B.temp_char[joystick_enabled_matlab_node_B.i_o]);
   }
 
-  // MATLABSystem: '<S220>/SinkBlock'
+  // MATLABSystem: '<S219>/SinkBlock'
   Pub_joystick_enabled_matlab_node_404_3.publish
     (&joystick_enabled_matlab_node_B.debug_msg);
 
@@ -7946,7 +7817,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   //   MATLABSystem: '<S2>/SourceBlock'
   //
   joystick_enabled_matlab_node_DW.PositionIntegrator_IC_LOADING = 0U;
-  if (joystick_enabled_matlab_node_B.b_varargout_1_o) {
+  if (joystick_enabled_matlab_node_B.b_varargout_1_e) {
     joystick_enabled_matlab_node_DW.PositionIntegrator_PrevResetSta = 1;
   } else {
     joystick_enabled_matlab_node_DW.PositionIntegrator_PrevResetSta = 0;
@@ -8000,19 +7871,19 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.VelocityIntegrator_PrevResetSta = 0;
   }
 
-  // Update for UnitDelay: '<S30>/Delay Input1' incorporates:
+  // Update for UnitDelay: '<S29>/Delay Input1' incorporates:
   //   UnitDelay: '<S4>/Unit Delay'
   //
-  //  Block description for '<S30>/Delay Input1':
+  //  Block description for '<S29>/Delay Input1':
   //
   //   Store in Global RAM
 
   joystick_enabled_matlab_node_DW.DelayInput1_DSTATE =
     joystick_enabled_matlab_node_DW.UnitDelay_DSTATE;
 
-  // Update for DiscreteIntegrator: '<S32>/Discrete-Time Integrator' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read6'
-  //   MATLAB Function: '<S26>/deltaQuatError'
+  // Update for DiscreteIntegrator: '<S31>/Discrete-Time Integrator' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read6'
+  //   MATLAB Function: '<S25>/deltaQuatError'
   //
   if (joystick_enabled_matlab_node_B.integrator_reset > 0) {
     joystick_enabled_matlab_node_DW.DiscreteTimeIntegrator_PrevRese = 1;
@@ -8033,12 +7904,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       -1.0471975511965976;
   }
 
-  // Update for DiscreteTransferFcn: '<S26>/Discrete Transfer Fcn'
+  // Update for DiscreteTransferFcn: '<S25>/Discrete Transfer Fcn'
   joystick_enabled_matlab_node_DW.DiscreteTransferFcn_states[0] =
     joystick_enabled_matlab_node_B.scale;
 
-  // Update for DiscreteIntegrator: '<S32>/Discrete-Time Integrator' incorporates:
-  //   MATLAB Function: '<S26>/deltaQuatError'
+  // Update for DiscreteIntegrator: '<S31>/Discrete-Time Integrator' incorporates:
+  //   MATLAB Function: '<S25>/deltaQuatError'
 
   joystick_enabled_matlab_node_B.idx = (0.0 - joystick_enabled_matlab_node_B.eta)
     * 0.01 + joystick_enabled_matlab_node_DW.DiscreteTimeIntegrator_DSTATE[1];
@@ -8052,12 +7923,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       -1.0471975511965976;
   }
 
-  // Update for DiscreteTransferFcn: '<S26>/Discrete Transfer Fcn'
+  // Update for DiscreteTransferFcn: '<S25>/Discrete Transfer Fcn'
   joystick_enabled_matlab_node_DW.DiscreteTransferFcn_states[1] =
     joystick_enabled_matlab_node_B.absxk;
 
-  // Update for DiscreteIntegrator: '<S32>/Discrete-Time Integrator' incorporates:
-  //   MATLAB Function: '<S26>/deltaQuatError'
+  // Update for DiscreteIntegrator: '<S31>/Discrete-Time Integrator' incorporates:
+  //   MATLAB Function: '<S25>/deltaQuatError'
 
   joystick_enabled_matlab_node_B.idx = (0.0 -
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1) * 0.01 +
@@ -8072,12 +7943,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       -1.0471975511965976;
   }
 
-  // Update for DiscreteTransferFcn: '<S26>/Discrete Transfer Fcn'
+  // Update for DiscreteTransferFcn: '<S25>/Discrete Transfer Fcn'
   joystick_enabled_matlab_node_DW.DiscreteTransferFcn_states[2] =
     joystick_enabled_matlab_node_B.DiscreteTransferFcn_tmp_idx_2;
 
-  // Update for DiscreteIntegrator: '<S32>/Discrete-Time Integrator' incorporates:
-  //   MATLAB Function: '<S26>/deltaQuatError'
+  // Update for DiscreteIntegrator: '<S31>/Discrete-Time Integrator' incorporates:
+  //   MATLAB Function: '<S25>/deltaQuatError'
 
   joystick_enabled_matlab_node_B.idx = (0.0 -
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_2) * 0.01 +
@@ -8092,17 +7963,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       -1.0471975511965976;
   }
 
-  // Update for DiscreteTransferFcn: '<S26>/Discrete Transfer Fcn'
+  // Update for DiscreteTransferFcn: '<S25>/Discrete Transfer Fcn'
   joystick_enabled_matlab_node_DW.DiscreteTransferFcn_states[3] =
     joystick_enabled_matlab_node_B.eps_tmp;
 
-  // Update for DiscreteIntegrator: '<S137>/Integrator' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read1'
-  //   DiscreteIntegrator: '<S132>/Filter'
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   DiscreteIntegrator: '<S77>/Filter'
-  //   DiscreteIntegrator: '<S82>/Integrator'
-  //   Switch: '<S127>/Switch'
+  // Update for DiscreteIntegrator: '<S136>/Integrator' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read1'
+  //   DiscreteIntegrator: '<S131>/Filter'
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   DiscreteIntegrator: '<S76>/Filter'
+  //   DiscreteIntegrator: '<S81>/Integrator'
+  //   Switch: '<S126>/Switch'
   //
   if (joystick_enabled_matlab_node_B.integrator_reset > 0) {
     joystick_enabled_matlab_node_DW.Integrator_PrevResetState = 1;
@@ -8119,7 +7990,7 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
   }
 
   joystick_enabled_matlab_node_B.idx = 0.01 *
-    joystick_enabled_matlab_node_B.rtb_Rb_u_j +
+    joystick_enabled_matlab_node_B.rtb_Rb_u_b +
     joystick_enabled_matlab_node_DW.Integrator_DSTATE[0];
   joystick_enabled_matlab_node_DW.Integrator_DSTATE[0] =
     joystick_enabled_matlab_node_B.idx;
@@ -8129,15 +8000,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE[0] = -1.0;
   }
 
-  // Update for DiscreteIntegrator: '<S132>/Filter' incorporates:
-  //   Gain: '<S140>/Filter Coefficient'
+  // Update for DiscreteIntegrator: '<S131>/Filter' incorporates:
+  //   Gain: '<S139>/Filter Coefficient'
 
   joystick_enabled_matlab_node_DW.Filter_DSTATE[0] += 0.01 *
     joystick_enabled_matlab_node_B.eps_p[0];
 
-  // Switch: '<S72>/Switch1' incorporates:
-  //   Constant: '<S72>/Constant'
-  //   Constant: '<S72>/Constant2'
+  // Switch: '<S71>/Switch1' incorporates:
+  //   Constant: '<S71>/Constant'
+  //   Constant: '<S71>/Constant2'
 
   if (rtb_fixforDTpropagationissue_id) {
     tmp = 1;
@@ -8145,12 +8016,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp = -1;
   }
 
-  // Switch: '<S72>/Switch2' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
-  //   Constant: '<S72>/Constant3'
-  //   Constant: '<S72>/Constant4'
-  //   DiscreteIntegrator: '<S82>/Integrator'
-  //   RelationalOperator: '<S72>/fix for DT propagation issue1'
+  // Switch: '<S71>/Switch2' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
+  //   Constant: '<S71>/Constant3'
+  //   Constant: '<S71>/Constant4'
+  //   DiscreteIntegrator: '<S81>/Integrator'
+  //   RelationalOperator: '<S71>/fix for DT propagation issue1'
 
   if (joystick_enabled_matlab_node_B.Integrator_i[0] > 0.0) {
     tmp_0 = 1;
@@ -8158,13 +8029,13 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp_0 = -1;
   }
 
-  // Switch: '<S72>/Switch' incorporates:
-  //   Constant: '<S72>/Constant1'
-  //   DiscreteIntegrator: '<S82>/Integrator'
-  //   Logic: '<S72>/AND3'
-  //   RelationalOperator: '<S72>/Equal1'
-  //   Switch: '<S72>/Switch1'
-  //   Switch: '<S72>/Switch2'
+  // Switch: '<S71>/Switch' incorporates:
+  //   Constant: '<S71>/Constant1'
+  //   DiscreteIntegrator: '<S81>/Integrator'
+  //   Logic: '<S71>/AND3'
+  //   RelationalOperator: '<S71>/Equal1'
+  //   Switch: '<S71>/Switch1'
+  //   Switch: '<S71>/Switch2'
 
   if (rtb_RelationalOperator_idx_0 && (tmp == tmp_0)) {
     joystick_enabled_matlab_node_B.b_t = 0.0;
@@ -8173,8 +8044,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
       joystick_enabled_matlab_node_B.Integrator_i[0];
   }
 
-  // Update for DiscreteIntegrator: '<S82>/Integrator' incorporates:
-  //   Switch: '<S72>/Switch'
+  // Update for DiscreteIntegrator: '<S81>/Integrator' incorporates:
+  //   Switch: '<S71>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 * joystick_enabled_matlab_node_B.b_t
     + joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[0];
@@ -8186,15 +8057,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[0] = -10.0;
   }
 
-  // Update for DiscreteIntegrator: '<S77>/Filter'
+  // Update for DiscreteIntegrator: '<S76>/Filter'
   joystick_enabled_matlab_node_DW.Filter_DSTATE_n[0] += 0.01 *
     joystick_enabled_matlab_node_B.eps[0];
 
-  // Switch: '<S182>/Switch1' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant'
-  //   Constant: '<S182>/Constant2'
-  //   RelationalOperator: '<S182>/fix for DT propagation issue'
+  // Switch: '<S181>/Switch1' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant'
+  //   Constant: '<S181>/Constant2'
+  //   RelationalOperator: '<S181>/fix for DT propagation issue'
 
   if (joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 > 0.0) {
     tmp = 1;
@@ -8202,12 +8073,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp = -1;
   }
 
-  // Switch: '<S182>/Switch2' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant3'
-  //   Constant: '<S182>/Constant4'
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   RelationalOperator: '<S182>/fix for DT propagation issue1'
+  // Switch: '<S181>/Switch2' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant3'
+  //   Constant: '<S181>/Constant4'
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   RelationalOperator: '<S181>/fix for DT propagation issue1'
 
   if (joystick_enabled_matlab_node_B.eps_n[0] > 0.0) {
     tmp_0 = 1;
@@ -8215,15 +8086,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp_0 = -1;
   }
 
-  // Switch: '<S182>/Switch' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant1'
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   Logic: '<S182>/AND3'
-  //   RelationalOperator: '<S182>/Equal1'
-  //   RelationalOperator: '<S182>/Relational Operator'
-  //   Switch: '<S182>/Switch1'
-  //   Switch: '<S182>/Switch2'
+  // Switch: '<S181>/Switch' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant1'
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   Logic: '<S181>/AND3'
+  //   RelationalOperator: '<S181>/Equal1'
+  //   RelationalOperator: '<S181>/Relational Operator'
+  //   Switch: '<S181>/Switch1'
+  //   Switch: '<S181>/Switch2'
 
   if ((joystick_enabled_matlab_node_B.rtb_DeadZone_o_idx_0 != 0.0) && (tmp ==
        tmp_0)) {
@@ -8232,8 +8103,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.eps_n[0];
   }
 
-  // Update for DiscreteIntegrator: '<S192>/Integrator' incorporates:
-  //   Switch: '<S182>/Switch'
+  // Update for DiscreteIntegrator: '<S191>/Integrator' incorporates:
+  //   Switch: '<S181>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 * joystick_enabled_matlab_node_B.b_t
     + joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[0];
@@ -8245,15 +8116,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[0] = -100.0;
   }
 
-  // Update for DiscreteIntegrator: '<S187>/Filter'
+  // Update for DiscreteIntegrator: '<S186>/Filter'
   joystick_enabled_matlab_node_DW.Filter_DSTATE_g[0] += 0.01 *
     joystick_enabled_matlab_node_B.wb_u[0];
 
-  // Update for DiscreteIntegrator: '<S137>/Integrator' incorporates:
-  //   Switch: '<S127>/Switch'
+  // Update for DiscreteIntegrator: '<S136>/Integrator' incorporates:
+  //   Switch: '<S126>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 *
-    joystick_enabled_matlab_node_B.rtb_Rb_u_f +
+    joystick_enabled_matlab_node_B.rtb_Rb_u_j +
     joystick_enabled_matlab_node_DW.Integrator_DSTATE[1];
   joystick_enabled_matlab_node_DW.Integrator_DSTATE[1] =
     joystick_enabled_matlab_node_B.idx;
@@ -8263,15 +8134,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE[1] = -1.0;
   }
 
-  // Update for DiscreteIntegrator: '<S132>/Filter' incorporates:
-  //   Gain: '<S140>/Filter Coefficient'
+  // Update for DiscreteIntegrator: '<S131>/Filter' incorporates:
+  //   Gain: '<S139>/Filter Coefficient'
 
   joystick_enabled_matlab_node_DW.Filter_DSTATE[1] += 0.01 *
     joystick_enabled_matlab_node_B.eps_p[1];
 
-  // Switch: '<S72>/Switch1' incorporates:
-  //   Constant: '<S72>/Constant'
-  //   Constant: '<S72>/Constant2'
+  // Switch: '<S71>/Switch1' incorporates:
+  //   Constant: '<S71>/Constant'
+  //   Constant: '<S71>/Constant2'
 
   if (rtb_fixforDTpropagationissue__0) {
     tmp = 1;
@@ -8279,11 +8150,11 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp = -1;
   }
 
-  // Switch: '<S72>/Switch2' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
-  //   Constant: '<S72>/Constant3'
-  //   Constant: '<S72>/Constant4'
-  //   RelationalOperator: '<S72>/fix for DT propagation issue1'
+  // Switch: '<S71>/Switch2' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
+  //   Constant: '<S71>/Constant3'
+  //   Constant: '<S71>/Constant4'
+  //   RelationalOperator: '<S71>/fix for DT propagation issue1'
 
   if (joystick_enabled_matlab_node_B.rtb_X_est_wb > 0.0) {
     tmp_0 = 1;
@@ -8291,19 +8162,19 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp_0 = -1;
   }
 
-  // Switch: '<S72>/Switch' incorporates:
-  //   Constant: '<S72>/Constant1'
-  //   Logic: '<S72>/AND3'
-  //   RelationalOperator: '<S72>/Equal1'
-  //   Switch: '<S72>/Switch1'
-  //   Switch: '<S72>/Switch2'
+  // Switch: '<S71>/Switch' incorporates:
+  //   Constant: '<S71>/Constant1'
+  //   Logic: '<S71>/AND3'
+  //   RelationalOperator: '<S71>/Equal1'
+  //   Switch: '<S71>/Switch1'
+  //   Switch: '<S71>/Switch2'
 
   if (rtb_RelationalOperator_idx_1 && (tmp == tmp_0)) {
     joystick_enabled_matlab_node_B.rtb_X_est_wb = 0.0;
   }
 
-  // Update for DiscreteIntegrator: '<S82>/Integrator' incorporates:
-  //   Switch: '<S72>/Switch'
+  // Update for DiscreteIntegrator: '<S81>/Integrator' incorporates:
+  //   Switch: '<S71>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 *
     joystick_enabled_matlab_node_B.rtb_X_est_wb +
@@ -8316,15 +8187,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[1] = -10.0;
   }
 
-  // Update for DiscreteIntegrator: '<S77>/Filter'
+  // Update for DiscreteIntegrator: '<S76>/Filter'
   joystick_enabled_matlab_node_DW.Filter_DSTATE_n[1] += 0.01 *
     joystick_enabled_matlab_node_B.eps[1];
 
-  // Switch: '<S182>/Switch1' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant'
-  //   Constant: '<S182>/Constant2'
-  //   RelationalOperator: '<S182>/fix for DT propagation issue'
+  // Switch: '<S181>/Switch1' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant'
+  //   Constant: '<S181>/Constant2'
+  //   RelationalOperator: '<S181>/fix for DT propagation issue'
 
   if (joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 > 0.0) {
     tmp = 1;
@@ -8332,12 +8203,12 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp = -1;
   }
 
-  // Switch: '<S182>/Switch2' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant3'
-  //   Constant: '<S182>/Constant4'
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   RelationalOperator: '<S182>/fix for DT propagation issue1'
+  // Switch: '<S181>/Switch2' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant3'
+  //   Constant: '<S181>/Constant4'
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   RelationalOperator: '<S181>/fix for DT propagation issue1'
 
   if (joystick_enabled_matlab_node_B.eps_n[1] > 0.0) {
     tmp_0 = 1;
@@ -8345,15 +8216,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp_0 = -1;
   }
 
-  // Switch: '<S182>/Switch' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant1'
-  //   DiscreteIntegrator: '<S192>/Integrator'
-  //   Logic: '<S182>/AND3'
-  //   RelationalOperator: '<S182>/Equal1'
-  //   RelationalOperator: '<S182>/Relational Operator'
-  //   Switch: '<S182>/Switch1'
-  //   Switch: '<S182>/Switch2'
+  // Switch: '<S181>/Switch' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant1'
+  //   DiscreteIntegrator: '<S191>/Integrator'
+  //   Logic: '<S181>/AND3'
+  //   RelationalOperator: '<S181>/Equal1'
+  //   RelationalOperator: '<S181>/Relational Operator'
+  //   Switch: '<S181>/Switch1'
+  //   Switch: '<S181>/Switch2'
 
   if ((joystick_enabled_matlab_node_B.rtb_Filter_p_idx_0 != 0.0) && (tmp ==
        tmp_0)) {
@@ -8362,8 +8233,8 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_B.b_t = joystick_enabled_matlab_node_B.eps_n[1];
   }
 
-  // Update for DiscreteIntegrator: '<S192>/Integrator' incorporates:
-  //   Switch: '<S182>/Switch'
+  // Update for DiscreteIntegrator: '<S191>/Integrator' incorporates:
+  //   Switch: '<S181>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 * joystick_enabled_matlab_node_B.b_t
     + joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[1];
@@ -8375,15 +8246,15 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[1] = -100.0;
   }
 
-  // Update for DiscreteIntegrator: '<S187>/Filter'
+  // Update for DiscreteIntegrator: '<S186>/Filter'
   joystick_enabled_matlab_node_DW.Filter_DSTATE_g[1] += 0.01 *
     joystick_enabled_matlab_node_B.wb_u[1];
 
-  // Update for DiscreteIntegrator: '<S137>/Integrator' incorporates:
-  //   Switch: '<S127>/Switch'
+  // Update for DiscreteIntegrator: '<S136>/Integrator' incorporates:
+  //   Switch: '<S126>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 *
-    joystick_enabled_matlab_node_B.b_a_h +
+    joystick_enabled_matlab_node_B.b_a_l +
     joystick_enabled_matlab_node_DW.Integrator_DSTATE[2];
   joystick_enabled_matlab_node_DW.Integrator_DSTATE[2] =
     joystick_enabled_matlab_node_B.idx;
@@ -8393,55 +8264,55 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE[2] = -1.0;
   }
 
-  // Update for DiscreteIntegrator: '<S132>/Filter' incorporates:
-  //   Gain: '<S140>/Filter Coefficient'
+  // Update for DiscreteIntegrator: '<S131>/Filter' incorporates:
+  //   Gain: '<S139>/Filter Coefficient'
 
   joystick_enabled_matlab_node_DW.Filter_DSTATE[2] += 0.01 *
     joystick_enabled_matlab_node_B.eps_p[2];
 
-  // Switch: '<S72>/Switch1' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
-  //   Constant: '<S72>/Constant'
-  //   Constant: '<S72>/Constant2'
-  //   RelationalOperator: '<S72>/fix for DT propagation issue'
+  // Switch: '<S71>/Switch1' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
+  //   Constant: '<S71>/Constant'
+  //   Constant: '<S71>/Constant2'
+  //   RelationalOperator: '<S71>/fix for DT propagation issue'
 
-  if (joystick_enabled_matlab_node_B.rtb_Integrator_i_e > 0.0) {
+  if (joystick_enabled_matlab_node_B.rtb_Integrator_i_d > 0.0) {
     tmp = 1;
   } else {
     tmp = -1;
   }
 
-  // Switch: '<S72>/Switch2' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
-  //   Constant: '<S72>/Constant3'
-  //   Constant: '<S72>/Constant4'
-  //   RelationalOperator: '<S72>/fix for DT propagation issue1'
+  // Switch: '<S71>/Switch2' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
+  //   Constant: '<S71>/Constant3'
+  //   Constant: '<S71>/Constant4'
+  //   RelationalOperator: '<S71>/fix for DT propagation issue1'
 
-  if (joystick_enabled_matlab_node_B.rtb_X_est_wb_j > 0.0) {
+  if (joystick_enabled_matlab_node_B.rtb_X_est_wb_a > 0.0) {
     tmp_0 = 1;
   } else {
     tmp_0 = -1;
   }
 
-  // Switch: '<S72>/Switch' incorporates:
-  //   Constant: '<S72>/Clamping_zero'
-  //   Constant: '<S72>/Constant1'
-  //   Logic: '<S72>/AND3'
-  //   RelationalOperator: '<S72>/Equal1'
-  //   RelationalOperator: '<S72>/Relational Operator'
-  //   Switch: '<S72>/Switch1'
-  //   Switch: '<S72>/Switch2'
+  // Switch: '<S71>/Switch' incorporates:
+  //   Constant: '<S71>/Clamping_zero'
+  //   Constant: '<S71>/Constant1'
+  //   Logic: '<S71>/AND3'
+  //   RelationalOperator: '<S71>/Equal1'
+  //   RelationalOperator: '<S71>/Relational Operator'
+  //   Switch: '<S71>/Switch1'
+  //   Switch: '<S71>/Switch2'
 
-  if ((joystick_enabled_matlab_node_B.rtb_Integrator_i_e != 0.0) && (tmp ==
+  if ((joystick_enabled_matlab_node_B.rtb_Integrator_i_d != 0.0) && (tmp ==
        tmp_0)) {
-    joystick_enabled_matlab_node_B.rtb_X_est_wb_j = 0.0;
+    joystick_enabled_matlab_node_B.rtb_X_est_wb_a = 0.0;
   }
 
-  // Update for DiscreteIntegrator: '<S82>/Integrator' incorporates:
-  //   Switch: '<S72>/Switch'
+  // Update for DiscreteIntegrator: '<S81>/Integrator' incorporates:
+  //   Switch: '<S71>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 *
-    joystick_enabled_matlab_node_B.rtb_X_est_wb_j +
+    joystick_enabled_matlab_node_B.rtb_X_est_wb_a +
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[2];
   joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[2] =
     joystick_enabled_matlab_node_B.idx;
@@ -8451,17 +8322,17 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_j[2] = -10.0;
   }
 
-  // Update for DiscreteIntegrator: '<S77>/Filter' incorporates:
-  //   Gain: '<S85>/Filter Coefficient'
+  // Update for DiscreteIntegrator: '<S76>/Filter' incorporates:
+  //   Gain: '<S84>/Filter Coefficient'
 
   joystick_enabled_matlab_node_DW.Filter_DSTATE_n[2] += 0.01 *
-    joystick_enabled_matlab_node_B.eps_d;
+    joystick_enabled_matlab_node_B.eps_b;
 
-  // Switch: '<S182>/Switch1' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant'
-  //   Constant: '<S182>/Constant2'
-  //   RelationalOperator: '<S182>/fix for DT propagation issue'
+  // Switch: '<S181>/Switch1' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant'
+  //   Constant: '<S181>/Constant2'
+  //   RelationalOperator: '<S181>/fix for DT propagation issue'
 
   if (joystick_enabled_matlab_node_B.upper_force_index > 0.0) {
     tmp = 1;
@@ -8469,38 +8340,38 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     tmp = -1;
   }
 
-  // Switch: '<S182>/Switch2' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant3'
-  //   Constant: '<S182>/Constant4'
-  //   Gain: '<S189>/Integral Gain'
-  //   RelationalOperator: '<S182>/fix for DT propagation issue1'
+  // Switch: '<S181>/Switch2' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant3'
+  //   Constant: '<S181>/Constant4'
+  //   Gain: '<S188>/Integral Gain'
+  //   RelationalOperator: '<S181>/fix for DT propagation issue1'
 
-  if (joystick_enabled_matlab_node_B.eps_a > 0.0) {
+  if (joystick_enabled_matlab_node_B.eps_f > 0.0) {
     tmp_0 = 1;
   } else {
     tmp_0 = -1;
   }
 
-  // Switch: '<S182>/Switch' incorporates:
-  //   Constant: '<S182>/Clamping_zero'
-  //   Constant: '<S182>/Constant1'
-  //   Logic: '<S182>/AND3'
-  //   RelationalOperator: '<S182>/Equal1'
-  //   RelationalOperator: '<S182>/Relational Operator'
-  //   Switch: '<S182>/Switch1'
-  //   Switch: '<S182>/Switch2'
+  // Switch: '<S181>/Switch' incorporates:
+  //   Constant: '<S181>/Clamping_zero'
+  //   Constant: '<S181>/Constant1'
+  //   Logic: '<S181>/AND3'
+  //   RelationalOperator: '<S181>/Equal1'
+  //   RelationalOperator: '<S181>/Relational Operator'
+  //   Switch: '<S181>/Switch1'
+  //   Switch: '<S181>/Switch2'
 
   if ((joystick_enabled_matlab_node_B.upper_force_index != 0.0) && (tmp == tmp_0))
   {
-    joystick_enabled_matlab_node_B.eps_a = 0.0;
+    joystick_enabled_matlab_node_B.eps_f = 0.0;
   }
 
-  // Update for DiscreteIntegrator: '<S192>/Integrator' incorporates:
-  //   Switch: '<S182>/Switch'
+  // Update for DiscreteIntegrator: '<S191>/Integrator' incorporates:
+  //   Switch: '<S181>/Switch'
 
   joystick_enabled_matlab_node_B.idx = 0.01 *
-    joystick_enabled_matlab_node_B.eps_a +
+    joystick_enabled_matlab_node_B.eps_f +
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[2];
   joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[2] =
     joystick_enabled_matlab_node_B.idx;
@@ -8510,9 +8381,9 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
     joystick_enabled_matlab_node_DW.Integrator_DSTATE_h[2] = -100.0;
   }
 
-  // Update for DiscreteIntegrator: '<S187>/Filter' incorporates:
-  //   DataStoreRead: '<S26>/Data Store Read9'
-  //   Gain: '<S195>/Filter Coefficient'
+  // Update for DiscreteIntegrator: '<S186>/Filter' incorporates:
+  //   DataStoreRead: '<S25>/Data Store Read9'
+  //   Gain: '<S194>/Filter Coefficient'
   //
   joystick_enabled_matlab_node_DW.Filter_DSTATE_g[2] += 0.01 *
     joystick_enabled_matlab_node_B.rtb_delta_qe_idx_1_tmp;
@@ -8534,11 +8405,11 @@ void joystick_enabled_matlab_node::step0() // Sample time: [0.01s, 0.0s]
 // Model step function for TID1
 void joystick_enabled_matlab_node::step1() // Sample time: [0.5s, 0.0s]
 {
-  // MATLABSystem: '<S232>/SinkBlock' incorporates:
-  //   Constant: '<S231>/Constant'
+  // MATLABSystem: '<S228>/SinkBlock' incorporates:
+  //   Constant: '<S227>/Constant'
 
   Pub_joystick_enabled_matlab_node_435_150.publish
-    (&joystick_enabled_matlab__ConstP.pooled7);
+    (&joystick_enabled_matlab__ConstP.Constant_Value_d);
 }
 
 // Use this function only if you need to maintain compatibility with an existing static main program.
@@ -8571,29 +8442,29 @@ void joystick_enabled_matlab_node::initialize()
   joystick_enabled_matlab_node_DW.VelocityIntegrator_PrevResetSta = 2;
   joystick_enabled_matlab_node_DW.VelocityIntegrator_IC_LOADING = 1U;
 
-  // InitializeConditions for DiscreteIntegrator: '<S32>/Discrete-Time Integrator' 
+  // InitializeConditions for DiscreteIntegrator: '<S31>/Discrete-Time Integrator' 
   joystick_enabled_matlab_node_DW.DiscreteTimeIntegrator_PrevRese = 2;
 
-  // InitializeConditions for DiscreteIntegrator: '<S137>/Integrator'
+  // InitializeConditions for DiscreteIntegrator: '<S136>/Integrator'
   joystick_enabled_matlab_node_DW.Integrator_PrevResetState = 2;
 
-  // InitializeConditions for DiscreteIntegrator: '<S132>/Filter'
+  // InitializeConditions for DiscreteIntegrator: '<S131>/Filter'
   joystick_enabled_matlab_node_DW.Filter_PrevResetState = 2;
 
-  // InitializeConditions for DiscreteIntegrator: '<S82>/Integrator'
+  // InitializeConditions for DiscreteIntegrator: '<S81>/Integrator'
   joystick_enabled_matlab_node_DW.Integrator_PrevResetState_d = 2;
 
-  // InitializeConditions for DiscreteIntegrator: '<S77>/Filter'
+  // InitializeConditions for DiscreteIntegrator: '<S76>/Filter'
   joystick_enabled_matlab_node_DW.Filter_PrevResetState_j = 2;
 
-  // InitializeConditions for DiscreteIntegrator: '<S192>/Integrator'
+  // InitializeConditions for DiscreteIntegrator: '<S191>/Integrator'
   joystick_enabled_matlab_node_DW.Integrator_PrevResetState_p = 2;
 
-  // InitializeConditions for DiscreteIntegrator: '<S187>/Filter'
+  // InitializeConditions for DiscreteIntegrator: '<S186>/Filter'
   joystick_enabled_matlab_node_DW.Filter_PrevResetState_a = 2;
 
   // SystemInitialize for Enabled SubSystem: '<S1>/Subsystem'
-  // Start for MATLABSystem: '<S23>/SinkBlock'
+  // Start for MATLABSystem: '<S22>/SinkBlock'
   joystick_enabled_matlab_node_DW.obj_o.QOSAvoidROSNamespaceConventions = false;
   joystick_enabled_matlab_node_DW.obj_o.matlabCodegenIsDeleted = false;
   joystick_enabled_matlab_node_DW.obj_o.isSetupComplete = false;
@@ -8603,7 +8474,7 @@ void joystick_enabled_matlab_node::initialize()
 
   // End of SystemInitialize for SubSystem: '<S1>/Subsystem'
 
-  // SystemInitialize for MATLAB Function: '<S26>/guidanceLaw'
+  // SystemInitialize for MATLAB Function: '<S25>/guidanceLaw'
   joystick_enabled_matlab_node_DW.action_id = 1.0;
   joystick_enabled_matlab_node_DW.prior_Ri_u[0] = 999.0;
   joystick_enabled_matlab_node_DW.prior_Ri_u[1] = 999.0;
@@ -8612,19 +8483,16 @@ void joystick_enabled_matlab_node::initialize()
   // SystemInitialize for MATLAB Function: '<S6>/dvl_reset'
   joystick_enabled_matlab_node_DW.prior_flag = true;
 
-  // SystemInitialize for MATLAB Function: '<S10>/MATLAB Function'
-  joystick_enabled_matlab_node_DW.time_since_last_beat = 2.0;
-
   // SystemInitialize for MATLAB Function: '<Root>/joystick_mode_manager'
   joystick_enabled_matlab_node_DW.joystick_flag = true;
   joystick_enabled_matlab_node_DW.prior_joystick_flag = true;
 
-  // Start for MATLABSystem: '<S228>/SourceBlock'
+  // Start for MATLABSystem: '<S224>/SourceBlock'
   joystick_enabled_matlab_node_DW.obj.QOSAvoidROSNamespaceConventions = false;
   joystick_enabled_matlab_node_DW.obj.matlabCodegenIsDeleted = false;
   joystick_enabled_matlab_node_DW.obj.isSetupComplete = false;
   joystick_enabled_matlab_node_DW.obj.isInitialized = 1;
-  joy_Subscriber_setupImpl_oroz0s(&joystick_enabled_matlab_node_DW.obj);
+  joys_Subscriber_setupImpl_oroz0(&joystick_enabled_matlab_node_DW.obj);
   joystick_enabled_matlab_node_DW.obj.isSetupComplete = true;
 
   // Start for MATLABSystem: '<S3>/SourceBlock'
@@ -8651,7 +8519,7 @@ void joystick_enabled_matlab_node::initialize()
   joystick_Subscriber_setupImpl_o(&joystick_enabled_matlab_node_DW.obj_a);
   joystick_enabled_matlab_node_DW.obj_a.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S18>/SourceBlock'
+  // Start for MATLABSystem: '<S17>/SourceBlock'
   joystick_enabled_matlab_node_DW.obj_n.QOSAvoidROSNamespaceConventions = false;
   joystick_enabled_matlab_node_DW.obj_n.matlabCodegenIsDeleted = false;
   joystick_enabled_matlab_node_DW.obj_n.isSetupComplete = false;
@@ -8659,7 +8527,7 @@ void joystick_enabled_matlab_node::initialize()
   joystick_e_Subscriber_setupImpl(&joystick_enabled_matlab_node_DW.obj_n);
   joystick_enabled_matlab_node_DW.obj_n.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S222>/SourceBlock'
+  // Start for MATLABSystem: '<S221>/SourceBlock'
   joystick_enabled_matlab_node_DW.obj_c.QOSAvoidROSNamespaceConventions = false;
   joystick_enabled_matlab_node_DW.obj_c.matlabCodegenIsDeleted = false;
   joystick_enabled_matlab_node_DW.obj_c.isSetupComplete = false;
@@ -8667,15 +8535,7 @@ void joystick_enabled_matlab_node::initialize()
   joyst_Subscriber_setupImpl_oroz(&joystick_enabled_matlab_node_DW.obj_c);
   joystick_enabled_matlab_node_DW.obj_c.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S225>/SourceBlock'
-  joystick_enabled_matlab_node_DW.obj_h.QOSAvoidROSNamespaceConventions = false;
-  joystick_enabled_matlab_node_DW.obj_h.matlabCodegenIsDeleted = false;
-  joystick_enabled_matlab_node_DW.obj_h.isSetupComplete = false;
-  joystick_enabled_matlab_node_DW.obj_h.isInitialized = 1;
-  joys_Subscriber_setupImpl_oroz0(&joystick_enabled_matlab_node_DW.obj_h);
-  joystick_enabled_matlab_node_DW.obj_h.isSetupComplete = true;
-
-  // Start for MATLABSystem: '<S233>/SinkBlock'
+  // Start for MATLABSystem: '<S229>/SinkBlock'
   joystick_enabled_matlab_node_DW.obj_e.QOSAvoidROSNamespaceConventions = false;
   joystick_enabled_matlab_node_DW.obj_e.matlabCodegenIsDeleted = false;
   joystick_enabled_matlab_node_DW.obj_e.isSetupComplete = false;
@@ -8683,7 +8543,7 @@ void joystick_enabled_matlab_node::initialize()
   joystic_Publisher_setupImpl_oro(&joystick_enabled_matlab_node_DW.obj_e);
   joystick_enabled_matlab_node_DW.obj_e.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S220>/SinkBlock'
+  // Start for MATLABSystem: '<S219>/SinkBlock'
   joystick_enabled_matlab_node_DW.obj_g.QOSAvoidROSNamespaceConventions = false;
   joystick_enabled_matlab_node_DW.obj_g.matlabCodegenIsDeleted = false;
   joystick_enabled_matlab_node_DW.obj_g.isSetupComplete = false;
@@ -8691,7 +8551,7 @@ void joystick_enabled_matlab_node::initialize()
   joystick__Publisher_setupImpl_o(&joystick_enabled_matlab_node_DW.obj_g);
   joystick_enabled_matlab_node_DW.obj_g.isSetupComplete = true;
 
-  // Start for MATLABSystem: '<S232>/SinkBlock'
+  // Start for MATLABSystem: '<S228>/SinkBlock'
   joystick_enabled_matlab_node_DW.obj_f.QOSAvoidROSNamespaceConventions = false;
   joystick_enabled_matlab_node_DW.obj_f.matlabCodegenIsDeleted = false;
   joystick_enabled_matlab_node_DW.obj_f.isSetupComplete = false;
@@ -8703,7 +8563,7 @@ void joystick_enabled_matlab_node::initialize()
 // Model terminate function
 void joystick_enabled_matlab_node::terminate()
 {
-  // Terminate for MATLABSystem: '<S228>/SourceBlock'
+  // Terminate for MATLABSystem: '<S224>/SourceBlock'
   if (!joystick_enabled_matlab_node_DW.obj.matlabCodegenIsDeleted) {
     joystick_enabled_matlab_node_DW.obj.matlabCodegenIsDeleted = true;
     if ((joystick_enabled_matlab_node_DW.obj.isInitialized == 1) &&
@@ -8712,7 +8572,7 @@ void joystick_enabled_matlab_node::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S228>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S224>/SourceBlock'
 
   // Terminate for MATLABSystem: '<S3>/SourceBlock'
   if (!joystick_enabled_matlab_node_DW.obj_b.matlabCodegenIsDeleted) {
@@ -8747,7 +8607,7 @@ void joystick_enabled_matlab_node::terminate()
 
   // End of Terminate for MATLABSystem: '<S2>/SourceBlock'
 
-  // Terminate for MATLABSystem: '<S18>/SourceBlock'
+  // Terminate for MATLABSystem: '<S17>/SourceBlock'
   if (!joystick_enabled_matlab_node_DW.obj_n.matlabCodegenIsDeleted) {
     joystick_enabled_matlab_node_DW.obj_n.matlabCodegenIsDeleted = true;
     if ((joystick_enabled_matlab_node_DW.obj_n.isInitialized == 1) &&
@@ -8756,10 +8616,10 @@ void joystick_enabled_matlab_node::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S18>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S17>/SourceBlock'
 
   // Terminate for Enabled SubSystem: '<S1>/Subsystem'
-  // Terminate for MATLABSystem: '<S23>/SinkBlock'
+  // Terminate for MATLABSystem: '<S22>/SinkBlock'
   if (!joystick_enabled_matlab_node_DW.obj_o.matlabCodegenIsDeleted) {
     joystick_enabled_matlab_node_DW.obj_o.matlabCodegenIsDeleted = true;
     if ((joystick_enabled_matlab_node_DW.obj_o.isInitialized == 1) &&
@@ -8768,10 +8628,10 @@ void joystick_enabled_matlab_node::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S23>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S22>/SinkBlock'
   // End of Terminate for SubSystem: '<S1>/Subsystem'
 
-  // Terminate for MATLABSystem: '<S222>/SourceBlock'
+  // Terminate for MATLABSystem: '<S221>/SourceBlock'
   if (!joystick_enabled_matlab_node_DW.obj_c.matlabCodegenIsDeleted) {
     joystick_enabled_matlab_node_DW.obj_c.matlabCodegenIsDeleted = true;
     if ((joystick_enabled_matlab_node_DW.obj_c.isInitialized == 1) &&
@@ -8780,20 +8640,9 @@ void joystick_enabled_matlab_node::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S222>/SourceBlock'
+  // End of Terminate for MATLABSystem: '<S221>/SourceBlock'
 
-  // Terminate for MATLABSystem: '<S225>/SourceBlock'
-  if (!joystick_enabled_matlab_node_DW.obj_h.matlabCodegenIsDeleted) {
-    joystick_enabled_matlab_node_DW.obj_h.matlabCodegenIsDeleted = true;
-    if ((joystick_enabled_matlab_node_DW.obj_h.isInitialized == 1) &&
-        joystick_enabled_matlab_node_DW.obj_h.isSetupComplete) {
-      Sub_joystick_enabled_matlab_node_423.resetSubscriberPtr();//();
-    }
-  }
-
-  // End of Terminate for MATLABSystem: '<S225>/SourceBlock'
-
-  // Terminate for MATLABSystem: '<S233>/SinkBlock'
+  // Terminate for MATLABSystem: '<S229>/SinkBlock'
   if (!joystick_enabled_matlab_node_DW.obj_e.matlabCodegenIsDeleted) {
     joystick_enabled_matlab_node_DW.obj_e.matlabCodegenIsDeleted = true;
     if ((joystick_enabled_matlab_node_DW.obj_e.isInitialized == 1) &&
@@ -8802,9 +8651,9 @@ void joystick_enabled_matlab_node::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S233>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S229>/SinkBlock'
 
-  // Terminate for MATLABSystem: '<S220>/SinkBlock'
+  // Terminate for MATLABSystem: '<S219>/SinkBlock'
   if (!joystick_enabled_matlab_node_DW.obj_g.matlabCodegenIsDeleted) {
     joystick_enabled_matlab_node_DW.obj_g.matlabCodegenIsDeleted = true;
     if ((joystick_enabled_matlab_node_DW.obj_g.isInitialized == 1) &&
@@ -8813,9 +8662,9 @@ void joystick_enabled_matlab_node::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S220>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S219>/SinkBlock'
 
-  // Terminate for MATLABSystem: '<S232>/SinkBlock'
+  // Terminate for MATLABSystem: '<S228>/SinkBlock'
   if (!joystick_enabled_matlab_node_DW.obj_f.matlabCodegenIsDeleted) {
     joystick_enabled_matlab_node_DW.obj_f.matlabCodegenIsDeleted = true;
     if ((joystick_enabled_matlab_node_DW.obj_f.isInitialized == 1) &&
@@ -8824,7 +8673,7 @@ void joystick_enabled_matlab_node::terminate()
     }
   }
 
-  // End of Terminate for MATLABSystem: '<S232>/SinkBlock'
+  // End of Terminate for MATLABSystem: '<S228>/SinkBlock'
 }
 
 // Constructor

@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.11
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Sat Jul 11 23:06:24 2026
+// C/C++ source code generated on : Sun Jul 12 15:12:27 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -21,7 +21,7 @@
 // Constant parameters (default storage)
 const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
   // Expression: FF_maneuvers
-  //  Referenced by: '<S26>/trickFTListInjector'
+  //  Referenced by: '<S25>/trickFTListInjector'
 
   {
     { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 },
@@ -75,18 +75,15 @@ const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
       -1.5478910645887443e-16, -1.8948357597841057e-16 }
   },
 
-  // Pooled Parameter (Expression: )
-  //  Referenced by:
-  //    '<S225>/Constant'
-  //    '<S231>/Constant'
-  //    '<S226>/Out1'
+  // Computed Parameter: Constant_Value_d
+  //  Referenced by: '<S227>/Constant'
 
   {
     false                              // SL_DummyData
   },
 
   // Expression: ccw_force
-  //  Referenced by: '<S33>/forceToPWMCalculator'
+  //  Referenced by: '<S32>/forceToPWMCalculator'
 
   { 22.656580205999994, 22.6046666016, 22.5156718512, 22.382179725600004,
     21.803713848, 21.4032374712, 21.225247970399998, 20.913766344,
@@ -377,7 +374,7 @@ const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
     -64.966167792000007, -65.9451100464 },
 
   // Expression: ccw_pwm
-  //  Referenced by: '<S33>/forceToPWMCalculator'
+  //  Referenced by: '<S32>/forceToPWMCalculator'
 
   { 1900.0, 1896.0, 1892.0, 1888.0, 1884.0, 1880.0, 1876.0, 1872.0, 1868.0,
     1864.0, 1860.0, 1856.0, 1852.0, 1848.0, 1844.0, 1840.0, 1836.0, 1832.0,
@@ -404,7 +401,7 @@ const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
     1108.0, 1104.0, 1100.0 },
 
   // Expression: cw_force
-  //  Referenced by: '<S33>/forceToPWMCalculator'
+  //  Referenced by: '<S32>/forceToPWMCalculator'
 
   { -22.656580205999994, -22.6046666016, -22.5156718512, -22.382179725600004,
     -21.803713848, -21.4032374712, -21.225247970399998, -20.913766344,
@@ -694,7 +691,7 @@ const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
     64.966167792000007, 65.9451100464 },
 
   // Expression: cw_pwm
-  //  Referenced by: '<S33>/forceToPWMCalculator'
+  //  Referenced by: '<S32>/forceToPWMCalculator'
 
   { 1100.0, 1104.0, 1108.0, 1112.0, 1116.0, 1120.0, 1124.0, 1128.0, 1132.0,
     1136.0, 1140.0, 1144.0, 1148.0, 1152.0, 1156.0, 1160.0, 1164.0, 1168.0,
@@ -721,12 +718,12 @@ const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
     1892.0, 1896.0, 1900.0 },
 
   // Expression: voltage
-  //  Referenced by: '<S33>/forceToPWMCalculator'
+  //  Referenced by: '<S32>/forceToPWMCalculator'
 
   { 10.0, 12.0, 14.0, 16.0, 18.0, 20.0 },
 
   // Expression: invMT_wrench
-  //  Referenced by: '<S26>/Constant'
+  //  Referenced by: '<S25>/Constant'
 
   { 1.2303149606299215, 1.230314960629922, 1.230314960629922, 1.2303149606299215,
     -5.0638902104277623E-17, 7.3656714309200358E-17, 3.0957821291774887E-17,
@@ -738,7 +735,7 @@ const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
     1.1609195017937319, 1.1609195017937319 },
 
   // Expression: invFT_wrench
-  //  Referenced by: '<S26>/Constant1'
+  //  Referenced by: '<S25>/Constant1'
 
   { -0.085040920905990927, 0.085040920905990844, 0.08504092090599083,
     -0.08504092090599083, 0.35355339059327379, -0.35355339059327379,
@@ -760,12 +757,12 @@ const ConstP_joystick_enabled_matla_T joystick_enabled_matlab__ConstP{
   { 1.0, 0.0, 0.0, 0.0, -0.037, 0.9993, 0.0, -0.9993, -0.037 },
 
   // Expression: qib_PID.Kp
-  //  Referenced by: '<S26>/Gain1'
+  //  Referenced by: '<S25>/Gain1'
 
   { 10.0, 10.0, 5.0, 10.0 },
 
   // Expression: P
-  //  Referenced by: '<S142>/Proportional Gain'
+  //  Referenced by: '<S141>/Proportional Gain'
 
   { 0.5, 0.5, 1.0 }
 };

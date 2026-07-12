@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.11
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Sat Jul 11 23:06:24 2026
+// C/C++ source code generated on : Sun Jul 12 15:12:27 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -539,17 +539,6 @@ struct SL_Bus_std_msgs_Bool
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
-#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
-
-// MsgType=std_msgs/Empty
-struct SL_Bus_std_msgs_Empty
-{
-  boolean_T SL_DummyData;
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Gamepad_
 #define DEFINED_TYPEDEF_FOR_SL_Bus_custom_interfaces_Gamepad_
 
@@ -576,6 +565,17 @@ struct SL_Bus_custom_interfaces_Gamepad
   boolean_T select;
   boolean_T joystick_press_left;
   boolean_T joystick_press_right;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
+#define DEFINED_TYPEDEF_FOR_SL_Bus_std_msgs_Empty_
+
+// MsgType=std_msgs/Empty
+struct SL_Bus_std_msgs_Empty
+{
+  boolean_T SL_DummyData;
 };
 
 #endif
@@ -624,7 +624,7 @@ struct sensor_bus
 
 #endif
 
-// Custom Type definition for MATLABSystem: '<S233>/SinkBlock'
+// Custom Type definition for MATLABSystem: '<S229>/SinkBlock'
 #include "rmw/qos_profiles.h"
 #ifndef struct_sJ4ih70VmKcvCeguWN0mNVF
 #define struct_sJ4ih70VmKcvCeguWN0mNVF

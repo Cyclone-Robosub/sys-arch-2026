@@ -1,5 +1,5 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 11-Jul-2026 23:06:32
+// Generated 12-Jul-2026 15:23:11
 #include "slros2_initialize.h"
 const std::string SLROSNodeName("joystick_enabled_matlab_node");
 // joystick_enabled_matlab_node/ /Subsystem/Publish
@@ -20,7 +20,5 @@ SimulinkSubscriber<custom_interfaces::msg::Imu,SL_Bus_custom_interfaces_Imu> Sub
 SimulinkSubscriber<custom_interfaces::msg::VR,SL_Bus_custom_interfaces_VR> Sub_joystick_enabled_matlab_node_412;
 // joystick_enabled_matlab_node/dvl_reset_subscriber/Subscribe
 SimulinkSubscriber<std_msgs::msg::Bool,SL_Bus_std_msgs_Bool> Sub_joystick_enabled_matlab_node_416;
-// joystick_enabled_matlab_node/joystick_heartbeat/Subscribe
-SimulinkSubscriber<std_msgs::msg::Empty,SL_Bus_std_msgs_Empty> Sub_joystick_enabled_matlab_node_423;
 // joystick_enabled_matlab_node/joystick_output/Subscribe
 SimulinkSubscriber<custom_interfaces::msg::Gamepad,SL_Bus_custom_interfaces_Gamepad> Sub_joystick_enabled_matlab_node_428;
