@@ -2,7 +2,7 @@
 using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
-  this->declare_parameter<std::string>("mission_file", "TrialParamTree");
+  this->declare_parameter<std::string>("mission_file", "TrialTree");
   param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
   cb_handle = param_subscriber->add_parameter_callback("mission_file", std::bind(&MissionManagerNode::parameter_callback, this, std::placeholders::_1));
  
