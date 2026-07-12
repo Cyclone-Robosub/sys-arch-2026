@@ -13,7 +13,6 @@
   <depend>rclcpp</depend>
   <depend>custom_interfaces</depend>
   <depend>sys</depend>
-  <depend>linux</depend>
   <export>
     <build_type>ament_cmake</build_type>
   </export>
