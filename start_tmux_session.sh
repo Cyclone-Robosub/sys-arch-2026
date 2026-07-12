@@ -42,8 +42,9 @@ SOFT_MUX_PANE=$(tmux split-window -h -t $THRUST_INTERFACE_PANE -P -F "#{pane_id}
 # --- System Monitor (btop) ---
 tmux split-window -v -t $SOFT_MUX_PANE "btop; bash"
 
-# --- Mux Controller ---
-tmux split-window -v -t $THRUST_INTERFACE_PANE "ros2 run mux_controller mux_controller; bash"
+# --- MicroROS Agent ---
+LD_LIBRARY_PATH=/opt/ros/jazzy-agent/lib:$LD_LIBRARY_PATH
+tmux split-window -v -t $THRUST_INTERFACE_PANE "source /uros_ws/install/setup.bash && ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyUSB0 -b 921600; bash"
 
 ################################################################################
 # SECTION 2: Video Streaming and Recording Window
