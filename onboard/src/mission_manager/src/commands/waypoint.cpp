@@ -40,7 +40,7 @@ NodeStatus WaypointCmd::tick() {
         RCLCPP_ERROR(logger(), "Drive to World Waypoint - Error: timeout");
         halt();
         return NodeStatus::FAILURE;
-    } else {
+    } else if (timeout_sec <= 0) {
         RCLCPP_ERROR(logger(), "Drive to World Waypoint - Invalid timeout");
         halt();
         return NodeStatus::FAILURE;
