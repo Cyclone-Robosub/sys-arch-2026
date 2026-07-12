@@ -7,20 +7,39 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(custom_interfaces REQUIRED)
+find_package(fd_interface REQUIRED)
+
+# Include directories
+include_directories(
+  ${PROJECT_SOURCE_DIR}/include
+)
+
+# Main executable (without ENABLE_TESTING defined)
+add_executable(pico_go_switch src/pico_go_switch.cpp)
+ament_target_dependencies(pico_go_switch
+  rclcpp
+  custom_interfaces
+  std_msgs
+  fd_interface
+)
+
+# Install main executable
+install(TARGETS
+  pico_go_switch
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
+  # No unit tests yet :(
 endif()
+
+# Install launch files.
+install(DIRECTORY
+launch
+DESTINATION share/${PROJECT_NAME}/
+)
 
 ament_package()
