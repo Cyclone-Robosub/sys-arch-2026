@@ -15,13 +15,13 @@
                             hold_time="1"
                             timeout="30"
                             _description="Drive to a waypoint 5m in the +x direction"/>
-      <DriveToWorldWaypoint world_waypoint="5,-1,0.67,0,0,0"
-                            waypoint_mask="1,1,1,0,0,0"
-                            tolerance="0.1,0.1,0.1,0.1,0.1,0.1"
+      <DriveToWorldWaypoint world_waypoint="5,-1,0.67,0,0,3.14"
+                            waypoint_mask="1,1,1,1,1,1"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="1"
                             timeout="30"
                             _description="Drive 1m in the -y direction "/>
-      <DriveToWorldWaypoint world_waypoint="0,-1,0.67,0,0,0"
+      <DriveToWorldWaypoint world_waypoint="0,-1,0.67,0,0,3.14"
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="99999"
