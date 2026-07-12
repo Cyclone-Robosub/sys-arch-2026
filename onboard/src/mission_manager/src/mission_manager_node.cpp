@@ -171,17 +171,20 @@ std::string MissionManagerNode::buildMissionPayload() {
 
 void MissionManagerNode::get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response) {
     std::string search_id = request->command_id;
-    response->params = "";
+    std::string params_print = "Parameters for " + search_id + ":\n";
     for (const auto& [key, value] : mission_params) {
         size_t pos = key.find(".");
         if (pos != std::string::npos) {
             std::string cmd = key.substr(0, pos);
             if (cmd == search_id) {
                 std::string param = key.substr(pos + 1);
-                response->params = response->params + "parameter: " + param + ", value: " + value + "\n";
+                params_print = params_print + param + " : " + value + "\n";
             }
         }
     }
+    //RCLCPP_INFO(this->get_logger(), "%s", params_print.c_str());
+    printf("%s", params_print.c_str());
+    response->success = true;
 }
 /*
     Heartbeat functions
