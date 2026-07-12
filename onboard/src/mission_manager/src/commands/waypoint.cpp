@@ -22,8 +22,8 @@ bool WaypointCmd::setGoal(Goal& goal) {
     getInput("waypoint_mask", goal.waypoint_mask);
     getInput("tolerance", goal.tolerance);
     getInput("hold_time", goal.hold_time);
-    RCLCPP_INFO(logger(), "%f", goal.timeout);
     getInput("timeout", goal.timeout);
+    RCLCPP_INFO(logger(), "%f", goal.timeout);
     
 
     start_time = std::chrono::steady_clock::now();
