@@ -75,4 +75,5 @@ class MissionManagerNode : public rclcpp::Node {
         std::string buildMissionPayload();
         rclcpp::Service<custom_interfaces::srv::GetMissionCmd>::SharedPtr get_mission_cmd_service;
         void get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response);
+        rclcpp::Service<custom_interfaces::srv::TerminateMission>::SharedPtr terminate_mission_service;
 };
