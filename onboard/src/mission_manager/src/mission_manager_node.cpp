@@ -20,7 +20,6 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
 
   mission_cmd_service = this->create_service<custom_interfaces::srv::SetMissionCmd>("set_mission_cmd_service", std::bind(&MissionManagerNode::update_mission_cmd_param, this, std::placeholders::_1, std::placeholders::_2));
   get_mission_cmd_service = this->create_service<custom_interfaces::srv::GetMissionCmd>("get_mission_cmd_service", std::bind(&MissionManagerNode::get_mission_cmd_param, this, std::placeholders::_1, std::placeholders::_2));
-  transform_waypoints_service = this->create_service<custom_interfaces::srv::TransformWaypt>("transform_waypt_service", std::bind(&MissionManagerNode::transform_waypt, this, std::placeholders::_1, std::placeholders::_2));
 
 }
 
@@ -187,9 +186,6 @@ void MissionManagerNode::get_mission_cmd_param(const std::shared_ptr<custom_inte
     //RCLCPP_INFO(this->get_logger(), "%s", params_print.c_str());
     printf("%s", params_print.c_str());
     response->success = true;
-}
-void MissionManagerNode::transform_waypt(const std::shared_ptr<custom_interfaces::srv::TransformWaypt::Request> request, std::shared_ptr<custom_interfaces::srv::TransformWaypt::Response> response) {
-    
 }
 /*
     Heartbeat functions
