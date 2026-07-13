@@ -114,7 +114,7 @@ std::string getTreeNameFromFile(const std::string& filename) {
     if (const char* main_tree = root->Attribute("main_tree_to_execute")) {
         return main_tree;
     }
-    throw std::runtime_error("No BehaviorTree ID found in file.");
+    return "No BehaviorTree ID found in file";
 }
 
 void LoadPlugin(BT::BehaviorTreeFactory& factory, const std::filesystem::path& file_path,

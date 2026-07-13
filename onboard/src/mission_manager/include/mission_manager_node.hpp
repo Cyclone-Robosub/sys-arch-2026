@@ -1,10 +1,8 @@
 #include "rclcpp/rclcpp.hpp"
 #include <iostream>
 #include <fstream> 
-#include <sstream>
 #include <chrono>
 #include <string>
-#include <format>
 #include "std_srvs/srv/trigger.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/empty.hpp"
@@ -84,5 +82,5 @@ class MissionManagerNode : public rclcpp::Node {
         void get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response);
         rclcpp::Service<custom_interfaces::srv::TransformWaypt>::SharedPtr transform_waypoints_service;
         void transform_waypt(const std::shared_ptr<custom_interfaces::srv::TransformWaypt::Request> request, std::shared_ptr<custom_interfaces::srv::TransformWaypt::Response> response);
-    
+        void rewrite_mission_id_old_file(const std::string old_filename);
 };
