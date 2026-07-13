@@ -56,6 +56,7 @@ Dashboard::Dashboard(std::unique_ptr<TUI_Interface> tui) : Node("tui"), tui(std:
     force_pub_mux = this->create_client<std_srvs::srv::SetBool>("force_pub");
     force_pub_mission_manager = this->create_client<std_srvs::srv::Trigger>("pub_ready_status");
     revive_pico_client = this->create_client<std_srvs::srv::Trigger>("revive_pico");
+    detach_tmux_session_client = this->create_client<std_srvs::srv::Trigger>("detatch_tmux_session");
     
     refresh_display();
 }
@@ -251,6 +252,21 @@ void Dashboard::send_revive_signal() {
     revive_pico_client->async_send_request(request);
 }
 
+void Dashboard::detatch_robot_tmux_session() {
+    std::shared_ptr<std_srvs::srv::Trigger::Request> request = std::make_shared<std_srvs::srv::Trigger::Request>();
+    detach_tmux_session_client->async_send_request(request);
+}
+
+void Dashboard::prepare_for_competition_run() {
+    if (!mission_manager_heartbeat) {
+        return; // we can't do a competition run without mission manager
+    }
+    if (!mission_manager_ready) {
+        toggle_ready();
+    }
+    detatch_robot_tmux_session();
+}
+
 void Dashboard::ping_loop() {
     while (rclcpp::ok()) {
         usleep(10);
@@ -319,6 +335,9 @@ void Dashboard::work_loop() {
                     break;
                 case 'f':
                     send_revive_signal();
+                    break;
+                case 'g':
+                    prepare_for_competition_run();
                     break;
                 case 'q':
                     exit = true;
@@ -638,6 +657,8 @@ void Dashboard_TUI::display_commands() {
     printf("[E]: Send Go Signal\n");
     jump_to_column(col_2_3);
     printf("[F]: Revive Pico\n");
+    jump_to_column(col_2_3);
+    printf("[G]: Prepare Comp Run\n");
 }
 
 void Dashboard_TUI::display_debug(const int col_number, Debug_Message debug) {
