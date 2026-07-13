@@ -1,5 +1,10 @@
 #include "rclcpp/rclcpp.hpp"
+#include <iostream>
+#include <fstream> 
+#include <sstream>
 #include <chrono>
+#include <string>
+#include <format>
 #include "std_srvs/srv/trigger.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/empty.hpp"
@@ -16,6 +21,8 @@
 #include "server/dropper_server.hpp"
 #include "custom_interfaces/srv/set_mission_cmd.hpp"
 #include "custom_interfaces/srv/get_mission_cmd.hpp"
+#include "custom_interfaces/srv/transform_waypt.hpp"
+#include <tinyxml2.h>
 
 class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
@@ -75,4 +82,7 @@ class MissionManagerNode : public rclcpp::Node {
         std::string buildMissionPayload();
         rclcpp::Service<custom_interfaces::srv::GetMissionCmd>::SharedPtr get_mission_cmd_service;
         void get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response);
+        rclcpp::Service<custom_interfaces::srv::TransformWaypt>::SharedPtr transform_waypoints_service;
+        void transform_waypt(const std::shared_ptr<custom_interfaces::srv::TransformWaypt::Request> request, std::shared_ptr<custom_interfaces::srv::TransformWaypt::Response> response);
+    
 };

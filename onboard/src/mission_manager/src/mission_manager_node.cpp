@@ -189,8 +189,98 @@ void MissionManagerNode::get_mission_cmd_param(const std::shared_ptr<custom_inte
     response->success = true;
 }
 void MissionManagerNode::transform_waypt(const std::shared_ptr<custom_interfaces::srv::TransformWaypt::Request> request, std::shared_ptr<custom_interfaces::srv::TransformWaypt::Response> response) {
+    auto fd = request->mission_file_path;
+    std::string file_prefix = "./onboard/src/behaviortree_ros2/mission_tree_files/";
+    //printf("%s\n", file_prefix.c_str());
+    std::filesystem::copy(file_prefix + fd, file_prefix + fd + ".old.xml");
+
+    std::string new_filename = file_prefix + fd;
+    std::string old_filename = file_prefix + fd + ".old.xml";
+    /*
+    tinyxml2::XMLDocument doc;
+    if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
+        throw std::runtime_error("Failed to load XML file.");
+    }
     
+    // tree -> sequence -> task
+    // tinyxml2::XMLElement *levelElement = doc.FirstChildElement();
+    tinyxml2::XMLPrinter printer;
+    // levelElement->Accept(&printer);
+    */
+    //std::ofstream ss {file_prefix + "/test.txt"};
+    std::ifstream input_file (old_filename);
+    std::ofstream output_file (new_filename);
+
+    if (!input_file.is_open()) {
+        throw std::runtime_error("Error opening input file!");
+    }
+    
+    if (!output_file.is_open()) {
+        throw std::runtime_error("Error opening output file!");
+    }
+    
+    bool is_first_line = true;
+    std::string line;
+    while (std::getline(input_file, line)) {
+        if (!is_first_line) {
+            output_file << "\n";
+        }
+        is_first_line = false;
+        size_t pos = line.find("DriveToWorldWaypoint");
+        if (pos != std::string::npos) {
+            std::string new_line;
+            size_t waypt = line.find("=", pos);
+            if (waypt != std::string::npos) {
+                new_line = line.substr(0, waypt + 2);
+            
+                std::string waypoint = line.substr(waypt + 1);
+               
+                size_t first_comma = waypoint.find_first_of(",");
+                size_t second_comma = waypoint.substr(first_comma + 1, std::string::npos).find_first_of(",");
+            
+                double old_x = std::stod(waypoint.substr(1, first_comma - 1));
+                double old_y = std::stod(waypoint.substr(first_comma + 1, second_comma));
+                double new_x = old_x + request->x_offset;
+                double new_y = old_y + request->y_offset;
+                
+                // std::stringstream s1;
+                //s1 << new_x;
+                //std::stringstream s2;
+                //s2 << new_y;
+                new_line = new_line + std::to_string(new_x) + "," + std::to_string(new_y) + waypoint.substr(first_comma + second_comma, std::string::npos);
+                output_file << new_line;
+            } else {
+                output_file << line;
+            }
+        } else {
+            output_file << line;
+        }
+    }
+
+    /*
+    for (tinyxml2::XMLElement* tree = doc.RootElement()->FirstChildElement(); tree != nullptr; tree = tree->NextSiblingElement()) {
+        visit_waypoints(tree, ss);
+
+    }
+    */
+    // ss << printer.CStr();
+    // tree
+    //for (tinyxml2::XMLElement* seq_child = doc.RootElement()->FirstChildElement(); seq_child != NULL; seq_child = seq_child->NextSiblingElement()) {
+        // sequence
+        //seq_child->Accept(&printer);
+        //ss << "(sequence)" << printer.CStr();
+        //for (tinyxml2::XMLElement* task = seq_child->FirstChildElement()->FirstChildElement(); task != NULL; task = task->NextSiblingElement()) {
+            // task
+            //task->Accept(&printer);
+            //ss << "(task)" << printer.CStr();
+        //}
+    //}
+    //ss.close();
+    input_file.close();
+    output_file.close();
+    response->success = true;
 }
+
 /*
     Heartbeat functions
 */
