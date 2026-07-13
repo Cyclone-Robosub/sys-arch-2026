@@ -10,11 +10,15 @@ fi
 source install/setup.sh
 source ~/.$(echo $SHELL | awk -F  '/' '{print $NF}')rc # make sure we have PATH up to date
 
-SESSION="joystick"
+SESSION="laptop"
+
+# --- TUI ---
+# Create new detached tmux session
+TUI_PANE=$(tmux new-session -d -s $SESSION -n 'tui' -P -F "#{pane_id}" "ros2 run tui tui; bash" )
 
 # --- Rosbridge ---
-# Create new detached tmux session
-JOYSTICK_PANE=$(tmux new-session -d -s $SESSION -n 'joystick' -P -F "#{pane_id}" "ros2 launch rosbridge_server rosbridge_websocket_launch.xml; bash" )
+# Create new window for joystick systems
+JOYSTICK_PANE=$(tmux new-window -t $SESSION -n 'joystick' -P -F "#{pane_id}" "ros2 launch rosbridge_server rosbridge_websocket_launch.xml; bash" )
 
 # --- Webpage ---
 # Sleep so that the rosbridge loads first
