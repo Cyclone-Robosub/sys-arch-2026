@@ -120,6 +120,10 @@ if(EXISTS "/usr/include/aarch64-linux-gnu/NvInfer.h")
     RUNTIME DESTINATION lib/${PROJECT_NAME}
   )
 
+  install(DIRECTORY include/
+    DESTINATION include
+  )
+
   if(BUILD_TESTING)
     find_package(ament_cmake_gtest REQUIRED)
 
@@ -138,10 +142,6 @@ if(EXISTS "/usr/include/aarch64-linux-gnu/NvInfer.h")
 endif() # TensorRT available
 
 # ── install ───────────────────────────────────────────────────────────────────
-install(DIRECTORY include/
-  DESTINATION include
-)
-
 install(DIRECTORY launch/
   DESTINATION share/${PROJECT_NAME}/launch
 )
