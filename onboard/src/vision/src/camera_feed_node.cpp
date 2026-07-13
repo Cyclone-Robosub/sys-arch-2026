@@ -86,13 +86,13 @@ private:
   //
   // Pipeline layout:
   //   v4l2src  →  h264parse  →  tee ──┬──> queue → rtspclientsink  (stream to mediaMTX)
-  //                                   └──> queue → nvv4l2decoder → nvvidconv → appsink  (publish to ROS)
+  //                                   └──> queue → avdec_h264 → videoconvert → appsink  (publish to ROS)
   bool init_pipeline()
   {
     GError * err = nullptr;
 
-    // nvv4l2decoder outputs NVMM memory on Jetson; nvvidconv brings it to system
-    // memory as BGRx. The BGR conversion is done in the frame callback via cvtColor.
+    // Raspberry Pi 5 has no H.264 hardware decoder, so decode in software
+    // (avdec_h264) and let videoconvert hand appsink BGR directly.
     std::string pipeline_str =
       "v4l2src device=" + device_ + " ! "
       "video/x-h264,width=" + std::to_string(width_) +
@@ -101,9 +101,9 @@ private:
       "h264parse ! "
       "tee name=t "
         "t. ! queue ! rtspclientsink location=" + rtsp_url_ + " "
-        "t. ! queue ! nvv4l2decoder ! nvvidconv ! "
-          "video/x-raw,format=BGRx ! " 
-          "appsink name=appsink emit-signals=false sync=false " // Use signals for C++ callbacks
+        "t. ! queue ! avdec_h264 ! videoconvert ! "
+          "video/x-raw,format=BGR ! "
+          "appsink name=appsink emit-signals=false sync=false "
             "max-buffers=1 drop=true";
 
     RCLCPP_INFO(this->get_logger(), "Pipeline: %s", pipeline_str.c_str());
@@ -161,10 +161,8 @@ private:
 
       GstMapInfo map;
       if (gst_buffer_map(buffer, &map, GST_MAP_READ)) {
-        // nvvidconv outputs BGRx (4 bytes/pixel); strip the X channel to BGR.
-        cv::Mat bgrx(h, w, CV_8UC4, map.data);
-        cv::Mat frame;
-        cv::cvtColor(bgrx, frame, cv::COLOR_BGRA2BGR);
+        // videoconvert outputs BGR; toImageMsg() copies, so wrapping is safe.
+        cv::Mat frame(h, w, CV_8UC3, map.data);
 
         auto img_msg = cv_bridge::CvImage(
           std_msgs::msg::Header(), "bgr8", frame).toImageMsg();
