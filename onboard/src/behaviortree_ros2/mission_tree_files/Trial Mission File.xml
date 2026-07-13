@@ -30,8 +30,14 @@
       <DriveToWorldWaypoint world_waypoint="0,0,0.67,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
-                            hold_time="9999"
+                            hold_time="3"
                             timeout="9999"
+                            _description="Descend 2 ft and hold position for 3 seconds"/>
+      <DriveToWorldWaypoint world_waypoint="0,0,0.67,0,0,0"
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="9999"
+                            timeout="0.1"
                             _description="Descend 2 ft and hold position for 3 seconds"/>
     </Sequence>
   </BehaviorTree>
@@ -39,10 +45,10 @@
   <BehaviorTree ID="ReturnToGateTask">
     <Sequence>
       <DriveToWorldWaypoint world_waypoint="0,-1,0.67,0,0,0"
-                            waypoint_mask="1,1,1,1,1,1"
+                            waypoint_mask="0,0,0,0,0,0"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="99999"
-                            timeout="99999"
+                            timeout="0.1"
                             _description="Return to origin at the same y"/>
     </Sequence>
   </BehaviorTree>
