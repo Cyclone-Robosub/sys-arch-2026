@@ -1,4 +1,4 @@
-string mission_id
+string mission_file_path
 float64 x_offset
 float64 y_offset
 ---
