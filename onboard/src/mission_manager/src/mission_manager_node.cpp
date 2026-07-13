@@ -21,7 +21,7 @@ MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
   mission_cmd_service = this->create_service<custom_interfaces::srv::SetMissionCmd>("set_mission_cmd_service", std::bind(&MissionManagerNode::update_mission_cmd_param, this, std::placeholders::_1, std::placeholders::_2));
   get_mission_cmd_service = this->create_service<custom_interfaces::srv::GetMissionCmd>("get_mission_cmd_service", std::bind(&MissionManagerNode::get_mission_cmd_param, this, std::placeholders::_1, std::placeholders::_2));
   transform_waypoints_service = this->create_service<custom_interfaces::srv::TransformWaypt>("transform_waypt_service", std::bind(&MissionManagerNode::transform_waypt, this, std::placeholders::_1, std::placeholders::_2));
-
+    terminate_mm_service = this->create_service<custom_interfaces::srv::TerminateMM>("terminate_mm_service", std::bind(&MissionManagerNode::terminate, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 
@@ -279,6 +279,12 @@ void MissionManagerNode::transform_waypt(const std::shared_ptr<custom_interfaces
     input_file.close();
     output_file.close();
     response->success = true;
+}
+
+void MissionManagerNode::terminate(const std::shared_ptr<custom_interfaces::srv::TerminateMM::Request> req, std::shared_ptr<custom_interfaces::srv::TerminateMM::Response> res) {
+    res->success = true;
+    shutdown_timer_ = this->create_wall_timer(std::chrono::milliseconds(1),
+      []() { rclcpp::shutdown(); });
 }
 
 /*

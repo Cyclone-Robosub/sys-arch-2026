@@ -22,7 +22,8 @@
 #include "custom_interfaces/srv/set_mission_cmd.hpp"
 #include "custom_interfaces/srv/get_mission_cmd.hpp"
 #include "custom_interfaces/srv/transform_waypt.hpp"
-#include <tinyxml2.h>
+#include "custom_interfaces/srv/terminate_mm.hpp"
+#include <chrono>
 
 class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
@@ -76,6 +77,8 @@ class MissionManagerNode : public rclcpp::Node {
         std::shared_ptr<rclcpp::ParameterCallbackHandle> cb_handle;
         std::shared_ptr<rclcpp::AsyncParametersClient> bt_param_client;
 
+        rclcpp::TimerBase::SharedPtr shutdown_timer_;
+
         rclcpp::Service<custom_interfaces::srv::SetMissionCmd>::SharedPtr mission_cmd_service;
         std::unordered_map<std::string, std::string> mission_params;
         void update_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Response> response);
@@ -84,5 +87,6 @@ class MissionManagerNode : public rclcpp::Node {
         void get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response);
         rclcpp::Service<custom_interfaces::srv::TransformWaypt>::SharedPtr transform_waypoints_service;
         void transform_waypt(const std::shared_ptr<custom_interfaces::srv::TransformWaypt::Request> request, std::shared_ptr<custom_interfaces::srv::TransformWaypt::Response> response);
-    
+        rclcpp::Service<custom_interfaces::srv::TerminateMM>::SharedPtr terminate_mm_service;
+        void terminate(const std::shared_ptr<custom_interfaces::srv::TerminateMM::Request> req, std::shared_ptr<custom_interfaces::srv::TerminateMM::Response> res);
 };
