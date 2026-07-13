@@ -89,10 +89,7 @@ ament_target_dependencies(
 target_include_directories(matlab_control PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(matlab_control 
-    "/usr/local/MATLAB/R2025b/sys/os/glnxa64/orig/libstdc++.so.6"
-	${CMAKE_DL_LIBS}
-    )
+
 install(TARGETS matlab_control
   EXPORT export_${PROJECT_NAME}
   DESTINATION lib/${PROJECT_NAME})
