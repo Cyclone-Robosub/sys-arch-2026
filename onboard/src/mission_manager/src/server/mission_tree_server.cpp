@@ -11,7 +11,7 @@
 
 MissionTreeServer::MissionTreeServer(const rclcpp::NodeOptions& options) : TreeExecutionServer(options) {
     current_command_publisher = node()->create_publisher<custom_interfaces::msg::CommandTree>("current_command", 10);
-    node()->declare_parameter("mission_file", "TrialParamTree");
+    node()->declare_parameter("mission_file", "TrialTree");
     cur_mission = node()->get_parameter("mission_file").as_string();
     mission_file_stored = cur_mission;
 }

@@ -2,7 +2,7 @@
 using namespace std::chrono_literals;
 
 MissionManagerNode::MissionManagerNode() : rclcpp::Node("mission_manager") {
-  this->declare_parameter<std::string>("mission_file", "TrialParamTree");
+  this->declare_parameter<std::string>("mission_file", "TrialTree");
   param_subscriber = std::make_shared<rclcpp::ParameterEventHandler>(this);
   cb_handle = param_subscriber->add_parameter_callback("mission_file", std::bind(&MissionManagerNode::parameter_callback, this, std::placeholders::_1));
  
@@ -66,7 +66,7 @@ void MissionManagerNode::try_start_mission() {
         idle_goal_handle_.reset();
         return;
    }
-   std::this_thread::sleep_for(std::chrono::seconds(15));
+   std::this_thread::sleep_for(std::chrono::seconds(2));
    ExecuteTree::Goal goal;
    goal.target_tree = cur_mission;
    goal.payload = buildMissionPayload();

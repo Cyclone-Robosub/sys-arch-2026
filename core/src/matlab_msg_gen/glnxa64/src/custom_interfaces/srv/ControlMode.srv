@@ -1,2 +1,0 @@
-uint8 mode # Disabled = 0, CLI = 1, CTRL (Matlab) = 2, Echo (Playback) = 3
----
