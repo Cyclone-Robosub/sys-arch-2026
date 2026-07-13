@@ -167,14 +167,14 @@ protected:
     }
 
     /*
-    *   Helper function to subscribe to mux_heartbeat topic and get the heartbeats from mux
+    *   Helper function to subscribe to thrust_interface_heartbeat topic and get the heartbeats from thrust_interface
     */
     void subscribe_thrust_interface_heartbeat() {
         thrust_interface_heartbeat_subscriber = node->create_subscription<std_msgs::msg::Empty>("thrust_interface_heartbeat", 10, std::bind(&TestThrustInterface::thrust_interface_heartbeat_callback, this, std::placeholders::_1));
     }
     
     /*
-    *   Helper function for the callback for mux heartbeat
+    *   Helper function for the callback for thrust_interface heartbeat
     */
     void thrust_interface_heartbeat_callback(std_msgs::msg::Empty msg) {
         active_heartbeat = true;
