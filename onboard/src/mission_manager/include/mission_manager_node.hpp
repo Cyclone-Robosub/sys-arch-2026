@@ -14,8 +14,7 @@
 #include "server/seek_object_server.hpp"
 #include "server/waypoint_server.hpp"
 #include "server/dropper_server.hpp"
-#include "custom_interfaces/srv/set_mission_cmd.hpp"
-#include "custom_interfaces/srv/get_mission_cmd.hpp"
+#include "custom_interfaces/srv/terminate_mission.hpp"
 
 class MissionManagerNode : public rclcpp::Node {
     using ExecuteTree = btcpp_ros2_interfaces::action::ExecuteTree;
@@ -30,6 +29,7 @@ class MissionManagerNode : public rclcpp::Node {
         void go_signal_callback(std_msgs::msg::Bool::SharedPtr signal);
         void try_start_mission();
         void reset_mission();
+        void try_to_terminate_mission(const std::shared_ptr<custom_interfaces::srv::TerminateMission::Request> request, const std::shared_ptr<custom_interfaces::srv::TerminateMission::Response> response);
     private:
         rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_service;
         rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr ready_pub_service;
@@ -45,6 +45,7 @@ class MissionManagerNode : public rclcpp::Node {
         void mission_manager_heartbeat_send();
         void publish_current_ready_status();
         void publish_mission_status();
+        void send_current_mission_goal();
         void parameter_callback(const rclcpp::Parameter & p);
         void goal_response_callback(GoalHandleExecuteTree::SharedPtr goal_handle);
         void result_callback(const GoalHandleExecuteTree::WrappedResult & result);
@@ -69,11 +70,5 @@ class MissionManagerNode : public rclcpp::Node {
         std::shared_ptr<rclcpp::ParameterCallbackHandle> cb_handle;
         std::shared_ptr<rclcpp::AsyncParametersClient> bt_param_client;
 
-        rclcpp::Service<custom_interfaces::srv::SetMissionCmd>::SharedPtr mission_cmd_service;
-        std::unordered_map<std::string, std::string> mission_params;
-        void update_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::SetMissionCmd::Response> response);
-        std::string buildMissionPayload();
-        rclcpp::Service<custom_interfaces::srv::GetMissionCmd>::SharedPtr get_mission_cmd_service;
-        void get_mission_cmd_param(const std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Request> request, std::shared_ptr<custom_interfaces::srv::GetMissionCmd::Response> response);
         rclcpp::Service<custom_interfaces::srv::TerminateMission>::SharedPtr terminate_mission_service;
 };

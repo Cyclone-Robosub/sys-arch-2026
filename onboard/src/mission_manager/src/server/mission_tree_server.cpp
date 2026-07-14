@@ -21,48 +21,11 @@ void MissionTreeServer::onTreeCreated(BT::Tree& tree) {
 }
 
 bool MissionTreeServer::onGoalReceived(const std::string& tree_name, const std::string& payload) {
-    parseMissionPayload(payload);
     if (mission_file_stored != cur_mission) {
         mission_file_stored = cur_mission;
         executeRegistration();
     }
     return true;
-}
-
- void MissionTreeServer::parseMissionPayload(const std::string& payload) {
-    std::istringstream stream(payload);
-    std::string line;
-
-    while (std::getline(stream, line)) {
-        if (line.empty()) {
-            continue;
-        }
-        const auto equals_pos = line.find('=');
-        if (equals_pos == std::string::npos) {
-            RCLCPP_WARN(node()->get_logger(), "Invalid mission payload line: %s", line.c_str());
-            continue;
-        }
-        const std::string key = line.substr(0, equals_pos);
-        const std::string value = line.substr(equals_pos + 1);
-        setBlackboardValue(key, value);
-    }
-}
-void MissionTreeServer::setBlackboardValue(const std::string& key,
-                                             const std::string& value) {
-    auto bb = globalBlackboard();
-    if (endsWith(key, ".world_waypoint") || endsWith(key, ".tolerance")) {
-        bb->set(key, BT::convertFromString<CycloneCommands::Pose6D>(value));
-    } else if (endsWith(key, ".waypoint_mask")) {
-        bb->set(key, BT::convertFromString<CycloneCommands::WaypointMask>(value));
-    } else if (endsWith(key, ".hold_time") || endsWith(key, ".timeout")) {
-        bb->set(key, BT::convertFromString<double>(value));
-    } else {
-        RCLCPP_WARN(node()->get_logger(), "Unknown mission parameter key: %s", key.c_str());
-    }
-}
-
-bool MissionTreeServer::endsWith(const std::string& text, const std::string& suffix) {
-    return text.size() >= suffix.size() && text.compare(text.size() - suffix.size(), suffix.size(), suffix) == 0;
 }
 
 std::optional<BT::NodeStatus> MissionTreeServer::onLoopAfterTick(BT::NodeStatus status) {
