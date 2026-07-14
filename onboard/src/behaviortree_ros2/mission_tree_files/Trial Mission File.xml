@@ -19,6 +19,7 @@
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="3"
+                            duration ="3"
                             timeout="30"
                             _description="Roll"/>
       <DriveToWorldWaypoint world_waypoint="2,0,1,0,0,0"
@@ -31,12 +32,14 @@
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="3.5"
+                            duration="3.5"
                             timeout="30"
                             _description="Pitch Up"/>
       <DurationTrick trick="ff_pitchDown"
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="3.5"
+                            duration="3.5"
                             timeout="30"
                             _description="Unwind Cable"/>
       <DriveToWorldWaypoint world_waypoint="2,0,1,0,0,0"
