@@ -5,8 +5,7 @@ using namespace std::chrono_literals;
 SimpleBMS::SimpleBMS() : Node("simple_bms") {
     if (init_i2c()){
         // Timer to check voltage & current values at a frequency of 100 hz
-        // FIXME set this to 60ms temporarily to make sure I am not running into issues, this should be changed down once I understand what is happening better
-        battery_timer = this->create_wall_timer(60ms, std::bind(&SimpleBMS::bms_callback, this)); // This has been changed to 20ms from 10ms since it needs to wait 10ms in between reading the voltage and the current
+        battery_timer = this->create_wall_timer(20ms, std::bind(&SimpleBMS::bms_callback, this)); // This has been changed to 20ms from 10ms since it needs to wait 10ms in between reading the voltage and the current
     }
     // Publisher to Battery topic
     bms_publisher = this->create_publisher<custom_interfaces::msg::Battery>("bms", 10);
@@ -80,7 +79,7 @@ void SimpleBMS::bms_callback() {
 }
 
 float SimpleBMS::readBMS(bool isVoltage) {
-    // get reading from sensor. This will either be Voltage on pin A0 or current on pin A1, depending on how it was configured before this function was called
+    // Get reading from sensor. This will either be Voltage on pin A0 or current on pin A1, depending on how it was configured before this function was called
 
     uint8_t output[2];
     if (read(i2c_fd, output, 2) != 2) {

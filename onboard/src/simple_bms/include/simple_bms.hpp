@@ -33,13 +33,12 @@ class SimpleBMS : public rclcpp::Node {
         
         const char* I2C_FD = "/dev/i2c-1";
         const int BMS_ADDRESS = 0x48;
-        const ConfigValues VOLTAGE_CONFIG = { // FIXME confirm that the multiplexor configurations should be 000 and 010 and not 100 and 101
-            // FIXME the below line seems to imply that I don't need to do all the config changing stuff
+        const ConfigValues VOLTAGE_CONFIG = { 
             // AIN_P and AIN_N denote the selected positive and negative inputs.
-            /* Value of 8342 -- 1000001101000010
+            /* Value of 8142 -- 1000001101000010
             1   - Start a single conversion
             000 - Input multiplexer configuration - AIN_P = AIN0 and AIN_N = AIN1
-            000 - FSR=+- 4.096V
+            000 - FSR=+- 6.144V
             1   - Operate in single-shot mode
             010 - Data rate of 32SPS
             0   - Comparator operating mode: Traditional
