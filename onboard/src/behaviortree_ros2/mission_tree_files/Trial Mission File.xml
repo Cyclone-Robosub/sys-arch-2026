@@ -16,7 +16,6 @@
                             timeout="30"
                             _description="Drive forward 2m."/>
       <DurationTrick trick="ff_rollRight"
-                            end_waypoint_body="2,0,1,0,0,0"
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="3"
@@ -29,14 +28,12 @@
                             timeout="30"
                             _description="Stabilize"/>
       <DurationTrick trick="ff_pitchUp"
-                            end_waypoint_body="2,0,1,0,0,0"
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="3.5"
                             timeout="30"
                             _description="Pitch Up"/>
       <DurationTrick trick="ff_pitchDown"
-                            end_waypoint_body="2,0,1,0,0,0"
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="3.5"
