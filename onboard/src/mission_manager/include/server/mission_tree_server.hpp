@@ -14,9 +14,6 @@ class MissionTreeServer : public TreeExecutionServer {
     public:
         explicit MissionTreeServer(const rclcpp::NodeOptions& options);
         void onTreeCreated(BT::Tree& tree);
-        void parseMissionPayload(const std::string& payload);
-        void setBlackboardValue(const std::string& key, const std::string& value);
-        bool endsWith(const std::string& text, const std::string& suffix);
         std::optional<BT::NodeStatus> onLoopAfterTick(BT::NodeStatus status);
         void registerNodesIntoFactory (BT::BehaviorTreeFactory& factory);
         bool onGoalReceived (const std::string& tree_name, const std::string& payload);

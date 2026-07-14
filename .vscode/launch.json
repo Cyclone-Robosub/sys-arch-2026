@@ -2,11 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "ROS2: Launch mission manager",
+      "type": "ros2",
+      "request": "launch",
+      "target": "${workspaceFolder}/onboard/src/mission_manager/launch/mission_tree_server.launch.xml"
+    },
+    {
       "name": "ROS2: Attach",
       "type": "ros2",
       "request": "attach"
     },
-
     {
       "name": "(gdb) Launch",
       "type": "cppdbg",
