@@ -17,7 +17,7 @@
                             _description="Drive forward 2m."/>
       <DistanceTrick trick="ff_rollRight"
                             end_waypoint_body="2,0,1,0,0,0"
-                            waypoint="1,1,1,1,1,1"
+                            waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
                             hold_time="3"
                             timeout="30"
