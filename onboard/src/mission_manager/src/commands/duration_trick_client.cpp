@@ -11,7 +11,8 @@ using namespace CycloneCommands;
             InputPort<WaypointMask>("waypoint_mask"),
             InputPort<Pose6D>("tolerance"),
             InputPort<uint64_t>("hold_time"),
-            InputPort<double>("timeout")
+            InputPort<double>("timeout"),
+            InputPort<std::string>("description")
         });
     }
 
@@ -21,6 +22,9 @@ using namespace CycloneCommands;
         getInput("waypoint_mask", goal.waypoint_mask);
         getInput("hold_time", goal.hold_time);
         getInput("timeout", goal.timeout);
+        std::string description;
+        getInput("description", description);
+        RCLCPP_INFO(logger(), "%s", description.c_str());
         
         start_time = std::chrono::steady_clock::now();
         timeout_sec = goal.timeout;

@@ -12,7 +12,8 @@ PortsList WaypointCmd::providedPorts() {
         InputPort<WaypointMask>("waypoint_mask"),
         InputPort<Pose6D>("tolerance"),
         InputPort<double>("hold_time"),
-        InputPort<double>("timeout")
+        InputPort<double>("timeout"),
+        InputPort<std::string>("description")
     });
 }
 
@@ -23,7 +24,9 @@ bool WaypointCmd::setGoal(Goal& goal) {
     getInput("tolerance", goal.tolerance);
     getInput("hold_time", goal.hold_time);
     getInput("timeout", goal.timeout);
-    RCLCPP_INFO(logger(), "%f", goal.timeout);
+    std::string description;
+    getInput("description", description);
+    RCLCPP_INFO(logger(), "%s", description.c_str());
     
 
     start_time = std::chrono::steady_clock::now();
