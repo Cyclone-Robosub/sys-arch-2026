@@ -1,14 +1,22 @@
 #include "tmux_session_detacher.hpp"
 
-Tmux_Session_Detacher::Tmux_Session_Detacher(std::string session_name) : Node("tmux_session_detacher"),
-    session_name(session_name) {
+Tmux_Session_Detacher::Tmux_Session_Detacher(std::string session_name) : Node("tmux_session_detacher")
+    {
+    this->session_name = "\"" + session_name + "\"";
     detach_session_service = this->create_service<std_srvs::srv::Trigger>("detatch_tmux_session", 
             std::bind(&Tmux_Session_Detacher::detach_session, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void Tmux_Session_Detacher::detach_session(const std::shared_ptr<std_srvs::srv::Trigger::Request> request, const std::shared_ptr<std_srvs::srv::Trigger::Response> response) {
     (void)request; // stop compiler complaining
-    // TODO
+    std::string full_string = "tmux detach-client -s " + session_name;
+    if (system(full_string.c_str()) == 0) {
+        response->success = true;
+    }
+    else {
+        response->success = false;
+    }
+    
 }
 
 int main(int argc, char* argv[]) {

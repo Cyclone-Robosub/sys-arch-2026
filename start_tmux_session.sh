@@ -98,6 +98,8 @@ MISSION_MANAGER_PANE=$(tmux new-window -t $SESSION -n 'mission_manager' -P -F "#
 # Attach to Session
 ################################################################################
 
+TMUX_DETACHER=$(tmux new-window -t $SESSION -n 'tmux-detacher' -P -F "#{pane_id}" "ros2 run tmux_session_detacher tmux_session_detacher; bash")
+
 # Select the main window
 tmux select-window -t $SESSION:0
 
