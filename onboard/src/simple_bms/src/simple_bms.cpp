@@ -20,8 +20,9 @@ SimpleBMS::~SimpleBMS() {
 
 bool SimpleBMS::init_i2c() {
     // Open and connect to the ADC
-    if ((i2c_fd = open(I2C_FD, O_RDWR))< 0) {
-        std::cout << "error: device not found" << std::endl;
+    i2c_fd = open(I2C_FD, O_RDWR);
+    if (i2c_fd < 0) {
+        std::cout << "error: Device not found. Got " << i2c_fd << std::endl;
         return false;
     }
     if (ioctl(i2c_fd, I2C_SLAVE, BMS_ADDRESS) < 0) {
@@ -40,7 +41,7 @@ bool SimpleBMS::config_i2c(SimpleBMS::ConfigValues conf){
     config[2] = conf.msb;
 
     if (write(i2c_fd, config, 3) != 3) {
-        std::cout << "error: could not write to config" << std::endl;
+        std::cout << "error: Could not write to config" << std::endl;
         return false;
     }
 
@@ -50,7 +51,7 @@ bool SimpleBMS::config_i2c(SimpleBMS::ConfigValues conf){
     // read from conversion register
     uint8_t conv_reg[1] = {conf.conv_reg_val};
     if (write(i2c_fd, conv_reg, 1) != 1) {
-        std::cerr << "Failed to set pointer to conversion register." << std::endl;
+        std::cerr << "error: Failed to set pointer to conversion register" << std::endl;
         return false;
     }
     return true;
@@ -72,6 +73,8 @@ void SimpleBMS::bms_callback() {
     // publish to topic before resetting back to the configuration for voltage, just in case the configuration fails
     publish_bms(status);
 
+    std::cout << "Voltage: " << status.voltage << ", Current: " << status.current << std::endl;
+
     // Configure for reading voltage on the next callback
     if (!config_i2c(VOLTAGE_CONFIG)) return;
 }
@@ -81,12 +84,12 @@ float SimpleBMS::readBMS(bool isVoltage) {
 
     uint8_t output[2];
     if (read(i2c_fd, output, 2) != 2) {
-        std::cout << "error: could not read from conversion register" << std::endl;
+        std::cout << "Error: Could not read from conversion register" << std::endl;
         return 0.0f;
     }
     // reconstruct value from output, using the relevant scalar depending on whether it is reading current or voltage
     int16_t combined_out = (output[0] << 8) | output[1];
-    return combined_out * ((isVoltage) ? 0.000125f : 1.0f);
+    return combined_out * ((isVoltage)? 0.00224452072881f : 1.0f);
 }
 
 void SimpleBMS::publish_bms(SimpleBMS::BatteryStatus status) {

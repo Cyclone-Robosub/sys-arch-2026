@@ -39,7 +39,7 @@ class SimpleBMS : public rclcpp::Node {
             /* Value of 8342 -- 1000001101000010
             1   - Start a single conversion
             000 - Input multiplexer configuration - AIN_P = AIN0 and AIN_N = AIN1
-            001 - FSR=+- 4.096V
+            000 - FSR=+- 4.096V
             1   - Operate in single-shot mode
             010 - Data rate of 32SPS
             0   - Comparator operating mode: Traditional
@@ -49,14 +49,14 @@ class SimpleBMS : public rclcpp::Node {
             */
             0x01,
             0x42,
-            0x83,
+            0x81,
             0x00
         };
         const ConfigValues CURRENT_CONFIG = {
             // Only change from the values in the voltage config is bit 13 such that the multiplexer config is 010, meaning AIN_P = AIN1 and AIN_N = AIN3
             0x01,
             0x42,
-            0xA3,
+            0xA1,
             0x00
         };
         int i2c_fd = -1;

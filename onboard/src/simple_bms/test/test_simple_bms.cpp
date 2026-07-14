@@ -14,5 +14,5 @@
 
 class TestSimpleBMS : public ::testing::Test {
 protected:
-    std::shared_ptr<simple_bms> node;
-}
+    std::shared_ptr<SimpleBMS> node;
+};
