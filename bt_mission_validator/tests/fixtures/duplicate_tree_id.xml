@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Sequence>
+      <Idle/>
+    </Sequence>
+  </BehaviorTree>
+  <BehaviorTree ID="MainTree">
+    <Idle/>
+  </BehaviorTree>
+  <TreeNodesModel>
+    <Action ID="Idle"/>
+  </TreeNodesModel>
+</root>

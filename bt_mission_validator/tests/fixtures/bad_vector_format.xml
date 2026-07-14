@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Sequence>
+      <Dive waypoint="1,2,three,4,5,6"/>
+    </Sequence>
+  </BehaviorTree>
+  <TreeNodesModel>
+    <Action ID="Dive">
+      <input_port name="waypoint" type="std::vector&lt;float&gt;">target waypoint</input_port>
+    </Action>
+  </TreeNodesModel>
+</root>

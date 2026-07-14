@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Sequence>
+      <Dive depth="5"/>
+    </Sequence>
+  </BehaviorTree>
+  <TreeNodesModel>
+    <Action ID="Dive">
+      <input_port name="depth" type="float">target depth</input_port>
+      <input_port name="timeout" type="float">give up after this</input_port>
+    </Action>
+  </TreeNodesModel>
+</root>
