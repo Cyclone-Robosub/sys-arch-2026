@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:simpleType name="TreeId">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Number">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\s*-?[0-9]+(\.[0-9]+)?\s*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Pose6D">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\s*-?[0-9]+(\.[0-9]+)?\s*,\s*-?[0-9]+(\.[0-9]+)?\s*,\s*-?[0-9]+(\.[0-9]+)?\s*,\s*-?[0-9]+(\.[0-9]+)?\s*,\s*-?[0-9]+(\.[0-9]+)?\s*,\s*-?[0-9]+(\.[0-9]+)?\s*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Mask6D">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\s*[01]\s*,\s*[01]\s*,\s*[01]\s*,\s*[01]\s*,\s*[01]\s*,\s*[01]\s*"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:group name="BtNode">
+    <xs:choice>
+      <xs:element name="Sequence" type="ControlNode"/>
+      <xs:element name="Fallback" type="ControlNode"/>
+      <xs:element name="Repeat" type="RepeatNode"/>
+      <xs:element name="SubTree" type="SubTreeNode"/>
+      <xs:element name="DriveToWorldWaypoint" type="DriveToWorldWaypointNode"/>
+      <xs:element name="DriveToWorldWaypointSeeking" type="DriveToWorldWaypointSeekingNode"/>
+      <xs:element name="Idle" type="IdleNode"/>
+      <xs:element name="TrackObjectWaypoint" type="TrackObjectWaypointNode"/>
+      <xs:element name="DurationTrick" type="DurationTrickNode"/>
+      <xs:element name="DistanceTrick" type="DistanceTrickNode"/>
+    </xs:choice>
+  </xs:group>
+
+  <xs:complexType name="ControlNode">
+    <xs:group ref="BtNode" minOccurs="1" maxOccurs="unbounded"/>
+  </xs:complexType>
+
+  <xs:complexType name="RepeatNode">
+    <xs:group ref="BtNode" minOccurs="1" maxOccurs="1"/>
+    <xs:attribute name="num_cycles" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="_description" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="SubTreeNode">
+    <xs:attribute name="ID" type="TreeId" use="required"/>
+    <xs:attribute name="_autoremap" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="DriveToWorldWaypointNode">
+    <xs:attribute name="world_waypoint" type="Pose6D" use="required"/>
+    <xs:attribute name="waypoint_mask" type="Mask6D" use="required"/>
+    <xs:attribute name="tolerance" type="Pose6D" use="required"/>
+    <xs:attribute name="hold_time" type="Number" use="required"/>
+    <xs:attribute name="timeout" type="Number" use="required"/>
+    <xs:attribute name="_description" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="DriveToWorldWaypointSeekingNode">
+    <xs:attribute name="world_waypoint" type="Pose6D" use="required"/>
+    <xs:attribute name="waypoint_mask" type="Mask6D" use="required"/>
+    <xs:attribute name="object" type="xs:string" use="required"/>
+    <xs:attribute name="confidence" type="Number" use="required"/>
+    <xs:attribute name="timeout" type="Number" use="required"/>
+    <xs:attribute name="_description" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="TrackObjectWaypointNode">
+    <xs:attribute name="tracking_position" type="Pose6D" use="required"/>
+    <xs:attribute name="waypoint_mask" type="Mask6D" use="required"/>
+    <xs:attribute name="object" type="xs:string" use="required"/>
+    <xs:attribute name="tolerance" type="Pose6D" use="required"/>
+    <xs:attribute name="hold_time" type="Number" use="required"/>
+    <xs:attribute name="timeout" type="Number" use="required"/>
+    <xs:attribute name="_description" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="DurationTrickNode">
+    <xs:attribute name="trick" type="xs:string" use="required"/>
+    <xs:attribute name="duration" type="Number" use="required"/>
+    <xs:attribute name="waypoint_mask" type="Mask6D" use="required"/>
+    <xs:attribute name="tolerance" type="Pose6D" use="required"/>
+    <xs:attribute name="hold_time" type="Number" use="required"/>
+    <xs:attribute name="timeout" type="Number" use="required"/>
+    <xs:attribute name="_description" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="DistanceTrickNode">
+    <xs:attribute name="trick" type="xs:string" use="required"/>
+    <xs:attribute name="end_waypoint_body" type="Pose6D" use="required"/>
+    <xs:attribute name="waypoint_mask" type="Mask6D" use="required"/>
+    <xs:attribute name="tolerance" type="Pose6D" use="required"/>
+    <xs:attribute name="hold_time" type="Number" use="required"/>
+    <xs:attribute name="timeout" type="Number" use="required"/>
+    <xs:attribute name="_description" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="IdleNode">
+    <xs:attribute name="ID" type="TreeId" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="BehaviorTreeType">
+    <xs:group ref="BtNode" minOccurs="1" maxOccurs="1"/>
+    <xs:attribute name="ID" type="TreeId" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="TreeNodesModelType" mixed="true">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:any processContents="skip"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="BehaviorTree" type="BehaviorTreeType" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element name="TreeNodesModel" type="TreeNodesModelType" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+      <xs:attribute name="BTCPP_format" type="xs:positiveInteger" use="required"/>
+      <xs:attribute name="main_tree_to_execute" type="TreeId" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

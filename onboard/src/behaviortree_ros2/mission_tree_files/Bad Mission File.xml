@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+      main_tree_to_execute="TrialTree">
+  <BehaviorTree ID="GateTask">
+    <Sequence>
+    <DriveToWorldWaypoint world_waypoint="0,0,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,1"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            _description="Descend"/>
+    <DriveToWorldWaypoint world_waypoint="0.5,0.15,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="In front of gate"/>
+    <DriveToWorldWaypoint world_waypoint="1.85,0.15,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="Center of Gate"/>
+    <DurationTrick trick="ff_rollRight"
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="3"
+                            duration="3"
+                            timeout="30"
+                            waypoint="0,0,0,0,0,0"
+                            _description="Roll"/>
+    <DriveToWorldWaypoint world_waypoint="1.85,0.15,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="Stabilize"/>
+    <DriveToWorldWaypoint world_waypoint="3.2,0.15,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="After gate"/>
+    <DriveToWorldWaypoint world_waypoint="6.7,-0.75,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="After gate 2 (far point)"/>
+    <DriveToWorldWaypoint world_waypoint="4.6,-1.75,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="In front of slalom"/>
+    <DriveToWorldWaypoint world_waypoint="3.65,-1.75,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="slalom 1"/>
+    <DriveToWorldWaypoint world_waypoint="2.35,-1.85,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="slalom 2"/>
+    <DriveToWorldWaypoint world_waypoint="0.85,-1.4,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="slalom 3"/>
+    <DriveToWorldWaypoint world_waypoint="4.6,-1.75,1,0,0,0"
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="after slalom"/>
+    <DriveToWorldWaypoint world_waypoint="0.2,-1.4,1,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="home"/>
+    <DriveToWorldWaypoint world_waypoint="0,0,0.2,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="1"
+                            timeout="30"
+                            _description="ascend"/>
+    <DriveToWorldWaypoint world_waypoint="0,0,0.2,0,0,0" 
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="999"
+                            timeout="0.1"
+                            _description="force failure"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="ReturnToGateTask">
+    <Sequence>
+      <DriveToWorldWaypoint world_waypoint="0,0,0.2,0,0,0"
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.1,0.1,0.1"
+                            hold_time="9999"
+                            timeout="0.1"
+                            _description="Trigger a failure using short timeout to force idle."/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="TrialTree">
+    <Sequence>
+      <SubTree ID="GateTask"
+               _autoremap="false"/>
+      <SubTree ID="ReturnToGateTask"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="DriveToWorldWaypoint">
+      <input_port name="world_waypoint"
+                  type="std::vector&lt;float&gt;">[6x1] Target position and orientation in world frame</input_port>
+      <input_port name="waypoint_mask"
+                  type="std::vector&lt;bool&gt;">[6x1] Specifies which states the controller must prioritize</input_port>
+      <input_port name="tolerance"
+                  type="std::vector&lt;float&gt;">[6x1] Allowed error margin for arrival</input_port>
+      <input_port name="hold_time"
+                  type="float">Time to remain within tolerance before returning SUCCESS</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
+    </Action>
+  </TreeNodesModel>
+
+</root>
