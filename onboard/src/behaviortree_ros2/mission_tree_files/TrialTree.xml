@@ -1,33 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4"
-<<<<<<< HEAD
-      main_tree_to_execute="TrialTree2">
-=======
       main_tree_to_execute="TrialTree">
->>>>>>> 7b51a5e (bleh)
   <BehaviorTree ID="GateTask">
     <Sequence>
-      <DriveToWorldWaypoint world_waypoint="0,0,1,0,0,0"
+      <DriveToWorldWaypoint world_waypoint="0,0,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Descend"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="3.1,0,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="1.5,0,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="0.17,0,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="In front of gate"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="4.9,0,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="3,8,0,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="0.4,0,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
@@ -40,101 +28,67 @@
                             hold_time="3"
                             timeout="30"
                             _description="Roll Right"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="4.9,0,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="3.8,0,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="0.4,0,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="2"
                             timeout="30"
                             _description="Stabilize"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="7.3,-1.8,1.5,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="5,-0.75,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="0.4,0.5,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Slalom Entrance"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="7.3,-1.8,1.5,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="5,-.75,1.5,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="0.4,0.5,0.75,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Descend More"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="8,-1.8,1.5,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="6.2,-0.75,1.5,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="3.5,-0.5,0.75,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Slalom 1"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="10.1,-0.9,1.5,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="8.5,-0.65,1.5,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="2,0.6,0.75,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Slalom 2"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="12.3,-2.5,1.5,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="10.7,-1.65,1.5,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="2,0,0.75,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Slalom 3"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="13.5,-2.5,1.5,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="12,-1.65,1.5,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="3.5,0,0.75,0,0,0"
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
+                            hold_time="1"
+                            timeout="30"
+                            _description="WP1"/>
+      <DriveToWorldWaypoint world_waypoint="2,0,0.75,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Slalom Exit"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="7.3,-1.8,1.5,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="12,-1.65,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="0.4,0.5,1,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Ascend Back to 1"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="18.9,-0.7,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="13,-2.05,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="3.5,-0.5,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Octagon Center"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="18.9,-0.7,0.2,0,0,-0.7854"
-=======
-      <DriveToWorldWaypoint world_waypoint="13,-2.05,0.2,0,0,-0.78"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="3.5,-0.5,0.2,0,0,0"
                             waypoint_mask="1,1,1,1,1,1"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="0.1"
@@ -147,21 +101,13 @@
                             hold_time="7"
                             timeout="30"
                             _description="Surface"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="18.9,-0.7,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="13,-2.05,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="3.5,-0.5,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="3"
                             timeout="30"
                             _description="Descend"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="18.25,2.9,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="13.6,-4.55,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="3.5,0.75,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="5"
@@ -174,16 +120,24 @@
                             hold_time="0.1"
                             timeout="30"
                             _description="Dropper 1"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="18.9,3.25,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="15,-4.35,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="2,0.75,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="5"
                             timeout="30"
                             _description="Bin 2"/>
+      <DriveToWorldWaypoint world_waypoint="2,-0.5,0.5,0,0,0"
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
+                            hold_time="5"
+                            timeout="30"
+                            _description="WP2"/>
+      <DriveToWorldWaypoint world_waypoint="3.5,-0.5,0.5,0,0,0"
+                            waypoint_mask="1,1,1,1,1,0"
+                            tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
+                            hold_time="5"
+                            timeout="30"
+                            _description="WP3"/>
       <DurationTrick trick="dropper"
                             duration = "0.01"
                             waypoint_mask="1,1,1,1,1,0"
@@ -191,60 +145,31 @@
                             hold_time="0.1"
                             timeout="30"
                             _description="Dropper 2"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="10.1,-0.9,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="11.5,-4.85,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
-                            waypoint_mask="1,1,1,1,1,0"
-                            tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
-                            hold_time="5"
-                            timeout="30"
-<<<<<<< HEAD
-                            _description="Nav"/>
-      <DriveToWorldWaypoint world_waypoint="4.9,0,1,0,0,0"
-=======
-			    _description="Nav"/>
-      <DriveToWorldWaypoint world_waypoint="5.2,-4.85,1,0,0,0"
-                            waypoint_mask="1,1,1,1,1,0"
-                            tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
-                            hold_time="5"
-                            timeout="30"
-                            _description="Nav2"/>
-      <DriveToWorldWaypoint world_waypoint="3.8,0,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="1.5,0.75,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="After Gate"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="3.1,0,1,0,0,0"
-=======
-      <DriveToWorldWaypoint world_waypoint="1.5,0,1,0,0,0"
->>>>>>> 7b51a5e (bleh)
+      <DriveToWorldWaypoint world_waypoint="0.17,0,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="1"
                             timeout="30"
                             _description="Front of Gate"/>
-      <DriveToWorldWaypoint world_waypoint="0,0,1,0,0,0"
+      <DriveToWorldWaypoint world_waypoint="0,0,0.5,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="3"
                             timeout="30"
                             _description="Starting Point"/>
-<<<<<<< HEAD
-      <DriveToWorldWaypoint world_waypoint="0,0,0.1,0,0,0"
-=======
       <DriveToWorldWaypoint world_waypoint="0,0,0.2,0,0,0"
->>>>>>> 7b51a5e (bleh)
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="0.1"
                             timeout="30"
                             _description="Surface"/>
-      <DriveToWorldWaypoint world_waypoint="0,0,1,0,0,0"
+      <DriveToWorldWaypoint world_waypoint="0,0,0.2,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="3"
@@ -255,7 +180,7 @@
 
   <BehaviorTree ID="ReturnToGateTask">
     <Sequence>
-      <DriveToWorldWaypoint world_waypoint="0,0,0.67,0,0,0"
+      <DriveToWorldWaypoint world_waypoint="0,0,0.2,0,0,0"
                             waypoint_mask="1,1,1,1,1,0"
                             tolerance="0.2,0.2,0.2,0.2,0.2,0.2"
                             hold_time="9999"
@@ -273,7 +198,7 @@
   </BehaviorTree>
 
   <!-- Description of Node Models (used by Groot) -->
-  <TreeNodesModel>
+ <TreeNodesModel>
     <Action ID="DriveToWorldWaypoint">
       <input_port name="world_waypoint"
                   type="std::vector&lt;float&gt;">[6x1] Target position and orientation in world frame</input_port>
