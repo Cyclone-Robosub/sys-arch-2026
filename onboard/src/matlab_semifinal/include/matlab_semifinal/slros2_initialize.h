@@ -1,5 +1,5 @@
 // Copyright 2022-2024 The MathWorks, Inc.
-// Generated 14-Jul-2026 08:59:35
+// Generated 14-Jul-2026 17:20:10
 #ifndef _SLROS2_INITIALIZE_H_
 #define _SLROS2_INITIALIZE_H_
 #include "matlab_semifinal_types.h"
@@ -38,9 +38,9 @@ inline rclcpp::QoS getQOSSettingsFromRMW(const rmw_qos_profile_t& qosProfile) {
     return qos;
 }
 // matlab_semifinal/ /Subsystem/Publish
-extern SimulinkPublisher<custom_interfaces::msg::Result,SL_Bus_custom_interfaces_Result> Pub_matlab_semifinal_549_7;
+extern SimulinkPublisher<custom_interfaces::msg::Result,SL_Bus_custom_interfaces_Result> Pub_Mission_Manager_HIL_209_7;
 // matlab_semifinal/Low-Level Controller/cascaded_pid_controller/Subsystem Reference/Subsystem/Publish
-extern SimulinkPublisher<std_msgs::msg::UInt8,SL_Bus_std_msgs_UInt8> Pub_matlab_semifinal_588_262_826_2;
+extern SimulinkPublisher<std_msgs::msg::UInt8,SL_Bus_std_msgs_UInt8> Pub_Mission_Manager_HIL_123_262_826_2;
 // matlab_semifinal/Subsystem Reference1/Publish
 extern SimulinkPublisher<custom_interfaces::msg::Debug,SL_Bus_custom_interfaces_Debug> Pub_matlab_semifinal_594_3;
 // matlab_semifinal/pwm_heartbeat_publisher/Publish2
@@ -48,7 +48,7 @@ extern SimulinkPublisher<std_msgs::msg::Empty,SL_Bus_std_msgs_Empty> Pub_matlab_
 // matlab_semifinal/pwm_publisher/Publish
 extern SimulinkPublisher<custom_interfaces::msg::Pwms,SL_Bus_custom_interfaces_Pwms> Pub_matlab_semifinal_626_2;
 // matlab_semifinal/ /Subscribe
-extern SimulinkSubscriber<custom_interfaces::msg::Goal,SL_Bus_custom_interfaces_Goal> Sub_matlab_semifinal_549_284;
+extern SimulinkSubscriber<custom_interfaces::msg::Goal,SL_Bus_custom_interfaces_Goal> Sub_Mission_Manager_HIL_209_284;
 // matlab_semifinal/DRR
 extern SimulinkSubscriber<custom_interfaces::msg::DRR,SL_Bus_custom_interfaces_DRR> Sub_matlab_semifinal_552;
 // matlab_semifinal/IMU

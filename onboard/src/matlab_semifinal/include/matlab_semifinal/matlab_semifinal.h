@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.15
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Jul 14 08:59:23 2026
+// C/C++ source code generated on : Tue Jul 14 17:19:54 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -309,6 +309,7 @@ struct DW_matlab_semifinal_T {
   real_T prior_action_id_n;            // '<S25>/guidanceLaw'
   real_T prior_Ri_u[3];                // '<S25>/guidanceLaw'
   real_T ammo;                         // '<S33>/Dropper Magazine'
+  real_T last_drop_time;               // '<S33>/Dropper Magazine'
   int8_T UnitDelay_DSTATE_f[4];        // '<S1>/Unit Delay'
   boolean_T DelayInput1_DSTATE_g;      // '<S30>/Delay Input1'
   int8_T PositionIntegrator_PrevResetSta;// '<S6>/Position Integrator'
@@ -569,6 +570,7 @@ extern volatile boolean_T runModel;
 //  Block '<S25>/Scope1' : Unused code path elimination
 //  Block '<S25>/Scope2' : Unused code path elimination
 //  Block '<S25>/Scope4' : Unused code path elimination
+//  Block '<S33>/Scope' : Unused code path elimination
 //  Block '<S6>/Display' : Unused code path elimination
 //  Block '<S6>/Display1' : Unused code path elimination
 //  Block '<S6>/Display2' : Unused code path elimination

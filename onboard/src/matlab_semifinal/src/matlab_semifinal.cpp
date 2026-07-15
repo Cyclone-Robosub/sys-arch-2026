@@ -9,7 +9,7 @@
 //
 // Model version                  : 1.15
 // Simulink Coder version         : 25.2 (R2025b) 28-Jul-2025
-// C/C++ source code generated on : Tue Jul 14 08:59:23 2026
+// C/C++ source code generated on : Tue Jul 14 17:19:54 2026
 //
 // Target selection: ert.tlc
 // Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -2140,7 +2140,7 @@ void matlab_semifinal::matlab_semi_Publisher_setupImpl(const
     matlab_semifinal_B.b_zeroDelimTopic_b[i] = b_zeroDelimTopic[i];
   }
 
-  Pub_matlab_semifinal_549_7.createPublisher
+  Pub_Mission_Manager_HIL_209_7.createPublisher
     (&matlab_semifinal_B.b_zeroDelimTopic_b[0], qos_profile);
 }
 
@@ -2172,7 +2172,7 @@ void matlab_semifinal::matlab_se_Publisher_setupImpl_m(const
     matlab_semifinal_B.b_zeroDelimTopic_l[i] = b_zeroDelimTopic[i];
   }
 
-  Pub_matlab_semifinal_588_262_826_2.createPublisher
+  Pub_Mission_Manager_HIL_123_262_826_2.createPublisher
     (&matlab_semifinal_B.b_zeroDelimTopic_l[0], qos_profile);
 }
 
@@ -2333,7 +2333,7 @@ void matlab_semifinal::matlab_sem_Subscriber_setupImpl(const
     b_zeroDelimTopic[i] = b_zeroDelimTopic_0[i];
   }
 
-  Sub_matlab_semifinal_549_284.createSubscriber(&b_zeroDelimTopic[0],
+  Sub_Mission_Manager_HIL_209_284.createSubscriber(&b_zeroDelimTopic[0],
     qos_profile);
 }
 
@@ -2719,7 +2719,7 @@ void matlab_semifinal::step0()         // Sample time: [0.01s, 0.0s]
 
   // MATLABSystem: '<S17>/SourceBlock'
   matlab_semifinal_B.b_varargout_1_c =
-    Sub_matlab_semifinal_549_284.getLatestMessage
+    Sub_Mission_Manager_HIL_209_284.getLatestMessage
     (&matlab_semifinal_B.rtb_SourceBlock_o2_p_k);
 
   // DataStoreRead: '<S1>/Data Store Read'
@@ -2838,7 +2838,7 @@ void matlab_semifinal::step0()         // Sample time: [0.01s, 0.0s]
     //   EnablePort: '<S18>/Enable'
 
     // MATLABSystem: '<S22>/SinkBlock'
-    Pub_matlab_semifinal_549_7.publish(&matlab_semifinal_B.result_msg);
+    Pub_Mission_Manager_HIL_209_7.publish(&matlab_semifinal_B.result_msg);
 
     // End of Outputs for SubSystem: '<S1>/Subsystem'
     break;
@@ -2857,7 +2857,7 @@ void matlab_semifinal::step0()         // Sample time: [0.01s, 0.0s]
     //   EnablePort: '<S18>/Enable'
 
     // MATLABSystem: '<S22>/SinkBlock'
-    Pub_matlab_semifinal_549_7.publish(&matlab_semifinal_B.result_msg);
+    Pub_Mission_Manager_HIL_209_7.publish(&matlab_semifinal_B.result_msg);
 
     // End of Outputs for SubSystem: '<S1>/Subsystem'
     break;
@@ -2870,6 +2870,7 @@ void matlab_semifinal::step0()         // Sample time: [0.01s, 0.0s]
 
   // DigitalClock: '<S26>/Digital Clock' incorporates:
   //   DigitalClock: '<Root>/Digital Clock'
+  //   DigitalClock: '<S33>/Digital Clock'
 
   matlab_semifinal_B.idx = (((&matlab_semifinal_M)->Timing.clockTick0) * 0.01);
 
@@ -5809,18 +5810,11 @@ void matlab_semifinal::step0()         // Sample time: [0.01s, 0.0s]
     std::memset(&matlab_semifinal_B.FT_cmd_list[0], 0, sizeof(real_T) << 3U);
   }
 
-  // MATLAB Function: '<S33>/Dropper Magazine' incorporates:
-  //   RelationalOperator: '<S101>/Compare'
-  //   RelationalOperator: '<S30>/FixPt Relational Operator'
-  //   UnitDelay: '<S30>/Delay Input1'
-  //
-  //  Block description for '<S30>/Delay Input1':
-  //
-  //   Store in Global RAM
-
-  if ((static_cast<int32_T>(matlab_semifinal_B.dropper_trigger) > static_cast<
-       int32_T>(matlab_semifinal_DW.DelayInput1_DSTATE_g)) &&
-      (matlab_semifinal_DW.ammo > 0.0)) {
+  // MATLAB Function: '<S33>/Dropper Magazine'
+  if ((matlab_semifinal_B.idx - matlab_semifinal_DW.last_drop_time > 1.0) && ((
+        static_cast<int32_T>(matlab_semifinal_B.dropper_trigger) >
+        static_cast<int32_T>(matlab_semifinal_DW.DelayInput1_DSTATE_g)) &&
+       (matlab_semifinal_DW.ammo > 0.0))) {
     matlab_semifinal_B.b_t = std::round(matlab_semifinal_DW.ammo);
     if (matlab_semifinal_B.b_t < 256.0) {
       rtb_trigger_msg.data = static_cast<uint8_T>(matlab_semifinal_B.b_t);
@@ -5829,12 +5823,13 @@ void matlab_semifinal::step0()         // Sample time: [0.01s, 0.0s]
     }
 
     matlab_semifinal_DW.ammo--;
+    matlab_semifinal_DW.last_drop_time = matlab_semifinal_B.idx;
 
     // Outputs for Enabled SubSystem: '<S33>/Subsystem' incorporates:
     //   EnablePort: '<S159>/Enable'
 
     // MATLABSystem: '<S160>/SinkBlock'
-    Pub_matlab_semifinal_588_262_826_2.publish(&rtb_trigger_msg);
+    Pub_Mission_Manager_HIL_123_262_826_2.publish(&rtb_trigger_msg);
 
     // End of Outputs for SubSystem: '<S33>/Subsystem'
   }
@@ -7632,7 +7627,7 @@ void matlab_semifinal::terminate()
     matlab_semifinal_DW.obj_j.matlabCodegenIsDeleted = true;
     if ((matlab_semifinal_DW.obj_j.isInitialized == 1) &&
         matlab_semifinal_DW.obj_j.isSetupComplete) {
-      Sub_matlab_semifinal_549_284.resetSubscriberPtr();//();
+      Sub_Mission_Manager_HIL_209_284.resetSubscriberPtr();//();
     }
   }
 
@@ -7644,7 +7639,7 @@ void matlab_semifinal::terminate()
     matlab_semifinal_DW.obj_f.matlabCodegenIsDeleted = true;
     if ((matlab_semifinal_DW.obj_f.isInitialized == 1) &&
         matlab_semifinal_DW.obj_f.isSetupComplete) {
-      Pub_matlab_semifinal_549_7.resetPublisherPtr();//();
+      Pub_Mission_Manager_HIL_209_7.resetPublisherPtr();//();
     }
   }
 
@@ -7668,7 +7663,7 @@ void matlab_semifinal::terminate()
     matlab_semifinal_DW.obj_oc.matlabCodegenIsDeleted = true;
     if ((matlab_semifinal_DW.obj_oc.isInitialized == 1) &&
         matlab_semifinal_DW.obj_oc.isSetupComplete) {
-      Pub_matlab_semifinal_588_262_826_2.resetPublisherPtr();//();
+      Pub_Mission_Manager_HIL_123_262_826_2.resetPublisherPtr();//();
     }
   }
 
