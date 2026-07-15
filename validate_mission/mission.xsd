@@ -61,7 +61,7 @@
     <xs:attribute name="tolerance" type="Pose6D" use="required"/>
     <xs:attribute name="hold_time" type="Number" use="required"/>
     <xs:attribute name="timeout" type="Number" use="required"/>
-    <xs:attribute name="_description" type="xs:string" use="optional"/>
+    <xs:attribute name="description" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="DriveToWorldWaypointSeekingNode">
@@ -70,7 +70,7 @@
     <xs:attribute name="object" type="xs:string" use="required"/>
     <xs:attribute name="confidence" type="Number" use="required"/>
     <xs:attribute name="timeout" type="Number" use="required"/>
-    <xs:attribute name="_description" type="xs:string" use="optional"/>
+    <xs:attribute name="description" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="TrackObjectWaypointNode">
@@ -80,7 +80,7 @@
     <xs:attribute name="tolerance" type="Pose6D" use="required"/>
     <xs:attribute name="hold_time" type="Number" use="required"/>
     <xs:attribute name="timeout" type="Number" use="required"/>
-    <xs:attribute name="_description" type="xs:string" use="optional"/>
+    <xs:attribute name="description" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="DurationTrickNode">
@@ -90,7 +90,7 @@
     <xs:attribute name="tolerance" type="Pose6D" use="required"/>
     <xs:attribute name="hold_time" type="Number" use="required"/>
     <xs:attribute name="timeout" type="Number" use="required"/>
-    <xs:attribute name="_description" type="xs:string" use="optional"/>
+    <xs:attribute name="description" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="DistanceTrickNode">
@@ -100,7 +100,7 @@
     <xs:attribute name="tolerance" type="Pose6D" use="required"/>
     <xs:attribute name="hold_time" type="Number" use="required"/>
     <xs:attribute name="timeout" type="Number" use="required"/>
-    <xs:attribute name="_description" type="xs:string" use="optional"/>
+    <xs:attribute name="description" type="xs:string" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="IdleNode">
