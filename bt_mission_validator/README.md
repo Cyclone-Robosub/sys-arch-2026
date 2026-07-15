@@ -19,23 +19,37 @@ from the canonical schema too, and the tool correctly rejects the file
 (see `tests/test_validator.py::test_trial_mission_file_correctly_fails_on_undeclared_node`).
 
 ## Quick start
+Install python virtual environment for pip
+`python3 -m venv .venv`
+
+Source and activate the environment (rerun to reactivate)
+`source .venv/bin/activate`
+
+To deactivate
+   `deactivate`
 
 ```bash
-pip install -r requirements.txt   # just lxml
 cd bt_mission_validator
+pip install -r requirements.txt   # just lxml
 
 # Validate against the schema shipped with this package
 # (bt_mission_validator/schemas/mission_schema.xsd, built from all 5 of
 # your sample mission files -- see "Regenerating the schema" below)
-python3 -m bt_mission_validator.cli validate missions/*.xml
-
-# CI-friendly: exit code is 0 iff every file passed (warnings don't fail the build)
-python3 -m bt_mission_validator.cli validate --quiet missions/*.xml; echo "exit: $?"
+python -m bt_mission_validator.cli validate [missions/*.xml]
+# To include DurationTrick, run this (see "Regenerating the schema" below for more info)
+```bash
+python -m bt_mission_validator.cli generate-schema '../onboard/src/behaviortree_ros2/mission_tree_files/models.xml' \
+    -o bt_mission_validator/schemas/mission_schema.xsd
 ```
+# CI-friendly: exit code is 0 iff every file passed (warnings don't fail the build)
+```bash
+python -m bt_mission_validator.cli validate --quiet [missions/*.xml]; echo "exit: $?"
+```
+[missions/*.xml] can be replaced by a file path pointing to any mission xml file
 
 Run the test suite:
 ```bash
-python3 -m unittest discover -s tests -v
+python -m unittest discover -s tests -v
 ```
 
 ## Regenerating the schema
@@ -45,10 +59,10 @@ the canonical schema from whichever mission file(s) now have the correct
 `<TreeNodesModel>` for it:
 
 ```bash
-python -m bt_mission_validator.cli generate-schema missions/*.xml \
+python -m bt_mission_validator.cli generate-schema [missions/*.xml] \
     -o bt_mission_validator/schemas/mission_schema.xsd
 ```
-
+[missions/*.xml] can be replaced by a file path pointing to any mission xml file
 You can pass any number of mission files. Their `<TreeNodesModel>` blocks
 are merged into one catalog (plus BT.CPP's built-in nodes: `Sequence`,
 `Fallback`, `Repeat`, `SubTree`, etc.). If two files declare the *same*
