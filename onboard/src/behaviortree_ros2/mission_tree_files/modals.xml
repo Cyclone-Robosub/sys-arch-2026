@@ -1,138 +1,73 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"><!--Canonical mission schema. Regenerate with: python -m bt_mission_validator.cli generate-schema <mission files...>--><xs:simpleType name="blackboardType">
-    <xs:restriction base="xs:string">
-        <xs:pattern value="\{.*\}"/>
-    </xs:restriction>
-</xs:simpleType>
-<xs:simpleType name="booleanOrBlackboardType">
-  <xs:union memberTypes="xs:boolean blackboardType"/>
-</xs:simpleType>
-<xs:simpleType name="integerOrBlackboardType">
-  <xs:union memberTypes="xs:integer blackboardType"/>
-</xs:simpleType>
-<xs:simpleType name="decimalOrBlackboardType">
-  <xs:union memberTypes="xs:decimal blackboardType"/>
-</xs:simpleType>
-<xs:simpleType name="stringOrBlackboardType">
-  <xs:union memberTypes="xs:string blackboardType"/>
-</xs:simpleType>
-<xs:simpleType name="descriptionType">
-    <xs:restriction base="xs:string">
-      <xs:whiteSpace value="preserve"/>
-    </xs:restriction>
-</xs:simpleType>
-
-<!-- Extensions beyond BT.CPP's stock generator: comma-separated numeric /
-     boolean vectors are how [6x1] pose/mask/tolerance ports are encoded in
-     these mission files (e.g. world_waypoint="10,0,0,0,0,0"). BT.CPP itself
-     leaves std::vector<T> ports completely unrestricted in the XSD it
-     generates; we validate the textual shape here instead. -->
-<xs:simpleType name="rawVectorIntType">
-  <xs:restriction base="xs:string">
-    <xs:pattern value="-?[0-9]+(,\s*-?[0-9]+)*"/>
-  </xs:restriction>
-</xs:simpleType>
-<xs:simpleType name="vectorIntOrBlackboardType">
-  <xs:union memberTypes="rawVectorIntType blackboardType"/>
-</xs:simpleType>
-<xs:simpleType name="rawVectorDoubleType">
-  <xs:restriction base="xs:string">
-    <xs:pattern value="-?[0-9]+(\.[0-9]+)?(,\s*-?[0-9]+(\.[0-9]+)?)*"/>
-  </xs:restriction>
-</xs:simpleType>
-<xs:simpleType name="vectorDoubleOrBlackboardType">
-  <xs:union memberTypes="rawVectorDoubleType blackboardType"/>
-</xs:simpleType>
-<xs:simpleType name="rawVectorBoolType">
-  <xs:restriction base="xs:string">
-    <xs:pattern value="(true|false|0|1)(,\s*(true|false|0|1))*"/>
-  </xs:restriction>
-</xs:simpleType>
-<xs:simpleType name="vectorBoolOrBlackboardType">
-  <xs:union memberTypes="rawVectorBoolType blackboardType"/>
-</xs:simpleType>
-
-<xs:complexType name="inputPortType">
-  <xs:simpleContent>
-    <xs:extension base="xs:string">
-      <xs:attribute name="name" type="xs:string" use="required"/>
-      <xs:attribute name="type" type="xs:string" use="optional"/>
-      <xs:attribute name="default" type="xs:string" use="optional"/>
-    </xs:extension>
-  </xs:simpleContent>
-</xs:complexType>
-<xs:complexType name="outputPortType">
-  <xs:simpleContent>
-    <xs:extension base="xs:string">
-      <xs:attribute name="name" type="xs:string" use="required"/>
-      <xs:attribute name="type" type="xs:string" use="optional"/>
-    </xs:extension>
-  </xs:simpleContent>
-</xs:complexType>
-<xs:attributeGroup name="preconditionAttributeGroup">
-  <xs:attribute name="_failureIf" type="xs:string" use="optional"/>
-  <xs:attribute name="_successIf" type="xs:string" use="optional"/>
-  <xs:attribute name="_skipIf" type="xs:string" use="optional"/>
-  <xs:attribute name="_while" type="xs:string" use="optional"/>
-</xs:attributeGroup>
-<xs:attributeGroup name="postconditionAttributeGroup">
-  <xs:attribute name="_onHalted" type="xs:string" use="optional"/>
-  <xs:attribute name="_onFailure" type="xs:string" use="optional"/>
-  <xs:attribute name="_onSuccess" type="xs:string" use="optional"/>
-  <xs:attribute name="_post" type="xs:string" use="optional"/>
-</xs:attributeGroup>
-<xs:attributeGroup name="commonAttributeGroup">
-  <xs:attribute name="name" type="xs:string" use="optional"/>
-  <xs:attribute name="_description" type="xs:string" use="optional"/>
-  <xs:attributeGroup ref="preconditionAttributeGroup"/>
-  <xs:attributeGroup ref="postconditionAttributeGroup"/>
-</xs:attributeGroup>
-<xs:complexType name="treeNodesModelNodeType">
-  <xs:sequence>
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="input_port" type="inputPortType"/>
-      <xs:element name="output_port" type="outputPortType"/>
-    </xs:choice>
-    <xs:element name="description" type="descriptionType" minOccurs="0" maxOccurs="1"/>
-  </xs:sequence>
-  <xs:attribute name="ID" type="xs:string" use="required"/>
-</xs:complexType>
-<xs:group name="treeNodesModelNodeGroup">
-  <xs:choice>
-    <xs:element name="Action" type="treeNodesModelNodeType"/>
-    <xs:element name="Condition" type="treeNodesModelNodeType"/>
-    <xs:element name="Control" type="treeNodesModelNodeType"/>
-    <xs:element name="Decorator" type="treeNodesModelNodeType"/>
-  </xs:choice>
-</xs:group>
-<xs:element name="root">
-  <xs:complexType>
-    <xs:sequence>
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="include"/>
-        <xs:element ref="BehaviorTree"/>
-      </xs:choice>
-      <xs:element ref="TreeNodesModel" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
-    <xs:attribute name="BTCPP_format" type="xs:string" use="required"/>
-    <xs:attribute name="main_tree_to_execute" type="xs:string" use="optional"/>
-  </xs:complexType>
-</xs:element>
-<xs:group name="oneNodeGroup"><xs:choice><xs:element name="Delay" type="DelayType"/><xs:element name="DistanceTrick" type="DistanceTrickType"/><xs:element name="DriveToWorldWaypoint" type="DriveToWorldWaypointType"/><xs:element name="DriveToWorldWaypointSeeking" type="DriveToWorldWaypointSeekingType"/><xs:element name="DurationTrick" type="DurationTrickType"/><xs:element name="Fallback" type="FallbackType"/><xs:element name="ForceFailure" type="ForceFailureType"/><xs:element name="ForceSuccess" type="ForceSuccessType"/><xs:element name="Idle" type="IdleType"/><xs:element name="IfThenElse" type="IfThenElseType"/><xs:element name="Inverter" type="InverterType"/><xs:element name="KeepRunningUntilFailure" type="KeepRunningUntilFailureType"/><xs:element name="Parallel" type="ParallelType"/><xs:element name="ParallelAll" type="ParallelAllType"/><xs:element name="Precondition" type="PreconditionType"/><xs:element name="ReactiveFallback" type="ReactiveFallbackType"/><xs:element name="ReactiveSequence" type="ReactiveSequenceType"/><xs:element name="Repeat" type="RepeatType"/><xs:element name="RetryUntilSuccesful" type="RetryUntilSuccesfulType"/><xs:element name="RetryUntilSuccessful" type="RetryUntilSuccessfulType"/><xs:element name="RunOnce" type="RunOnceType"/><xs:element name="Sequence" type="SequenceType"/><xs:element name="SequenceWithMemory" type="SequenceWithMemoryType"/><xs:element name="SubTree" type="SubTreeType"/><xs:element name="Switch2" type="Switch2Type"/><xs:element name="Switch3" type="Switch3Type"/><xs:element name="Switch4" type="Switch4Type"/><xs:element name="Switch5" type="Switch5Type"/><xs:element name="Switch6" type="Switch6Type"/><xs:element name="Timeout" type="TimeoutType"/><xs:element name="TrackObjectWaypoint" type="TrackObjectWaypointType"/><xs:element name="TryCatch" type="TryCatchType"/><xs:element name="WhileDoElse" type="WhileDoElseType"/></xs:choice></xs:group><xs:element name="include">
-  <xs:complexType>
-    <xs:attribute name="path" type="xs:string" use="required"/>
-    <xs:attribute name="ros_pkg" type="xs:string" use="optional"/>
-  </xs:complexType>
-</xs:element>
-<xs:element name="BehaviorTree">
-  <xs:complexType>
-    <xs:group ref="oneNodeGroup"/>
-    <xs:attribute name="ID" type="xs:string" use="required"/>
-  </xs:complexType>
-</xs:element>
-<xs:element name="TreeNodesModel">
-  <xs:complexType>
-    <xs:group ref="treeNodesModelNodeGroup" minOccurs="0" maxOccurs="unbounded"/>
-  </xs:complexType>
-</xs:element>
-<xs:complexType name="DelayType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="delay_msec" type="integerOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="DistanceTrickType"><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="trick" type="stringOrBlackboardType" use="required"/><xs:attribute name="end_waypoint_body" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="waypoint_mask" type="vectorBoolOrBlackboardType" use="required"/><xs:attribute name="tolerance" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="hold_time" type="decimalOrBlackboardType" use="required"/><xs:attribute name="timeout" type="decimalOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="DriveToWorldWaypointType"><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="world_waypoint" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="waypoint_mask" type="vectorBoolOrBlackboardType" use="required"/><xs:attribute name="tolerance" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="hold_time" type="decimalOrBlackboardType" use="required"/><xs:attribute name="timeout" type="decimalOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="DriveToWorldWaypointSeekingType"><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="world_waypoint" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="waypoint_mask" type="vectorBoolOrBlackboardType" use="required"/><xs:attribute name="object" type="stringOrBlackboardType" use="required"/><xs:attribute name="confidence" type="decimalOrBlackboardType" use="required"/><xs:attribute name="timeout" type="decimalOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="DurationTrickType"><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="trick" type="stringOrBlackboardType" use="required"/><xs:attribute name="duration" type="decimalOrBlackboardType" use="required"/><xs:attribute name="waypoint_mask" type="vectorBoolOrBlackboardType" use="required"/><xs:attribute name="tolerance" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="hold_time" type="decimalOrBlackboardType" use="required"/><xs:attribute name="timeout" type="decimalOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="FallbackType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="ForceFailureType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="ForceSuccessType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="IdleType"><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="IfThenElseType"><xs:group ref="oneNodeGroup" minOccurs="2" maxOccurs="3"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="InverterType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="KeepRunningUntilFailureType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="ParallelType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="success_count" type="integerOrBlackboardType" default="-1"/><xs:attribute name="failure_count" type="integerOrBlackboardType" default="1"/></xs:complexType><xs:complexType name="ParallelAllType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="max_failures" type="integerOrBlackboardType" default="1"/></xs:complexType><xs:complexType name="PreconditionType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="if" type="stringOrBlackboardType" use="required"/><xs:attribute name="else" default="FAILURE"/></xs:complexType><xs:complexType name="ReactiveFallbackType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="ReactiveSequenceType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="RepeatType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="num_cycles" type="integerOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="RetryUntilSuccesfulType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="num_attempts" type="integerOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="RetryUntilSuccessfulType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="num_attempts" type="integerOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="RunOnceType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="then_skip" type="booleanOrBlackboardType" default="true"/></xs:complexType><xs:complexType name="SequenceType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="SequenceWithMemoryType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="SubTreeType"><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="ID" type="xs:string" use="required"/><xs:anyAttribute processContents="skip"/></xs:complexType><xs:complexType name="Switch2Type"><xs:group ref="oneNodeGroup" minOccurs="2" maxOccurs="3"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="variable" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_1" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_2" type="stringOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="Switch3Type"><xs:group ref="oneNodeGroup" minOccurs="3" maxOccurs="4"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="variable" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_1" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_2" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_3" type="stringOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="Switch4Type"><xs:group ref="oneNodeGroup" minOccurs="4" maxOccurs="5"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="variable" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_1" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_2" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_3" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_4" type="stringOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="Switch5Type"><xs:group ref="oneNodeGroup" minOccurs="5" maxOccurs="6"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="variable" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_1" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_2" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_3" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_4" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_5" type="stringOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="Switch6Type"><xs:group ref="oneNodeGroup" minOccurs="6" maxOccurs="7"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="variable" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_1" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_2" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_3" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_4" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_5" type="stringOrBlackboardType" use="required"/><xs:attribute name="case_6" type="stringOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="TimeoutType"><xs:group ref="oneNodeGroup" minOccurs="1" maxOccurs="1"/><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="msec" type="integerOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="TrackObjectWaypointType"><xs:attributeGroup ref="commonAttributeGroup"/><xs:attribute name="tracking_position" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="waypoint_mask" type="vectorBoolOrBlackboardType" use="required"/><xs:attribute name="object" type="stringOrBlackboardType" use="required"/><xs:attribute name="tolerance" type="vectorDoubleOrBlackboardType" use="required"/><xs:attribute name="hold_time" type="decimalOrBlackboardType" use="required"/><xs:attribute name="timeout" type="decimalOrBlackboardType" use="required"/></xs:complexType><xs:complexType name="TryCatchType"><xs:group ref="oneNodeGroup" minOccurs="2" maxOccurs="unbounded"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType><xs:complexType name="WhileDoElseType"><xs:group ref="oneNodeGroup" minOccurs="2" maxOccurs="3"/><xs:attributeGroup ref="commonAttributeGroup"/></xs:complexType></xs:schema>
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+      main_tree_to_execute="JustforModelsTree">
+<TreeNodesModel>
+    <Action ID="DriveToWorldWaypoint">
+      <input_port name="world_waypoint"
+                  type="std::vector&lt;float&gt;">[6x1] Target position and orientation in world frame</input_port>
+      <input_port name="waypoint_mask"
+                  type="std::vector&lt;bool&gt;">[6x1] Specifies which states the controller must prioritize</input_port>
+      <input_port name="tolerance"
+                  type="std::vector&lt;float&gt;">[6x1] Allowed error margin for arrival</input_port>
+      <input_port name="hold_time"
+                  type="float">Time to remain within tolerance before returning SUCCESS</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
+    </Action>
+    <Action ID="DriveToWorldWaypointSeeking">
+      <input_port name="world_waypoint"
+                  type="std::vector&lt;float&gt;">Target position/orientation during search</input_port>
+      <input_port name="waypoint_mask"
+                  type="std::vector&lt;bool&gt;">[6x1] Controlled vs discretionary states</input_port>
+      <input_port name="object"
+                  type="string">Identification string of the target object</input_port>
+      <input_port name="confidence"
+                  type="float">Threshold for successful object identification</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
+    </Action>
+    <Action ID="Idle"/>
+    <Action ID="TrackObjectWaypoint">
+      <input_port name="tracking_position"
+                  type="std::vector&lt;float&gt;">[6x1] Target vector/orientation relative to Object k Frame</input_port>
+      <input_port name="waypoint_mask"
+                  type="std::vector&lt;bool&gt;">[6x1] Controlled vs discretionary states</input_port>
+      <input_port name="object"
+                  type="string">ID string of the object to track</input_port>
+      <input_port name="tolerance"
+                  type="std::vector&lt;float&gt;">Allowed error margin relative to object</input_port>
+      <input_port name="hold_time"
+                  type="float">Time to remain at relative waypoint</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
+    </Action>
+    <Action ID="DurationTrick">
+      <input_port name="trick"
+                  type="string">Maneuver identification string</input_port>
+      <input_port name="duration"
+                  type="float">How long Manny should perform the trick for</input_port>
+      <input_port name="waypoint_mask"
+                  type="std::vector&lt;bool&gt;">States to control upon arrival</input_port>
+      <input_port name="tolerance"
+                  type="std::vector&lt;float&gt;">Arrival error margin</input_port>
+      <input_port name="hold_time"
+                  type="float">Time to remain at end position</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
+    </Action>
+    <Action ID="DistanceTrick">
+      <input_port name="trick"
+                  type="string">Maneuver identification string</input_port>
+      <input_port name="end_waypoint_body"
+                  type="std::vector&lt;float&gt;">Target position relative to start (FRD frame)</input_port>
+      <input_port name="waypoint_mask"
+                  type="std::vector&lt;bool&gt;">States to control upon arrival</input_port>
+      <input_port name="tolerance"
+                  type="std::vector&lt;float&gt;">Arrival error margin</input_port>
+      <input_port name="hold_time"
+                  type="float">Time to remain at end position</input_port>
+      <input_port name="timeout"
+                  type="float">Time to attempt the task before giving up and returning FAILURE</input_port>
+    </Action>
+  </TreeNodesModel>
+</root>
